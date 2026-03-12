@@ -1,0 +1,412 @@
+/**
+ * @file    Lexer.hpp
+ * @version 0.0.1
+ * @date    Fri, 26 Sep 2025 17:05:10 +0000
+ */
+#ifndef Lexer_HPP_
+#define Lexer_HPP_
+
+#include <iostream>
+#include <iterator>
+#include <list>
+#include <map>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+#include <boost/regex.hpp>
+#include "pparser.tab.hh"
+
+using std::string;
+using std::vector;
+using std::list;
+using std::map;
+using std::pair;
+using std::regex;
+using std::stringstream;
+using yy::parser;
+
+/* LEX TYPES */
+#define right_assoc 0x8
+#define left_assoc  0x20
+#define non_assoc   0x40
+#define start       0x1;
+
+#define INT 1
+#define FLOAT 2
+
+/*
+ /// Symbol kinds.
+struct symbol_kind
+{
+	enum symbol_kind_type
+	{
+	YYNTOKENS = 28, ///< Number of tokens.
+	S_YYEMPTY = -2,
+	S_YYEOF = 0,                             // "end of input"
+	S_YYerror = 1,                           // error
+	S_YYUNDEF = 2,                           // "invalid token"
+	S_NUMBER = 3,                            // NUMBER
+	S_DOLLAR_SIGN = 4,                       // DOLLAR_SIGN
+	S_DOT = 5,                               // DOT
+	S_INDIRECT_MEMBER = 6,                   // INDIRECT_MEMBER
+	S_COMMA = 7,                             // COMMA
+	S_EQUAL = 8,                             // EQUAL
+	S_STRING_LITERAL = 9,                    // STRING_LITERAL
+	S_NUMERIC_LITERAL = 10,                  // NUMERIC_LITERAL
+	S_ID = 11,                               // ID
+	S_CONST_ID = 12,                         // CONST_ID
+	S_LBRACE = 13,                           // LBRACE
+	S_RBRACE = 14,                           // RBRACE
+	S_LBRACKET = 15,                         // LBRACKET
+	S_RBRACKET = 16,                         // RBRACKET
+	S_LPAREN = 17,                           // LPAREN
+	S_RPAREN = 18,                           // RPAREN
+	S_CONFIG_LOAD = 19,                      // CONFIG_LOAD
+	S_INCLUDE = 20,                          // INCLUDE
+	S_REQUIRE = 21,                          // REQUIRE
+	S_INSERT = 22,                           // INSERT
+	S_ASSIGN = 23,                           // ASSIGN
+	S_VAR_ATTRIB = 24,                       // VAR_ATTRIB
+	S_VALUE_ATTRIB = 25,                     // VALUE_ATTRIB
+	S_FILE_ATTRIB = 26,                      // FILE_ATTRIB
+	S_FILE_NAME = 27,                        // FILE_NAME
+	S_YYACCEPT = 28,                         // $accept
+	// S_complier = 29,                         // complier
+	// S_files = 30,                            // files
+	// S_file = 31,                             // file
+	// S_blocks = 32,                           // blocks
+	// S_block = 33,                            // block
+	// S_qualafied_id = 34,                     // qualafied_id
+	// S_sub_proc = 35,                         // sub_proc
+	// S_array = 36,                            // array
+	// S_params = 37,                           // params
+	// S_symbol = 38,                           // symbol
+	// S_built_in = 39,                         // built_in
+	// S_attributes = 40,                       // attributes
+	// S_attrib = 41                            // attrib
+	};
+};
+
+// basic_symbol.
+  template <typename Base>
+  parser::basic_symbol<Base>::basic_symbol (const basic_symbol& that)
+    : Base (that)
+    , value ()
+  {
+    switch (this->kind ())
+    {
+      case symbol_kind::S_NUMBER: // NUMBER
+        value.copy< int > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_attrib: // attrib
+        value.copy< std::pair< std::string, std::string > > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_DOLLAR_SIGN: // DOLLAR_SIGN
+      case symbol_kind::S_DOT: // DOT
+      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
+      case symbol_kind::S_COMMA: // COMMA
+      case symbol_kind::S_EQUAL: // EQUAL
+      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
+      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
+      case symbol_kind::S_ID: // ID
+      case symbol_kind::S_CONST_ID: // CONST_ID
+      case symbol_kind::S_LBRACE: // LBRACE
+      case symbol_kind::S_RBRACE: // RBRACE
+      case symbol_kind::S_LBRACKET: // LBRACKET
+      case symbol_kind::S_RBRACKET: // RBRACKET
+      case symbol_kind::S_LPAREN: // LPAREN
+      case symbol_kind::S_RPAREN: // RPAREN
+      case symbol_kind::S_CONFIG_LOAD: // CONFIG_LOAD
+      case symbol_kind::S_INCLUDE: // INCLUDE
+      case symbol_kind::S_REQUIRE: // REQUIRE
+      case symbol_kind::S_INSERT: // INSERT
+      case symbol_kind::S_ASSIGN: // ASSIGN
+      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
+      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
+      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
+      case symbol_kind::S_FILE_NAME: // FILE_NAME
+      case symbol_kind::S_qualafied_id: // qualafied_id
+      case symbol_kind::S_sub_proc: // sub_proc
+      case symbol_kind::S_array: // array
+      case symbol_kind::S_symbol: // symbol
+      case symbol_kind::S_built_in: // built_in
+      case symbol_kind::S_attributes: // attributes
+        value.copy< std::string > (YY_MOVE (that.value));
+        break;
+
+      default:
+        break;
+    }
+
+struct symbol_type : basic_symbol<by_kind>
+{
+	// superclass
+	typedef basic_symbol<by_kind> super_type;
+
+	symbol_type () YY_NOEXCEPT {}
+
+	// valueless symbols, and symbols from each type
+	symbol_type (int tok) : super_type (token_kind_type (tok))
+	{
+	}
+
+	symbol_type (int tok, const int& v)	: super_type (token_kind_type (tok), v)
+	{
+	}
+
+	symbol_type (int tok, const std::string& v)	: super_type (token_kind_type (tok), v)
+	{
+	}
+};
+
+*/
+
+// namespace bkp
+// {
+//vector<pair<string,int>> str_to_int { { "INT", 1}, {"FLOAT", 2} };
+/**
+ *
+ */
+typedef struct token_t {
+	unsigned long id;
+	string name;
+	string type;
+	string rexpr;
+} token_t;
+
+typedef struct token_match_t
+{
+	int line;
+	int col;
+	string value;
+	token_t token;
+} token_match_t;
+
+
+template<typename T>
+class TTYPE
+{
+public:
+	inline void set(const T& v) { *_val = v; }
+	inline T& get() { return *_val; }
+private:
+	T* _val;
+};
+
+typedef struct token_def
+{
+	unsigned long id;
+	string name;
+	string stype;
+	int itype;
+	string rexp;
+	unsigned long index;
+	string value;
+	parser::symbol_type* type;
+	// operator yy::parser::symbol_type()
+	// {
+	// 	return new yy::parser::symbol_type;
+	// }
+} token_def;
+
+typedef token_def token;
+
+typedef struct token_match
+{
+	unsigned long id;
+	int pos;
+	int line;
+	string value;
+	token_def token;
+} token_match;
+
+typedef struct state_t
+{
+	unsigned long id;
+	string name;
+} state_t;
+
+typedef struct context_t
+{
+	std::string&               scan_file;
+	std::string&               search_text;
+	boost::regex&              rexp;
+	boost::sregex_iterator&    begin;
+	boost::sregex_iterator&    end;
+	boost::sregex_iterator*    p_iter;
+	state_t*                   state;
+	string&                    expr;
+	vector<token_def*>*        matches;
+} context_t;
+
+const string TOKEN_TYPE           = R"([A-Za-z][A-Za-z_]*((::)[A-Za-z_]*)?)";
+const string TOKEN_TYPE_          = R"([A-Za-z][A-Za-z_]*)";
+const string VALID_SYMBOL_CHARS   = R"([A-Za-z0-9_])"; /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
+const string VALID_CHARS          = R"([[:punct:][:alnum:]])"; // [:punct:] = !"#$%&'()*+,-./:;<=>?@[\]^_{|}~`);
+const string CONFIG_STATES        = R"((?<states>^\s*(?<state>[A-Za-z][A-Za-z0-9_]*)\s*=\s*\s*\{(?<tokens>[A-Za-z][A-Za-z0-9_]*(, [A-Za-z][A-Za-z0-9_]*)*)\}\s*\s*$))";
+const string CONFIG_SECTIONS      = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>groups)|(?<states>states)\s*\]\s*$)";
+const string CONFIG_PAIR          = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
+const string CONFIG_COMMENT       = R"(^\s*#.*$)";
+const string CONFIG               = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
+
+/**
+  * @brief class Lexer
+  */
+class Lexer final
+{
+public:
+    /**
+ * @name Lexer
+ * @def Lexer()
+ * @brief default ctor
+ */
+Lexer();
+
+/**
+ * @name load_config
+ * @def void load_config( const string &file )
+ * @brief  load_config: load configuration from file
+ * @param  const string& file
+ * @return void
+ */
+void load_config( const string& file );
+
+/**
+ * @name dump_config
+ * @brief void dump_config( const string& file ) const
+ * @param const string& file
+ * @return void
+ */
+void dump_config( const string& file ) const;
+
+/**
+ * @name dump_config
+ * @def void dump_config( ) const
+ * @brief  dump current config
+ * @return void
+ */
+void dump_config( ) const;
+
+/**
+ * @name init
+ * @def void init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
+ * @brief  initialize state
+ * @return bool
+ */
+void init(const string &config_file, parser* pparser, const string& input_file, const string& output_file);
+
+/**
+* @name get_state
+* @brief state_t *get_state() const
+* @return state_t
+*/
+state_t *get_state() const;
+
+/**
+ * @name set_state
+ * @brief void set_state(state_t* pstate)
+ * @param state_t* pstate
+ * @return void
+ */
+void set_state(state_t* pstate);
+
+/**
+ * @name tokenize
+ * @def void tokenize()
+*/
+void tokenize();
+
+/**
+ * @name  get_token
+ * @def parser::symbol_type get_token()
+ * @return int
+ */
+parser::symbol_type get_token();
+
+/**
+ * @name reset
+ * @def void reset()
+ */
+void reset();
+
+/**
+ * @name get_expr
+ * @def const string& get_expr() const
+ * @brief get regex expression
+ * @return const string&
+ */
+const string& get_expr() const;
+
+/**
+ * @name build_expr
+ * @def void build_expr()
+ */
+void build_expr();
+
+/**
+ * @name print_token
+ * @def void print_token(int id)
+ * @brief print token to stdout
+ */
+void print_token(int id);
+
+/**
+ * @name is_id
+ * @def bool is_id( const token_def& token, const int& id )
+ * @param token
+ * @param id
+ * @return
+ */
+bool is_id( const token_def& token, const int& id );
+
+/**
+ * @name on_state
+ * @param pstate
+ * @return
+ */
+inline unsigned long on_state(state_t* pstate);
+
+/**
+ * @name on_token
+ * @brief override virtual, on_token, for each token ...
+ * @param token_def* token
+ */
+inline parser::symbol_type on_token( token_def* ptoken );
+
+protected:
+	parser*                                     m_pparser;
+	string                                      m_config_file;
+    string                                      m_input_file;
+    string                                      m_output_file;
+	vector<token_def>                           m_tokens;
+	map<unsigned long, token_def*>              m_idx_tab;  // idx  -> token_def
+	map<unsigned long, token_def*>              m_id_tab;   // id   -> token_def
+	map<string, token_def*>                     m_name_tab; // name -> token_def
+	vector<state_t*>*                           p_states;
+	map<unsigned long, vector<unsigned long>>*  p_state_tokens_tab;
+	map<unsigned long, state_t*>*               p_state_tab;
+	vector<token_def*>                          m_matches;
+	string                                      m_all_search_text;
+    string                                      m_current_search_text;
+	boost::regex                                m_rexp;
+	boost::sregex_iterator                      m_begin;
+	boost::sregex_iterator                      m_end;
+	boost::sregex_iterator*                     m_piter;
+  	int                                         m_pos;
+	int                                         m_len;
+	state_t*                                    p_state;
+	string                                      m_expr;
+    string                                      m_str;
+    string                                      m_prefix;
+    string                                      m_suffix;
+	stringstream                                m_sout;
+	//stack<string>                               filestack;
+};
+
+//}
+
+#endif
