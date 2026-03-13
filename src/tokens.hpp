@@ -176,7 +176,6 @@ inline vector g_tokens_all = {
     token{UL_HASH_MARK, "HASH_MARK", "string", 0, "#", 42, string("null"), new yy::parser::symbol_type(parser::make_HASH_MARK())},
     token{UL_SEMI_COLON, "SEMI_COLON", "string", 0, ";", 42, string("null"), new yy::parser::symbol_type(parser::make_SEMI_COLON())},
     token{UL_SINGLE_QUOTE, "SINGLE_QUOTE", "string", 0, "'", 42, string("null"), new yy::parser::symbol_type(parser::make_SINGLE_QUOTE())},
-
     token{UL_GREATER_THAN, "GREATER_THAN", "string", 0, ">", 42, string("null"), new yy::parser::symbol_type(parser::make_GREATER_THAN())},
     token{UL_QUESTION_MARK, "QUESTION_MARK", "string", 0, R"(\?)", 42, string("null"), new yy::parser::symbol_type(parser::make_QUESTION_MARK())},
     token{UL_COMMA, "COMMA", "string", 0, R"(\,)", 42, string("null"), new yy::parser::symbol_type(parser::make_COMMA())},

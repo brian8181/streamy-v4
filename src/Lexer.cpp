@@ -7,23 +7,23 @@
  */
 
 #define _GNU_SOURCE
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <sstream>
-#include <utility>
-#include <vector>
-#include <map>
-#include <regex>
-#include <fmt/core.h>
-#include <fmt/format.h>
-#include <boost/regex.hpp>
 #include "fileio.hpp"
 #include "Lexer.hpp"
+#include <boost/regex.hpp>
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 //#include "constants.hpp"
 #include "tokens.hpp"
 #include "scanner.h"

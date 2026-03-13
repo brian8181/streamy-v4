@@ -34,6 +34,19 @@ ifdef CLANG
 endif
 
 
+ifndef RELEASE
+	CXXFLAGS +=-ggdb -DDEBUG
+endif
+
+CYGWIN=TRUE
+ifdef CYGWIN
+	CXXFLAGS +=-DCYGWIN
+	//LDFLAGS += -lfmt -lcppunit.dll
+else
+	LDFLAGS += -lfmt -lcppunit
+endif
+
+
 all: $(BLD)/scanner
 
 $(BLD)/scanner: $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/scanner.cpp $(SRC)/scanner.h $(SRC)/tokens.hpp $(SRC)/Lexer.cpp $(BLD)/Lexer.hpp $(SRC)/utility.cpp $(BLD)/ast.o
