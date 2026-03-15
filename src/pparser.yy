@@ -204,7 +204,7 @@ number:
  * @name stmt
  */
 stmt:
-     expr CLOSE_BRACE                                                {
+     expr CLOSE_BRACE                                           {
                                                                     /*$$ = opr(PRINT, 1, $2);          */
                                                                     cout << FMT_FG_YELLOW "PARSER stmt: | expr CLOSE_BRACE\n" << FMT_RESET;
                                                                 }
@@ -214,29 +214,29 @@ stmt:
      | IF LPAREN expr %prec IFX RPAREN                          {
                                                                     cout << "PARSER stmt TEST: | IF LPAREN expr prec IFX RPAREN\n";
                                                                 }
-    | IF LPAREN expr RPAREN stmt %prec IFX SLASH IF CLOSE_BRACE      {
+    | IF LPAREN expr RPAREN stmt %prec IFX SLASH IF CLOSE_BRACE {
                                                                     cout << "PARSER stmt: | IF LPAREN expr RPAREN stmt prec IFX CLOSE_BRACE\n";
                                                                 }
-    | SLASH IF CLOSE_BRACE                                           {
+    | SLASH IF CLOSE_BRACE                                      {
                                                                     cout << "PARSER stmt: | IF LPAREN expr RPAREN stmt ELSE stmt CLOSE_BRACE\n";
                                                                 }
 
-    | IF LPAREN expr RPAREN stmt ELSE stmt CLOSE_BRACE               {
+    | IF LPAREN expr RPAREN stmt ELSE stmt CLOSE_BRACE          {
                                                                     cout << "PARSER stmt: | IF LPAREN expr RPAREN stmt ELSE stmt CLOSE_BRACE\n";
                                                                 }
-    | sub_proc CLOSE_BRACE                                           {
+    | sub_proc CLOSE_BRACE                                      {
                                                                     cout << "PARSER stmt: | sub_porc CLOSE_BRACE\n";
                                                                 }
-    | array CLOSE_BRACE                                              {
+    | array CLOSE_BRACE                                         {
                                                                     cout  << "PARSER stmt: | array CLOSE_BRACE\n";
                                                                 }
-    | expr VBAR modifier CLOSE_BRACE                                 {
+    | expr VBAR modifier CLOSE_BRACE                            {
                                                                     cout << "PARSER stmt: | symbol VBAR CLOSE_BRACE\n";
                                                                 }
-    | qualafied_id CLOSE_BRACE                                       {
+    | qualafied_id CLOSE_BRACE                                  {
                                                                     cout  << "PARSER stmt: | qualafied_id CLOSE_BRACE\n";
                                                                 }
-     | built_in CLOSE_BRACE                                          {
+     | built_in CLOSE_BRACE                                     {
                                                                     cout  << "PARSER stmt: | built_in CLOSE_BRACE\n";
                                                                 }
                                                                 ;

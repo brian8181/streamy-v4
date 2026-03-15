@@ -16,7 +16,7 @@
 #include <utility>
 #include <vector>
 #include <boost/regex.hpp>
-#include "pparser.tab.hh"
+#include "../streamy-v4/build/pparser.tab.hh"
 
 using std::string;
 using std::vector;
@@ -30,41 +30,14 @@ using yy::parser;
 #define INT 1
 #define FLOAT 2
 
-// namespace bkp
-// {
-
-/**
- *
- */
-typedef struct token_t {
-	unsigned long id;
-	string name;
-	string type;
-	string rexpr;
-} token_t;
-
-typedef struct token_match_t
-{
-	int line;
-	int col;
-	string value;
-	token_t token;
-} token_match_t;
-
 typedef struct token_def
 {
 	unsigned long id;
 	string name;
 	string stype;
-	int itype;
 	string rexp;
 	unsigned long index;
 	string value;
-	parser::symbol_type* type;
-	// operator yy::parser::symbol_type()
-	// {
-	// 	return new yy::parser::symbol_type;
-	// }
 } token_def;
 
 typedef token_def token;
@@ -263,7 +236,5 @@ protected:
 	stringstream                                m_sout;
 	//stack<string>                               filestack;
 };
-
-//}
 
 #endif

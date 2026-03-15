@@ -24,7 +24,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-//#include "constants.hpp"
 #include "tokens.hpp"
 #include "scanner.h"
 
@@ -89,7 +88,7 @@ void Lexer::load_config( const string& file )
             string stype = token_match["type"].str();
             string test_val = token_match["test"].str();
 
-            auto* ptoken = new token_def{ 0xFFul + j*0x06ul, string(name), stype, 0, string(expr), 0, string("null"), nullptr };
+            auto* ptoken = new token_def{ 0xFFul + j*0x06ul, string(name), stype, string(expr), 0, string("null") };
 
             // copy to term to vector
             m_tokens.push_back(*ptoken);
@@ -264,6 +263,8 @@ void Lexer::tokenize()
  */
 parser::symbol_type Lexer::get_token()
 {
+    // //parser::YY_STACK_PRINT();
+    // YY_SYMBOL_PRINT( "get_token()", p_state->yy_symbol );
 
     SKIP:
     if(*m_piter != m_end)
@@ -279,55 +280,56 @@ parser::symbol_type Lexer::get_token()
         m_str    = m.str();
         m_prefix = m.prefix().matched ? m.prefix() : string();
         m_suffix = m.suffix().matched ? m.suffix() : string();
-
-        cout << "match='" << m_str
-            << "', prefix='" << m_prefix
-            << "', suffix='" << m_suffix
-            << "'" << endl << endl;
+        cout << "MATCH=\"" << m_prefix << "\" : \"" << m_str << "\" : \"" << m_suffix << "\""<<  endl;
 
         // find matched
         for(int i = 1; i < len; ++i)
         {
-            cout << "matching .." << endl;
-
             if(m[i].matched)
             {
-                if(m.prefix().matched && gp_state->id != cINITIAL)
+                if(m.prefix().matched)
                 {
-                    cout << "error: unexpected token ... \"" << m_prefix << "\"" << endl;
-                    return parser::make_YYerror();
+                    if (gp_state->id != UL_INITIAL_STATE)
+                    {
+                        cout << "error: unexpected token ... \"" << m_prefix << "\"" << endl;
+                        return parser::make_YYerror();
+                    }
+                    // stream prefix (unescaped text)
+                    m_sout << m_prefix;
                 }
 
-                // stream prefix (unescaped text)
-                m_sout << m_prefix;
                 // find match & lookup by sub_match index
                 ptoken = m_idx_tab[i];        // lookup by sub_match index!
                 ptoken->value = m[i].str();   // set match value
                 m_matches.push_back(ptoken);
 
-                ++(*m_piter); // increment iterator
+                //++(*m_piter); // increment iterator
+
+                // reinit get_token iterators
+                m_current_search_text = m_suffix;
+                m_rexp = boost::regex( m_expr, boost::regex::extended  );
+                m_begin = boost::sregex_iterator( m_current_search_text.begin( ), m_current_search_text.end( ), m_rexp );
+                m_piter = &m_begin;
+                m_end = boost::sregex_iterator();
+
                 // get return "value / token" first, then check for skip,
                 // call "get_token/on_token" recursively ,(as long as), ... while it skips
                 // then return token ... stack unrolls
-
                 yy::parser::symbol_type rtoken = on_token( ptoken );
 
-
                 if (rtoken.kind() == yy::parser::symbol_type( parser::token::SKIP_TOKEN).kind())
-                {   cout << "skipping... " << endl;
+                {
+                    cout << "skipping... " << endl;
                     goto SKIP;
                 }
-                cout << "retrun .." << endl;
                 return rtoken;
             }
         }
     }
     else
     {
-        cout << "ending .." << endl;
         m_sout << m_suffix;
         write_str(m_output_file, m_sout.str());
-
         m_current_search_text.clear();
         m_sout.clear();
         m_suffix.clear();
@@ -400,7 +402,6 @@ void Lexer::set_state(state_t* pstate)
             }
         }
     }
-
     // build expr
     m_expr.clear();
     stringstream ss;
@@ -414,19 +415,17 @@ void Lexer::set_state(state_t* pstate)
     m_expr = ss.str();
     m_expr.pop_back(); // remove extra '|' i.e. "V-BAR"
 
-    cout << "expr=" << m_expr << endl;
-
     // reinit get_token iterators
     m_current_search_text = m_suffix;
-    m_rexp = boost::regex( m_expr, boost::regex::extended /*|  boost::match_not_bol | boost::match_not_eol*/ );
+    m_rexp = boost::regex( m_expr, boost::regex::extended  );
     m_begin = boost::sregex_iterator( m_current_search_text.begin( ), m_current_search_text.end( ), m_rexp );
     m_piter = &m_begin;
     m_end = boost::sregex_iterator();
 
-    cout << "state{\n"
-        << "id=" << pstate->id << endl
-        << "name=" << pstate->name << endl
-        << "}" << endl;
+#ifdef DEBUG
+    cout << "EXPR=\"" << m_expr << "\"" << endl;
+    cout << "STATE=" << pstate->id << " : " << pstate->name << endl;
+#endif
 }
 
 
@@ -438,12 +437,11 @@ void Lexer::set_state(state_t* pstate)
 void Lexer::print_token(int id)
 {
     const token *ptoken = m_id_tab[id];
-    cout << "token: {" << setw(5) << left << "\n\t id: " << setw(10) << right << ptoken->id << setw(5) << left
+    cout << "TOKEN={" << setw(5) << left << "\n\t id: " << setw(10) << right << ptoken->id << setw(5) << left
          << "\n\t name: " << setw(10) << right << ptoken->name << setw(5) << left << "\n\t stype: " << setw(10) << right
          << ptoken->stype << setw(5) << left << "\n\t index: " << setw(10) << right << ptoken->index << setw(5) << left
          << "\n\t value: " << setw(10) << right << ptoken->value << setw(5) << left << "\n\t rexp: " << setw(10) << right
          << ptoken->rexp << setw(5) << left << setw(10) << right
-         //<< ptoken->type << setw(5) << left << setw(10) << right
          << "\n}" << endl;
 }
 

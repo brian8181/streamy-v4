@@ -13,10 +13,6 @@
 #include <stack>
 #include <boost/regex.hpp>
 
-// .[{()\*+?|^$
-// [[.NUL.]] matches a NUL character.
-// "(\\|)|(:)|(\\[)|(\\])|(\\{)|(\\})|(\\*)|(!=)|(=)|(\\,)|(\\.)|(\\$[a-zA-Z]+)|([ \\t]+)"
-
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -143,123 +139,122 @@ using yy::parser;
 #define UL_ANYTHING 0xFFFFFFul
 #define UL_MATCH 128ul
 #define UL_UNDEFINED 0xDEADBEEFul
+#define UL_NULL 0x0ul
+#define EMPTY_STRING string("")
+#define S_TYPE "string"
 
 /**
  * @name g_tokens_all
  * @brief global token vector - all tokens
  */
 inline vector g_tokens_all = {
-    token{UL_UNDEFINED, "UNDEFINED", "string", 0, ".", 42, string("null"), new yy::parser::symbol_type(parser::make_UNDEFINED())},
-    token{UL_MATCH, "MATCH", "string", 0, "match", 42, string("null"),new yy::parser::symbol_type(parser::make_MATCH())},
-    token{UL_UNESCAPED_TEXT, "UNESCAPED_TEXT", "string", 0, R"([^{]+)", 42, string("null"), new yy::parser::symbol_type(parser::make_UNESCAPED_TEXT(""))},
-    // ESCAPED TOKENS
-    token{UL_WHITESPACE, "WHITESPACE", "string", 0, R"([ \t\n]*)", 42, string("null"), new yy::parser::symbol_type(parser::make_WHITESPACE())},
-    token{UL_DOLLAR_SIGN, "DOLLAR_SIGN", "string", 0, R"(\$)", 42, string("null"), new yy::parser::symbol_type(parser::make_DOLLAR_SIGN())},
-    token{UL_VALID_CHAR, "VALID_CHAR", "string", 0, R"([A-Za-z0-9*@_~+-])", 42, string("null"), new yy::parser::symbol_type(parser::make_VALID_CHAR())},
-    token{UL_NUMERIC_LITERAL, "NUMERIC_LITERAL", "string", 0, R"([0-9]+)", 42, string("null"), new yy::parser::symbol_type(parser::make_NUMERIC_LITERAL(""))},
-    token{UL_DOUBLE_QUOTE, "DOUBLE_QUOTE", "string", 0, "\"", 42, string("null"), new yy::parser::symbol_type(parser::make_DOUBLE_QUOTE())},
-    token{UL_CARROT, "CARROT", "string", 0, R"(\^)", 42, string("null"), new yy::parser::symbol_type(parser::make_CARROT())},
-    token{UL_AMPERSAND, "AMPERSAND", "string", 0, R"(\*)", 42, string("null"), new yy::parser::symbol_type(parser::make_AMPERSAND())},
-    token{UL_ASTERISK, "ASTERISK", "string", 0, R"(\*)", 42, string("null"), new yy::parser::symbol_type(parser::make_ASTERISK())},
-    token{UL_OPEN_PAREN, "LPAREN", "string", 0, R"(\()", 42, string("null"), new yy::parser::symbol_type(parser::make_OPEN_PAREN())},
-    token{UL_CLOSE_PAREN, "RPAREN", "string", 0, R"(\))", 42, string("null"), new yy::parser::symbol_type(parser::make_CLOSE_PAREN())},
-    token{UL_DASH, "MINUS", "string", 0, "-", 42, string("null"), new yy::parser::symbol_type(parser::make_DASH())},
-    token{UL_PLUS_SIGN, "PLUS", "string", 0, R"(\+)", 42, string("null"), new yy::parser::symbol_type(parser::make_PLUS_SIGN())},
-    token{UL_EQUAL_SIGN, "EQUAL_SIGN", "string", 0, R"(=)", 42, string("null"), new yy::parser::symbol_type(parser::make_EQUAL_SIGN())},
-    token{UL_CLOSE_BRACKET, "RBRACKET", "string", 0, R"(\])", 42, string("null"), new yy::parser::symbol_type(parser::make_CLOSE_BRACKET())},
-    token{UL_OPEN_BRACE, "OPEN_BRACE", "string", 0, R"(\{)", 42, string("null"), new yy::parser::symbol_type(parser::make_OPEN_BRACE())},
-    token{UL_CLOSE_BRACE, "CLOSE_BRACE", "string", 0, R"(\})", 42, string("null"), new yy::parser::symbol_type(parser::make_CLOSE_BRACE())},
-    token{UL_OPEN_BRACKET, "LBRACKET", "string", 0, R"(\[)", 42, string("null"), new yy::parser::symbol_type(parser::make_OPEN_BRACKET())},
-    token{UL_VBAR, "VBAR", "string", 0, R"(\|)", 42, string("null"), new yy::parser::symbol_type(parser::make_VBAR())},
-    token{UL_BACKSLASH, "BACKSLASH", "string", 0, R"(\\)", 42, string("null"), new yy::parser::symbol_type(parser::make_BACKSLASH())},
-    token{UL_COLON, "COLON", "string", 0, ":", 42, string("null"), new yy::parser::symbol_type(parser::make_COLON())},
-    token{UL_HASH_MARK, "HASH_MARK", "string", 0, "#", 42, string("null"), new yy::parser::symbol_type(parser::make_HASH_MARK())},
-    token{UL_SEMI_COLON, "SEMI_COLON", "string", 0, ";", 42, string("null"), new yy::parser::symbol_type(parser::make_SEMI_COLON())},
-    token{UL_SINGLE_QUOTE, "SINGLE_QUOTE", "string", 0, "'", 42, string("null"), new yy::parser::symbol_type(parser::make_SINGLE_QUOTE())},
-    token{UL_GREATER_THAN, "GREATER_THAN", "string", 0, ">", 42, string("null"), new yy::parser::symbol_type(parser::make_GREATER_THAN())},
-    token{UL_QUESTION_MARK, "QUESTION_MARK", "string", 0, R"(\?)", 42, string("null"), new yy::parser::symbol_type(parser::make_QUESTION_MARK())},
-    token{UL_COMMA, "COMMA", "string", 0, R"(\,)", 42, string("null"), new yy::parser::symbol_type(parser::make_COMMA())},
-    token{UL_DOT, "DOT", "string", 0, R"(\.)", 42, string("null"), new yy::parser::symbol_type(parser::make_DOT())},
-    token{UL_SLASH, "SLASH", "string", 0, "/", 42, string("null"), new yy::parser::symbol_type(parser::make_SLASH())},
-    token{UL_GREATER_THAN_EQUAL, "GREATER_THAN_EQUAL", "string", 0, ">=", 42, string("null"), new yy::parser::symbol_type(parser::make_GREATER_THAN_EQUAL())},
-    token{UL_LESS_THAN_EQUAL, "LESS_THAN_EQUAL", "string", 0, "<=", 42, string("null"), new yy::parser::symbol_type(parser::make_LESS_THAN_EQUAL())},
-    //token{UL_EQUALS, "EQUALS", "string", 0, "==", 42, string("null"), new yy::parser::symbol_type(parser::make_EQUALS())},
-    token{UL_STRING_LITERAL, "STRING_LITERAL", "string", 0, R"("[A-Za-z0-9*@_.~+-]+")", 42, string("null"), new yy::parser::symbol_type(parser::make_STRING_LITERAL(""))},
-    token{UL_ARRAY, "ARRAY", "string", 0, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", 42, string("null"), new yy::parser::symbol_type(parser::make_ARRAY())},
-    token{UL_IDENTIFIER, "IDENTIFIER", "string", 0, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", 42, string("null"), new parser::symbol_type(parser::make_IDENTIFIER(""))},
-    token{UL_COMMENT, "COMMENT", "string", 0, R"(\{[ ]*\*[^*}]*\*[ ]*\})", 42, string("null"), new yy::parser::symbol_type(parser::make_COMMENT())},
-    token{UL_CONST_SYMBOL, "CONST_SYMBOL", "string", 0, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)", 42, string("null"), new yy::parser::symbol_type(parser::make_CONST_SYMBOL())},
-    token{UL_ANYTHING, "ANYTHING", "string", 0, ".", 42, string("null"), new yy::parser::symbol_type(parser::make_ANYTHING())},
-    token{UL_IF, "IF", "string", 0, "if", 42, string("null"), new yy::parser::symbol_type(parser::make_IF())},
-    token{UL_ELSEIF, "ELSEIF", "string", 0, "elseif", 42, string("null"), new yy::parser::symbol_type(parser::make_ELSEIF())},
-    token{UL_WHILE, "WHILE", "string", 0, "while", 42, string("null"), new yy::parser::symbol_type(parser::make_WHILE())},
-    token{UL_ASSIGN, "ASSIGN", "string", 0, "assign", 42, string("null"), new yy::parser::symbol_type(parser::make_ASSIGN(""))},
-    token{UL_BREAK, "BREAK", "string", 0, "break", 42, string("null"), new yy::parser::symbol_type(parser::make_BREAK())},
-    token{UL_REQUIRE, "REQUIRE", "string", 0, "require", 42, string("null"), new yy::parser::symbol_type(parser::make_REQUIRE(""))},
-    token{UL_INCLUDE, "INCLUDE", "string", 0, "include", 42, string("null"), new yy::parser::symbol_type(parser::make_INCLUDE(""))},
-    token{UL_CONFIG_LOAD, "CONFIG_LOAD", "string", 0, "config_load", 42, string("null"), new yy::parser::symbol_type(parser::make_CONFIG_LOAD(""))},
-    token{UL_INSERT, "INSERT", "string", 0, "insert", 42, string("null"), new yy::parser::symbol_type(parser::make_INSERT(""))},
-    token{UL_VAR_ATTRIB, "VAR_ATTRIB", "string", 0, R"(var='[^']*')", 42, string("null"),new yy::parser::symbol_type(parser::make_VAR_ATTRIB(""))},
-    token{UL_VALUE_ATTRIB, "VALUE_ATTRIB", "string", 0, R"(value='[^']*')", 42, string("null"),new yy::parser::symbol_type(parser::make_VALUE_ATTRIB(""))},
-    token{UL_FROM_ATTRIB, "FROM_ATTRIB", "string", 0, R"(from='[^']*')", 42, string("null"), new yy::parser::symbol_type(parser::make_FROM_ATTRIB(""))},
-    token{UL_ITEM_ATTRIB, "ITEM_ATTRIB", "string", 0, R"(item='[^']*')", 42, string("null"), new yy::parser::symbol_type(parser::make_ITEM_ATTRIB(""))},
-    token{UL_KEY_ATTRIB, "KEY_ATTRIB", "string", 0, R"(key='[^']*')", 42, string("null"), new yy::parser::symbol_type(parser::make_KEY_ATTRIB(""))},
-    token{UL_NAME_ATTRIB, "NAME_ATTRIB", "string", 0, R"(name='[^']*')", 42, string("null"), new yy::parser::symbol_type(parser::make_NAME_ATTRIB(""))},
-    token{UL_FILE_ATTRIB, "FILE_ATTRIB", "string", 0, R"(file='[^']*')", 42, string("null"), new yy::parser::symbol_type(parser::make_FILE_ATTRIB(""))},
-    token{UL_CAPITALIZE, "CAPITALIZE", "string", 0, "capitalize", 42, string("null"), new yy::parser::symbol_type(parser::make_CAPITALIZE(""))},
-    // token{UL_CAT, "CAT", "string", 0, "cat", 42, string("null"), new yy::parser::symbol_type(parser::make_CAT(""))},
-    token{UL_COUNT_PARAGRAPHS, "COUNT_PARAGRAPHS", "string", 0, "count_paragraphs", 42, string("null"), new yy::parser::symbol_type(parser::make_COUNT_PARAGRAPHS(""))},
-    token{UL_COUNT_SENTENCES, "COUNT_SENTENCES", "string", 0, "count_sentences", 42, string("null"), new yy::parser::symbol_type(parser::make_COUNT_SENTENCES(""))},
-    token{UL_COUNT_WORDS, "COUNT_WORDS", "string", 0, "count_words", 42, string("null"), new yy::parser::symbol_type(parser::make_COUNT_WORDS(""))},
-    token{UL_DATE_FORMAT, "DATE_FORMAT", "string", 0, "date_format", 42, string("null"), new yy::parser::symbol_type(parser::make_DATE_FORMAT(""))},
-    token{UL_DEFAULT, "DEFAULT", "string", 0, "default", 42, string("null"), new yy::parser::symbol_type(parser::make_DEFAULT(""))},
-    token{UL_ESCAPE, "ESCAPE", "string", 0, "escape", 42, string("null"), new yy::parser::symbol_type(parser::make_ESCAPE(""))},
-    token{UL_INDENT, "INDENT", "string", 0, "indent", 42, string("null"), new yy::parser::symbol_type(parser::make_INDENT(""))},
-    token{UL_LOWER, "LOWER", "string", 0, "lower", 42, string("null"), new yy::parser::symbol_type(parser::make_LOWER(""))},
-    token{UL_UPPER, "UPPER", "string", 0, "upper", 42, string("null"), new yy::parser::symbol_type(parser::make_UPPER(""))},
-    token{UL_STRIP, "STRIP", "string", 0, "strip", 42, string("null"), new yy::parser::symbol_type(parser::make_STRIP(""))},
-    token{UL_NL2BR, "NL2BR", "string", 0, "nl2br", 42, string("null"), new yy::parser::symbol_type(parser::make_NL2BR(""))},
-    token{UL_REGX_REPLACE, "REGX_REPLACE", "string", 0, "regx_replace", 42, string("null"), new yy::parser::symbol_type(parser::make_REGX_REPLACE(""))},
-    token{UL_REPLACE, "REPLACE", "string", 0, "replace", 42, string("null"), new yy::parser::symbol_type(parser::make_REPLACE(""))},
-    token{UL_SPACIFY, "SPACIFY", "string", 0, "spacify", 42, string("null"), new yy::parser::symbol_type(parser::make_SPACIFY(""))},
-    token{UL_STRING_FORMAT, "STRING_FORMAT", "string", 0, "string_format", 42, string("null"), new yy::parser::symbol_type(parser::make_STRING_FORMAT(""))},
-    token{UL_STRIP_TAGS, "STRIP_TAGS", "string", 0, "strip_tags", 42, string("null"), new yy::parser::symbol_type(parser::make_STRIP_TAGS(""))},
-    token{UL_TRUNCATE, "TRUNCATE", "string", 0, "truncate", 42, string("null"), new yy::parser::symbol_type(parser::make_TRUNCATE(""))},
-    token{UL_WORDWRAP, "WORDWRAP", "string", 0, "wordwrap", 42, string("null"), new yy::parser::symbol_type(parser::make_WORDWRAP(""))}
+    token{UL_UNDEFINED, "UNDEFINED", S_TYPE, R"(.)", UL_NULL, EMPTY_STRING},
+    token{UL_MATCH, "MATCH", S_TYPE, R"(match)", UL_NULL, EMPTY_STRING},
+    token{UL_UNESCAPED_TEXT, "UNESCAPED_TEXT", S_TYPE, R"([^{]+)", UL_NULL, EMPTY_STRING},
+    token{UL_WHITESPACE, "WHITESPACE", S_TYPE, R"([ \t\n]*)", UL_NULL, EMPTY_STRING},
+    token{UL_DOLLAR_SIGN, "DOLLAR_SIGN", S_TYPE, R"(\$)", UL_NULL, EMPTY_STRING},
+    token{UL_VALID_CHAR, "VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_~+-])", UL_NULL, EMPTY_STRING},
+    token{UL_NUMERIC_LITERAL, "NUMERIC_LITERAL", S_TYPE, R"([0-9]+)", UL_NULL, EMPTY_STRING},
+    token{UL_DOUBLE_QUOTE, "DOUBLE_QUOTE", S_TYPE, "\"", UL_NULL, EMPTY_STRING},
+    token{UL_CARROT, "CARROT", S_TYPE, R"(\^)", UL_NULL, EMPTY_STRING},
+    token{UL_AMPERSAND, "AMPERSAND", S_TYPE, R"(\*)", UL_NULL, EMPTY_STRING},
+    token{UL_ASTERISK, "ASTERISK", S_TYPE, R"(\*)", UL_NULL, EMPTY_STRING},
+    token{UL_OPEN_PAREN, "LPAREN", S_TYPE, R"(\()", UL_NULL, EMPTY_STRING},
+    token{UL_CLOSE_PAREN, "RPAREN", S_TYPE, R"(\))", UL_NULL, EMPTY_STRING},
+    token{UL_DASH, "MINUS", S_TYPE, "-", UL_NULL, EMPTY_STRING},
+    token{UL_PLUS_SIGN, "PLUS", S_TYPE, R"(\+)", UL_NULL, EMPTY_STRING},
+    token{UL_EQUAL_SIGN, "EQUAL_SIGN", S_TYPE, R"(=)", UL_NULL, EMPTY_STRING},
+    token{UL_CLOSE_BRACKET, "RBRACKET", S_TYPE, R"(\])", UL_NULL, EMPTY_STRING},
+    token{UL_OPEN_BRACE, "OPEN_BRACE", S_TYPE, R"(\{)", UL_NULL, EMPTY_STRING},
+    token{UL_CLOSE_BRACE, "CLOSE_BRACE", S_TYPE, R"(\})", UL_NULL, EMPTY_STRING},
+    token{UL_OPEN_BRACKET, "LBRACKET", S_TYPE, R"(\[)", UL_NULL, EMPTY_STRING},
+    token{UL_VBAR, "VBAR", S_TYPE, R"(\|)", UL_NULL, EMPTY_STRING},
+    token{UL_BACKSLASH, "BACKSLASH", S_TYPE, R"(\\)", UL_NULL, EMPTY_STRING},
+    token{UL_COLON, "COLON", S_TYPE, ":", UL_NULL, EMPTY_STRING},
+    token{UL_HASH_MARK, "HASH_MARK", S_TYPE, R"(#)", UL_NULL, EMPTY_STRING},
+    token{UL_SEMI_COLON, "SEMI_COLON", S_TYPE, R"(;)", UL_NULL, EMPTY_STRING},
+    token{UL_SINGLE_QUOTE, "SINGLE_QUOTE", S_TYPE, R"(')", UL_NULL, EMPTY_STRING},
+    token{UL_GREATER_THAN, "GREATER_THAN", S_TYPE, R"(>)", UL_NULL, EMPTY_STRING},
+    token{UL_QUESTION_MARK, "QUESTION_MARK", S_TYPE, R"(\?)", UL_NULL, EMPTY_STRING},
+    token{UL_COMMA, "COMMA", S_TYPE, R"(\,)", UL_NULL, EMPTY_STRING},
+    token{UL_DOT, "DOT", S_TYPE, R"(\.)", UL_NULL, EMPTY_STRING},
+    token{UL_SLASH, "SLASH", S_TYPE, R"(/)", UL_NULL, EMPTY_STRING},
+    token{UL_GREATER_THAN_EQUAL, "GREATER_THAN_EQUAL", S_TYPE, R"(>=)", UL_NULL, EMPTY_STRING},
+    token{UL_LESS_THAN_EQUAL, "LESS_THAN_EQUAL", S_TYPE, R"(<=)", UL_NULL, EMPTY_STRING},
+    token{UL_STRING_LITERAL, "STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-]+")", UL_NULL, EMPTY_STRING},
+    token{UL_ARRAY, "ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", UL_NULL, EMPTY_STRING},
+    token{UL_IDENTIFIER, "IDENTIFIER", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", UL_NULL, EMPTY_STRING},
+    token{UL_COMMENT, "COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", UL_NULL, EMPTY_STRING},
+    token{UL_CONST_SYMBOL, "CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)", UL_NULL, EMPTY_STRING},
+    token{UL_ANYTHING, "ANYTHING", S_TYPE, ".", UL_NULL, EMPTY_STRING},
+    token{UL_IF, "IF", S_TYPE, "if", UL_NULL, EMPTY_STRING},
+    token{UL_ELSEIF, "ELSEIF", S_TYPE, "elseif", UL_NULL, EMPTY_STRING},
+    token{UL_WHILE, "WHILE", S_TYPE, "while", UL_NULL, EMPTY_STRING},
+    token{UL_ASSIGN, "ASSIGN", S_TYPE, "assign", UL_NULL, EMPTY_STRING},
+    token{UL_BREAK, "BREAK", S_TYPE, "break", UL_NULL, EMPTY_STRING},
+    token{UL_REQUIRE, "REQUIRE", S_TYPE, "require", UL_NULL, EMPTY_STRING},
+    token{UL_INCLUDE, "INCLUDE", S_TYPE, "include", UL_NULL, EMPTY_STRING},
+    token{UL_CONFIG_LOAD, "CONFIG_LOAD", S_TYPE, "config_load", UL_NULL, EMPTY_STRING},
+    token{UL_INSERT, "INSERT", S_TYPE, "insert", UL_NULL, EMPTY_STRING},
+    token{UL_VAR_ATTRIB, "VAR_ATTRIB", S_TYPE, R"(var='[^']*')", UL_NULL, EMPTY_STRING},
+    token{UL_VALUE_ATTRIB, "VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", UL_NULL, EMPTY_STRING},
+    token{UL_FROM_ATTRIB, "FROM_ATTRIB", S_TYPE, R"(from='[^']*')", UL_NULL, EMPTY_STRING},
+    token{UL_ITEM_ATTRIB, "ITEM_ATTRIB", S_TYPE, R"(item='[^']*')", UL_NULL, EMPTY_STRING},
+    token{UL_KEY_ATTRIB, "KEY_ATTRIB", S_TYPE, R"(key='[^']*')", UL_NULL, EMPTY_STRING},
+    token{UL_NAME_ATTRIB, "NAME_ATTRIB", S_TYPE, R"(name='[^']*')", UL_NULL, EMPTY_STRING},
+    token{UL_FILE_ATTRIB, "FILE_ATTRIB", S_TYPE, R"(file='[^']*')", UL_NULL, EMPTY_STRING},
+    token{UL_CAPITALIZE, "CAPITALIZE", S_TYPE, "capitalize", UL_NULL, EMPTY_STRING},
+    token{UL_COUNT_PARAGRAPHS, "COUNT_PARAGRAPHS", S_TYPE, "count_paragraphs", UL_NULL, EMPTY_STRING},
+    token{UL_COUNT_SENTENCES, "COUNT_SENTENCES", S_TYPE, "count_sentences", UL_NULL, EMPTY_STRING},
+    token{UL_COUNT_WORDS, "COUNT_WORDS", S_TYPE, "count_words", UL_NULL, EMPTY_STRING},
+    token{UL_DATE_FORMAT, "DATE_FORMAT", S_TYPE, "date_format", UL_NULL, EMPTY_STRING},
+    token{UL_NULL, "DEFAULT", S_TYPE, R"(default)", UL_NULL, EMPTY_STRING},
+    token{UL_ESCAPE, "ESCAPE", S_TYPE, R"(escape)", UL_NULL, EMPTY_STRING},
+    token{UL_INDENT, "INDENT", S_TYPE, R"(indent)", UL_NULL, EMPTY_STRING},
+    token{UL_LOWER, "LOWER", S_TYPE, R"(lower)", UL_NULL, EMPTY_STRING},
+    token{UL_UPPER, "UPPER", S_TYPE, R"(upper)", UL_NULL, EMPTY_STRING},
+    token{UL_STRIP, "STRIP", S_TYPE, R"(strip)", UL_NULL, EMPTY_STRING},
+    token{UL_NL2BR, "NL2BR", S_TYPE, R"(nl2br)", UL_NULL, EMPTY_STRING},
+    token{UL_REGX_REPLACE, "REGX_REPLACE", S_TYPE, R"(regx_replace)", UL_NULL, EMPTY_STRING},
+    token{UL_REPLACE, "REPLACE", S_TYPE, R"(replace)", UL_NULL, EMPTY_STRING},
+    token{UL_SPACIFY, "SPACIFY", S_TYPE, R"(spacify)", UL_NULL, EMPTY_STRING},
+    token{UL_STRING_FORMAT, "STRING_FORMAT", S_TYPE, R"(string_format)", UL_NULL, EMPTY_STRING},
+    token{UL_STRIP_TAGS, "STRIP_TAGS", S_TYPE, R"(strip_tags)", UL_NULL, EMPTY_STRING},
+    token{UL_TRUNCATE, "TRUNCATE", S_TYPE, R"(truncate)", UL_NULL, EMPTY_STRING},
+    token{UL_WORDWRAP, "WORDWRAP", S_TYPE, R"(wordwrap)", UL_NULL, EMPTY_STRING}
 };
-
 
 /**
  * @brief unsigned long states
  */
-constexpr unsigned long cINITIAL = 0x10;
-constexpr unsigned long cCOMMENT = 0x20;
-constexpr unsigned long cESCAPED = 0x40;
-constexpr unsigned long cDOUBLE_QUOTED = 0x80;
-constexpr unsigned long cSINGLE_QUOTED = 0x100;
-constexpr unsigned long cINCLUDING = 0x200;
-constexpr unsigned long cIF_BLOCK = 0x400;
-constexpr unsigned long cIF_CONDITION = 0x800;
+constexpr unsigned long UL_INITIAL_STATE = 0x10;
+constexpr unsigned long UL_COMMENT_STATE = 0x20;
+constexpr unsigned long UL_ESCAPED_STATE = 0x40;
+constexpr unsigned long UL_DOUBLE_QUOTED_STATE = 0x80;
+constexpr unsigned long UL_SINGLE_QUOTED_STATE = 0x100;
+constexpr unsigned long UL_INCLUDING_STATE = 0x200;
+constexpr unsigned long UL_IF_BLOCK_STATE = 0x400;
+constexpr unsigned long UL_IF_CONDITION_STATE = 0x800;
 
 /**
  * @brief state_t states
  */
-inline state_t sINITIAL = {cINITIAL, "INITIAL"};
-inline state_t sCOMMENT = {cCOMMENT, "COMMENT"};
-inline state_t sESCAPED = {cESCAPED, "ESCAPED"};
-inline state_t sDOUBLE_QUOTED = {cDOUBLE_QUOTED, "DOUBLE_QUOTED"};
-inline state_t sSINGLE_QUOTED = {cSINGLE_QUOTED, "SINGLE_QUOTED"};
-inline state_t sINCLUDING = {cINCLUDING, "INCLUDING"};
-inline state_t sIF_BLOCK = {cIF_BLOCK, "IF_BLOCK"};
-inline state_t sIF_CONDITION = {cIF_CONDITION, "IF_CONDITION"};
+inline state_t sINITIAL = {UL_INITIAL_STATE, "INITIAL"};
+inline state_t sCOMMENT = {UL_COMMENT_STATE, "COMMENT"};
+inline state_t sESCAPED = {UL_ESCAPED_STATE, "ESCAPED"};
+inline state_t sDOUBLE_QUOTED = {UL_DOUBLE_QUOTED_STATE, "DOUBLE_QUOTED"};
+inline state_t sSINGLE_QUOTED = {UL_SINGLE_QUOTED_STATE, "SINGLE_QUOTED"};
+inline state_t sINCLUDING = {UL_INCLUDING_STATE, "INCLUDING"};
+inline state_t sIF_BLOCK = {UL_IF_BLOCK_STATE, "IF_BLOCK"};
+inline state_t sIF_CONDITION = {UL_IF_CONDITION_STATE, "IF_CONDITION"};
 
 /**
  * @brief token list -> by state
  */
 inline vector<unsigned long> INITIAL_STATE_TOKENS = {UL_OPEN_BRACE};
 inline vector<unsigned long> COMMENT_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
-inline vector<unsigned long> ESCAPED_STATE_TOKENS = {UL_DOLLAR_SIGN, UL_HASH_MARK, UL_VBAR, UL_COLON, UL_COMMA, UL_DOT, UL_PERCENT_SIGN, UL_NUMERIC_LITERAL, UL_DOUBLE_QUOTE, UL_CLOSE_BRACE,UL_EQUAL_SIGN };
-inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {UL_DOUBLE_QUOTE, UL_VALID_CHAR };
+inline vector<unsigned long> ESCAPED_STATE_TOKENS = {UL_DOLLAR_SIGN, UL_HASH_MARK, UL_VBAR, UL_IDENTIFIER, UL_COLON, UL_COMMA, UL_DOT, UL_PERCENT_SIGN, UL_NUMERIC_LITERAL, UL_DOUBLE_QUOTE, UL_CLOSE_BRACE,UL_EQUAL_SIGN};
+inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {UL_DOUBLE_QUOTE, UL_VALID_CHAR};
 inline vector<unsigned long> SINGLE_QUOTED_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_VALID_CHAR, UL_SINGLE_QUOTE, UL_DOUBLE_QUOTE};
 inline vector<unsigned long> INCLUDING_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
 inline vector<unsigned long> IF_BLOCK_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
@@ -276,30 +271,27 @@ inline vector<state_t *> g_states{&sINITIAL,       &sCOMMENT,   &sESCAPED,  &sDO
  * @brief state table : unsigned long -> state_t
  * @name g_state_tab
  */
-inline map<unsigned long, state_t *> g_state_tab = {{cINITIAL, &sINITIAL},
-                                                    {cESCAPED, &sESCAPED},
-                                                    {cCOMMENT, &sCOMMENT},
-                                                    {cSINGLE_QUOTED, &sSINGLE_QUOTED},
-                                                    {cDOUBLE_QUOTED, &sDOUBLE_QUOTED},
-                                                    {cINCLUDING, &sINCLUDING},
-                                                    {cIF_BLOCK, &sIF_BLOCK},
-                                                    {cIF_CONDITION, &sIF_CONDITION}
+inline map<unsigned long, state_t *> g_state_tab = {{UL_INITIAL_STATE, &sINITIAL},
+                                                    {UL_ESCAPED_STATE, &sESCAPED},
+                                                    {UL_COMMENT_STATE, &sCOMMENT},
+                                                    {UL_SINGLE_QUOTED_STATE, &sSINGLE_QUOTED},
+                                                    {UL_DOUBLE_QUOTED_STATE, &sDOUBLE_QUOTED},
+                                                    {UL_INCLUDING_STATE, &sINCLUDING},
+                                                    {UL_IF_BLOCK_STATE, &sIF_BLOCK},
+                                                    {UL_IF_CONDITION_STATE, &sIF_CONDITION} };
 
-};
 /**
  * @brief global state -> token table
  * @name g_state_tokens_tab
  */
-inline map<unsigned long, vector<unsigned long>> g_state_tokens_tab{
-    {cINITIAL, INITIAL_STATE_TOKENS},
-    {cESCAPED, ESCAPED_STATE_TOKENS},
-    {cCOMMENT, COMMENT_STATE_TOKENS},
-    {cSINGLE_QUOTED, SINGLE_QUOTED_STATE_TOKENS},
-    {cDOUBLE_QUOTED, DOUBLE_QUOTED_STATE_TOKENS},
-    {cINCLUDING, INCLUDING_STATE_TOKENS},
-    {cIF_BLOCK, IF_BLOCK_STATE_TOKENS},
-    {cIF_CONDITION, IF_CONDITION_STATE_TOKENS},
-};
+inline map<unsigned long, vector<unsigned long>> g_state_tokens_tab {{UL_INITIAL_STATE, INITIAL_STATE_TOKENS},
+                                                                     {UL_ESCAPED_STATE, ESCAPED_STATE_TOKENS},
+                                                                     {UL_COMMENT_STATE, COMMENT_STATE_TOKENS},
+                                                                     {UL_SINGLE_QUOTED_STATE, SINGLE_QUOTED_STATE_TOKENS},
+                                                                     {UL_DOUBLE_QUOTED_STATE, DOUBLE_QUOTED_STATE_TOKENS},
+                                                                     {UL_INCLUDING_STATE, INCLUDING_STATE_TOKENS},
+                                                                     {UL_IF_BLOCK_STATE, IF_BLOCK_STATE_TOKENS},
+                                                                     {UL_IF_CONDITION_STATE, IF_CONDITION_STATE_TOKENS} };
 
 /**
  * @brief global state_t state
@@ -314,15 +306,7 @@ inline state_t *gp_state = &sINITIAL;
  */
 inline unsigned long Lexer::on_state(state_t *pstate)
 {
-    switch (pstate->id)
-    {
-    case cINITIAL:
-        return cINITIAL;
-    case cESCAPED:
-        return cESCAPED;
-    default:;
-    }
-    return -1;
+   return -1;
 }
 
 /**
@@ -339,7 +323,7 @@ inline parser::symbol_type Lexer::on_token(token_def *ptoken)
 {
     switch (gp_state->id)
     {
-        case cINITIAL:
+        case UL_INITIAL_STATE:
         {
             switch (ptoken->id)
             {
@@ -349,17 +333,16 @@ inline parser::symbol_type Lexer::on_token(token_def *ptoken)
                 m_sout << " ~" << ptoken->value << "~ ";
                 return parser::make_OPEN_BRACE();
             case UL_SKIP_TOKEN:
-                cout << "default: SKIP_TOKEN" << endl;
                 print_token(ptoken->id);
-                ptoken->type = new parser::symbol_type(parser::token::SKIP_TOKEN);
-                return *ptoken->type;
+                cout << "default: SKIP_TOKEN" << endl;
+                return parser::make_OPEN_BRACE();
             default:
                 cout << "error: id=" << ptoken->id << ", name=" << ptoken->name << endl;
                 return parser::make_UNDEFINED();
             }
             break;
         }
-        case cESCAPED:
+        case UL_ESCAPED_STATE:
         {
             switch (ptoken->id)
             {
@@ -421,22 +404,22 @@ inline parser::symbol_type Lexer::on_token(token_def *ptoken)
             }
             break;
         }
-        case cDOUBLE_QUOTED:
-        case cSINGLE_QUOTED:
+        case UL_DOUBLE_QUOTED_STATE:
         {
             switch (ptoken->id)
             {
-            case UL_ESC_TAB:
-                g_stringstream << "\t";
-                return parser::make_SKIP_TOKEN();
-            case UL_ESC_BACKSLASH:
-                g_stringstream << "\\";
-                return parser::make_SKIP_TOKEN();
-            case UL_ESC_DOUBLE_QUOTE:
-                g_stringstream << "\"";
-                return parser::make_SKIP_TOKEN();
-            case UL_ESC_SINGLE_QUOTE:
-                g_stringstream << "'";
+            // case UL_ESC_TAB:
+            //     g_stringstream << "\t";
+            //     return parser::make_SKIP_TOKEN();
+            // case UL_ESC_BACKSLASH:
+            //     g_stringstream << "\\";
+            //     return parser::make_SKIP_TOKEN();
+            // case UL_ESC_DOUBLE_QUOTE:
+            //     g_stringstream << "\"";
+            //     return parser::make_SKIP_TOKEN();
+            // case UL_ESC_SINGLE_QUOTE:
+            //     g_stringstream << "'";
+            //     return parser::make_SKIP_TOKEN();
             case UL_VALID_CHAR:
                 g_stringstream << ptoken->value;
                 cout << "char " << g_stringstream.str() << endl;
@@ -445,62 +428,55 @@ inline parser::symbol_type Lexer::on_token(token_def *ptoken)
                 cout << "SKIP_TOKEN" << endl;
                 return parser::make_SKIP_TOKEN();
             case UL_DOUBLE_QUOTE:
-            case UL_SINGLE_QUOTE:
                 set_state(&sESCAPED);
                 return parser::make_STRING_LITERAL(g_stringstream.str());
-            default: return parser::make_SKIP_TOKEN();
-            }
-            break;
-        }
-        case cINCLUDING:
-        {
-            switch (ptoken->id)
-            {
-            case UL_FILE_ATTRIB:
-            {
-                int len = m_matches.size();
-                string val = m_matches[ len-1 ]->value;
-
-                boost::regex re(R"(file='(?<file_name>[^']*)')");
-                boost::smatch match;
-                boost::regex_match(val, match, re);
-                string file = match[1].str();
-
-                cout << file << endl;
-
-                // get include text & append remaining text from current file to it
-                // set m_current_search_text, continue lexing ...
-                pair<string, string> p(file, m_suffix);
-                //filestack.push(m_suffix);
-
-                string sout;
-                read_str(file, sout);
-
-                // bkp todo !!
-                // parse /compile include
-
-                m_current_search_text = sout + m_current_search_text;
+            default:
                 return parser::make_SKIP_TOKEN();
             }
             break;
-            case UL_CLOSE_BRACE:
+        }
+        case UL_INCLUDING_STATE:
+        {
+            switch (ptoken->id)
             {
-                set_state(&sINITIAL);
+                case UL_FILE_ATTRIB:
+                {
+                    const int len = m_matches.size();
+                    const string val = m_matches[ len-1 ]->value;
+
+                    const boost::regex re(R"(file='(?<file_name>[^']*)')");
+                    boost::smatch match;
+                    boost::regex_match(val, match, re);
+                    string file = match[1].str();
+
+                    cout << file << endl;
+
+                    // get include text & append remaining text from current file to it
+                    // set m_current_search_text, continue lexing ...
+                    pair<string, string> p(file, m_suffix);
+                    //filestack.push(m_suffix);
+
+                    string sout;
+                    read_str(file, sout);
+
+                    // bkp todo !!
+                    // parse /compile include
+
+                    m_current_search_text = sout + m_current_search_text;
+                    return parser::make_SKIP_TOKEN();
+                }
+                case UL_CLOSE_BRACE:
+                    set_state(&sINITIAL);
+                    return parser::make_CLOSE_BRACE();
+                case UL_SINGLE_QUOTE:
+                    set_state(&sESCAPED);
+                    return parser::make_STRING_LITERAL(g_stringstream.str());
+                default:
+                    cout << "error: id=" << ptoken->id << ", name=" << ptoken->name << endl;
+                    return parser::make_UNDEFINED();
             }
             break;
-            case UL_SINGLE_QUOTE:
-            {
-                set_state(&sESCAPED);
-                return parser::make_STRING_LITERAL(g_stringstream.str());
-            }
-            default:
-            {
-                cout << "error: id=" << ptoken->id << ", name=" << ptoken->name << endl;
-                return parser::make_UNDEFINED();
-            }
-            }
         }
-        break;
         default:
         {
             cout << "ERROR:" << ptoken->id << endl;

@@ -29,38 +29,34 @@ FMT_YELLOW='\e[33m'
 FMT_BLUE='\e[34m'
 FMT_CYAN='\e[36m'
 
-ifdef CLANG
-	CXX=clang++
-endif
+#ifdef CLANG
+#	CXX=clang++
+#endif
 
+#
+#ifndef RELEASE
+#	CXXFLAGS +=-ggdb -DDEBUG
+#endif
 
-ifndef RELEASE
-	CXXFLAGS +=-ggdb -DDEBUG
-endif
-
-CYGWIN=TRUE
-ifdef CYGWIN
-	CXXFLAGS +=-DCYGWIN
-	//LDFLAGS += -lfmt -lcppunit.dll
-else
-	LDFLAGS += -lfmt -lcppunit
-endif
+#CYGWIN=TRUE
+#ifdef CYGWIN
+#	CXXFLAGS +=-DCYGWIN
+#	//LDFLAGS += -lfmt -lcppunit.dll
+#else
+#	LDFLAGS += -lfmt -lcppunit
+#endif
 
 
 all: $(BLD)/scanner
 
 $(BLD)/scanner: $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/scanner.cpp $(SRC)/scanner.h $(SRC)/tokens.hpp $(SRC)/Lexer.cpp $(BLD)/Lexer.hpp $(SRC)/utility.cpp $(BLD)/ast.o
 	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/scanner\"$(FMT_RESET) ...\n"
-	$(CXX) $(CXXFLAGS) -fPIC -I$(BLD) -I$(SRC) -I"/home/brian/src/boost_1_89_0" $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/scanner.cpp $(SRC)/Lexer.cpp $(SRC)/utility.cpp $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) -I$(BLD) -I$(SRC) -I"/home/brian/src/boost_1_89_0" $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/scanner.cpp $(SRC)/Lexer.cpp $(SRC)/utility.cpp $(LDFLAGS) -o $@
 
 #$(BLD)/pparser.tab.o: $(SRC)/symtab.c $(SRC)/symtab.h $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh
 #	$(CC) $(CCFLAGS) -fPIC -c $< -o $@
-#
-#$(BLD)/pparser.tab.cc $(BLD)/parser.tab.hh: $(SRC)/pparser.yy
-#	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
-#	$(YACC) -Wcounterexamples --header $^ -o $@
 
-ROOT="/home/brian/scanner"
+
 $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
 	$(YACC) $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cc
@@ -89,10 +85,10 @@ dist:
 	tar -czvf scanner.tar.gz ./src ./include ./makefile ./README.md ./LICENSE ./CHANGELOG.md
 
 install:
-	cp ./$(BLD)/scanner ./$(prefix)/bin/scanner
+	#cp ./$(BLD)/scanner ./$(prefix)/bin/scanner
 
 uninstall:
-	-rm ./$(prefix)/bin/scanner
+	#-rm ./$(prefix)/bin/scanner
 
 clean:
 	@echo -e "$(FMT_GREEN)cleaning ...$(FMT_RESET)"

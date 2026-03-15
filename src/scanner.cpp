@@ -22,7 +22,7 @@ using std::cerr;
 using std::endl;
 using std::string;
 
-constexpr int SRC_IDX_OFFSET = 1;
+constexpr int SRC_IDX_OFFSET = 0;
 constexpr int CONFIG_IDX_OFFSET = 0;
 
 static string g_config_file;
@@ -118,6 +118,7 @@ int parse_options(const int argc, char* argv[])
     cout << "start scan ..." << endl;
     yyparser.parse();
     cout << "finished scanning. " << endl;
+
     return 0;
 }
 
