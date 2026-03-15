@@ -142,12 +142,6 @@ state_t *get_state() const;
 void set_state(state_t* pstate);
 
 /**
- * @name tokenize
- * @def  void tokenize()
-*/
-void tokenize();
-
-/**
  * @name   get_token
  * @def    parser::symbol_type get_token()
  * @return int
@@ -214,9 +208,9 @@ protected:
 	map<unsigned long, token_def*>              m_idx_tab;  // idx  -> token_def
 	map<unsigned long, token_def*>              m_id_tab;   // id   -> token_def
 	map<string, token_def*>                     m_name_tab; // name -> token_def
-	vector<state_t*>*                           p_states;
-	map<unsigned long, vector<unsigned long>>*  p_state_tokens_tab;
-	map<unsigned long, state_t*>*               p_state_tab;
+	vector<state_t*>*                           m_pstates;
+	map<unsigned long, vector<unsigned long>>*  m_pstate_tokens_tab;
+	map<unsigned long, state_t*>*               m_pstate_tab;
 	vector<token_def*>                          m_matches;
 
 	string                                      m_all_search_text;
@@ -228,7 +222,7 @@ protected:
   	int                                         m_pos;
 	int                                         m_len;
 
-	state_t*                                    p_state;
+	state_t*                                    m_pstate;
 	string                                      m_expr;
     string                                      m_str;
     string                                      m_prefix;

@@ -118,8 +118,8 @@ void Lexer::load_config( const string& file )
             unsigned long i = 0ul;
             unsigned long state_id = 0xFFul | (++i*6ul); // generate id for new state
             auto* pstate = new state_t{ state_id , str_state }; // create new state
-            p_states->push_back(pstate);
-            (*p_state_tab)[pstate->id] = pstate; // insert new state into table
+            m_pstates->push_back(pstate);
+            (*m_pstate_tab)[pstate->id] = pstate; // insert new state into table
 
             // copy to term to vector
             vector<token_def> tokens; // token vector for this state
@@ -160,7 +160,7 @@ void Lexer::dump_config( ) const
     cout << "scan file: " << m_input_file << endl;
     cout << "search text: " << m_all_search_text << endl;
     cout << "regexp: " << m_expr << endl;
-    cout << "state: " << p_state->name << endl;
+    cout << "state: " << m_pstate->name << endl;
 
     // todo: loop though globals
 
@@ -192,10 +192,10 @@ void Lexer::init(const string &config_file, parser* pparser, const string& input
     m_output_file = output_file;
     m_pparser = pparser;
 
-    p_state = gp_state;
-    p_states = &g_states;
-    p_state_tab = &g_state_tab;
-    p_state_tokens_tab = &g_state_tokens_tab;
+    m_pstate = gp_state;
+    m_pstates = &g_states;
+    m_pstate_tab = &g_state_by_id;
+    m_pstate_tokens_tab = &g_tokens_by_state_id;
 
     //load_config( m_config_file );
     stringstream ss;
@@ -204,56 +204,7 @@ void Lexer::init(const string &config_file, parser* pparser, const string& input
     m_suffix = m_all_search_text;
     ss.clear();
     // set state
-    set_state(p_state);
-}
-
-/**
- * @name tokenize
- * @def void Lexer::tokenize()
-*/
-void Lexer::tokenize()
-{
-    stringstream ss;
-    read_sstream( m_input_file, ss );
-    string search_text = ss.str( );
-
-    // initialize expression ...
-    const auto rexp = boost::regex( m_expr, boost::regex::extended );
-    const auto begin = boost::sregex_iterator( search_text.begin( ), search_text.end( ), rexp, boost::match_not_bol | boost::match_not_eol );
-    const auto end = boost::sregex_iterator();
-
-    for(auto iter = begin; iter != end; ++iter)
-    {
-        token_def* ptoken = nullptr;
-        const boost::smatch& m = *iter;
-        const size_t len = m.size();
-        // find matched
-        cout << "find index " << endl;
-        for(int i = 1; i < len; ++i)
-        {
-            if(m[i].matched)
-            {   cout << "prefix: \"" << m.prefix() << "\" match: \"" << m[i].str() << "\"" << endl;
-                if(string prefix = m.prefix(); !prefix.empty())
-                {
-                    cout << "error: invalid characters in sequence (" << prefix << ")" << endl;
-                }
-
-                ptoken = m_idx_tab[i];        // look up by index
-                ptoken->value = m[i].str();  // set match value
-
-                cout << "matched index: " << i << endl;
-                print_token(ptoken->id);
-                if(ptoken->id == UL_SKIP_TOKEN)
-                {
-                    ++(*m_piter);
-                    continue; // skip back to top of for
-                }
-                break; // found : break for
-            }
-        }
-        if(ptoken == nullptr)
-            cout << "error: no submatch (" << m.str() << ") ..." << endl;
-    }
+    set_state(m_pstate);
 }
 
 /**
@@ -365,7 +316,7 @@ const string& Lexer::get_expr() const
 */
 state_t *Lexer::get_state() const
 {
-    return p_state;
+    return m_pstate;
 }
 
 /**
@@ -378,40 +329,30 @@ void Lexer::set_state(state_t* pstate)
 {
     m_tokens.clear();
     m_idx_tab.clear();
-    m_idx_tab.clear();
     m_name_tab.clear();
 
     gp_state = pstate;
-    p_state = gp_state;
+    m_pstate = gp_state;
 
-    m_tokens.clear();
-    vector<unsigned long>* TOKENS = &g_state_tokens_tab[gp_state->id];
+    stringstream ss;
+    vector<unsigned long>* TOKENS = &g_tokens_by_state_id[gp_state->id];
     const unsigned long len_states = TOKENS->size();
     for (unsigned long i = 0; i < len_states; i++)
     {
-        const unsigned long len_tokens = g_tokens_all.size();
-        for (unsigned long j = 0; j < len_tokens; j++)
-        {
-            g_tokens_all[j].index = i + 1;
-            if (g_tokens_all[j].id == (*TOKENS)[i])
-            {
-                m_tokens.push_back(g_tokens_all[j]);
-                m_id_tab[g_tokens_all[j].id] = &g_tokens_all[j];
-                m_idx_tab[g_tokens_all[j].index] = &g_tokens_all[j];
-                m_name_tab[g_tokens_all[j].name] = &g_tokens_all[j];
-            }
-        }
+        unsigned long id = (*TOKENS)[i];
+        // token_def* ptoken = &g_tokens_all[id];
+        // ptoken->index = i;
+        // // ss << R"((?<)" << ptoken->name << R"(>)" << ptoken->rexp << R"()|)";
+        // ss << "(" << ptoken->rexp << ")|";
+
+        // m_tokens.push_back(ptoken);
+        // m_id_tab[ptoken->id] = ptoken;
+        // //    todo set index !!
+        // m_idx_tab[ptoken->index] = ptoken;
+        // m_name_tab[ptoken->name] = ptoken;
     }
-    // build expr
+
     m_expr.clear();
-    stringstream ss;
-    const size_t len = m_tokens.size();
-    for(int i = 0; i < len; ++i)
-    {
-        const token_def* ptoken = &m_tokens[i];
-        // ss << R"((?<)" << ptoken->name << R"(>)" << ptoken->rexp << R"()|)";
-        ss << "(" << ptoken->rexp << ")|";
-    }
     m_expr = ss.str();
     m_expr.pop_back(); // remove extra '|' i.e. "V-BAR"
 
