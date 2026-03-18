@@ -174,16 +174,16 @@ void build_expr();
  * @brief print token to stdout
  * @param int id
  */
-void print_token(int id);
+void print_token(unsigned long id);
 
 /**
  * @name   is_id
  * @def    bool is_id( const token_def& token, const int& id )
  * @param  const token_def& token
- * @param  const int& id
+ * @param  const unsigned long& id
  * @return bool
  */
-bool is_id( const token_def& token, const int& id );
+bool is_id( const token_def& token, const unsigned long& id );
 
 /**
  * @name   on_state
@@ -197,24 +197,23 @@ inline unsigned long on_state(state_t* pstate);
  * @brief override virtual, on_token, for each token ...
  * @param token_def* token
  */
-inline parser::symbol_type on_token( token_def* ptoken );
+inline parser::symbol_type on_token( token_def* ptoken, string& match_str );
 
 protected:
 	parser*                                     m_pparser;
 	string                                      m_config_file;
     string                                      m_input_file;
     string                                      m_output_file;
-	vector<token_def>                           m_tokens;
+	vector<token_def*>                          m_tokens;
 	map<unsigned long, token_def*>              m_idx_tab;  // idx  -> token_def
 	map<unsigned long, token_def*>              m_id_tab;   // id   -> token_def
 	map<string, token_def*>                     m_name_tab; // name -> token_def
-	vector<state_t*>*                           m_pstates;
-	map<unsigned long, vector<unsigned long>>*  m_pstate_tokens_tab;
-	map<unsigned long, state_t*>*               m_pstate_tab;
+	//vector<state_t*>*                           m_pstates;
+	//map<unsigned long, vector<unsigned long>>*  m_pstate_tokens_tab;
+	//map<unsigned long, state_t*>*               m_pstate_tab;
 	vector<token_def*>                          m_matches;
 
-	string                                      m_all_search_text;
-    string                                      m_current_search_text;
+	string                                      m_text;
 	boost::regex                                m_rexp;
 	boost::sregex_iterator                      m_begin;
 	boost::sregex_iterator                      m_end;
@@ -222,7 +221,6 @@ protected:
   	int                                         m_pos;
 	int                                         m_len;
 
-	state_t*                                    m_pstate;
 	string                                      m_expr;
     string                                      m_str;
     string                                      m_prefix;

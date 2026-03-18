@@ -33,7 +33,6 @@ static bool output_file_flag = false;
 static bool dump_flag = false;
 
 // create parser & lexer
-// create parser & lexer
 static yy::parser yyparser;
 static Lexer lexer;
 
@@ -44,6 +43,7 @@ static Lexer lexer;
 sym_t lex()
 {
     return lexer.get_token();
+    //return yy::parser::make_END();
 }
 
 /**
@@ -93,21 +93,22 @@ int parse_options(const int argc, char* argv[])
     }
 
     // configure scanner ...
-    const string file = argv[optind + SRC_IDX_OFFSET];
     string config_file = file_flag ? g_config_file : ".config/default.txt";
-
-    cout << FMT_FG_BLUE << "load configuration file=\"" << FMT_RESET
-         << FMT_FG_GREEN << FMT_ITALIC <<  config_file << "\"" << FMT_RESET << endl;
-    //cout << FMT_FG_BLUE << "input files=\"" << FMT_RESET
-    //     << FMT_FG_GREEN << FMT_ITALIC <<  files << "\"" << FMT_RESET << endl;
-
-    g_config_file = config_file;
-    g_input_file = file;
-
     if( argc > (optind + CONFIG_IDX_OFFSET) )
         config_file = argv[optind + CONFIG_IDX_OFFSET];
+    cout << FMT_FG_BLUE << "load configuration file=\"" << FMT_RESET
+         << FMT_FG_GREEN << FMT_ITALIC <<  config_file << "\"" << FMT_RESET << endl;
 
-    lexer.init(config_file, &yyparser, file, "test/a.txt");
+    // input file ...
+    const string input_file = argv[optind + SRC_IDX_OFFSET];
+    cout << FMT_FG_BLUE << "input files=\"" << FMT_RESET
+         << FMT_FG_GREEN << FMT_ITALIC <<  input_file << "\"" << FMT_RESET << endl;
+
+    g_config_file = config_file;
+    g_input_file = input_file;
+
+
+    lexer.init(config_file, &yyparser, input_file, "test/a.txt");
     if (dump_flag)
     {
         cout << "dumping configuration ... " << endl;

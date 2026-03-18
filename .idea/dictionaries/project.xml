@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>filestack</w>
+      <w>pstate</w>
     </words>
   </dictionary>
 </component>
