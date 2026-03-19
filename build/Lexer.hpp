@@ -32,12 +32,9 @@ using yy::parser;
 
 typedef struct token_def
 {
-	unsigned long id;
 	string name;
 	string stype;
 	string rexp;
-	unsigned long index;
-	string value;
 } token_def;
 
 typedef token_def token;
@@ -48,8 +45,8 @@ typedef struct token_match
 	int pos;
 	int line;
 	string value;
-	token_def token;
-} token_match;
+	token_def* token;
+} t_match;
 
 typedef struct state_t
 {
@@ -197,7 +194,7 @@ inline unsigned long on_state(state_t* pstate);
  * @brief override virtual, on_token, for each token ...
  * @param token_def* token
  */
-inline parser::symbol_type on_token( token_def* ptoken, string& match_str );
+inline parser::symbol_type on_token( t_match* ptoken );
 
 protected:
 	parser*                                     m_pparser;
