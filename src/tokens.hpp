@@ -461,6 +461,8 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
                     cout << sout << endl;
 
                     m_suffix = sout + m_suffix;
+                    //set_context(m_suffix);
+                    //set_state(&sESCAPED);
                     return parser::make_SKIP_TOKEN();
                 }
                 case UL_CLOSE_BRACE:

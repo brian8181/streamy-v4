@@ -358,7 +358,8 @@ void Lexer::print_token(unsigned long id)
 }
 
 /**
- *
+ * @name set_context
+ * @param current_input
  */
 void Lexer::set_context(string& current_input)
 {

@@ -182,10 +182,10 @@ void print_token(unsigned long id);
  */
 bool is_id( const token_def& token, const unsigned long& id );
 
-	/**
-	 *
-	 */
-	void set_context(string& current_input);
+/**
+ *
+ */
+void set_context(string& current_input);
 
 /**
  * @name   on_state
