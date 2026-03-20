@@ -182,6 +182,11 @@ void print_token(unsigned long id);
  */
 bool is_id( const token_def& token, const unsigned long& id );
 
+	/**
+	 *
+	 */
+	void set_context(string& current_input);
+
 /**
  * @name   on_state
  * @param  state_t* pstate
@@ -205,10 +210,6 @@ protected:
 	map<unsigned long, token_def*>              m_idx_tab;  // idx  -> token_def
 	map<unsigned long, token_def*>              m_id_tab;   // id   -> token_def
 	map<string, token_def*>                     m_name_tab; // name -> token_def
-	//vector<state_t*>*                           m_pstates;
-	//map<unsigned long, vector<unsigned long>>*  m_pstate_tokens_tab;
-	//map<unsigned long, state_t*>*               m_pstate_tab;
-	vector<token_def*>                          m_matches_;
 	vector<token_match*>                        m_matches;
 
 	string                                      m_text;

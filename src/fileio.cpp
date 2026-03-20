@@ -33,6 +33,29 @@ bool file_exist(const string& path)
 }
 
 /**
+ * @brief get an ofstream by path
+ * @param path
+ * @param strm
+ * @return ofstream&
+ */
+void get_ofstream(const string& file, /*out */ ofstream* strm)
+{
+    strm = new ofstream(file, std::ofstream::out);
+}
+
+
+/**
+ * @brief get an ifstream by path
+ * @param path
+ * @param srtm
+ * @return ifstream&
+ */
+void get_ifstream(const string& file, /*out */ ifstream* strm)
+{
+    strm = new ifstream(file, std::ifstream::in);
+}
+
+/**
  * @brief  read a character from a file stream
  * @param  ifstream& strm : The file stream to read from
  * @param  char& c : the character to read
@@ -186,6 +209,34 @@ int write_sstream(const string& file, /* in */ const stringstream& istrm)
         return istrm.str().size();
     }
     return -1;
+}
+
+/**
+ * @brief
+ * @param  file : file to read from
+ * @param  lines : vector to store the lines
+ * @return number of lines written, or -1 on errors
+ */
+int read_line(ifstream* istrm, /* out */ string& line)
+{
+   if (!istrm->is_open())
+        return -1;
+    //getline(istrm, line);
+    return 0;
+}
+
+/**
+ * @brief
+ * @param  const string& file : file to write to
+ * @param  const vector<string>& lines : lines to write
+ * @return int : number of lines written, or -1 on error
+ */
+int write_line(ofstream* ostrm, /* in */ string& line)
+{
+    if (!ostrm->is_open())
+        return -1;
+    *ostrm << line;
+	return line.size();
 }
 
 /**

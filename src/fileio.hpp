@@ -25,6 +25,24 @@ using std::stringstream;
  */
 bool file_exist(const string& path);
 
+
+/**
+ * @brief get an ofstream by path
+ * @param path
+ * @param strm
+ * @return void
+ */
+void get_ofstream(const string& file, /*out */ofstream* strm);
+
+
+/**
+ * @brief get an ifstream by path
+ * @param path
+ * @param srtm
+ * @return void
+ */
+void get_ifstream(const string& file, /*out */ifstream* strm);
+
 /**
  * @brief  read a character from a file stream
  * @param  strm The file stream to read from
@@ -90,6 +108,22 @@ int read_sstream(const string& file, /* out */ stringstream& sstrm);
  * @return number of characters written, or -1 on error
  */
 int write_sstream(const string& file, /* in */ const stringstream& sstrm);
+
+/**
+ * @brief  read lines from a file into a vector of strings
+ * @param  file : file to read from
+ * @param  lines : vector to store the lines
+ * @return number of lines written, or -1 on errors
+ */
+int read_line(const string& file, /* out */ const string& line);
+
+/**
+ * @brief  write lines to a file
+ * @param  file : file to write to
+ * @param  lines : lines to write
+ * @return number of lines written, or -1 on error
+ */
+int write_line(const string& file, /* in */ const string& line);
 
 /**
  * @brief  read lines from a file into a vector of strings

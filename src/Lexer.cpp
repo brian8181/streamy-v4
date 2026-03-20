@@ -161,24 +161,20 @@ void Lexer::dump_config( ) const
     cout << "regexp: " << m_expr << endl;
     cout << "state: " << gp_state->name << endl;
 
-    stringstream ss;
-    const size_t len = m_tokens.size();
-    for(int i = 0; i < len; ++i)
-    {
-        const token_def* ptoken = m_tokens[i];
-        ss << //  << left << setw(10) << ptoken->id         <<
-              " name: "       << left << setw(10) << ptoken->name       <<
-              //" type: "       << left << setw(10) << ptoken->stype      <<
-              //" value: "      << left << setw(10) << ptoken->value      <<
-              " rexp: "       << left << setw(10) << ptoken->rexp       << endl;
-              //" index: "      << left << setw(10) << ptoken->index      << endl;
-    }
-    cout << ss.str();
+    // stringstream ss;
+    // const size_t len = m_tokens.size();
+    // for(int i = 0; i < len; ++i)
+    // {
+    //     const token_def* ptoken = g_tokens[i];
+    //     print_token(ptoke->na);
+    // }
+    // cout << ss.str();
 }
 
 /**
  * @name init
- * @def void Lexer::init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
+ * @def void Lexer::init(const string &config_file, parser* pparser,
+ *      const string& input_file, const string& output_file)
  * @brief  initialize state
  * @return bool
  */
@@ -206,7 +202,7 @@ parser::symbol_type Lexer::get_token()
     SKIP:
     if((*m_piter) != m_end)
     {
-        token* ptoken = nullptr;
+        token_def* ptoken = nullptr;
         boost::smatch m = *(*m_piter);
         const size_t len = m.size();
 
@@ -218,7 +214,6 @@ parser::symbol_type Lexer::get_token()
         m_prefix = m.prefix().matched ? m.prefix() : string();
         m_suffix = m.suffix().matched ? m.suffix() : string();
 
-
         // find matched
         for(int i = 1; i < len; ++i)
         {
@@ -229,12 +224,11 @@ parser::symbol_type Lexer::get_token()
                 {
                     if (gp_state->id == UL_INITIAL_STATE)
                     {
-                        // cout << "error: unexpected token ... \"" << m.prefix() << "\"" << endl;
+                        cout << "error: unexpected token ... \"" << m.prefix() << "\"" << endl;
                         // return parser::make_YYerror();
                         m_sout << m.prefix();
                     }
                     // stream prefix (unescaped text)
-
                 }
                 // get id by index value "i-1" zero based vector
                 // i is match index to group ...
@@ -243,7 +237,7 @@ parser::symbol_type Lexer::get_token()
                 ptoken = &g_tokens[id];
 
                 // find match & lookup by sub_match index
-                token_match tmatch = {id, 0, 0, m.str(), ptoken };
+                token_match tmatch = {id, 0, 0, m.str(), ptoken};
                 string match_str = m[i].str();
                 m_matches.push_back(&tmatch);
                 ++(*m_piter);
@@ -255,7 +249,6 @@ parser::symbol_type Lexer::get_token()
                 if (rtoken.kind() == yy::parser::symbol_type( parser::token::SKIP_TOKEN).kind())
                  {
                       cout << "skipping... " << endl;
-                      //++(*m_piter);
                       goto SKIP;
                  }
                 return rtoken;
@@ -330,10 +323,7 @@ void Lexer::set_state(state_t* pstate)
         // ss << R"((?<)" << ptoken->name << R"(>)" << ptoken->rexp << R"()|)";
         ss << "(" << ptoken->rexp << ")|";
 
-        // todo debug !!
         m_tokens.push_back(ptoken);
-        //m_id_tab[ptoken->id] = ptoken;
-        //m_idx_tab[ptoken->index] = ptoken;
         m_name_tab[ptoken->name] = ptoken;
     }
 
@@ -341,12 +331,8 @@ void Lexer::set_state(state_t* pstate)
     m_expr = ss.str();
     m_expr.pop_back(); // remove extra '|' i.e. "V-BAR"
 
-    // reinit get_token iterators
-    m_rexp = boost::regex( m_expr, boost::regex::extended  );
-    m_text = m_suffix;
-    m_begin = boost::sregex_iterator( m_text.begin( ), m_text.end( ), m_rexp );
-    m_piter = &m_begin;
-    m_end = boost::sregex_iterator();
+    // set context
+    set_context(m_suffix);
 
 #ifdef DEBUG
     cout << "EXPR=\"" << m_expr << "\"" << endl;
@@ -364,9 +350,24 @@ void Lexer::set_state(state_t* pstate)
 void Lexer::print_token(unsigned long id)
 {
     const token *ptoken = &g_tokens[id];
-        cout << "TOKEN={" << setw(5) << left << "\n\t id: " << setw(10) << right << id << setw(5) << left
-            << "\n\t name: " << setw(10) << right << ptoken->name << setw(5) << left << "\n\t stype: " << setw(10) << right
+    cout << "TOKEN={" << setw(5) << left << "\n\t id: "
+            << setw(10) << right << id << setw(5) << left
+            << "\n\t name: " << setw(10) << right << ptoken->name << setw(5) << left
+            << "\n\t stype: " << setw(10) << right
             << "\n\t rexp: " << setw(10) << right << ptoken->rexp << setw(5) << left << setw(10) << right << "\n}";
+}
+
+/**
+ *
+ */
+void Lexer::set_context(string& current_input)
+{
+    // reinit get_token iterators
+    m_rexp = boost::regex( m_expr, boost::regex::extended  );
+    m_text = current_input;
+    m_begin = boost::sregex_iterator( m_text.begin( ), m_text.end( ), m_rexp );
+    m_piter = &m_begin;
+    m_end = boost::sregex_iterator();
 }
 
 /**

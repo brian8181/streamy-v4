@@ -454,8 +454,7 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
 
                     // get include text & append remaining text from current file to it
                     // set m_current_search_text, continue lexing ...
-                    pair<string, string> p(path, m_suffix);
-                    //filestack.push(m_suffix);
+                    //pair<string, string> p(path, m_suffix);
 
                     // parse /compile include
                     cout << "FILE_ATTRIB file=" << path << endl;
