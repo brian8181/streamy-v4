@@ -236,33 +236,31 @@ parser::symbol_type Lexer::get_token()
                     // stream prefix (unescaped text)
 
                 }
-                //const vector<unsigned long>* STATE_TOKENS = g_tokens_by_state_id[sid];
+                // get id by index value "i-1" zero based vector
+                // i is match index to group ...
+                // (g index 0 (g index 1)|(g index 2)|(g index 3))...
                 unsigned long id = (*g_tokens_by_state_id[gp_state->id])[i-1];
                 ptoken = &g_tokens[id];
+
                 // find match & lookup by sub_match index
-                t_match token_match = {id, 0, 0, m.str(), ptoken };
+                token_match tmatch = {id, 0, 0, m.str(), ptoken };
 
                 // cout << "m[i].str()=" << m[i].str() << endl;   // set match value
                 string match_str = m[i].str();
-                m_matches.push_back(ptoken);
-                // reinit get_token iterators
-
+                m_matches.push_back(&tmatch);
                 ++(*m_piter);
-                //
+
                 // get return "value / token" first, then check for skip,
                 // call "get_token/on_token" recursively ,(as long as), ... while it skips
                 // then return token ... stack unrolls
-                yy::parser::symbol_type rtoken = on_token( &token_match );
+                yy::parser::symbol_type rtoken = on_token( &tmatch );
                 if (rtoken.kind() == yy::parser::symbol_type( parser::token::SKIP_TOKEN).kind())
                  {
                       cout << "skipping... " << endl;
-                      ++(*m_piter);
+                      //++(*m_piter);
                       goto SKIP;
                  }
-                //++(*m_piter);
                 return rtoken;
-                //return parser::make_END();
-                cout << "MATCH=\"" << m.prefix() << "\" : \"" << m[i].str() << "\" : \"" << m.suffix() << "\""<<  endl;
             }
         }
     }
@@ -367,13 +365,10 @@ void Lexer::set_state(state_t* pstate)
  */
 void Lexer::print_token(unsigned long id)
 {
-    const token *ptoken = m_id_tab[id];
-    // cout << "TOKEN={" << setw(5) << left << "\n\t id: " << setw(10) << right << ptoken->id << setw(5) << left
-    //      << "\n\t name: " << setw(10) << right << ptoken->name << setw(5) << left << "\n\t stype: " << setw(10) << right
-    //      << ptoken->stype << setw(5) << left << "\n\t index: " << setw(10) << right << ptoken->index << setw(5) << left
-    //      << "\n\t value: " << setw(10) << right << ptoken->value << setw(5) << left << "\n\t rexp: " << setw(10) << right
-    //      << ptoken->rexp << setw(5) << left << setw(10) << right
-    //      << "\n}" << endl;
+    const token *ptoken = &g_tokens[id];
+        cout << "TOKEN={" << setw(5) << left << "\n\t id: " << setw(10) << right << id << setw(5) << left
+            << "\n\t name: " << setw(10) << right << ptoken->name << setw(5) << left << "\n\t stype: " << setw(10) << right
+            << "\n\t rexp: " << setw(10) << right << ptoken->rexp << setw(5) << left << setw(10) << right << "\n}";
 }
 
 /**

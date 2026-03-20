@@ -46,7 +46,7 @@ typedef struct token_match
 	int line;
 	string value;
 	token_def* token;
-} t_match;
+} token_match;
 
 typedef struct state_t
 {
@@ -194,7 +194,7 @@ inline unsigned long on_state(state_t* pstate);
  * @brief override virtual, on_token, for each token ...
  * @param token_def* token
  */
-inline parser::symbol_type on_token( t_match* ptoken );
+inline parser::symbol_type on_token( token_match* ptoken );
 
 protected:
 	parser*                                     m_pparser;
@@ -208,7 +208,8 @@ protected:
 	//vector<state_t*>*                           m_pstates;
 	//map<unsigned long, vector<unsigned long>>*  m_pstate_tokens_tab;
 	//map<unsigned long, state_t*>*               m_pstate_tab;
-	vector<token_def*>                          m_matches;
+	vector<token_def*>                          m_matches_;
+	vector<token_match*>                        m_matches;
 
 	string                                      m_text;
 	boost::regex                                m_rexp;
