@@ -154,7 +154,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_UNESCAPED_TEXT,     token{"UNESCAPED_TEXT",     S_TYPE,  R"([^{]+)",                                     }},
     {UL_WHITESPACE,         token{"WHITESPACE",         S_TYPE,  R"([ \t\n]*)",                                  }},
     {UL_DOLLAR_SIGN,        token{"DOLLAR_SIGN",        S_TYPE,  R"(\$)",                                        }},
-    {UL_VALID_CHAR,         token{"VALID_CHAR",         S_TYPE,  R"([A-Za-z0-9*@_~+-])",                         }},
+    {UL_VALID_CHAR,         token{"VALID_CHAR",         S_TYPE,  R"([A-Za-z0-9*@_~+-.])",                         }},
     {UL_NUMERIC_LITERAL,    token{"NUMERIC_LITERAL",    S_TYPE,  R"([0-9]+)",                                    }},
     {UL_DOUBLE_QUOTE,       token{"DOUBLE_QUOTE",       S_TYPE,  R"(")",                                         }},
     {UL_CARROT,             token{"CARROT",             S_TYPE,  R"(\^)",                                        }},
