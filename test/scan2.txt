@@ -1,3 +1,3 @@
  {$x}
 {$abc="testing..."}
-{include}
+{include file="myfile.txt"}

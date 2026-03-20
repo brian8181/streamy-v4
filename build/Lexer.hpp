@@ -39,14 +39,14 @@ typedef struct token_def
 
 typedef token_def token;
 
-typedef struct token_match
+struct token_match
 {
 	unsigned long id;
 	int pos;
 	int line;
 	string value;
 	token_def* token;
-} token_match;
+};
 
 typedef struct state_t
 {

@@ -244,8 +244,6 @@ parser::symbol_type Lexer::get_token()
 
                 // find match & lookup by sub_match index
                 token_match tmatch = {id, 0, 0, m.str(), ptoken };
-
-                // cout << "m[i].str()=" << m[i].str() << endl;   // set match value
                 string match_str = m[i].str();
                 m_matches.push_back(&tmatch);
                 ++(*m_piter);

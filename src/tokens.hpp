@@ -203,7 +203,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_ITEM_ATTRIB,        token{"ITEM_ATTRIB",        S_TYPE,  R"(item='[^']*')",                              }},
     {UL_KEY_ATTRIB,         token{"KEY_ATTRIB",         S_TYPE,  R"(key='[^']*')",                               }},
     {UL_NAME_ATTRIB,        token{"NAME_ATTRIB",        S_TYPE,  R"(name='[^']*')",                              }},
-    {UL_FILE_ATTRIB,        token{"FILE_ATTRIB",        S_TYPE,  R"(file='[^']*')",                              }},
+    {UL_FILE_ATTRIB,        token{"FILE_ATTRIB",        S_TYPE,  R"(file="[^"]*")",                              }},
     {UL_CAPITALIZE,         token{"CAPITALIZE",         S_TYPE,  "capitalize",                                   }},
     {UL_COUNT_PARAGRAPHS,   token{"COUNT_PARAGRAPHS",   S_TYPE,  "count_paragraphs",                             }},
     {UL_COUNT_SENTENCES,    token{"COUNT_SENTENCES",    S_TYPE,  "count_sentences",                              }},
@@ -257,7 +257,7 @@ inline vector<unsigned long> COMMENT_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, 
 inline vector<unsigned long> ESCAPED_STATE_TOKENS = {UL_DOLLAR_SIGN, UL_DOUBLE_QUOTE, UL_HASH_MARK, UL_VBAR, UL_INCLUDE, UL_IDENTIFIER, UL_COLON, UL_COMMA, UL_DOT, UL_PERCENT_SIGN, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE, UL_EQUAL_SIGN};
 inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {UL_DOUBLE_QUOTE, UL_VALID_CHAR};
 inline vector<unsigned long> SINGLE_QUOTED_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_VALID_CHAR, UL_SINGLE_QUOTE, UL_DOUBLE_QUOTE};
-inline vector<unsigned long> INCLUDING_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
+inline vector<unsigned long> INCLUDING_STATE_TOKENS = {UL_FILE_ATTRIB, UL_WHITESPACE, UL_CLOSE_BRACE};
 inline vector<unsigned long> IF_BLOCK_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
 inline vector<unsigned long> IF_CONDITION_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
 
@@ -442,26 +442,24 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
             {
                 case UL_FILE_ATTRIB:
                 {
-                    const int len = m_matches.size();
-                    const string val;// = m_matches[ len-1 ]->value;
-
-                    const boost::regex re(R"(file='(?<file_name>[^']*)')");
+                    const boost::regex re("file=\"([^\"]*)\"");
                     boost::smatch match;
-                    boost::regex_match(val, match, re);
-                    string file = match[1].str();
+                    boost::regex_match(ptoken->value, match, re);
 
-                    cout << file << endl;
+                    const int len = m_matches.size();
+                    g_tokens[ ptoken->id ];
+                    std::string path = match[1].str();
+                    string sout;
+                    read_str(path, sout);
 
                     // get include text & append remaining text from current file to it
                     // set m_current_search_text, continue lexing ...
-                    pair<string, string> p(file, m_suffix);
+                    pair<string, string> p(path, m_suffix);
                     //filestack.push(m_suffix);
 
-                    string sout;
-                    read_str(file, sout);
-
-                    // bkp todo !!
                     // parse /compile include
+                    cout << "FILE_ATTRIB file=" << path << endl;
+                    cout << sout << endl;
 
                     m_suffix = sout + m_suffix;
                     return parser::make_SKIP_TOKEN();
@@ -469,9 +467,12 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
                 case UL_CLOSE_BRACE:
                     set_state(&sINITIAL);
                     return parser::make_CLOSE_BRACE();
-                case UL_SINGLE_QUOTE:
+                case UL_DOUBLE_QUOTE:
                     set_state(&sESCAPED);
                     return parser::make_STRING_LITERAL(g_stringstream.str());
+                case UL_WHITESPACE:
+                      cout << "WHITESPACE : SKIP_TOKEN" << endl;
+                return parser::make_SKIP_TOKEN();
                 default:
                     //cout << "error: id=" << ptoken->id << ", name=" << ptoken->name << endl;
                     return parser::make_UNDEFINED();
