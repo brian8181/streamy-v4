@@ -420,7 +420,6 @@ namespace yy {
       // STRING_LITERAL
       // NUMERIC_LITERAL
       // IDENTIFIER
-      // ID
       // CONST_ID
       // VAR_ATTRIB
       // VALUE_ATTRIB
@@ -564,35 +563,34 @@ namespace yy {
     STRING_LITERAL = 336,          // STRING_LITERAL
     NUMERIC_LITERAL = 337,         // NUMERIC_LITERAL
     IDENTIFIER = 338,              // IDENTIFIER
-    ID = 339,                      // ID
-    CONST_ID = 340,                // CONST_ID
-    VAR_ATTRIB = 341,              // VAR_ATTRIB
-    VALUE_ATTRIB = 342,            // VALUE_ATTRIB
-    FILE_ATTRIB = 343,             // FILE_ATTRIB
-    FROM_ATTRIB = 344,             // FROM_ATTRIB
-    KEY_ATTRIB = 345,              // KEY_ATTRIB
-    NAME_ATTRIB = 346,             // NAME_ATTRIB
-    ITEM_ATTRIB = 347,             // ITEM_ATTRIB
-    FILE_NAME = 348,               // FILE_NAME
-    UNESCAPED_TEXT = 349,          // UNESCAPED_TEXT
-    COMMENT = 350,                 // COMMENT
-    QUESTION_MARK = 351,           // QUESTION_MARK
-    NUMBER = 352,                  // NUMBER
-    IFX = 353,                     // IFX
-    ELSE = 354,                    // ELSE
-    ELSEIF = 355,                  // ELSEIF
-    GREATER_THAN_EQUAL = 356,      // GREATER_THAN_EQUAL
-    LESS_THAN_EQUAL = 357,         // LESS_THAN_EQUAL
-    EQUAL_SIGN = 358,              // EQUAL_SIGN
-    NOT_EQUAL = 359,               // NOT_EQUAL
-    LESS_THAN = 360,               // LESS_THAN
-    GREATER_THAN = 361,            // GREATER_THAN
-    PLUS = 362,                    // PLUS
-    MINUS = 363,                   // MINUS
-    ASTERISK = 364,                // ASTERISK
-    SLASH = 365,                   // SLASH
-    PERCENT = 366,                 // PERCENT
-    UMINUS = 367                   // UMINUS
+    CONST_ID = 339,                // CONST_ID
+    VAR_ATTRIB = 340,              // VAR_ATTRIB
+    VALUE_ATTRIB = 341,            // VALUE_ATTRIB
+    FILE_ATTRIB = 342,             // FILE_ATTRIB
+    FROM_ATTRIB = 343,             // FROM_ATTRIB
+    KEY_ATTRIB = 344,              // KEY_ATTRIB
+    NAME_ATTRIB = 345,             // NAME_ATTRIB
+    ITEM_ATTRIB = 346,             // ITEM_ATTRIB
+    FILE_NAME = 347,               // FILE_NAME
+    UNESCAPED_TEXT = 348,          // UNESCAPED_TEXT
+    COMMENT = 349,                 // COMMENT
+    QUESTION_MARK = 350,           // QUESTION_MARK
+    NUMBER = 351,                  // NUMBER
+    IFX = 352,                     // IFX
+    ELSE = 353,                    // ELSE
+    ELSEIF = 354,                  // ELSEIF
+    GREATER_THAN_EQUAL = 355,      // GREATER_THAN_EQUAL
+    LESS_THAN_EQUAL = 356,         // LESS_THAN_EQUAL
+    EQUAL_SIGN = 357,              // EQUAL_SIGN
+    NOT_EQUAL = 358,               // NOT_EQUAL
+    LESS_THAN = 359,               // LESS_THAN
+    GREATER_THAN = 360,            // GREATER_THAN
+    PLUS = 361,                    // PLUS
+    MINUS = 362,                   // MINUS
+    ASTERISK = 363,                // ASTERISK
+    SLASH = 364,                   // SLASH
+    PERCENT = 365,                 // PERCENT
+    UMINUS = 366                   // UMINUS
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -609,7 +607,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 113, ///< Number of tokens.
+        YYNTOKENS = 112, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of input"
         S_YYerror = 1,                           // error
@@ -695,52 +693,51 @@ namespace yy {
         S_STRING_LITERAL = 81,                   // STRING_LITERAL
         S_NUMERIC_LITERAL = 82,                  // NUMERIC_LITERAL
         S_IDENTIFIER = 83,                       // IDENTIFIER
-        S_ID = 84,                               // ID
-        S_CONST_ID = 85,                         // CONST_ID
-        S_VAR_ATTRIB = 86,                       // VAR_ATTRIB
-        S_VALUE_ATTRIB = 87,                     // VALUE_ATTRIB
-        S_FILE_ATTRIB = 88,                      // FILE_ATTRIB
-        S_FROM_ATTRIB = 89,                      // FROM_ATTRIB
-        S_KEY_ATTRIB = 90,                       // KEY_ATTRIB
-        S_NAME_ATTRIB = 91,                      // NAME_ATTRIB
-        S_ITEM_ATTRIB = 92,                      // ITEM_ATTRIB
-        S_FILE_NAME = 93,                        // FILE_NAME
-        S_UNESCAPED_TEXT = 94,                   // UNESCAPED_TEXT
-        S_COMMENT = 95,                          // COMMENT
-        S_QUESTION_MARK = 96,                    // QUESTION_MARK
-        S_NUMBER = 97,                           // NUMBER
-        S_IFX = 98,                              // IFX
-        S_ELSE = 99,                             // ELSE
-        S_ELSEIF = 100,                          // ELSEIF
-        S_GREATER_THAN_EQUAL = 101,              // GREATER_THAN_EQUAL
-        S_LESS_THAN_EQUAL = 102,                 // LESS_THAN_EQUAL
-        S_EQUAL_SIGN = 103,                      // EQUAL_SIGN
-        S_NOT_EQUAL = 104,                       // NOT_EQUAL
-        S_LESS_THAN = 105,                       // LESS_THAN
-        S_GREATER_THAN = 106,                    // GREATER_THAN
-        S_PLUS = 107,                            // PLUS
-        S_MINUS = 108,                           // MINUS
-        S_ASTERISK = 109,                        // ASTERISK
-        S_SLASH = 110,                           // SLASH
-        S_PERCENT = 111,                         // PERCENT
-        S_UMINUS = 112,                          // UMINUS
-        S_YYACCEPT = 113,                        // $accept
-        S_complier = 114,                        // complier
-        S_files = 115,                           // files
-        S_file = 116,                            // file
-        S_blocks = 117,                          // blocks
-        S_block = 118,                           // block
-        S_assign_stmt = 119,                     // assign_stmt
-        S_number = 120,                          // number
-        S_qualafied_id = 121,                    // qualafied_id
-        S_sub_proc = 122,                        // sub_proc
-        S_array = 123,                           // array
-        S_params = 124,                          // params
-        S_param = 125,                           // param
-        S_symbol = 126,                          // symbol
-        S_built_in = 127,                        // built_in
-        S_attributes = 128,                      // attributes
-        S_attrib = 129                           // attrib
+        S_CONST_ID = 84,                         // CONST_ID
+        S_VAR_ATTRIB = 85,                       // VAR_ATTRIB
+        S_VALUE_ATTRIB = 86,                     // VALUE_ATTRIB
+        S_FILE_ATTRIB = 87,                      // FILE_ATTRIB
+        S_FROM_ATTRIB = 88,                      // FROM_ATTRIB
+        S_KEY_ATTRIB = 89,                       // KEY_ATTRIB
+        S_NAME_ATTRIB = 90,                      // NAME_ATTRIB
+        S_ITEM_ATTRIB = 91,                      // ITEM_ATTRIB
+        S_FILE_NAME = 92,                        // FILE_NAME
+        S_UNESCAPED_TEXT = 93,                   // UNESCAPED_TEXT
+        S_COMMENT = 94,                          // COMMENT
+        S_QUESTION_MARK = 95,                    // QUESTION_MARK
+        S_NUMBER = 96,                           // NUMBER
+        S_IFX = 97,                              // IFX
+        S_ELSE = 98,                             // ELSE
+        S_ELSEIF = 99,                           // ELSEIF
+        S_GREATER_THAN_EQUAL = 100,              // GREATER_THAN_EQUAL
+        S_LESS_THAN_EQUAL = 101,                 // LESS_THAN_EQUAL
+        S_EQUAL_SIGN = 102,                      // EQUAL_SIGN
+        S_NOT_EQUAL = 103,                       // NOT_EQUAL
+        S_LESS_THAN = 104,                       // LESS_THAN
+        S_GREATER_THAN = 105,                    // GREATER_THAN
+        S_PLUS = 106,                            // PLUS
+        S_MINUS = 107,                           // MINUS
+        S_ASTERISK = 108,                        // ASTERISK
+        S_SLASH = 109,                           // SLASH
+        S_PERCENT = 110,                         // PERCENT
+        S_UMINUS = 111,                          // UMINUS
+        S_YYACCEPT = 112,                        // $accept
+        S_complier = 113,                        // complier
+        S_files = 114,                           // files
+        S_file = 115,                            // file
+        S_blocks = 116,                          // blocks
+        S_block = 117,                           // block
+        S_assign_stmt = 118,                     // assign_stmt
+        S_number = 119,                          // number
+        S_qualafied_id = 120,                    // qualafied_id
+        S_sub_proc = 121,                        // sub_proc
+        S_array = 122,                           // array
+        S_params = 123,                          // params
+        S_param = 124,                           // param
+        S_symbol = 125,                          // symbol
+        S_built_in = 126,                        // built_in
+        S_attributes = 127,                      // attributes
+        S_attrib = 128                           // attrib
       };
     };
 
@@ -823,7 +820,6 @@ namespace yy {
       case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
       case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_ID: // ID
       case symbol_kind::S_CONST_ID: // CONST_ID
       case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
       case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
@@ -974,7 +970,6 @@ switch (yykind)
       case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
       case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_ID: // ID
       case symbol_kind::S_CONST_ID: // CONST_ID
       case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
       case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
@@ -2421,21 +2416,6 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_ID (std::string v)
-      {
-        return symbol_type (token::ID, std::move (v));
-      }
-#else
-      static
-      symbol_type
-      make_ID (const std::string& v)
-      {
-        return symbol_type (token::ID, v);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
       make_CONST_ID (std::string v)
       {
         return symbol_type (token::CONST_ID, std::move (v));
@@ -3157,7 +3137,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 90,     ///< Last index in yytable_.
+      yylast_ = 89,     ///< Last index in yytable_.
       yynnts_ = 17,  ///< Number of nonterminal symbols.
       yyfinal_ = 20 ///< Termination state number.
     };
@@ -3212,10 +3192,10 @@ switch (yykind)
       75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
       85,    86,    87,    88,    89,    90,    91,    92,    93,    94,
       95,    96,    97,    98,    99,   100,   101,   102,   103,   104,
-     105,   106,   107,   108,   109,   110,   111,   112
+     105,   106,   107,   108,   109,   110,   111
     };
     // Last valid token kind.
-    const int code_max = 367;
+    const int code_max = 366;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -3281,7 +3261,6 @@ switch (yykind)
       case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
       case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_ID: // ID
       case symbol_kind::S_CONST_ID: // CONST_ID
       case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
       case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
@@ -3382,7 +3361,6 @@ switch (yykind)
       case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
       case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_ID: // ID
       case symbol_kind::S_CONST_ID: // CONST_ID
       case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
       case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
@@ -3469,7 +3447,7 @@ switch (yykind)
 
 
 } // yy
-#line 3473 "build/pparser.tab.hh"
+#line 3451 "build/pparser.tab.hh"
 
 
 

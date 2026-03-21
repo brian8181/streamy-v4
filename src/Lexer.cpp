@@ -156,8 +156,8 @@ void Lexer::dump_config( const string& file ) const
 void Lexer::dump_config( ) const
 {
     cout << "config_file: " << m_config_file << endl;
-    cout << "scan file: " << m_input_file << endl;
-    cout << "search text: " << m_text << endl;
+    cout << "input file: " << m_input_file << endl;
+    cout << "input text: " << m_text << endl;
     cout << "regexp: " << m_expr << endl;
     cout << "state: " << gp_state->name << endl;
 
@@ -190,6 +190,65 @@ void Lexer::init(const string &config_file, parser* pparser, const string& input
     m_suffix = m_text;
     // set state
     set_state(gp_state);
+
+    // todo context
+    // context_t c;
+    // c.expr = m_expr;
+    // c.scan_file = m_input_file;
+    // c.search_text = m_text;
+}
+
+/**
+* @name get_state
+* @brief state_t *Lexer::get_state() const
+* @return state_t
+*/
+state_t *Lexer::get_state() const
+{
+    return gp_state;
+}
+
+/**
+ * @name set_state
+ * @brief void Lexer::set_state(state_t* pstate)
+ * @param state_t* pstate
+ * @return void
+ */
+void Lexer::set_state(state_t* pstate)
+{
+    m_tokens.clear();
+    m_idx_tab.clear();
+    m_name_tab.clear();
+    gp_state = pstate;
+
+    stringstream ss;
+    unsigned long sid = pstate->id;
+    const vector<unsigned long>* STATE_TOKENS = g_tokens_by_state_id[sid];
+    const unsigned long len = STATE_TOKENS->size();
+    // iter this states tokens
+    for (unsigned long i = 0; i < len; i++)
+    {
+        unsigned long id = (*STATE_TOKENS)[i];
+        token_def* ptoken = &g_tokens[id];
+        //ptoken->index = i+1;
+        // ss << R"((?<)" << ptoken->name << R"(>)" << ptoken->rexp << R"()|)";
+        ss << "(" << ptoken->rexp << ")|";
+
+        m_tokens.push_back(ptoken);
+        m_name_tab[ptoken->name] = ptoken;
+    }
+
+    m_expr.clear();
+    m_expr = ss.str();
+    m_expr.pop_back(); // remove extra '|' i.e. "V-BAR"
+
+    // set context
+    set_context(m_suffix);
+
+#ifdef DEBUG
+    cout << "EXPR=\"" << m_expr << "\"" << endl;
+    cout << "STATE=" << pstate->id << " : " << pstate->name << endl;
+#endif
 }
 
 /**
@@ -288,60 +347,6 @@ const string& Lexer::get_expr() const
 }
 
 /**
-* @name get_state
-* @brief state_t *Lexer::get_state() const
-* @return state_t
-*/
-state_t *Lexer::get_state() const
-{
-    return gp_state;
-}
-
-/**
- * @name set_state
- * @brief void Lexer::set_state(state_t* pstate)
- * @param state_t* pstate
- * @return void
- */
-void Lexer::set_state(state_t* pstate)
-{
-    m_tokens.clear();
-    m_idx_tab.clear();
-    m_name_tab.clear();
-    gp_state = pstate;
-
-    stringstream ss;
-    unsigned long sid = pstate->id;
-    const vector<unsigned long>* STATE_TOKENS = g_tokens_by_state_id[sid];
-    const unsigned long len = STATE_TOKENS->size();
-    // iter this states tokens
-    for (unsigned long i = 0; i < len; i++)
-    {
-        unsigned long id = (*STATE_TOKENS)[i];
-        token_def* ptoken = &g_tokens[id];
-        //ptoken->index = i+1;
-        // ss << R"((?<)" << ptoken->name << R"(>)" << ptoken->rexp << R"()|)";
-        ss << "(" << ptoken->rexp << ")|";
-
-        m_tokens.push_back(ptoken);
-        m_name_tab[ptoken->name] = ptoken;
-    }
-
-    m_expr.clear();
-    m_expr = ss.str();
-    m_expr.pop_back(); // remove extra '|' i.e. "V-BAR"
-
-    // set context
-    set_context(m_suffix);
-
-#ifdef DEBUG
-    cout << "EXPR=\"" << m_expr << "\"" << endl;
-    cout << "STATE=" << pstate->id << " : " << pstate->name << endl;
-#endif
-}
-
-
-/**
  * @name  print_token
  * @def   void Lexer::print_token(int id)
  * @brief print token to stdout
@@ -358,20 +363,6 @@ void Lexer::print_token(unsigned long id)
 }
 
 /**
- * @name set_context
- * @param current_input
- */
-void Lexer::set_context(string& current_input)
-{
-    // reinit get_token iterators
-    m_rexp = boost::regex( m_expr, boost::regex::extended  );
-    m_text = current_input;
-    m_begin = boost::sregex_iterator( m_text.begin( ), m_text.end( ), m_rexp );
-    m_piter = &m_begin;
-    m_end = boost::sregex_iterator();
-}
-
-/**
  * @name is_id
  * @def bool Lexer::is_id( const token_def& token, const int& id )
  * @param token
@@ -382,4 +373,20 @@ bool Lexer::is_id( const token_def& token, const unsigned long& id )
 {
        // return (token.id == id);
     return true;
+}
+
+/**
+ * @name  set_context
+ * @def   set_context(string& current_input)
+ * @param string& current_input
+ * @return void
+ */
+void Lexer::set_context(string& current_input)
+{
+    // reinit get_token iterators
+    m_rexp = boost::regex( m_expr, boost::regex::extended  );
+    m_text = current_input;
+    m_begin = boost::sregex_iterator( m_text.begin( ), m_text.end( ), m_rexp );
+    m_piter = &m_begin;
+    m_end = boost::sregex_iterator();
 }

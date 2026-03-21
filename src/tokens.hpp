@@ -328,7 +328,7 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
         {
             switch (ptoken->id)
             {
-            case UL_OPEN_BRACE:
+            case UL_OPEN_BRACE:  /** open brace, ESCAPE */
                 set_state(&sESCAPED);
                 print_token(ptoken->id);
                 m_sout << " ~" << ptoken->value << "~ ";
@@ -337,9 +337,6 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
                 print_token(ptoken->id);
                 cout << "default: SKIP_TOKEN" << endl;
                 return parser::make_OPEN_BRACE();
-            default:
-                //cout << "error: id=" << ptoken->id << ", name=" << ptoken->name << endl;
-                return parser::make_UNDEFINED();
             }
             break;
         }
@@ -347,16 +344,11 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
         {
             switch (ptoken->id)
             {
-            case UL_CLOSE_BRACE:
+            case UL_CLOSE_BRACE: /** close brace, UNESCAPE */
                 set_state(&sINITIAL);
                 print_token(ptoken->id);
                 m_sout << " ~" << ptoken->value << "~ ";
                 return parser::make_CLOSE_BRACE();
-            case UL_INCLUDE:
-                set_state(&sINCLUDING);
-                print_token(ptoken->id);
-                m_sout << " ~" << ptoken->value << "~ ";
-                return parser::make_SKIP_TOKEN();
             case UL_DOLLAR_SIGN:
                 print_token(ptoken->id);
                 m_sout << " ~" << ptoken->value << "~ ";
@@ -365,6 +357,10 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
                 print_token(ptoken->id);
                 m_sout << " ~" << ptoken->value << "~ ";
                 return parser::make_PERCENT_SIGN();
+            case UL_DOT:
+                print_token(ptoken->id);
+                m_sout << " ~" << ptoken->value << "~ ";
+                return parser::make_DOT();
             case UL_HASH_MARK:
                 print_token(ptoken->id);
                 m_sout << " ~" << ptoken->value << "~ ";
@@ -393,15 +389,18 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
                 print_token(ptoken->id);
                 m_sout << " ~" << ptoken->value << "~ ";
                 return parser::make_NUMERIC_LITERAL(ptoken->value);
-            case UL_DOUBLE_QUOTE:
+            case UL_INCLUDE: /** INCLUDING */
+                set_state(&sINCLUDING);
+                print_token(ptoken->id);
+                m_sout << " ~" << ptoken->value << "~ ";
+                goto SKIP;
+            case UL_DOUBLE_QUOTE: /** opening quote, DOUBLE_QUOTE */
                 set_state(&sDOUBLE_QUOTED);
                 m_sout << " ~" << ptoken->value << "~ ";
             case UL_WHITESPACE:
             case UL_SKIP_TOKEN:
+                SKIP:
                 return parser::make_SKIP_TOKEN();
-            default:
-                //cout << "error: id=" << ptoken->id << ", name=" << ptoken->name << endl;
-                return parser::make_UNDEFINED();
             }
             break;
         }
@@ -409,9 +408,9 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
         {
             switch (ptoken->id)
             {
-            case UL_ESC_TAB:
+            case UL_ESC_TAB: /** esc sequences in string literals */
                 g_stringstream << "\t";
-                 return parser::make_SKIP_TOKEN();
+                return parser::make_SKIP_TOKEN();
             case UL_ESC_BACKSLASH:
                 g_stringstream << "\\";
                 return parser::make_SKIP_TOKEN();
@@ -421,17 +420,15 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
             case UL_ESC_SINGLE_QUOTE:
                 g_stringstream << "'";
                 return parser::make_SKIP_TOKEN();
-            case UL_VALID_CHAR:
+            case UL_VALID_CHAR: /** double quote, valid chars for string literal */
                 g_stringstream << ptoken->value;
                 cout << "char " << g_stringstream.str() << endl;
                 return parser::make_SKIP_TOKEN();
-            case UL_SKIP_TOKEN:
-                cout << "SKIP_TOKEN" << endl;
-                return parser::make_SKIP_TOKEN();
-            case UL_DOUBLE_QUOTE:
+            case UL_DOUBLE_QUOTE: /** closing quote, DOUBLE_QUOTE -> ESCAPED */
                 set_state(&sESCAPED);
                 return parser::make_STRING_LITERAL(g_stringstream.str());
-            default:
+            case UL_SKIP_TOKEN:
+                cout << "SKIP_TOKEN" << endl;
                 return parser::make_SKIP_TOKEN();
             }
             break;
@@ -454,29 +451,26 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
 
                     // get include text & append remaining text from current file to it
                     // set m_current_search_text, continue lexing ...
-                    //pair<string, string> p(path, m_suffix);
+                    // pair<string, string> p(path, m_suffix);
 
                     // parse /compile include
                     cout << "FILE_ATTRIB file=" << path << endl;
                     cout << sout << endl;
 
                     m_suffix = sout + m_suffix;
-                    //set_context(m_suffix);
-                    //set_state(&sESCAPED);
+                    // set_context(m_suffix);
+                    // set_state(&sESCAPED);
                     return parser::make_SKIP_TOKEN();
                 }
                 case UL_CLOSE_BRACE:
                     set_state(&sINITIAL);
                     return parser::make_CLOSE_BRACE();
-                case UL_DOUBLE_QUOTE:
+                case UL_DOUBLE_QUOTE: /** closing quote, DOUBLE_QUOTE -> ESCAPED */
                     set_state(&sESCAPED);
                     return parser::make_STRING_LITERAL(g_stringstream.str());
                 case UL_WHITESPACE:
-                      cout << "WHITESPACE : SKIP_TOKEN" << endl;
-                return parser::make_SKIP_TOKEN();
-                default:
-                    //cout << "error: id=" << ptoken->id << ", name=" << ptoken->name << endl;
-                    return parser::make_UNDEFINED();
+                    cout << "WHITESPACE : SKIP_TOKEN" << endl;
+                    return parser::make_SKIP_TOKEN();
             }
             break;
         }

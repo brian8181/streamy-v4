@@ -87,7 +87,7 @@
 %token AT AMPERSAND AND OR NOT DOT PERIOD
 %token<std::string> INDIRECT_MEMBER
 %token<std::string> STRING_LITERAL NUMERIC_LITERAL
-%token<std::string> IDENTIFIER ID CONST_ID
+%token<std::string> IDENTIFIER CONST_ID
 %token<std::string> VAR_ATTRIB VALUE_ATTRIB FILE_ATTRIB FROM_ATTRIB KEY_ATTRIB NAME_ATTRIB ITEM_ATTRIB FILE_NAME
 %token<std::string> UNESCAPED_TEXT
 %token COMMENT QUESTION_MARK
@@ -312,14 +312,14 @@ colon_sep_param:
  * @name qualafied_id
  */
 qualafied_id:
-    symbol DOT ID                                               {
+    symbol DOT IDENTIFIER                                               {
                                                                     cout << FMT_FG_YELLOW
-                                                                            << "PARSER qualafied_id: | symbol DOT ID"
+                                                                            << "PARSER qualafied_id: | symbol DOT IDENTIFIER"
                                                                          << FMT_RESET << endl;
                                                                 }
-    | symbol INDIRECT_MEMBER ID                                 { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | symbol INDIRECT_MEMBER ID" << FMT_RESET << endl; }
-    | qualafied_id DOT ID                                       { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | qualafied_id DOT ID" << FMT_RESET << endl; }
-    | qualafied_id INDIRECT_MEMBER ID                           { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | qualafied_id INDIRECT_MEMBER ID" << FMT_RESET << endl; }
+    | symbol INDIRECT_MEMBER IDENTIFIER                                 { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | symbol INDIRECT_MEMBER IDENTIFIER" << FMT_RESET << endl; }
+    | qualafied_id DOT IDENTIFIER                                       { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | qualafied_id DOT IDENTIFIER" << FMT_RESET << endl; }
+    | qualafied_id INDIRECT_MEMBER IDENTIFIER                           { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | qualafied_id INDIRECT_MEMBER IDENTIFIER" << FMT_RESET << endl; }
                                                                 ;
 
 /**

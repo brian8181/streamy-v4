@@ -1,3 +1,4 @@
  Hello Me!{$y}Test Me!
 boo{$abc="testing..."}hoo
+{$abc.foo}
 {include file="test/scan.txt"}

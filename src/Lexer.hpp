@@ -183,7 +183,10 @@ void print_token(unsigned long id);
 bool is_id( const token_def& token, const unsigned long& id );
 
 /**
- *
+ * @name  set_context
+ * @def   set_context(string& current_input)
+ * @param string& current_input
+ * @return void
  */
 void set_context(string& current_input);
 
@@ -225,6 +228,7 @@ protected:
     string                                      m_prefix;
     string                                      m_suffix;
 	stringstream                                m_sout;
+	//context_t                                   m_current_context;
 	//stack<string>                               filestack;
 };
 

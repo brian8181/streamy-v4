@@ -32,7 +32,7 @@ bool file_exist(const string& path);
  * @param strm
  * @return void
  */
-void get_ofstream(const string& file, /*out */ofstream* strm);
+void get_ofstream(const string& file, /*out */ofstream*& strm);
 
 
 /**
@@ -41,7 +41,7 @@ void get_ofstream(const string& file, /*out */ofstream* strm);
  * @param srtm
  * @return void
  */
-void get_ifstream(const string& file, /*out */ifstream* strm);
+void get_ifstream(const string& file, /*out */ifstream*& strm);
 
 /**
  * @brief  read a character from a file stream
