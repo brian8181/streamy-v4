@@ -1,2 +1,5 @@
-  ~{~  ~$~  ~x~  ~}~ 
- ~{~  ~$~  ~abc~  ~=~  ~"~  ~}~ 
+ Hello Me!{$y}Test Me!
+boo{$abc="}hoo
+{$abc.foo}
+{$a}
+{}

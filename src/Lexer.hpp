@@ -11,6 +11,7 @@
 #include <list>
 #include <map>
 #include <regex>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -25,6 +26,7 @@ using std::map;
 using std::pair;
 using std::regex;
 using std::stringstream;
+using std::ofstream;
 using yy::parser;
 
 #define INT 1
@@ -91,6 +93,20 @@ public:
 Lexer();
 
 /**
+ * @name   init
+ * @def    void init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
+ * @brief  initialize state
+ * @return bool
+ */
+void init(const string &config_file, parser* pparser, const string& input_file, const string& output_file);
+
+/**
+ * @name reset
+ * @def  void reset()
+ */
+void reset();
+
+/**
  * @name   load_config
  * @def    void load_config( const string &file )
  * @brief  load_config: load configuration from file
@@ -116,14 +132,6 @@ void dump_config( const string& file ) const;
 void dump_config( ) const;
 
 /**
- * @name   init
- * @def    void init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
- * @brief  initialize state
- * @return bool
- */
-void init(const string &config_file, parser* pparser, const string& input_file, const string& output_file);
-
-/**
 * @name   get_state
 * @brief  state_t *get_state() const
 * @return state_t
@@ -144,12 +152,6 @@ void set_state(state_t* pstate);
  * @return int
  */
 parser::symbol_type get_token();
-
-/**
- * @name reset
- * @def  void reset()
- */
-void reset();
 
 /**
  * @name   get_expr
@@ -230,6 +232,7 @@ protected:
 	stringstream                                m_sout;
 	//context_t                                   m_current_context;
 	//stack<string>                               filestack;
+	ofstream m_stream;
 };
 
 #endif

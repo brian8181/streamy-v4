@@ -10,7 +10,7 @@ LEX = flex
 #YACC = bison -y
 YACC = bison
 YFLAGS =
-CXXFLAGS = -g -std=c++20 -fPIC -DLEX_TEST -DCYGWIN -DDEBUG
+CXXFLAGS = -g -std=c++20 -fPIC -DLEX_TEST -DCYGWIN
 CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
 #LDFLAGS += /usr/lib/libcppunit.dll.a
 LDFLAGS=/usr/local/lib/libfmt.a
@@ -34,9 +34,9 @@ FMT_CYAN='\e[36m'
 #endif
 
 #
-#ifndef RELEASE
-#	CXXFLAGS +=-ggdb -DDEBUG
-#endif
+# ifndef RELEASE
+# 	CXXFLAGS +=-ggdb -DDEBU
+# endif
 
 #CYGWIN=TRUE
 #ifdef CYGWIN
@@ -46,6 +46,7 @@ FMT_CYAN='\e[36m'
 #	LDFLAGS += -lfmt -lcppunit
 #endif
 
+#CXXFLAGS+=-DDEBUG
 
 all: $(BLD)/scanner
 
@@ -55,7 +56,6 @@ $(BLD)/scanner: $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/scanner.cpp $(SRC)
 
 #$(BLD)/pparser.tab.o: $(SRC)/symtab.c $(SRC)/symtab.h $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh
 #	$(CC) $(CCFLAGS) -fPIC -c $< -o $@
-
 
 $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"

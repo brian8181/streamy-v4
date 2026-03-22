@@ -31,6 +31,7 @@ static string g_output_file;
 static bool file_flag = false;
 static bool output_file_flag = false;
 static bool dump_flag = false;
+static bool verbose_flag = false;
 
 // create parser & lexer
 static yy::parser yyparser;
@@ -55,13 +56,14 @@ sym_t lex()
 int parse_options(const int argc, char* argv[])
 {
     int option;
-    const auto options_string = "hVdf:o:";
+    const auto options_string = "hVdf:o:v";
     const struct option long_options[] = {
         {"help",        no_argument, nullptr,   'h'},
         {"version",     no_argument, nullptr,   'V'},
         {"file",        0, nullptr,   'f'},
         {"out",        0, nullptr,   'o'},
         {"dump",        no_argument, nullptr,   'd'},
+        {"verbose",        no_argument, nullptr,   'v'},
         {nullptr,          0, nullptr,    0 }
     };
 
@@ -86,11 +88,19 @@ int parse_options(const int argc, char* argv[])
             case 'd':
                 dump_flag = true;
                 break;
+            case 'v':
+                verbose_flag = true;
+                break;
             default:
                 cerr << "Unknown option: " << option << endl;
                 return 1;
         }
     }
+
+    //test
+    // symbol_table["x"] = "1";
+    // symbol_table["y"] = "2";
+    // symbol_table["z"] = "3";
 
     // configure scanner ...
     string config_file = file_flag ? g_config_file : ".config/default.txt";

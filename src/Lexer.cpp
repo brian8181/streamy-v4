@@ -3,16 +3,12 @@
  * @file    Lexer.cpp
  * @version 0.0.1
  * @date    Fri, 26 Sep 2025 17:05:10 +0000
- * @info    ...
  */
 
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "fileio.hpp"
-#include "Lexer.hpp"
 #include <boost/regex.hpp>
 #include <fmt/core.h>
 #include <fmt/format.h>
@@ -24,6 +20,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "fileio.hpp"
+#include "Lexer.hpp"
 #include "tokens.hpp"
 #include "scanner.h"
 
@@ -46,6 +44,44 @@ using yy::parser;
  */
 Lexer::Lexer()
 {
+}
+
+/**
+ * @name init
+ * @def void Lexer::init(const string &config_file, parser* pparser,
+ *      const string& input_file, const string& output_file)
+ * @brief  initialize state
+ * @return bool
+ */
+void Lexer::init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
+{
+    m_config_file = config_file;
+    m_input_file = input_file;
+    m_output_file = output_file;
+    m_pparser = pparser;
+
+    //load_config( m_config_file );
+    read_str( m_input_file, m_text );
+    m_suffix = m_text;
+    // set state
+    set_state(gp_state);
+
+    // todo context
+    // context_t c;
+    // c.expr = m_expr;
+    // c.scan_file = m_input_file;
+    // c.search_text = m_text;
+
+    m_stream.open(output_file, std::ios_base::out | std::ios::trunc);
+}
+
+/**
+ * @name reset
+ * @def void Lexer::reset()
+ */
+void Lexer::reset()
+{
+    init(m_config_file, m_pparser, m_input_file, m_output_file);
 }
 
 /**
@@ -172,33 +208,6 @@ void Lexer::dump_config( ) const
 }
 
 /**
- * @name init
- * @def void Lexer::init(const string &config_file, parser* pparser,
- *      const string& input_file, const string& output_file)
- * @brief  initialize state
- * @return bool
- */
-void Lexer::init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
-{
-    m_config_file = config_file;
-    m_input_file = input_file;
-    m_output_file = output_file;
-    m_pparser = pparser;
-
-    //load_config( m_config_file );
-    read_str( m_input_file, m_text );
-    m_suffix = m_text;
-    // set state
-    set_state(gp_state);
-
-    // todo context
-    // context_t c;
-    // c.expr = m_expr;
-    // c.scan_file = m_input_file;
-    // c.search_text = m_text;
-}
-
-/**
 * @name get_state
 * @brief state_t *Lexer::get_state() const
 * @return state_t
@@ -270,25 +279,29 @@ parser::symbol_type Lexer::get_token()
         m_suffix.clear();
 
         m_str    = m.str();
-        m_prefix = m.prefix().matched ? m.prefix() : string();
-        m_suffix = m.suffix().matched ? m.suffix() : string();
+        m_prefix = m.prefix().matched ? m.prefix() : string("");
+        m_suffix = m.suffix().matched ? m.suffix() : string("");
 
         // find matched
         for(int i = 1; i < len; ++i)
         {
             if(m[i].matched)
             {
+#ifdef DEBUG
                 cout << "MATCH=\"" << m.prefix() << "\" : \"" << m.str() << "\" : \"" << m.suffix() << "\""<<  endl;
+#endif
                 if(m.prefix().matched)
                 {
-                    if (gp_state->id == UL_INITIAL_STATE)
+                    if (gp_state->id != UL_INITIAL_STATE)
                     {
                         cout << "error: unexpected token ... \"" << m.prefix() << "\"" << endl;
-                        // return parser::make_YYerror();
-                        m_sout << m.prefix();
+                        return parser::make_YYerror();
                     }
                     // stream prefix (unescaped text)
+                    //m_sout << m.prefix();
+                    m_stream << m.prefix();
                 }
+
                 // get id by index value "i-1" zero based vector
                 // i is match index to group ...
                 // (g index 0 (g index 1)|(g index 2)|(g index 3))...
@@ -306,33 +319,27 @@ parser::symbol_type Lexer::get_token()
                 // then return token ... stack unrolls
                 yy::parser::symbol_type rtoken = on_token( &tmatch );
                 if (rtoken.kind() == yy::parser::symbol_type( parser::token::SKIP_TOKEN).kind())
-                 {
-                      cout << "skipping... " << endl;
-                      goto SKIP;
-                 }
+                {
+                    cout << "skipping... " << endl;
+                    goto SKIP;
+                }
+                m_stream << match_str;
                 return rtoken;
             }
         }
     }
     else
     {
-        m_sout << m_suffix;
-        write_str(m_output_file, m_sout.str());
+        //m_sout << m_suffix;
+        //write_str(m_output_file, m_sout.str());
+        m_stream << m_suffix;
+        m_stream.close();
         m_str.clear();
         m_sout.clear();
         m_suffix.clear();
         return parser::make_END(); // error or eof
     }
     return parser::make_END_OF_FILES(); // error or eof
-}
-
-/**
- * @name reset
- * @def void Lexer::reset()
- */
-void Lexer::reset()
-{
-    init(m_config_file, m_pparser, m_input_file, m_output_file);
 }
 
 /**
@@ -359,7 +366,7 @@ void Lexer::print_token(unsigned long id)
             << setw(10) << right << id << setw(5) << left
             << "\n\t name: " << setw(10) << right << ptoken->name << setw(5) << left
             << "\n\t stype: " << setw(10) << right
-            << "\n\t rexp: " << setw(10) << right << ptoken->rexp << setw(5) << left << setw(10) << right << "\n}";
+            << "\n\t rexp: " << setw(10) << right << ptoken->rexp << setw(5) << left << setw(10) << right << "\n}\n";
 }
 
 /**
