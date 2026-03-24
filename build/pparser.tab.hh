@@ -375,7 +375,7 @@ namespace yy {
     union union_type
     {
       // attrib
-      char dummy1[sizeof (std::pair< std::string, std::string > )];
+      char dummy1[sizeof ( std::pair<std::string, std::string> )];
 
       // CAPTURE
       // CONFIG_LOAD
@@ -427,6 +427,8 @@ namespace yy {
       // FILE_NAME
       // UNESCAPED_TEXT
       // assign_stmt
+      // stmt
+      // expr
       // qualafied_id
       // sub_proc
       // array
@@ -713,15 +715,18 @@ namespace yy {
         S_blocks = 111,                          // blocks
         S_block = 112,                           // block
         S_assign_stmt = 113,                     // assign_stmt
-        S_qualafied_id = 114,                    // qualafied_id
-        S_sub_proc = 115,                        // sub_proc
-        S_array = 116,                           // array
-        S_params = 117,                          // params
-        S_param = 118,                           // param
-        S_symbol = 119,                          // symbol
-        S_built_in = 120,                        // built_in
-        S_attributes = 121,                      // attributes
-        S_attrib = 122                           // attrib
+        S_stmt = 114,                            // stmt
+        S_expr = 115,                            // expr
+        S_qualafied_id = 116,                    // qualafied_id
+        S_sub_proc = 117,                        // sub_proc
+        S_array = 118,                           // array
+        S_params = 119,                          // params
+        S_param = 120,                           // param
+        S_symbol = 121,                          // symbol
+        S_modifier = 122,                        // modifier
+        S_built_in = 123,                        // built_in
+        S_attributes = 124,                      // attributes
+        S_attrib = 125                           // attrib
       };
     };
 
@@ -757,7 +762,7 @@ namespace yy {
         switch (this->kind ())
     {
       case symbol_kind::S_attrib: // attrib
-        value.move< std::pair< std::string, std::string >  > (std::move (that.value));
+        value.move<  std::pair<std::string, std::string>  > (std::move (that.value));
         break;
 
       case symbol_kind::S_CAPTURE: // CAPTURE
@@ -810,6 +815,8 @@ namespace yy {
       case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_UNESCAPED_TEXT: // UNESCAPED_TEXT
       case symbol_kind::S_assign_stmt: // assign_stmt
+      case symbol_kind::S_stmt: // stmt
+      case symbol_kind::S_expr: // expr
       case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
@@ -841,12 +848,12 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::pair< std::string, std::string > && v)
+      basic_symbol (typename Base::kind_type t,  std::pair<std::string, std::string> && v)
         : Base (t)
         , value (std::move (v))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::pair< std::string, std::string > & v)
+      basic_symbol (typename Base::kind_type t, const  std::pair<std::string, std::string> & v)
         : Base (t)
         , value (v)
       {}
@@ -889,7 +896,7 @@ namespace yy {
 switch (yykind)
     {
       case symbol_kind::S_attrib: // attrib
-        value.template destroy< std::pair< std::string, std::string >  > ();
+        value.template destroy<  std::pair<std::string, std::string>  > ();
         break;
 
       case symbol_kind::S_CAPTURE: // CAPTURE
@@ -942,6 +949,8 @@ switch (yykind)
       case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_UNESCAPED_TEXT: // UNESCAPED_TEXT
       case symbol_kind::S_assign_stmt: // assign_stmt
+      case symbol_kind::S_stmt: // stmt
+      case symbol_kind::S_expr: // expr
       case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
@@ -2722,7 +2731,7 @@ switch (yykind)
 
 
     /// Stored state numbers (used for stacks).
-    typedef signed char state_type;
+    typedef unsigned char state_type;
 
     /// Compute post-reduction state.
     /// \param yystate   the current state
@@ -2754,7 +2763,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -2762,17 +2771,17 @@ switch (yykind)
     static const signed char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
-    static const signed char yypgoto_[];
+    static const short yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
-    static const signed char yydefgoto_[];
+    static const unsigned char yydefgoto_[];
 
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
-    static const signed char yytable_[];
+    static const short yytable_[];
 
-    static const signed char yycheck_[];
+    static const unsigned char yycheck_[];
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
@@ -3014,9 +3023,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 80,     ///< Last index in yytable_.
-      yynnts_ = 16,  ///< Number of nonterminal symbols.
-      yyfinal_ = 23 ///< Termination state number.
+      yylast_ = 192,     ///< Last index in yytable_.
+      yynnts_ = 19,  ///< Number of nonterminal symbols.
+      yyfinal_ = 31 ///< Termination state number.
     };
 
 
@@ -3091,7 +3100,7 @@ switch (yykind)
     switch (this->kind ())
     {
       case symbol_kind::S_attrib: // attrib
-        value.copy< std::pair< std::string, std::string >  > (YY_MOVE (that.value));
+        value.copy<  std::pair<std::string, std::string>  > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_CAPTURE: // CAPTURE
@@ -3144,6 +3153,8 @@ switch (yykind)
       case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_UNESCAPED_TEXT: // UNESCAPED_TEXT
       case symbol_kind::S_assign_stmt: // assign_stmt
+      case symbol_kind::S_stmt: // stmt
+      case symbol_kind::S_expr: // expr
       case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
@@ -3185,7 +3196,7 @@ switch (yykind)
     switch (this->kind ())
     {
       case symbol_kind::S_attrib: // attrib
-        value.move< std::pair< std::string, std::string >  > (YY_MOVE (s.value));
+        value.move<  std::pair<std::string, std::string>  > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_CAPTURE: // CAPTURE
@@ -3238,6 +3249,8 @@ switch (yykind)
       case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_UNESCAPED_TEXT: // UNESCAPED_TEXT
       case symbol_kind::S_assign_stmt: // assign_stmt
+      case symbol_kind::S_stmt: // stmt
+      case symbol_kind::S_expr: // expr
       case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
@@ -3312,7 +3325,7 @@ switch (yykind)
 
 
 } // yy
-#line 3316 "build/pparser.tab.hh"
+#line 3329 "build/pparser.tab.hh"
 
 
 

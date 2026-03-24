@@ -8,6 +8,7 @@
     #include <iomanip>
     #include <list>
     #include <map>
+    #include <vector>
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
@@ -16,12 +17,15 @@
     #include "driver.h"
     #include "lexer.hpp"
 
+    using std::vector;
     using std::string;
     using std::cout;
     using std::endl;
     using std::pair;
     using std::map;
-    typedef std::pair< std::string, std::string > attribute;
+
+    //typedef std::pair< std::string, std::string > > attrib_t;
+    //typedef std::vector< attrib_t > attributes_t;
 
     // print a list of strings
     auto operator<<(std::ostream& o, const std::vector<std::string>& ss) -> std::ostream&
@@ -67,12 +71,14 @@
     nvalue* alloc_nvalue(char* name, char* value);
     void free_nvalue(nvalue* nv);
     void free_all_nvalues();
-    typedef std::pair< std::string, std::string > attribute;
+    //typedef std::pair< std::string, std::string > attribute;
 
     // declare
     typedef map<string, string> symbol_table_t;
     // test
     symbol_table_t symbol_table =  { {"a", "a_val"}, {"b", "b_val"}, {"c", "c_val"} };
+
+
 }
 
 %token MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN CONST_SYMBOL
@@ -81,7 +87,7 @@
 %token END 0 _("end of input")
 %token END_OF_FILES
 %type files file block blocks colon_sep_param colon_sep_params modifier
-%type<std::pair< std::string, std::string > > attrib
+%type< std::pair<std::string, std::string> > attrib
 %type<std::string> built_in
 %type<std::string> attributes
 %type<std::string> expr
@@ -176,6 +182,9 @@ block:
                                                                     cout << FMT_FG_YELLOW << "PARSER block: | OPEN_BRACE built_in CLOSE_BRACE" << FMT_RESET << endl;
                                                                     //free_all_nvalues();
                                                                 }
+    | OPEN_BRACE stmt CLOSE_BRACE                               {
+                                                                    cout << FMT_FG_YELLOW << "PARSER block: | OPEN_BRACE stmt CLOSE_BRACE" << FMT_RESET << endl;
+                                                                }
                                                                 ;
 /**
  * @name assign_stmt
@@ -207,7 +216,7 @@ assign_stmt:
 stmt:
      expr CLOSE_BRACE                                           {
                                                                     /*$$ = opr(PRINT, 1, $2);          */
-                                                                    cout << FMT_FG_YELLOW "PARSER stmt: | expr CLOSE_BRACE\n" << FMT_RESET;
+                                                                    cout << FMT_FG_YELLOW << "PARSER stmt: | expr CLOSE_BRACE\n" << FMT_RESET;
                                                                 }
     | WHILE LPAREN expr RPAREN stmt                             {
                                                                     cout << "PARSER stmt: | WHILE LPAREN expr RPAREN stmt\n";
@@ -448,12 +457,12 @@ modifier:
 built_in:
     CONFIG_LOAD attributes                                      {
                                                                     cout << FMT_FG_YELLOW << "PARSER built_in: | CONFIG_LOAD FILE_ATTRIB=\""
-                                                                        << $1 << "\" EQUAL STRING_LITERAL=\"$2\""
+                                                                        << $1 << "\" EQUAL STRING_LITERAL=\"" << "TEST" << "\""
                                                                         << FMT_RESET << endl;
                                                                 }
     | INCLUDE attributes                                        {
                                                                     cout << FMT_FG_YELLOW
-                                                                        << "PARSER built_in: | INCLUDE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""
+                                                                        << "PARSER built_in: | INCLUDE FILE_ATTRIB=\"" << "INCLUDE_FILE_TEST" << "\" EQUAL STRING_LITERAL=\"\""
                                                                         << FMT_RESET << endl;
                                                                 }
     | REQUIRE attributes                                        {
@@ -496,12 +505,18 @@ built_in:
 
 attributes:
     attrib                                                     {
-                                                                    cout << FMT_FG_YELLOW << "PARSER attribute: | attribute={name=\"\"; value=\"\"\n" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_YELLOW << "PARSER attribute: | attribute={name=\"" << $1.first  << "\"; value=\"" << $1.second << "\"\n" << FMT_RESET << endl;
+                                                                    // std::pair<std::string, std::string>  p($1, $3);
+                                                                    // std::vector< std::pair<std::string, std::string> > v;
+                                                                    // v.push_back( p );
+                                                                    //$$ = v;
                                                                }
     | attributes attrib                                        {
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER attributes: | attribute={name=\"\"; value=\"\"\n"
                                                                         << FMT_RESET << endl;
+                                                                    //std::pair<std::string, std::string>  p($1, $3);
+                                                                    //$$.push_back( p );
                                                                }
                                                                ;
 /**
