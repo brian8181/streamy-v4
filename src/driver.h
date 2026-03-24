@@ -38,23 +38,10 @@ int main(int argc, char* argv[]);
 /**
  * @brief
  * @param
- * @return
- */
-//int yylex ();
-
-/**
- * @brief
- * @param
  */
 //void yyerror (char const *);
-
 //#define lex yylex
-//yy::parser parser;
 
-//typedef yy::parser parser;
-typedef yy::parser::symbol_type sym_t;
-sym_t lex();
-
-
+yy::parser::symbol_type lex();
 
 #endif // _SCANNER_HPP_

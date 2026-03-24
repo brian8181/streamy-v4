@@ -150,7 +150,7 @@ blocks:
                                                                 }
     | blocks block                                              {
                                                                     cout << FMT_FG_YELLOW << "PARSER blocks: | blocks block" << FMT_RESET << endl;
-                                                                    //lexer.dump_config();
+                                                                    Lexer::instance().dump_config();
                                                                 }
                                                                 ;
 /**

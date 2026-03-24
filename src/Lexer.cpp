@@ -37,15 +37,6 @@ using std::left;
 using std::right;
 using yy::parser;
 
-// /**
-//  * @name Lexer
-//  * @def Lexer::Lexer()
-//  * @brief default ctor
-//  */
-// Lexer::Lexer()
-// {
-// }
-
 /**
  * @name init
  * @def void Lexer::init(const string &config_file, parser* pparser,
@@ -191,20 +182,12 @@ void Lexer::dump_config( const string& file ) const
  */
 void Lexer::dump_config( ) const
 {
+    // bkp todo, not what I would call a good dump ...
     cout << "config_file: " << m_config_file << endl;
     cout << "input file: " << m_input_file << endl;
     cout << "input text: " << m_text << endl;
     cout << "regexp: " << m_expr << endl;
     cout << "state: " << gp_state->name << endl;
-
-    // stringstream ss;
-    // const size_t len = m_tokens.size();
-    // for(int i = 0; i < len; ++i)
-    // {
-    //     const token_def* ptoken = g_tokens[i];
-    //     print_token(ptoke->na);
-    // }
-    // cout << ss.str();
 }
 
 /**

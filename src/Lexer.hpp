@@ -57,6 +57,7 @@ typedef struct state_t
 	string name;
 } state_t;
 
+// bkp todo
 typedef struct context_t
 {
 	std::string&               scan_file;
@@ -70,6 +71,7 @@ typedef struct context_t
 	vector<token_def*>*        matches;
 } context_t;
 
+// bkp todo cleanup!
 const string TOKEN_TYPE           = R"([A-Za-z][A-Za-z_]*((::)[A-Za-z_]*)?)";
 const string TOKEN_TYPE_          = R"([A-Za-z][A-Za-z_]*)";
 const string VALID_SYMBOL_CHARS   = R"([A-Za-z0-9_])"; /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
@@ -81,25 +83,26 @@ const string CONFIG_COMMENT       = R"(^\s*#.*$)";
 const string CONFIG               = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
 
 /**
-  * @brief class Lexer
+  * @brief class Lexer (singleton)
   */
 class Lexer final
 {
-
 public:
+	// singleton implementation
 	static Lexer& instance()
 	{
 		static Lexer s;
 		return s;
 	} // instance
 
-  Lexer(const Lexer&) = delete;
-  Lexer& operator = (const Lexer&) = delete;
+	Lexer(const Lexer&) = delete;
+	Lexer& operator = (const Lexer&) = delete;
 
-  private:
-  Lexer() {}
-  ~Lexer() {}
+private:
+	Lexer() {}
+	~Lexer() {}
 
+	// singleton public interface
 public:
 
 /**
@@ -221,12 +224,15 @@ protected:
 	string                                      m_config_file;
     string                                      m_input_file;
     string                                      m_output_file;
+
+	// bkp todo, using globals!
 	vector<token_def*>                          m_tokens;
 	map<unsigned long, token_def*>              m_idx_tab;  // idx  -> token_def
 	map<unsigned long, token_def*>              m_id_tab;   // id   -> token_def
 	map<string, token_def*>                     m_name_tab; // name -> token_def
 	vector<token_match*>                        m_matches;
 
+	// current context
 	string                                      m_text;
 	boost::regex                                m_rexp;
 	boost::sregex_iterator                      m_begin;
@@ -234,17 +240,19 @@ protected:
 	boost::sregex_iterator*                     m_piter;
   	int                                         m_pos;
 	int                                         m_len;
-
 	string                                      m_expr;
     string                                      m_str;
     string                                      m_prefix;
     string                                      m_suffix;
 	stringstream                                m_sout;
-	//context_t                                   m_current_context;
-	//stack<string>                               filestack;
+
+	//context_t                                 m_current_context;
+	//stack<string>                             filestack;
+
+	// misc
 	ofstream m_stream;
-	stringstream                            m_include_buffer;
-	string                                  m_include_path;
+	stringstream                                m_include_buffer;
+	string                                      m_include_path;
 };
 
 #endif

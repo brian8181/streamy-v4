@@ -35,16 +35,14 @@ static bool verbose_flag = false;
 
 // create parser & lexer
 static yy::parser yyparser;
-//static Lexer lexer = Lexer::instance();
 
 /**
  * @name lex
- * @return sym_t
+ * @return yy::parser::symbol_type
  */
-sym_t lex()
+yy::parser::symbol_type lex()
 {
     return Lexer::instance().get_token();
-    //return yy::parser::make_END();
 }
 
 /**

@@ -944,7 +944,7 @@ namespace yy {
 #line 151 "src/pparser.yy"
                                                                 {
                                                                     cout << FMT_FG_YELLOW << "PARSER blocks: | blocks block" << FMT_RESET << endl;
-                                                                    //lexer.dump_config();
+                                                                    Lexer::instance().dump_config();
                                                                 }
 #line 950 "build/pparser.tab.cc"
     break;
