@@ -11,9 +11,10 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    #include "../src/bash_color.h"
-    #include "../src/symtab.h"
-    #include "../src/scanner.h"
+    #include "bash_color.h"
+    #include "symtab.h"
+    #include "driver.h"
+    #include "lexer.hpp"
 
     using std::string;
     using std::cout;
@@ -72,7 +73,6 @@
     typedef map<string, string> symbol_table_t;
     // test
     symbol_table_t symbol_table =  { {"a", "a_val"}, {"b", "b_val"}, {"c", "c_val"} };
-
 }
 
 %token MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN CONST_SYMBOL
@@ -144,6 +144,7 @@ blocks:
                                                                 }
     | blocks block                                              {
                                                                     cout << FMT_FG_YELLOW << "PARSER blocks: | blocks block" << FMT_RESET << endl;
+                                                                    //lexer.dump_config();
                                                                 }
                                                                 ;
 /**

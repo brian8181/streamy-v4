@@ -9,7 +9,7 @@ project(inflex VERSION 0.1.0
                 DESCRIPTION "Very nice project"
                 LANGUAGES CXX)
 
-                
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Specify the C++ standard (e.g., C++14)
     set(CMAKE_CXX_STANDARD 14)
@@ -47,7 +47,7 @@ BISON_TARGET(build/parser.tab.c parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
 
 # Rest of your original code
 #find_package(FLEX)
-#FLEX_TARGET(MyScanner scanner.l ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)
+#FLEX_TARGET(MyScanner driver.l ${CMAKE_CURRENT_BINARY_DIR}/driver.cpp)
 
 # Find required packages
 find_package(fmt REQUIRED)
@@ -70,8 +70,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src, ${CMAKE_SOURCE_DIR}/build, )
 set(SOURCES
         build/parser.tab.c
         src/fileio.cpp
-        src/scanner.cpp
-        #src/scanner.h
+        src/driver.cpp
+        #src/driver.h
         #src/tokens.hpp
         src/Lexer.cpp
         #build/Lexer.hpp
@@ -81,11 +81,11 @@ set(SOURCES
 
 
 # Create test executable
-add_executable(scanner ${SOURCES})
+add_executable(driver ${SOURCES})
 
 # Link the executable against the Boost::regex imported target
 # CMake handles linking to the correct library file and adding the include directories
-target_link_libraries(scanner PRIVATE Boost::regex)
+target_link_libraries(driver PRIVATE Boost::regex)
 
 
 # Create library from sources

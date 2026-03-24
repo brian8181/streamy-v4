@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 #include <boost/regex.hpp>
-#include "../streamy-v4/build/pparser.tab.hh"
+#include "pparser.tab.hh"
 
 using std::string;
 using std::vector;
@@ -233,6 +233,8 @@ protected:
 	//context_t                                   m_current_context;
 	//stack<string>                               filestack;
 	ofstream m_stream;
+	stringstream                            m_include_buffer;
+	string                                  m_include_path;
 };
 
 #endif

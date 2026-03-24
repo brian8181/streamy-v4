@@ -23,7 +23,7 @@
 #include "fileio.hpp"
 #include "Lexer.hpp"
 #include "tokens.hpp"
-#include "scanner.h"
+#include "driver.h"
 
 using std::cerr;
 using std::cout;
@@ -323,7 +323,7 @@ parser::symbol_type Lexer::get_token()
                     cout << "skipping... " << endl;
                     goto SKIP;
                 }
-                m_stream << match_str;
+                //m_stream << match_str;
                 return rtoken;
             }
         }

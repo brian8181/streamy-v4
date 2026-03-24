@@ -2,7 +2,7 @@
 # @date: Mon Sep  8 00:03:12 CDT 2025
 # @version: 0.0.1
 
-APP = scanner
+APP = driver
 CXX = g++
 CC = gcc
 #LEX = reflex
@@ -10,7 +10,7 @@ LEX = flex
 #YACC = bison -y
 YACC = bison
 YFLAGS =
-CXXFLAGS = -g -std=c++20 -fPIC -DLEX_TEST -DCYGWIN
+CXXFLAGS = -g -std=gnu++17 -Wc++17-extensions -std=c++20 -fPIC -DLEX_TEST -DCYGWIN
 CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
 #LDFLAGS += /usr/lib/libcppunit.dll.a
 LDFLAGS=/usr/local/lib/libfmt.a
@@ -46,13 +46,13 @@ FMT_CYAN='\e[36m'
 #	LDFLAGS += -lfmt -lcppunit
 #endif
 
-#CXXFLAGS+=-DDEBUG
+CXXFLAGS+=-DDEBUG -DYYDEBUG
 
-all: $(BLD)/scanner
+all: $(BLD)/driver
 
-$(BLD)/scanner: $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/scanner.cpp $(SRC)/scanner.h $(SRC)/tokens.hpp $(SRC)/Lexer.cpp $(BLD)/Lexer.hpp $(SRC)/utility.cpp $(BLD)/ast.o
-	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/scanner\"$(FMT_RESET) ...\n"
-	$(CXX) $(CXXFLAGS) -I$(BLD) -I$(SRC) -I"/home/brian/src/boost_1_89_0" $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/scanner.cpp $(SRC)/Lexer.cpp $(SRC)/utility.cpp $(LDFLAGS) -o $@
+$(BLD)/driver: $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/driver.h $(SRC)/tokens.hpp $(SRC)/Lexer.cpp $(BLD)/Lexer.hpp $(SRC)/utility.cpp $(BLD)/ast.o
+	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/driver\"$(FMT_RESET) ...\n"
+	$(CXX) $(CXXFLAGS) -I$(BLD) -I$(SRC) -I"/home/brian/src/boost_1_89_0" $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/Lexer.cpp $(SRC)/utility.cpp $(LDFLAGS) -o $@
 
 #$(BLD)/pparser.tab.o: $(SRC)/symtab.c $(SRC)/symtab.h $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh
 #	$(CC) $(CCFLAGS) -fPIC -c $< -o $@
@@ -82,13 +82,13 @@ $(OBJ)/%.o: $(SRC)/%.cpp
 rebuild: clean all
 
 dist:
-	tar -czvf scanner.tar.gz ./src ./include ./makefile ./README.md ./LICENSE ./CHANGELOG.md
+	tar -czvf driver.tar.gz ./src ./include ./makefile ./README.md ./LICENSE ./CHANGELOG.md
 
 install:
-	#cp ./$(BLD)/scanner ./$(prefix)/bin/scanner
+	#cp ./$(BLD)/driver ./$(prefix)/bin/driver
 
 uninstall:
-	#-rm ./$(prefix)/bin/scanner
+	#-rm ./$(prefix)/bin/driver
 
 clean:
 	@echo -e "$(FMT_GREEN)cleaning ...$(FMT_RESET)"
@@ -97,7 +97,7 @@ clean:
 
 help:
 	@echo  '  all              - build all'
-	@echo  '  scanner          - build scanner executable'
+	@echo  '  driver          - build driver executable'
 	@echo  '  clean            - remove all files from build dir'
 	@echo  '  install          - copy files to usr/local'
 	@echo  '  rebuild          - clean and build all'

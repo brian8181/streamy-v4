@@ -1,5 +1,5 @@
 //
-// @brief settings for the scanner project.
+// @brief settings for the driver project.
 // @file config.hpp
 //
 //
