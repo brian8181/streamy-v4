@@ -37,14 +37,14 @@ using std::left;
 using std::right;
 using yy::parser;
 
-/**
- * @name Lexer
- * @def Lexer::Lexer()
- * @brief default ctor
- */
-Lexer::Lexer()
-{
-}
+// /**
+//  * @name Lexer
+//  * @def Lexer::Lexer()
+//  * @brief default ctor
+//  */
+// Lexer::Lexer()
+// {
+// }
 
 /**
  * @name init

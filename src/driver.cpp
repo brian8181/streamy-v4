@@ -35,7 +35,7 @@ static bool verbose_flag = false;
 
 // create parser & lexer
 static yy::parser yyparser;
-static Lexer lexer;
+//static Lexer lexer = Lexer::instance();
 
 /**
  * @name lex
@@ -43,7 +43,7 @@ static Lexer lexer;
  */
 sym_t lex()
 {
-    return lexer.get_token();
+    return Lexer::instance().get_token();
     //return yy::parser::make_END();
 }
 
@@ -117,12 +117,12 @@ int parse_options(const int argc, char* argv[])
     g_config_file = config_file;
     g_input_file = input_file;
 
-    lexer.init(config_file, &yyparser, input_file, "test/a.txt");
+    Lexer::instance().init(config_file, &yyparser, input_file, "test/a.txt");
     if (dump_flag)
     {
         cout << "dumping configuration ... " << endl;
-        lexer.dump_config();
-        cout << lexer.get_expr() << endl;
+        Lexer::instance().dump_config();
+        cout << Lexer::instance().get_expr() << endl;
         cout << "configuration dumped." << endl;
     }
     cout << "start scan ..." << endl;

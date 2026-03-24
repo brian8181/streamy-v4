@@ -18,6 +18,7 @@
 #include <vector>
 #include <boost/regex.hpp>
 #include "pparser.tab.hh"
+#include "singleton.h"
 
 using std::string;
 using std::vector;
@@ -84,13 +85,22 @@ const string CONFIG               = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comme
   */
 class Lexer final
 {
+
 public:
-    /**
- * @name  Lexer
- * @def   Lexer()
- * @brief default ctor
- */
-Lexer();
+	static Lexer& instance()
+	{
+		static Lexer s;
+		return s;
+	} // instance
+
+  Lexer(const Lexer&) = delete;
+  Lexer& operator = (const Lexer&) = delete;
+
+  private:
+  Lexer() {}
+  ~Lexer() {}
+
+public:
 
 /**
  * @name   init
