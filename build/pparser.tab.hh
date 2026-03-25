@@ -434,8 +434,10 @@ namespace yy {
       // array
       // symbol
       // built_in
-      // attributes
       char dummy2[sizeof (std::string)];
+
+      // attributes
+      char dummy3[sizeof (std::vector< std::pair<std::string, std::string> > )];
     };
 
     /// The size of the largest semantic type.
@@ -822,8 +824,11 @@ namespace yy {
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_built_in: // built_in
-      case symbol_kind::S_attributes: // attributes
         value.move< std::string > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_attributes: // attributes
+        value.move< std::vector< std::pair<std::string, std::string> >  > (std::move (that.value));
         break;
 
       default:
@@ -866,6 +871,18 @@ namespace yy {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const std::string& v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::vector< std::pair<std::string, std::string> > && v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::vector< std::pair<std::string, std::string> > & v)
         : Base (t)
         , value (v)
       {}
@@ -956,8 +973,11 @@ switch (yykind)
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_built_in: // built_in
-      case symbol_kind::S_attributes: // attributes
         value.template destroy< std::string > ();
+        break;
+
+      case symbol_kind::S_attributes: // attributes
+        value.template destroy< std::vector< std::pair<std::string, std::string> >  > ();
         break;
 
       default:
@@ -3160,8 +3180,11 @@ switch (yykind)
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_built_in: // built_in
-      case symbol_kind::S_attributes: // attributes
         value.copy< std::string > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_attributes: // attributes
+        value.copy< std::vector< std::pair<std::string, std::string> >  > (YY_MOVE (that.value));
         break;
 
       default:
@@ -3256,8 +3279,11 @@ switch (yykind)
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_built_in: // built_in
-      case symbol_kind::S_attributes: // attributes
         value.move< std::string > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_attributes: // attributes
+        value.move< std::vector< std::pair<std::string, std::string> >  > (YY_MOVE (s.value));
         break;
 
       default:
@@ -3325,7 +3351,7 @@ switch (yykind)
 
 
 } // yy
-#line 3329 "build/pparser.tab.hh"
+#line 3355 "build/pparser.tab.hh"
 
 
 

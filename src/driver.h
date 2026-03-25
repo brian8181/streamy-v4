@@ -9,7 +9,7 @@
 #define SCANNER_HPP_
 
 
-#include "../build/pparser.tab.hh"
+#include "pparser.tab.hh"
 #include "singleton.h"
 
 /**

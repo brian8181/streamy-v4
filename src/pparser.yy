@@ -12,7 +12,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    #include "bash_color.h"
+    #include "bash_color.hpp"
     #include "symtab.h"
     #include "driver.h"
     #include "lexer.hpp"
@@ -77,7 +77,7 @@
     typedef map<string, string> symbol_table_t;
     // test
     symbol_table_t symbol_table =  { {"a", "a_val"}, {"b", "b_val"}, {"c", "c_val"} };
-
+    bool is_name(const std::pair<string, string>& p, const string& str);
 
 }
 
@@ -89,7 +89,7 @@
 %type files file block blocks colon_sep_param colon_sep_params modifier
 %type< std::pair<std::string, std::string> > attrib
 %type<std::string> built_in
-%type<std::string> attributes
+%type<std::vector< std::pair<std::string, std::string> > > attributes
 %type<std::string> expr
 %type<std::string> stmt assign_stmt
 %token<std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
@@ -464,6 +464,10 @@ built_in:
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER built_in: | INCLUDE FILE_ATTRIB=\"" << "INCLUDE_FILE_TEST" << "\" EQUAL STRING_LITERAL=\"\""
                                                                         << FMT_RESET << endl;
+                                                                    // std::vector< std::pair<std::string, std::string> > v;
+                                                                    // auto beg = $2.begin();
+                                                                    // auto end = $2.find()
+
                                                                 }
     | REQUIRE attributes                                        {
                                                                     cout << FMT_FG_YELLOW
@@ -505,18 +509,22 @@ built_in:
 
 attributes:
     attrib                                                     {
-                                                                    cout << FMT_FG_YELLOW << "PARSER attribute: | attribute={name=\"" << $1.first  << "\"; value=\"" << $1.second << "\"\n" << FMT_RESET << endl;
-                                                                    // std::pair<std::string, std::string>  p($1, $3);
-                                                                    // std::vector< std::pair<std::string, std::string> > v;
-                                                                    // v.push_back( p );
-                                                                    //$$ = v;
+                                                                    cout << FMT_FG_YELLOW << "PARSER attribute: | push -> attrib={name=\"" << $1.first  << "\"; value=\"" << $1.second << "\"}\n" << FMT_RESET << endl;
+                                                                    std::pair<std::string, std::string>  p($1);
+                                                                    std::vector< std::pair<std::string, std::string> > v;
+                                                                    v.push_back( p );
+                                                                    $$ = v;
                                                                }
     | attributes attrib                                        {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER attributes: | attribute={name=\"\"; value=\"\"\n"
-                                                                        << FMT_RESET << endl;
-                                                                    //std::pair<std::string, std::string>  p($1, $3);
-                                                                    //$$.push_back( p );
+                                                                    // auto len = $2.size();
+                                                                    // for(int i = 0; i < len; ++i)
+                                                                    // {
+                                                                    //     cout << $2[i].first << " : " << $2[i].second  << endl;
+                                                                    //}
+                                                                    cout << FMT_FG_YELLOW << "PARSER attribute: | attributes : push-> attrib={name=\"" << $2.first  << "\"; value=\"" << $2.second << "\"}\n" << FMT_RESET << endl;
+
+                                                                    $1.push_back( $2 );
+                                                                    $$ = $1;
                                                                }
                                                                ;
 /**
@@ -553,6 +561,11 @@ attrib:
                                                                ;
 
 %%
+
+bool is_name(const std::pair<string, string>& p, const string& str)
+{
+    return (p.first == str);
+}
 
 char* STRDUP(char* s)
 {

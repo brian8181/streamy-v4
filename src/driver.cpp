@@ -14,7 +14,7 @@
 #include "driver.h"
 #include "Lexer.hpp"
 #include "config.hpp"
-#include "bash_color.h"
+#include "bash_color.hpp"
 #include "pparser.tab.hh"
 
 using std::cout;

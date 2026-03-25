@@ -22,6 +22,7 @@ const string FMT_RESET_REVERSE     = "\033[27m";
 const string FMT_RESET_HIDDEN      = "\033[28m";
 const string FMT_BOLD              = "\033[1m";
 const string FMT_DIM               = "\033[2m";
+const string FMT_ITALIC            = "\033[3m";
 const string FMT_UNDERLINE         = "\033[4m";
 const string FMT_BLINK             = "\033[5m";
 const string FMT_REVERSE           = "\033[7m";
@@ -59,30 +60,30 @@ const string FMT_BG_LIGHT_MAGENTA  = "\033[105m";
 const string FMT_BG_LIGHT_CYAN     = "\033[106m";
 const string FMT_BG_WHITE          = "\033[107m";
 
-string& FMT_STRING(string& s, const string& format)
-{
-    s = format + s + FMT_RESET;
-    return s;
-}
+// string& FMT_STRING(string& s, const string& format)
+// {
+//     s = format + s + FMT_RESET;
+//     return s;
+// }
 
-string& COLOR_RED(string& s)
-{
-    return FMT_STRING(s, FMT_FG_RED);
-}
+// string& COLOR_RED(string& s)
+// {
+//     return FMT_STRING(s, FMT_FG_RED);
+// }
 
-string& COLOR_BLUE(string& s)
-{
-     return FMT_STRING(s, FMT_FG_BLUE);
-}
+// string& COLOR_BLUE(string& s)
+// {
+//      return FMT_STRING(s, FMT_FG_BLUE);
+// }
 
-string& COLOR_YELLOW(string& s)
-{
-    return FMT_STRING(s, FMT_FG_YELLOW);
-}
+// string& COLOR_YELLOW(string& s)
+// {
+//     return FMT_STRING(s, FMT_FG_YELLOW);
+// }
 
-string& COLOR_GREEN(string& s)
-{
-    return FMT_STRING(s, FMT_FG_GREEN);
-}
+// string& COLOR_GREEN(string& s)
+// {
+//     return FMT_STRING(s, FMT_FG_GREEN);
+// }
 
 #endif

@@ -182,6 +182,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_COMMA,              token{"COMMA",              S_TYPE,  R"(\,)",                                        }},
     {UL_DOT,                token{"DOT",                S_TYPE,  R"(\.)",                                        }},
     {UL_SLASH,              token{"SLASH",              S_TYPE,  R"(/)",                                         }},
+    // EXCLACMATION TILDE TIC_MARK
     {UL_GREATER_THAN_EQUAL, token{"GREATER_THAN_EQUAL", S_TYPE,  R"(>=)",                                        }},
     {UL_LESS_THAN_EQUAL,    token{"LESS_THAN_EQUAL",    S_TYPE,  R"(<=)",                                        }},
     {UL_STRING_LITERAL,     token{"STRING_LITERAL",     S_TYPE,  R"("[A-Za-z0-9*@_.~+-/]+")",                     }},
@@ -257,7 +258,10 @@ inline state_t sIF_CONDITION = {UL_IF_CONDITION_STATE, "IF_CONDITION"};
  */
 inline vector<unsigned long> INITIAL_STATE_TOKENS = {UL_OPEN_BRACE};
 inline vector<unsigned long> COMMENT_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
-inline vector<unsigned long> ESCAPED_STATE_TOKENS = {UL_DOLLAR_SIGN, UL_DOUBLE_QUOTE, UL_HASH_MARK, UL_FILE_ATTRIB, UL_INCLUDE, UL_IDENTIFIER, UL_COLON, UL_COMMA, UL_DOT, UL_PERCENT_SIGN, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE, UL_EQUAL_SIGN, UL_WHITESPACE};
+
+inline vector<unsigned long> ESCAPED_STATE_TOKENS = {   UL_DOLLAR_SIGN, UL_DOUBLE_QUOTE, UL_HASH_MARK, UL_FILE_ATTRIB, UL_INCLUDE, UL_IDENTIFIER, UL_VBAR, UL_COLON, UL_COMMA, UL_DOT, UL_PERCENT_SIGN, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE, UL_EQUAL_SIGN, UL_WHITESPACE,
+                                                        UL_GREATER_THAN, UL_LESS_THAN, UL_GREATER_THAN_EQUAL, UL_LESS_THAN_EQUAL, UL_PLUS_SIGN, UL_DASH, UL_AMPERSAND, UL_ASTERISK, UL_CARROT };
+
 inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {UL_DOUBLE_QUOTE, UL_VALID_CHAR};
 inline vector<unsigned long> SINGLE_QUOTED_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_VALID_CHAR, UL_SINGLE_QUOTE, UL_DOUBLE_QUOTE};
 inline vector<unsigned long> INCLUDING_STATE_TOKENS = {UL_FILE_ATTRIB, UL_WHITESPACE};
@@ -450,10 +454,16 @@ inline parser::symbol_type Lexer::on_token( token_match* ptoken )
                 g_stringstream << ptoken->value;
                 cout << "char " << g_stringstream.str() << endl;
                 return parser::make_SKIP_TOKEN();
-            case UL_DOUBLE_QUOTE: /** closing quote, DOUBLE_QUOTE -> ESCAPED */
+            case UL_DOUBLE_QUOTE: /** closing quote, DOUBLE_QUOTE -> ESCAPED **/
+            {
                 set_state(&sESCAPED);
-                m_stream << g_stringstream.str() << "\"";
-                return parser::make_STRING_LITERAL(g_stringstream.str());
+                string qstr = g_stringstream.str();
+                g_stringstream.str("");
+                g_stringstream.clear();
+
+                m_stream << qstr  << "\"";
+                return parser::make_STRING_LITERAL(qstr);
+            }
             case UL_SKIP_TOKEN:
                 cout << "SKIP_TOKEN" << endl;
                 return parser::make_SKIP_TOKEN();

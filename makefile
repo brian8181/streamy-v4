@@ -61,7 +61,7 @@ $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
 	$(YACC) $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cc
 
-$(BLD)/pparser.tab.o: $(BLD)/bash_color.h $(BLD)/symtab.h $(BLD)/pparser.tab.hh $(BLD)/pparser.tab.cc
+$(BLD)/pparser.tab.o: $(BLD)/bash_color.hpp $(BLD)/symtab.h $(BLD)/pparser.tab.hh $(BLD)/pparser.tab.cc
 	@echo -e "$(FMT_GREEN)\nBuilding \"parser.tab.o\"$(FMT_RESET) ...\n"
 	$(CXX) $(CXXFLAGS) -g -std=c++14 -I$(BLD) -I$(SRC) -c $(BLD)/pparser.tab.cc -o $@
 
