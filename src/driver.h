@@ -8,9 +8,7 @@
 #ifndef SCANNER_HPP_
 #define SCANNER_HPP_
 
-
 #include "pparser.tab.hh"
-#include "singleton.h"
 
 /**
  * @brief parse command line options

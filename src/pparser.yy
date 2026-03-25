@@ -12,6 +12,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include "fileio.hpp"
     #include "bash_color.hpp"
     #include "symtab.h"
     #include "driver.h"
@@ -88,8 +89,7 @@
 %token END_OF_FILES
 %type files file block blocks colon_sep_param colon_sep_params modifier
 %type< std::pair<std::string, std::string> > attrib
-%type<std::string> built_in
-%type<std::vector< std::pair<std::string, std::string> > > attributes
+%type<std::vector< std::pair<std::string, std::string> > > attributes built_in
 %type<std::string> expr
 %type<std::string> stmt assign_stmt
 %token<std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
@@ -150,7 +150,7 @@ blocks:
                                                                 }
     | blocks block                                              {
                                                                     cout << FMT_FG_YELLOW << "PARSER blocks: | blocks block" << FMT_RESET << endl;
-                                                                    Lexer::instance().dump_config();
+                                                                    lexer::instance().dump_config();
                                                                 }
                                                                 ;
 /**
@@ -177,10 +177,36 @@ block:
                                                                 }
     | OPEN_BRACE qualafied_id CLOSE_BRACE                       {
                                                                     cout << FMT_FG_YELLOW << "PARSER block: | OPEN_BRACE qualafied_id CLOSE_BRACE" << FMT_RESET << endl;
+                                                                    // bkp todo, look up in symbol table & do replace
+                                                                    // bkp todo qualified lookup
+                                                                    if(symbol_table.find($2) != symbol_table.end())
+                                                                    {
+                                                                        string val = symbol_table[$2];
+                                                                        cout << FMT_FG_RED << $2 << " = " << val << FMT_RESET << endl;
+                                                                    }
                                                                 }
     | OPEN_BRACE built_in CLOSE_BRACE                           {
                                                                     cout << FMT_FG_YELLOW << "PARSER block: | OPEN_BRACE built_in CLOSE_BRACE" << FMT_RESET << endl;
                                                                     //free_all_nvalues();
+                                                                    size_t len = $2.size();
+                                                                    int i = 0;
+                                                                    for(; i < len; ++i)
+                                                                    {
+                                                                        if($2[i].first == "file")
+                                                                            break;
+                                                                    }
+                                                                    string include_file_path = $2[i].second;
+                                                                    // read incllude file
+                                                                    string sout;
+                                                                    read_str(include_file_path, sout);
+                                                                    //  append include file output to buffer
+                                                                    string* p_rstr = lexer::instance().get_remaining();
+                                                                    stringstream* include_buffer = lexer::instance().get_include_buffer();
+                                                                    *include_buffer << endl << sout << endl << *p_rstr;
+                                                                    // set the suffix a.k.a "current search buffer"
+                                                                    lexer::instance().set_remaining( *p_rstr );
+                                                                    lexer::instance().set_state(&sINITIAL);
+                                                                    cout << FMT_FG_RED << "file = \"" << FMT_ITALIC << include_file_path << "\"" << FMT_RESET << endl;
                                                                 }
     | OPEN_BRACE stmt CLOSE_BRACE                               {
                                                                     cout << FMT_FG_YELLOW << "PARSER block: | OPEN_BRACE stmt CLOSE_BRACE" << FMT_RESET << endl;
@@ -246,11 +272,7 @@ stmt:
     | qualafied_id CLOSE_BRACE                                  {
                                                                     cout  << "PARSER stmt: | qualafied_id CLOSE_BRACE\n";
                                                                 }
-    | built_in CLOSE_BRACE                                      {
-                                                                    cout  << "PARSER stmt: | built_in CLOSE_BRACE\n";
-                                                                }
-                                                                ;
-/**
+ /**
  * @name expr
  * @brief Numerical / logical exprssions
  */
@@ -464,10 +486,7 @@ built_in:
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER built_in: | INCLUDE FILE_ATTRIB=\"" << "INCLUDE_FILE_TEST" << "\" EQUAL STRING_LITERAL=\"\""
                                                                         << FMT_RESET << endl;
-                                                                    // std::vector< std::pair<std::string, std::string> > v;
-                                                                    // auto beg = $2.begin();
-                                                                    // auto end = $2.find()
-
+                                                                    $$ = $2;
                                                                 }
     | REQUIRE attributes                                        {
                                                                     cout << FMT_FG_YELLOW
@@ -516,13 +535,7 @@ attributes:
                                                                     $$ = v;
                                                                }
     | attributes attrib                                        {
-                                                                    // auto len = $2.size();
-                                                                    // for(int i = 0; i < len; ++i)
-                                                                    // {
-                                                                    //     cout << $2[i].first << " : " << $2[i].second  << endl;
-                                                                    //}
                                                                     cout << FMT_FG_YELLOW << "PARSER attribute: | attributes : push-> attrib={name=\"" << $2.first  << "\"; value=\"" << $2.second << "\"}\n" << FMT_RESET << endl;
-
                                                                     $1.push_back( $2 );
                                                                     $$ = $1;
                                                                }

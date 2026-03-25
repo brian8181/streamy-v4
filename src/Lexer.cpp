@@ -1,6 +1,6 @@
 
 /**
- * @file    Lexer.cpp
+ * @file    lexer.cpp
  * @version 0.0.1
  * @date    Fri, 26 Sep 2025 17:05:10 +0000
  */
@@ -21,8 +21,7 @@
 #include <utility>
 #include <vector>
 #include "fileio.hpp"
-#include "Lexer.hpp"
-#include "tokens.hpp"
+#include "lexer.hpp"
 #include "driver.h"
 
 using std::cerr;
@@ -37,14 +36,22 @@ using std::left;
 using std::right;
 using yy::parser;
 
+
+/**
+ * @brief global state_t state
+ * @name gp_state
+ */
+inline state_t* gp_state = &sINITIAL;
+
+
 /**
  * @name init
- * @def void Lexer::init(const string &config_file, parser* pparser,
+ * @def void lexer::init(const string &config_file, parser* pparser,
  *      const string& input_file, const string& output_file)
  * @brief  initialize state
  * @return bool
  */
-void Lexer::init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
+void lexer::init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
 {
     m_config_file = config_file;
     m_input_file = input_file;
@@ -68,21 +75,21 @@ void Lexer::init(const string &config_file, parser* pparser, const string& input
 
 /**
  * @name reset
- * @def void Lexer::reset()
+ * @def void lexer::reset()
  */
-void Lexer::reset()
+void lexer::reset()
 {
     init(m_config_file, m_pparser, m_input_file, m_output_file);
 }
 
 /**
  * @name load_config
- * @def void Lexer::load_config( const string &file )
+ * @def void lexer::load_config( const string &file )
  * @brief  load_config: load configuration from file
  * @param  const string& file
  * @return void
  */
-void Lexer::load_config( const string& file )
+void lexer::load_config( const string& file )
 {
     m_config_file = file;
     string section = "none";
@@ -165,22 +172,22 @@ void Lexer::load_config( const string& file )
 
 /**
  * @name dump_config
- * @brief void Lexer::dump_config( const string& file ) const
+ * @brief void lexer::dump_config( const string& file ) const
  * @param const string& file
  * @return void
  */
-void Lexer::dump_config( const string& file ) const
+void lexer::dump_config( const string& file ) const
 {
     dump_config( );
 }
 
 /**
  * @name dump_config
- * @def void Lexer::dump_config( ) const
+ * @def void lexer::dump_config( ) const
  * @brief  dump current config
  * @return void
  */
-void Lexer::dump_config( ) const
+void lexer::dump_config( ) const
 {
     // bkp todo, not what I would call a good dump ...
     cout << "config_file: " << m_config_file << endl;
@@ -192,21 +199,21 @@ void Lexer::dump_config( ) const
 
 /**
 * @name get_state
-* @brief state_t *Lexer::get_state() const
+* @brief state_t *lexer::get_state() const
 * @return state_t
 */
-state_t *Lexer::get_state() const
+state_t *lexer::get_state() const
 {
     return gp_state;
 }
 
 /**
  * @name set_state
- * @brief void Lexer::set_state(state_t* pstate)
+ * @brief void lexer::set_state(state_t* pstate)
  * @param state_t* pstate
  * @return void
  */
-void Lexer::set_state(state_t* pstate)
+void lexer::set_state(state_t* pstate)
 {
     m_tokens.clear();
     m_idx_tab.clear();
@@ -243,12 +250,47 @@ void Lexer::set_state(state_t* pstate)
 #endif
 }
 
+// /**
+//  * @name   get_remaining
+//  * @brief  get remaining input
+//  * @param  string& s
+//  * @return void
+//  */
+// inline string* lexer::get_remaining()
+// {
+// 	return &m_suffix;
+// }
+
+
+// /**
+//  * @name   set_remaining
+//  * @brief  set remaining input
+//  * @param  const string& s
+//  * @return void
+//  */
+// void lexer::set_remaining(const string& s)
+// {
+//     m_suffix.clear();
+//     m_suffix = s;
+// }
+
+// /**
+//  * @name   get_include_buffer
+//  * @brief  get remaining input
+//  * @return stringstream*
+//  */
+// stringstream* lexer::get_include_buffer()
+// {
+//     m_include_buffer.clear();
+//     return &m_include_buffer;
+// }
+
 /**
  * @name  get_token
- * @def parser::symbol_type Lexer::get_token()
+ * @def parser::symbol_type lexer::get_token()
  * @return int
  */
-parser::symbol_type Lexer::get_token()
+parser::symbol_type lexer::get_token()
 {
     SKIP:
     if((*m_piter) != m_end)
@@ -327,22 +369,22 @@ parser::symbol_type Lexer::get_token()
 
 /**
  * @name get_expr
- * @def const string& Lexer::get_expr() const
+ * @def const string& lexer::get_expr() const
  * @brief get regex expression
  * @return const string&
  */
-const string& Lexer::get_expr() const
+const string& lexer::get_expr() const
 {
     return m_expr;
 }
 
 /**
  * @name  print_token
- * @def   void Lexer::print_token(int id)
+ * @def   void lexer::print_token(int id)
  * @brief print token to stdout
  * @param unsigned long id
  */
-void Lexer::print_token(unsigned long id)
+void lexer::print_token(unsigned long id)
 {
     const token *ptoken = &g_tokens[id];
     cout << "TOKEN={" << setw(5) << left << "\n\t id: "
@@ -354,12 +396,12 @@ void Lexer::print_token(unsigned long id)
 
 /**
  * @name is_id
- * @def bool Lexer::is_id( const token_def& token, const int& id )
+ * @def bool lexer::is_id( const token_def& token, const int& id )
  * @param token
  * @param id
  * @return
  */
-bool Lexer::is_id( const token_def& token, const unsigned long& id )
+bool lexer::is_id( const token_def& token, const unsigned long& id )
 {
        // return (token.id == id);
     return true;
@@ -371,7 +413,7 @@ bool Lexer::is_id( const token_def& token, const unsigned long& id )
  * @param string& current_input
  * @return void
  */
-void Lexer::set_context(string& current_input)
+void lexer::set_context(string& current_input)
 {
     // reinit get_token iterators
     m_rexp = boost::regex( m_expr, boost::regex::extended  );
@@ -379,4 +421,227 @@ void Lexer::set_context(string& current_input)
     m_begin = boost::sregex_iterator( m_text.begin( ), m_text.end( ), m_rexp );
     m_piter = &m_begin;
     m_end = boost::sregex_iterator();
+}
+
+/**
+ * @name g_stringstream
+ */
+stringstream g_stringstream;
+
+/**
+ * @name lexer::on_state
+ * @param state_t* pstate
+ * @return unsigned long
+ */
+inline unsigned long lexer::on_state(state_t *pstate)
+{
+   return -1;
+}
+
+/**
+ * @name lexer::on_token
+ * @brief override virtual, on_token, for each token ...
+ * @param token_def* token
+ */
+inline parser::symbol_type lexer::on_token( token_match* ptoken )
+{
+    switch (gp_state->id)
+    {
+        case UL_INITIAL_STATE:
+        {
+            switch (ptoken->id)
+            {
+            case UL_OPEN_BRACE:  /** open brace, ESCAPE */
+                set_state(&sESCAPED);
+                print_token(ptoken->id);
+                m_stream << "{";
+                //m_stream << " ~"<< ptoken->value << "~ ";
+                return parser::make_OPEN_BRACE();
+            case UL_SKIP_TOKEN:
+                print_token(ptoken->id);
+                cout << "default: SKIP_TOKEN" << endl;
+                return parser::make_OPEN_BRACE();
+            }
+            break;
+        }
+        case UL_ESCAPED_STATE:
+        {
+            switch (ptoken->id)
+            {
+            case UL_CLOSE_BRACE: /** close brace, UNESCAPE */
+                set_state(&sINITIAL);
+                print_token(ptoken->id);
+                m_stream << "}";
+                //m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_CLOSE_BRACE();
+            case UL_IF:
+                set_state(&sIF_BLOCK);
+                print_token(ptoken->id);
+                return parser::make_IF();
+            case UL_DOLLAR_SIGN:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_DOLLAR_SIGN();
+            case UL_PERCENT_SIGN:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_PERCENT_SIGN();
+            case UL_DOT:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_DOT();
+            case UL_HASH_MARK:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_HASH_MARK();
+            case UL_COLON:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_COLON();
+            case UL_COMMA:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_COMMA();
+            case UL_VBAR:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_VBAR();
+            case UL_IDENTIFIER:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_IDENTIFIER(ptoken->value);
+            case UL_EQUAL_SIGN:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_EQUAL_SIGN();
+            case UL_NUMERIC_LITERAL:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_NUMERIC_LITERAL(ptoken->value);
+            case UL_FILE_ATTRIB:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_FILE_ATTRIB(ptoken->value);
+            case UL_INCLUDE: /** INCLUDING */
+                //set_state(&sINCLUDING);
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                //goto SKIP;
+                return parser::make_INCLUDE(ptoken->value);
+            case UL_DOUBLE_QUOTE: /** opening quote, DOUBLE_QUOTE */
+                set_state(&sDOUBLE_QUOTED);
+                m_stream << " ~" << ptoken->value << "~ ";
+            case UL_WHITESPACE:
+            case UL_SKIP_TOKEN:
+                return parser::make_SKIP_TOKEN();
+            }
+            break;
+        }
+        break;
+        case UL_IF_BLOCK_STATE:
+        {
+            switch (ptoken->id)
+            {
+            case UL_SKIP_TOKEN:
+                print_token(ptoken->id);
+                cout << "default: SKIP_TOKEN" << endl;
+                return parser::make_OPEN_BRACE();
+            }
+            break;
+        }
+        break;
+        case UL_DOUBLE_QUOTED_STATE:
+        {
+            switch (ptoken->id)
+            {
+            case UL_ESC_TAB: /** esc sequences in string literals */
+                g_stringstream << "\t";
+                return parser::make_SKIP_TOKEN();
+            case UL_ESC_BACKSLASH:
+                g_stringstream << "\\";
+                return parser::make_SKIP_TOKEN();
+            case UL_ESC_DOUBLE_QUOTE:
+                g_stringstream << "\"";
+                return parser::make_SKIP_TOKEN();
+            case UL_ESC_SINGLE_QUOTE:
+                g_stringstream << "'";
+                return parser::make_SKIP_TOKEN();
+            case UL_VALID_CHAR: /** double quote, valid chars for string literal */
+                g_stringstream << ptoken->value;
+                cout << "char " << g_stringstream.str() << endl;
+                return parser::make_SKIP_TOKEN();
+            case UL_DOUBLE_QUOTE: /** closing quote, DOUBLE_QUOTE -> ESCAPED **/
+            {
+                set_state(&sESCAPED);
+                string qstr = g_stringstream.str();
+                g_stringstream.str("");
+                g_stringstream.clear();
+
+                m_stream << qstr  << "\"";
+                return parser::make_STRING_LITERAL(qstr);
+            }
+            case UL_SKIP_TOKEN:
+                cout << "SKIP_TOKEN" << endl;
+                return parser::make_SKIP_TOKEN();
+            }
+            break;
+        }
+        break;
+        case UL_INCLUDING_STATE:
+        {
+            switch (ptoken->id)
+            {
+                case UL_FILE_ATTRIB:
+                {
+                    const boost::regex re("file=\"([^\"]*)\"");
+                    boost::smatch sm;
+                    boost::regex_search(ptoken->value, sm, re);
+
+                    //const int len = m_matches.size();
+                    g_tokens[ ptoken->id ];
+
+                    m_include_path.clear();
+                    m_include_path = sm[1].str();
+                    cout << "file=" << m_include_path << endl;
+                    string sout;
+                    read_str(m_include_path, sout);
+                    //  append include file output to buffer
+                    m_include_buffer.clear();
+                    m_include_buffer << endl << sout << endl;
+
+                    // set_state(&sESCAPED);
+                    // m_stream << m_suffix;
+                    return parser::make_SKIP_TOKEN();
+                }
+                case UL_CLOSE_BRACE:
+                {
+                    // append suffix after include is inserted/streamed
+                    m_include_buffer << m_suffix;
+                    // set the suffix a.k.a "current search buffer"
+                    m_suffix.clear();
+                    m_suffix = m_include_buffer.str();
+
+                    set_state(&sINITIAL);
+                    m_stream << "}";
+                    //return parser::make_CLOSE_BRACE();
+                    return parser::make_SKIP_TOKEN();
+                }
+                case UL_DOUBLE_QUOTE: /** closing quote, DOUBLE_QUOTE -> ESCAPED */
+                    set_state(&sESCAPED);
+                    return parser::make_STRING_LITERAL(g_stringstream.str());
+                case UL_WHITESPACE:
+                    cout << "WHITESPACE : SKIP_TOKEN" << endl;
+                    return parser::make_SKIP_TOKEN();
+            }
+            break;
+        }
+        break;
+        default:
+        {
+            cout << "ERROR:" << ptoken->id << endl;
+            break;
+        }
+    }
+
+    return parser::make_END();
 }

@@ -12,7 +12,7 @@
 #include <getopt.h>
 #include <set>
 #include "driver.h"
-#include "Lexer.hpp"
+#include "lexer.hpp"
 #include "config.hpp"
 #include "bash_color.hpp"
 #include "pparser.tab.hh"
@@ -42,7 +42,7 @@ static yy::parser yyparser;
  */
 yy::parser::symbol_type lex()
 {
-    return Lexer::instance().get_token();
+    return lexer::instance().get_token();
 }
 
 /**
@@ -115,12 +115,12 @@ int parse_options(const int argc, char* argv[])
     g_config_file = config_file;
     g_input_file = input_file;
 
-    Lexer::instance().init(config_file, &yyparser, input_file, "test/a.txt");
+    lexer::instance().init(config_file, &yyparser, input_file, "test/a.txt");
     if (dump_flag)
     {
         cout << "dumping configuration ... " << endl;
-        Lexer::instance().dump_config();
-        cout << Lexer::instance().get_expr() << endl;
+        lexer::instance().dump_config();
+        cout << lexer::instance().get_expr() << endl;
         cout << "configuration dumped." << endl;
     }
     cout << "start scan ..." << endl;

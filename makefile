@@ -10,7 +10,7 @@ LEX = flex
 #YACC = bison -y
 YACC = bison
 YFLAGS =
-CXXFLAGS = -g -std=gnu++17 -Wc++17-extensions -std=c++20 -fPIC -DLEX_TEST -DCYGWIN
+CXXFLAGS = -g -std=gnu++17 -fPIC -DLEX_TEST -DCYGWIN
 CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
 #LDFLAGS += /usr/lib/libcppunit.dll.a
 LDFLAGS=/usr/local/lib/libfmt.a
@@ -50,9 +50,9 @@ CXXFLAGS+=-DDEBUG -DYYDEBUG
 
 all: $(BLD)/driver
 
-$(BLD)/driver: $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/driver.h $(SRC)/tokens.hpp $(SRC)/Lexer.cpp $(BLD)/Lexer.hpp $(SRC)/utility.cpp $(BLD)/ast.o
+$(BLD)/driver: $(BLD)/pparser.tab.cc $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/driver.h $(SRC)/lexer.cpp $(BLD)/lexer.hpp $(SRC)/utility.cpp $(BLD)/ast.o
 	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/driver\"$(FMT_RESET) ...\n"
-	$(CXX) $(CXXFLAGS) -I$(BLD) -I$(SRC) -I"/home/brian/src/boost_1_89_0" $(BLD)/pparser.tab.o $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/Lexer.cpp $(SRC)/utility.cpp $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) -I$(BLD) -I$(SRC) -I"/home/brian/src/boost_1_89_0" $(BLD)/pparser.tab.cc $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/lexer.cpp $(SRC)/utility.cpp $(LDFLAGS) -o $@
 
 #$(BLD)/pparser.tab.o: $(SRC)/symtab.c $(SRC)/symtab.h $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh
 #	$(CC) $(CCFLAGS) -fPIC -c $< -o $@
@@ -61,9 +61,9 @@ $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
 	$(YACC) $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cc
 
-$(BLD)/pparser.tab.o: $(BLD)/bash_color.hpp $(BLD)/symtab.h $(BLD)/pparser.tab.hh $(BLD)/pparser.tab.cc
-	@echo -e "$(FMT_GREEN)\nBuilding \"parser.tab.o\"$(FMT_RESET) ...\n"
-	$(CXX) $(CXXFLAGS) -g -std=c++14 -I$(BLD) -I$(SRC) -c $(BLD)/pparser.tab.cc -o $@
+# $(BLD)/pparser.tab.o: $(BLD)/bash_color.hpp $(BLD)/symtab.h $(BLD)/pparser.tab.hh $(BLD)/pparser.tab.cc
+# 	@echo -e "$(FMT_GREEN)\nBuilding \"parser.tab.o\"$(FMT_RESET) ...\n"
+# 	$(CXX) $(CXXFLAGS) -g -I$(BLD) -I$(SRC) -c $(BLD)/pparser.tab.cc -o $@
 
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h

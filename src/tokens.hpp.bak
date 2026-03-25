@@ -6,12 +6,13 @@
 #ifndef TOKENS_HPP_
 #define TOKENS_HPP_
 
-#include "Lexer.hpp"
-#include "pparser.tab.hh"
+
 #include <iostream>
 #include <sstream>
 #include <stack>
 #include <boost/regex.hpp>
+#include "lexer.hpp"
+#include "pparser.tab.hh"
 
 using std::cerr;
 using std::cout;
@@ -313,21 +314,21 @@ inline state_t* gp_state = &sINITIAL;
 stringstream g_stringstream;
 
 /**
- * @name Lexer::on_state
+ * @name lexer::on_state
  * @param state_t* pstate
  * @return unsigned long
  */
-inline unsigned long Lexer::on_state(state_t *pstate)
+inline unsigned long lexer::on_state(state_t *pstate)
 {
    return -1;
 }
 
 /**
- * @name Lexer::on_token
+ * @name lexer::on_token
  * @brief override virtual, on_token, for each token ...
  * @param token_def* token
  */
-inline parser::symbol_type Lexer::on_token( token_match* ptoken )
+inline parser::symbol_type lexer::on_token( token_match* ptoken )
 {
     switch (gp_state->id)
     {

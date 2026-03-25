@@ -433,9 +433,9 @@ namespace yy {
       // sub_proc
       // array
       // symbol
-      // built_in
       char dummy2[sizeof (std::string)];
 
+      // built_in
       // attributes
       char dummy3[sizeof (std::vector< std::pair<std::string, std::string> > )];
     };
@@ -823,10 +823,10 @@ namespace yy {
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
-      case symbol_kind::S_built_in: // built_in
         value.move< std::string > (std::move (that.value));
         break;
 
+      case symbol_kind::S_built_in: // built_in
       case symbol_kind::S_attributes: // attributes
         value.move< std::vector< std::pair<std::string, std::string> >  > (std::move (that.value));
         break;
@@ -972,10 +972,10 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
-      case symbol_kind::S_built_in: // built_in
         value.template destroy< std::string > ();
         break;
 
+      case symbol_kind::S_built_in: // built_in
       case symbol_kind::S_attributes: // attributes
         value.template destroy< std::vector< std::pair<std::string, std::string> >  > ();
         break;
@@ -3043,7 +3043,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 192,     ///< Last index in yytable_.
+      yylast_ = 197,     ///< Last index in yytable_.
       yynnts_ = 19,  ///< Number of nonterminal symbols.
       yyfinal_ = 31 ///< Termination state number.
     };
@@ -3179,10 +3179,10 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
-      case symbol_kind::S_built_in: // built_in
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_built_in: // built_in
       case symbol_kind::S_attributes: // attributes
         value.copy< std::vector< std::pair<std::string, std::string> >  > (YY_MOVE (that.value));
         break;
@@ -3278,10 +3278,10 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
-      case symbol_kind::S_built_in: // built_in
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
+      case symbol_kind::S_built_in: // built_in
       case symbol_kind::S_attributes: // attributes
         value.move< std::vector< std::pair<std::string, std::string> >  > (YY_MOVE (s.value));
         break;
