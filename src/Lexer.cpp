@@ -36,13 +36,11 @@ using std::left;
 using std::right;
 using yy::parser;
 
-
 /**
  * @brief global state_t state
  * @name gp_state
  */
 inline state_t* gp_state = &sINITIAL;
-
 
 /**
  * @name init
@@ -249,41 +247,6 @@ void lexer::set_state(state_t* pstate)
     cout << "STATE=" << pstate->id << " : " << pstate->name << endl;
 #endif
 }
-
-// /**
-//  * @name   get_remaining
-//  * @brief  get remaining input
-//  * @param  string& s
-//  * @return void
-//  */
-// inline string* lexer::get_remaining()
-// {
-// 	return &m_suffix;
-// }
-
-
-// /**
-//  * @name   set_remaining
-//  * @brief  set remaining input
-//  * @param  const string& s
-//  * @return void
-//  */
-// void lexer::set_remaining(const string& s)
-// {
-//     m_suffix.clear();
-//     m_suffix = s;
-// }
-
-// /**
-//  * @name   get_include_buffer
-//  * @brief  get remaining input
-//  * @return stringstream*
-//  */
-// stringstream* lexer::get_include_buffer()
-// {
-//     m_include_buffer.clear();
-//     return &m_include_buffer;
-// }
 
 /**
  * @name  get_token

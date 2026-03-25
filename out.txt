@@ -1,0 +1,635 @@
+[34mload configuration file="[0m[32m[3mtest/scan2.txt"[0m
+[34minput files="[0m[32m[3mtest/scan2.txt"[0m
+EXPR="(\{)"
+STATE=16 : INITIAL
+start scan ...
+MATCH="" : "{" : "include file="test/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+TOKEN={
+	 id:         20
+	 name: OPEN_BRACE
+	 stype:  
+	 rexp:         \{       
+}
+MATCH="" : "include" : " file="test/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:         80
+	 name:    INCLUDE
+	 stype:  
+	 rexp:    include       
+}
+MATCH="" : " " : "file="test/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+skipping... 
+MATCH="" : "file" : "="test/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:         81
+	 name: FILE_ATTRIB
+	 stype:  
+	 rexp:       file       
+}
+MATCH="" : "=" : ""test/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:         19
+	 name: EQUAL_SIGN
+	 stype:  
+	 rexp:          =       
+}
+MATCH="" : """ : "test/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(")|([A-Za-z0-9*@_~+-./])"
+STATE=128 : DOUBLE_QUOTED
+skipping... 
+MATCH="" : "t" : "est/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char t
+skipping... 
+MATCH="" : "e" : "st/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char te
+skipping... 
+MATCH="" : "s" : "t/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char tes
+skipping... 
+MATCH="" : "t" : "/scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test
+skipping... 
+MATCH="" : "/" : "scan.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/
+skipping... 
+MATCH="" : "s" : "can.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/s
+skipping... 
+MATCH="" : "c" : "an.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/sc
+skipping... 
+MATCH="" : "a" : "n.txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/sca
+skipping... 
+MATCH="" : "n" : ".txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/scan
+skipping... 
+MATCH="" : "." : "txt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/scan.
+skipping... 
+MATCH="" : "t" : "xt"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/scan.t
+skipping... 
+MATCH="" : "x" : "t"}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/scan.tx
+skipping... 
+MATCH="" : "t" : ""}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+char test/scan.txt
+skipping... 
+MATCH="" : """ : "}
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+[33mPARSER name_value: | FILE_ATTRIB="file" EQUAL_SIGN STRING_LITERAL="test/scan.txt"[0m
+[33mPARSER attribute: | push -> attrib={name="file"; value="test/scan.txt"}
+[0m
+MATCH="" : "}" : "
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\{)"
+STATE=16 : INITIAL
+TOKEN={
+	 id:         22
+	 name: CLOSE_BRACE
+	 stype:  
+	 rexp:         \}       
+}
+[33mPARSER built_in: | INCLUDE FILE_ATTRIB="INCLUDE_FILE_TEST" EQUAL STRING_LITERAL=""[0m
+[33mPARSER block: | OPEN_BRACE built_in CLOSE_BRACE[0m
+EXPR="(\{)"
+STATE=16 : INITIAL
+[31mfile = "[3mtest/scan.txt"[0m
+[33mPARSER blocks: | block[0m
+MATCH="
+" : "{" : "$xx}
+{$yy}
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+TOKEN={
+	 id:         20
+	 name: OPEN_BRACE
+	 stype:  
+	 rexp:         \{       
+}
+MATCH="" : "$" : "xx}
+{$yy}
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:          9
+	 name: DOLLAR_SIGN
+	 stype:  
+	 rexp:         \$       
+}
+MATCH="" : "xx" : "}
+{$yy}
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:        116
+	 name: IDENTIFIER
+	 stype:  
+	 rexp: [A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*       
+}
+[33mPARSER symbol: | IDENTIFIER="xx"[0m
+MATCH="" : "}" : "
+{$yy}
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\{)"
+STATE=16 : INITIAL
+TOKEN={
+	 id:         22
+	 name: CLOSE_BRACE
+	 stype:  
+	 rexp:         \}       
+}
+[33mPARSER block: | OPEN_BRACE symbol CLOSE_BRACE[0m
+[33mPARSER blocks: | blocks block[0m
+config_file: test/scan2.txt
+input file: test/scan2.txt
+input text: 
+{$yy}
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+
+regexp: (\{)
+state: INITIAL
+MATCH="
+" : "{" : "$yy}
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+TOKEN={
+	 id:         20
+	 name: OPEN_BRACE
+	 stype:  
+	 rexp:         \{       
+}
+MATCH="" : "$" : "yy}
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:          9
+	 name: DOLLAR_SIGN
+	 stype:  
+	 rexp:         \$       
+}
+MATCH="" : "yy" : "}
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:        116
+	 name: IDENTIFIER
+	 stype:  
+	 rexp: [A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*       
+}
+[33mPARSER symbol: | IDENTIFIER="yy"[0m
+MATCH="" : "}" : "
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\{)"
+STATE=16 : INITIAL
+TOKEN={
+	 id:         22
+	 name: CLOSE_BRACE
+	 stype:  
+	 rexp:         \}       
+}
+[33mPARSER block: | OPEN_BRACE symbol CLOSE_BRACE[0m
+[33mPARSER blocks: | blocks block[0m
+config_file: test/scan2.txt
+input file: test/scan2.txt
+input text: 
+{$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+
+regexp: (\{)
+state: INITIAL
+MATCH="
+" : "{" : "$zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+TOKEN={
+	 id:         20
+	 name: OPEN_BRACE
+	 stype:  
+	 rexp:         \{       
+}
+MATCH="" : "$" : "zz}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:          9
+	 name: DOLLAR_SIGN
+	 stype:  
+	 rexp:         \$       
+}
+MATCH="" : "zz" : "}
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:        116
+	 name: IDENTIFIER
+	 stype:  
+	 rexp: [A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*       
+}
+[33mPARSER symbol: | IDENTIFIER="zz"[0m
+MATCH="" : "}" : "
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\{)"
+STATE=16 : INITIAL
+TOKEN={
+	 id:         22
+	 name: CLOSE_BRACE
+	 stype:  
+	 rexp:         \}       
+}
+[33mPARSER block: | OPEN_BRACE symbol CLOSE_BRACE[0m
+[33mPARSER blocks: | blocks block[0m
+config_file: test/scan2.txt
+input file: test/scan2.txt
+input text: 
+
+
+AAA {$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+
+regexp: (\{)
+state: INITIAL
+MATCH="
+
+
+AAA " : "{" : "$abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+TOKEN={
+	 id:         20
+	 name: OPEN_BRACE
+	 stype:  
+	 rexp:         \{       
+}
+MATCH="" : "$" : "abc=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:          9
+	 name: DOLLAR_SIGN
+	 stype:  
+	 rexp:         \$       
+}
+MATCH="" : "abc" : "=123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:        116
+	 name: IDENTIFIER
+	 stype:  
+	 rexp: [A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*       
+}
+[33mPARSER symbol: | IDENTIFIER="abc"[0m
+MATCH="" : "=" : "123} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:         19
+	 name: EQUAL_SIGN
+	 stype:  
+	 rexp:          =       
+}
+MATCH="" : "123" : "} BBB
+{$xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:         51
+	 name: NUMERIC_LITERAL
+	 stype:  
+	 rexp:     [0-9]+       
+}
+[33mPARSER assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL[0m
+MATCH="" : "}" : " BBB
+{$xyz="BOO"}
+{$x}
+"
+EXPR="(\{)"
+STATE=16 : INITIAL
+TOKEN={
+	 id:         22
+	 name: CLOSE_BRACE
+	 stype:  
+	 rexp:         \}       
+}
+[33mPARSER block: | OPEN_BRACE assign_stmt CLOSE_BRACE[0m
+[33mPARSER blocks: | blocks block[0m
+config_file: test/scan2.txt
+input file: test/scan2.txt
+input text:  BBB
+{$xyz="BOO"}
+{$x}
+
+regexp: (\{)
+state: INITIAL
+MATCH=" BBB
+" : "{" : "$xyz="BOO"}
+{$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+TOKEN={
+	 id:         20
+	 name: OPEN_BRACE
+	 stype:  
+	 rexp:         \{       
+}
+MATCH="" : "$" : "xyz="BOO"}
+{$x}
+"
+TOKEN={
+	 id:          9
+	 name: DOLLAR_SIGN
+	 stype:  
+	 rexp:         \$       
+}
+MATCH="" : "xyz" : "="BOO"}
+{$x}
+"
+TOKEN={
+	 id:        116
+	 name: IDENTIFIER
+	 stype:  
+	 rexp: [A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*       
+}
+[33mPARSER symbol: | IDENTIFIER="xyz"[0m
+MATCH="" : "=" : ""BOO"}
+{$x}
+"
+TOKEN={
+	 id:         19
+	 name: EQUAL_SIGN
+	 stype:  
+	 rexp:          =       
+}
+MATCH="" : """ : "BOO"}
+{$x}
+"
+EXPR="(")|([A-Za-z0-9*@_~+-./])"
+STATE=128 : DOUBLE_QUOTED
+skipping... 
+MATCH="" : "B" : "OO"}
+{$x}
+"
+char B
+skipping... 
+MATCH="" : "O" : "O"}
+{$x}
+"
+char BO
+skipping... 
+MATCH="" : "O" : ""}
+{$x}
+"
+char BOO
+skipping... 
+MATCH="" : """ : "}
+{$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+[33mPARSER assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL=[0mBOO
+MATCH="" : "}" : "
+{$x}
+"
+EXPR="(\{)"
+STATE=16 : INITIAL
+TOKEN={
+	 id:         22
+	 name: CLOSE_BRACE
+	 stype:  
+	 rexp:         \}       
+}
+[33mPARSER block: | OPEN_BRACE assign_stmt CLOSE_BRACE[0m
+[33mPARSER blocks: | blocks block[0m
+config_file: test/scan2.txt
+input file: test/scan2.txt
+input text: 
+{$x}
+
+regexp: (\{)
+state: INITIAL
+MATCH="
+" : "{" : "$x}
+"
+EXPR="(\$)|(")|(#)|(file)|(include)|([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)|(\|)|(:)|(\,)|(\.)|()|([0-9]+)|(\})|(=)|([ \t\n]*)|(>)|()|(>=)|(<=)|(\+)|(-)|(\*)|(\*)|(\^)"
+STATE=64 : ESCAPED
+TOKEN={
+	 id:         20
+	 name: OPEN_BRACE
+	 stype:  
+	 rexp:         \{       
+}
+MATCH="" : "$" : "x}
+"
+TOKEN={
+	 id:          9
+	 name: DOLLAR_SIGN
+	 stype:  
+	 rexp:         \$       
+}
+MATCH="" : "x" : "}
+"
+TOKEN={
+	 id:        116
+	 name: IDENTIFIER
+	 stype:  
+	 rexp: [A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*       
+}
+[33mPARSER symbol: | IDENTIFIER="x"[0m
+MATCH="" : "}" : "
+"
+EXPR="(\{)"
+STATE=16 : INITIAL
+TOKEN={
+	 id:         22
+	 name: CLOSE_BRACE
+	 stype:  
+	 rexp:         \}       
+}
+[33mPARSER block: | OPEN_BRACE symbol CLOSE_BRACE[0m
+[33mPARSER blocks: | blocks block[0m
+config_file: test/scan2.txt
+input file: test/scan2.txt
+input text: 
+
+regexp: (\{)
+state: INITIAL
+[33mPARSER file: | blocks END_OF_FILE[0m
+[33m*******************************************************[7m[0m
+[33m*                      End Of File                    *[7m[0m
+[33m*******************************************************[7m[0m
+[33mPARSER files: | file[0m
+[32mPARSER complier: | files[0m
+[33m*********************** STOPPING **********************[7m[0m
+[33m*                     Terminating.                    *[7m[0m
+[33m************************* Done ************************[7m[0m
+finished scanning. 

@@ -203,8 +203,10 @@ block:
                                                                     string* p_rstr = lexer::instance().get_remaining();
                                                                     stringstream* include_buffer = lexer::instance().get_include_buffer();
                                                                     *include_buffer << endl << sout << endl << *p_rstr;
+
+                                                                    cout << FMT_FG_RED << include_buffer->str() << FMT_RESET;
                                                                     // set the suffix a.k.a "current search buffer"
-                                                                    lexer::instance().set_remaining( *p_rstr );
+                                                                    lexer::instance().set_remaining( (*include_buffer).str() );
                                                                     lexer::instance().set_state(&sINITIAL);
                                                                     cout << FMT_FG_RED << "file = \"" << FMT_ITALIC << include_file_path << "\"" << FMT_RESET << endl;
                                                                 }
@@ -477,50 +479,17 @@ modifier:
  * @name built-in
  */
 built_in:
-    CONFIG_LOAD attributes                                      {
-                                                                    cout << FMT_FG_YELLOW << "PARSER built_in: | CONFIG_LOAD FILE_ATTRIB=\""
-                                                                        << $1 << "\" EQUAL STRING_LITERAL=\"" << "TEST" << "\""
-                                                                        << FMT_RESET << endl;
-                                                                }
+    CONFIG_LOAD attributes                                      {   cout << FMT_FG_YELLOW << "PARSER built_in: | CONFIG_LOAD FILE_ATTRIB=\"" << $1 << "\" EQUAL STRING_LITERAL=\"" << "TEST" << "\"" << FMT_RESET << endl;  }
     | INCLUDE attributes                                        {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER built_in: | INCLUDE FILE_ATTRIB=\"" << "INCLUDE_FILE_TEST" << "\" EQUAL STRING_LITERAL=\"\""
-                                                                        << FMT_RESET << endl;
+                                                                    cout << FMT_FG_YELLOW << "PARSER built_in: | INCLUDE attributes" << FMT_RESET << endl;
                                                                     $$ = $2;
                                                                 }
-    | REQUIRE attributes                                        {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""
-                                                                        << FMT_RESET << endl;
-
-                                                                }
-    | REQUIRE_ONCE attributes                                   {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER built_in: | REQUIRE_ONCE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""
-                                                                        << FMT_RESET << endl;
-
-                                                                }
-    | INSERT attributes                                         {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER built_in: | INSERT FILE_ATTRIB=\"\" EQUAL STRING_LITERAL=\"\""
-                                                                        << FMT_RESET << endl;
-
-                                                                }
-    | ASSIGN attributes                                         {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER built_in: | ASSIGN FILE_ATTRIB=\"\" EQUAL STRING_LITERAL=\"\""
-                                                                        << FMT_RESET << endl;
-                                                                }
-     | ISSET attributes                                         {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER built_in: | ISSET FILE_ATTRIB=\"\" EQUAL STRING_LITERAL=\"\""
-                                                                        << FMT_RESET << endl;
-                                                                }
-     | VERSION attributes                                       {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER built_in: | VERSION FILE_ATTRIB=\"\" EQUAL STRING_LITERAL=\"\""
-                                                                        << FMT_RESET << endl;
-                                                                }
+    | REQUIRE attributes                                        { cout << FMT_FG_YELLOW << "PARSER built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+    | REQUIRE_ONCE attributes                                   { cout << FMT_FG_YELLOW << "PARSER built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+    | INSERT attributes                                         { cout << FMT_FG_YELLOW << "PARSER built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+    | ASSIGN attributes                                         { cout << FMT_FG_YELLOW << "PARSER built_in: | ASSIGN FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+    | ISSET attributes                                          { cout << FMT_FG_YELLOW << "PARSER built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+    | VERSION attributes                                        { cout << FMT_FG_YELLOW << "PARSER built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
                                                                 ;
 /**
  * @name attributes
@@ -631,21 +600,7 @@ int yyerror(char * s)
 
 namespace yy
 {
-    /* auto parser::yylex() -> yy::parser::symbol_type
-    {
-        static int i = 0;
-        static int count = 0;
-        switch(int stage = count++)
-        {
-            case 0:
-                return parser::make_NUMBER(666);
-            case 1:
-                return parser::make_END();
-        }
-        return 0;
-    } */
-
-    parser::symbol_type yylex()
+    auto yylex() -> yy::parser::symbol_type
     {
         return lex();
     }

@@ -1,4 +1,9 @@
+{ ~include~  ~file~  ~=~  ~"~ test/scan.txt"}
+{ ~$~  ~xx~ }
+{ ~$~  ~yy~ }
+{ ~$~  ~zz~ }
+
+
 AAA { ~$~  ~abc~  ~=~  ~123~ } BBB
 { ~$~  ~xyz~  ~=~  ~"~ BOO"}
 { ~$~  ~x~ }
-{ ~include~  ~file~  ~=~  ~"~ test/scan.txt"}

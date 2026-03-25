@@ -1,4 +1,4 @@
+{include file="test/scan.txt"}
 AAA {$abc=123} BBB
 {$xyz="BOO"}
 {$x}
-{include file="test/scan.txt"}
