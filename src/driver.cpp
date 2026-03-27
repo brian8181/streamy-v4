@@ -28,7 +28,7 @@ constexpr int CONFIG_IDX_OFFSET = 0;
 static string g_config_file;
 static string g_input_file;
 static string g_output_file;
-static bool file_flag = false;
+static bool config_flag = false;
 static bool output_file_flag = false;
 static bool dump_flag = false;
 static bool verbose_flag = false;
@@ -54,11 +54,11 @@ yy::parser::symbol_type lex()
 int parse_options(const int argc, char* argv[])
 {
     int option;
-    const auto options_string = "hVdf:o:v";
+    const auto options_string = "hVdc:o:v";
     const struct option long_options[] = {
         {"help",        no_argument, nullptr,   'h'},
         {"version",     no_argument, nullptr,   'V'},
-        {"file",        0, nullptr,   'f'},
+        {"config",        0, nullptr,   'c'},
         {"out",        0, nullptr,   'o'},
         {"dump",        no_argument, nullptr,   'd'},
         {"verbose",        no_argument, nullptr,   'v'},
@@ -75,8 +75,8 @@ int parse_options(const int argc, char* argv[])
             case 'V':
                 cout << "Version 0.0.1" << endl;
                 return 0;
-             case 'f':
-                file_flag = true;
+             case 'c':
+                config_flag = true;
                 g_config_file = optarg;
                 break;
             case 'o':
@@ -101,21 +101,17 @@ int parse_options(const int argc, char* argv[])
     // symbol_table["z"] = "3";
 
     // configure driver ...
-    string config_file = file_flag ? g_config_file : ".config/default.txt";
     if( argc > (optind + CONFIG_IDX_OFFSET) )
-        config_file = argv[optind + CONFIG_IDX_OFFSET];
-    cout << FMT_FG_BLUE << "load configuration file=\"" << FMT_RESET
-         << FMT_FG_GREEN << FMT_ITALIC <<  config_file << "\"" << FMT_RESET << endl;
+        g_config_file = argv[optind + CONFIG_IDX_OFFSET];
 
     // input file ...
-    const string input_file = argv[optind + SRC_IDX_OFFSET];
+    if( argc > (optind + SRC_IDX_OFFSET))
+        g_input_file = argv[optind + SRC_IDX_OFFSET];
+
     cout << FMT_FG_BLUE << "input files=\"" << FMT_RESET
-         << FMT_FG_GREEN << FMT_ITALIC <<  input_file << "\"" << FMT_RESET << endl;
+         << FMT_FG_GREEN << FMT_ITALIC <<  g_input_file << "\"" << FMT_RESET << endl;
 
-    g_config_file = config_file;
-    g_input_file = input_file;
-
-    lexer::instance().init(config_file, &yyparser, input_file, "test/a.txt");
+    lexer::instance().init(g_config_file, &yyparser, g_input_file, "test/a.txt");
     if (dump_flag)
     {
         cout << "dumping configuration ... " << endl;
@@ -189,64 +185,3 @@ int main(int argc, char* argv[])
 		std::exit(-1);
 	}
 }
-
-#ifdef BISON_BRIDGE
-
-#include <ctype.h>
-#include <stdlib.h>
-#define NUM 1
-#define YYEOF 0
-
-char* yylval;
-int yyparse();
-
-/**
- * @brief
- * @param
- * @return
- */
-int yylex (void)
-{
-    int c = getchar ();
-    /* skip white space */
-    while (c == ' ' || c == '\t')
-        c = getchar ();
-    /* Process numbers. */
-    if (c == '.' || isdigit (c))
-    {
-        ungetc (c, stdin);
-        if (scanf ("%lf", &yylval) != 1)
-            abort ();
-        return NUM;
-    }
-    /* return end-of-input */
-    else if (c == EOF)
-        return YYEOF;
-    /* return a single char */
-    else
-        return c;
-}
-
-/**
- * @brief
- * @param
- */
-// void yyerror (char const *s)
-// {
-//     printf("%s\n", s);
-// }
-
-
-/**
- * @brief main function
- * @param argc : param count in argv
- * @param argv : command line parameters
- * @return 0 success : or error
- */
-
-int __main(int argc, char* argv[])
-{
-    return yyparse();
-}
-
-#endif

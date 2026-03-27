@@ -6,6 +6,20 @@
 #ifndef Lexer_HPP_
 #define Lexer_HPP_
 
+#ifdef _MSC_VER
+    #define forceinline __forceinline
+#elif defined(__GNUC__)
+    #define forceinline inline __attribute__((__always_inline__))
+#elif defined(__CLANG__)
+    #if __has_attribute(__always_inline__)
+        #define forceinline inline __attribute__((__always_inline__))
+    #else
+        #define forceinline inline
+    #endif
+#else
+    #define forceinline inline
+#endif
+
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -41,13 +55,15 @@ typedef struct token_def
 
 typedef token_def token;
 
-struct token_match
+struct token_match // : public token_def
 {
 	unsigned long id;
+    string file;
 	int pos;
 	int line;
+    int col;
 	string value;
-	token_def* token;
+	token_def* token; // ?
 };
 
 typedef struct state_t
@@ -59,9 +75,8 @@ typedef struct state_t
 // bkp todo
 typedef struct context_t
 {
-	std::string&               scan_file;
-	std::string&               search_text;
-	boost::regex&              rexp;
+	std::string&               input_text;
+    boost::regex&              rexp;
 	boost::sregex_iterator&    begin;
 	boost::sregex_iterator&    end;
 	boost::sregex_iterator*    p_iter;
@@ -80,8 +95,6 @@ const string CONFIG_SECTIONS      = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>grou
 const string CONFIG_PAIR          = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
 const string CONFIG_COMMENT       = R"(^\s*#.*$)";
 const string CONFIG               = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
-
-
 /**
  * @brief token definitions : unsigned long integers
  */
@@ -206,8 +219,6 @@ const string CONFIG               = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comme
 #define UL_NULL 0x0ul
 #define EMPTY_STRING string("")
 #define S_TYPE "string"
-
-
 /**
  * @name g_tokens_all
  * @brief global token vector - all tokens
@@ -218,13 +229,17 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_UNESCAPED_TEXT,     token{"UNESCAPED_TEXT",     S_TYPE,  R"([^{]+)",                                     }},
     {UL_WHITESPACE,         token{"WHITESPACE",         S_TYPE,  R"([ \t\n]*)",                                  }},
     {UL_DOLLAR_SIGN,        token{"DOLLAR_SIGN",        S_TYPE,  R"(\$)",                                        }},
-    //{UL_FILE_ATTRIB,        token{"FILE_ATTRIB",        S_TYPE, "file=\"[^\"]*\"",                              }},
-    {UL_FILE_ATTRIB,        token{"FILE_ATTRIB",        S_TYPE,  R"(file)",                                        }},
-    {UL_VALID_CHAR,         token{"VALID_CHAR",         S_TYPE,  R"([A-Za-z0-9*@_~+-./])",                         }},
+    {UL_FILE_ATTRIB,        token{"FILE_ATTRIB",        S_TYPE,  R"(file)",                                      }},
+    {UL_VALID_CHAR,         token{"VALID_CHAR",         S_TYPE,  R"([A-Za-z0-9*@_~+-./ ])",                      }},
     {UL_NUMERIC_LITERAL,    token{"NUMERIC_LITERAL",    S_TYPE,  R"([0-9]+)",                                    }},
     {UL_DOUBLE_QUOTE,       token{"DOUBLE_QUOTE",       S_TYPE,  R"(")",                                         }},
+    {UL_CAPITALIZE,         token{"UL_CAPITALIZE",      S_TYPE,  R"(capitalize)",                                }},
+    {UL_TILDE,              token{"TILDE",              S_TYPE,  R"(~)",                                         }},
+    {UL_EXCLAMATION,        token{"EXCLAMATION",        S_TYPE,  R"(!)",                                         }},
+    {UL_AT_SYMBOL,          token{"AT_SYMBOL",          S_TYPE,  R"(@)",                                         }},
+    {UL_TIC_MARK,           token{"TIC_MARK",           S_TYPE,  R"(`)",                                         }},
     {UL_CARROT,             token{"CARROT",             S_TYPE,  R"(\^)",                                        }},
-    {UL_AMPERSAND,          token{"AMPERSAND",          S_TYPE,  R"(\*)",                                        }},
+    {UL_AMPERSAND,          token{"AMPERSAND",          S_TYPE,  R"(&)",                                         }},
     {UL_ASTERISK,           token{"ASTERISK",           S_TYPE,  R"(\*)",                                        }},
     {UL_OPEN_PAREN,         token{"LPAREN",             S_TYPE,  R"(\()",                                        }},
     {UL_CLOSE_PAREN,        token{"RPAREN",             S_TYPE,  R"(\))",                                        }},
@@ -246,15 +261,13 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_COMMA,              token{"COMMA",              S_TYPE,  R"(\,)",                                        }},
     {UL_DOT,                token{"DOT",                S_TYPE,  R"(\.)",                                        }},
     {UL_SLASH,              token{"SLASH",              S_TYPE,  R"(/)",                                         }},
-    // EXCLACMATION TILDE TIC_MARK
     {UL_GREATER_THAN_EQUAL, token{"GREATER_THAN_EQUAL", S_TYPE,  R"(>=)",                                        }},
     {UL_LESS_THAN_EQUAL,    token{"LESS_THAN_EQUAL",    S_TYPE,  R"(<=)",                                        }},
-    {UL_STRING_LITERAL,     token{"STRING_LITERAL",     S_TYPE,  R"("[A-Za-z0-9*@_.~+-/]+")",                     }},
+    {UL_STRING_LITERAL,     token{"STRING_LITERAL",     S_TYPE,  R"("[A-Za-z0-9*@_.~+-/ ]+")",                   }},
     {UL_ARRAY,              token{"ARRAY",              S_TYPE,  R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", }},
     {UL_IDENTIFIER,         token{"IDENTIFIER",         S_TYPE,  R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)",          }},
     {UL_COMMENT,            token{"COMMENT",            S_TYPE,  R"(\{[ ]*\*[^*}]*\*[ ]*\})",                    }},
     {UL_CONST_SYMBOL,       token{"CONST_SYMBOL",       S_TYPE,  R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)",      }},
-    {UL_ANYTHING,           token{"ANYTHING",           S_TYPE,  ".",                                            }},
     {UL_IF,                 token{"IF",                 S_TYPE,  "if",                                           }},
     {UL_ELSEIF,             token{"ELSEIF",             S_TYPE,  "elseif",                                       }},
     {UL_WHILE,              token{"WHILE",              S_TYPE,  "while",                                        }},
@@ -269,8 +282,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_FROM_ATTRIB,        token{"FROM_ATTRIB",        S_TYPE,  R"(from='[^']*')",                              }},
     {UL_ITEM_ATTRIB,        token{"ITEM_ATTRIB",        S_TYPE,  R"(item='[^']*')",                              }},
     {UL_KEY_ATTRIB,         token{"KEY_ATTRIB",         S_TYPE,  R"(key='[^']*')",                               }},
-    {UL_NAME_ATTRIB,        token{"NAME_ATTRIB",        S_TYPE,  R"(name='[^']*")",                            }},
-    {UL_CAPITALIZE,         token{"CAPITALIZE",         S_TYPE,  "capitalize",                                   }},
+    {UL_NAME_ATTRIB,        token{"NAME_ATTRIB",        S_TYPE,  R"(name='[^']*")",                              }},
     {UL_COUNT_PARAGRAPHS,   token{"COUNT_PARAGRAPHS",   S_TYPE,  "count_paragraphs",                             }},
     {UL_COUNT_SENTENCES,    token{"COUNT_SENTENCES",    S_TYPE,  "count_sentences",                              }},
     {UL_COUNT_WORDS,        token{"COUNT_WORDS",        S_TYPE,  "count_words",                                  }},
@@ -288,9 +300,8 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_STRING_FORMAT,      token{"STRING_FORMAT",      S_TYPE,  R"(string_format)",                             }},
     {UL_STRIP_TAGS,         token{"STRIP_TAGS",         S_TYPE,  R"(strip_tags)",                                }},
     {UL_WORDWRAP,           token{"WORDWRAP",           S_TYPE,  R"(wordwrap)",                                  }},
-    {UL_TRUNCATE,           token{"TRUNCATE",           S_TYPE,  R"(truncate)",                                  }}
+    {UL_TRUNCATE,           token{"TRUNCATE",           S_TYPE,  R"(truncate)",                                  }},
 };
-
 /**
  * @brief unsigned long states
  */
@@ -303,8 +314,6 @@ constexpr unsigned long UL_INCLUDING_STATE = 0x200;
 constexpr unsigned long UL_IF_BLOCK_STATE = 0x400;
 constexpr unsigned long UL_IF_CONDITION_STATE = 0x800;
 constexpr unsigned long UL_IF_CONDITION_STATE_AND_ESC = UL_IF_CONDITION_STATE | UL_ESCAPED_STATE;
-
-
 /**
  * @brief state_t states
  */
@@ -316,29 +325,29 @@ inline state_t sSINGLE_QUOTED = {UL_SINGLE_QUOTED_STATE, "SINGLE_QUOTED"};
 inline state_t sINCLUDING = {UL_INCLUDING_STATE, "INCLUDING"};
 inline state_t sIF_BLOCK = {UL_IF_BLOCK_STATE, "IF_BLOCK"};
 inline state_t sIF_CONDITION = {UL_IF_CONDITION_STATE, "IF_CONDITION"};
-
 /**
  * @brief token list -> by state
  */
 inline vector<unsigned long> INITIAL_STATE_TOKENS = {UL_OPEN_BRACE};
+
+inline vector<unsigned long> ESCAPED_STATE_TOKENS = {   UL_DOLLAR_SIGN, UL_DOUBLE_QUOTE, UL_HASH_MARK, UL_FILE_ATTRIB, UL_INCLUDE, UL_CAPITALIZE, UL_TRUNCATE, UL_CONST_SYMBOL, UL_IDENTIFIER,
+                                                        UL_COMMA, UL_DOT, UL_PERCENT_SIGN, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE, UL_EQUAL_SIGN,
+                                                        UL_GREATER_THAN, UL_LESS_THAN, UL_GREATER_THAN_EQUAL, UL_LESS_THAN_EQUAL, UL_PLUS_SIGN, UL_DASH, UL_AMPERSAND, UL_ASTERISK, UL_CARROT,
+                                                        UL_VBAR, UL_COLON, UL_STRIP,
+                                                        UL_WHITESPACE    };
+
 inline vector<unsigned long> COMMENT_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
-
-inline vector<unsigned long> ESCAPED_STATE_TOKENS = {   UL_DOLLAR_SIGN, UL_DOUBLE_QUOTE, UL_HASH_MARK, UL_FILE_ATTRIB, UL_INCLUDE, UL_IDENTIFIER, UL_VBAR, UL_COLON, UL_COMMA, UL_DOT, UL_PERCENT_SIGN, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE, UL_EQUAL_SIGN, UL_WHITESPACE,
-                                                        UL_GREATER_THAN, UL_LESS_THAN, UL_GREATER_THAN_EQUAL, UL_LESS_THAN_EQUAL, UL_PLUS_SIGN, UL_DASH, UL_AMPERSAND, UL_ASTERISK, UL_CARROT };
-
 inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {UL_DOUBLE_QUOTE, UL_VALID_CHAR};
 inline vector<unsigned long> SINGLE_QUOTED_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_VALID_CHAR, UL_SINGLE_QUOTE, UL_DOUBLE_QUOTE};
 inline vector<unsigned long> INCLUDING_STATE_TOKENS = {UL_FILE_ATTRIB, UL_WHITESPACE};
 inline vector<unsigned long> IF_BLOCK_STATE_TOKENS = {UL_CLOSE_BRACE, UL_IDENTIFIER, UL_DOLLAR_SIGN};
 inline vector<unsigned long> IF_CONDITION_STATE_TOKENS = {UL_CLOSE_BRACE, UL_IDENTIFIER, UL_DOLLAR_SIGN};
-
 /**
  * @brief state_t states vector
  * @name g_states
  */
 inline vector<state_t *> g_states{&sINITIAL,       &sCOMMENT,   &sESCAPED,  &sDOUBLE_QUOTED,
                                   &sSINGLE_QUOTED, &sINCLUDING, &sIF_BLOCK, &sIF_CONDITION};
-
 /**
  * @brief state table : unsigned long -> state_t
  * @name g_state_tab
@@ -351,7 +360,6 @@ inline map<unsigned long, state_t *> g_state_by_id = {{UL_INITIAL_STATE, &sINITI
                                                     {UL_INCLUDING_STATE, &sINCLUDING},
                                                     {UL_IF_BLOCK_STATE, &sIF_BLOCK},
                                                     {UL_IF_CONDITION_STATE, &sIF_CONDITION} };
-
 /**
  * @brief global state: state_id -> states
  * @name g_state_tokens_tab
@@ -364,7 +372,6 @@ inline map<unsigned long, vector<unsigned long>*> g_tokens_by_state_id {{UL_INIT
                                                                      {UL_INCLUDING_STATE, &INCLUDING_STATE_TOKENS},
                                                                      {UL_IF_BLOCK_STATE, &IF_BLOCK_STATE_TOKENS},
                                                                      {UL_IF_CONDITION_STATE, &IF_CONDITION_STATE_TOKENS} };
-
 
 /**
   * @brief class lexer (singleton)
@@ -451,7 +458,7 @@ void set_state(state_t* pstate);
  */
 inline string* get_remaining()
 {
-	return &m_suffix;
+    return &m_suffix;
 }
 
 /**
@@ -564,13 +571,14 @@ protected:
     string                                      m_suffix;
 	stringstream                                m_sout;
 
-	//context_t                                 m_current_context;
+	//context_t                                   m_context;
 	//stack<string>                             filestack;
 
 	// misc
 	ofstream m_stream;
 	stringstream                                m_include_buffer;
 	string                                      m_include_path;
+    vector<string>                              m_line_buffer;
 };
 
 #endif

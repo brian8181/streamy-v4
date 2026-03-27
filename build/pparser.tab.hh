@@ -377,6 +377,10 @@ namespace yy {
       // attrib
       char dummy1[sizeof ( std::pair<std::string, std::string> )];
 
+      // PLUS_SIGN
+      // MINUS
+      char dummy2[sizeof (char)];
+
       // CAPTURE
       // CONFIG_LOAD
       // INCLUDE
@@ -391,6 +395,21 @@ namespace yy {
       // VERSION
       // CYCLE
       // COUNTER
+      // INDIRECT_MEMBER
+      // ARRAY
+      // STRING_LITERAL
+      // NUMERIC_LITERAL
+      // IDENTIFIER
+      // CONST_ID
+      // CONST_SYMBOL
+      // VAR_ATTRIB
+      // VALUE_ATTRIB
+      // FILE_ATTRIB
+      // FROM_ATTRIB
+      // KEY_ATTRIB
+      // NAME_ATTRIB
+      // ITEM_ATTRIB
+      // FILE_NAME
       // CAPITALIZE
       // CAT
       // COUNT_CHARACTERS
@@ -412,20 +431,6 @@ namespace yy {
       // STRIP_TAGS
       // TRUNCATE
       // WORDWRAP
-      // INDIRECT_MEMBER
-      // STRING_LITERAL
-      // NUMERIC_LITERAL
-      // IDENTIFIER
-      // CONST_ID
-      // VAR_ATTRIB
-      // VALUE_ATTRIB
-      // FILE_ATTRIB
-      // FROM_ATTRIB
-      // KEY_ATTRIB
-      // NAME_ATTRIB
-      // ITEM_ATTRIB
-      // FILE_NAME
-      // UNESCAPED_TEXT
       // assign_stmt
       // stmt
       // expr
@@ -433,11 +438,13 @@ namespace yy {
       // sub_proc
       // array
       // symbol
-      char dummy2[sizeof (std::string)];
+      // modifier
+      // attrib_name
+      char dummy3[sizeof (std::string)];
 
       // built_in
       // attributes
-      char dummy3[sizeof (std::vector< std::pair<std::string, std::string> > )];
+      char dummy4[sizeof (std::vector< std::pair<std::string, std::string> > )];
     };
 
     /// The size of the largest semantic type.
@@ -478,113 +485,111 @@ namespace yy {
       enum token_kind_type
       {
         YYEMPTY = -2,
-    END = 0,                       // "end of input"
+    END = 0,                       // END
     YYerror = 256,                 // error
     YYUNDEF = 257,                 // "invalid token"
-    MATCH = 258,                   // MATCH
-    UNDEFINED = 259,               // UNDEFINED
-    WHITESPACE = 260,              // WHITESPACE
-    ANYTHING = 261,                // ANYTHING
-    VALID_CHAR = 262,              // VALID_CHAR
-    SKIP_TOKEN = 263,              // SKIP_TOKEN
-    CONST_SYMBOL = 264,            // CONST_SYMBOL
-    CARROT = 265,                  // CARROT
-    OPEN_PAREN = 266,              // OPEN_PAREN
-    CLOSE_PAREN = 267,             // CLOSE_PAREN
-    DASH = 268,                    // DASH
-    PLUS_SIGN = 269,               // PLUS_SIGN
-    BACKSLASH = 270,               // BACKSLASH
-    ARRAY = 271,                   // ARRAY
-    OPEN_BRACKET = 272,            // OPEN_BRACKET
-    CLOSE_BRACKET = 273,           // CLOSE_BRACKET
-    OPEN_BRACE = 274,              // OPEN_BRACE
-    CLOSE_BRACE = 275,             // CLOSE_BRACE
-    LPAREN = 276,                  // LPAREN
-    RPAREN = 277,                  // RPAREN
-    QUESTION_MARK = 278,           // QUESTION_MARK
-    DOLLAR_SIGN = 279,             // DOLLAR_SIGN
-    COMMA = 280,                   // COMMA
-    VBAR = 281,                    // VBAR
-    COLON = 282,                   // COLON
-    HASH_MARK = 283,               // HASH_MARK
-    SEMI_COLON = 284,              // SEMI_COLON
-    DOUBLE_QUOTE = 285,            // DOUBLE_QUOTE
-    SINGLE_QUOTE = 286,            // SINGLE_QUOTE
-    BACK_SLASH = 287,              // BACK_SLASH
-    AT = 288,                      // AT
-    AMPERSAND = 289,               // AMPERSAND
-    AND = 290,                     // AND
-    OR = 291,                      // OR
-    NOT = 292,                     // NOT
-    DOT = 293,                     // DOT
-    END_OF_FILES = 294,            // END_OF_FILES
-    CAPTURE = 295,                 // CAPTURE
-    CONFIG_LOAD = 296,             // CONFIG_LOAD
-    INCLUDE = 297,                 // INCLUDE
-    REQUIRE = 298,                 // REQUIRE
-    REQUIRE_ONCE = 299,            // REQUIRE_ONCE
-    INSERT = 300,                  // INSERT
-    ASSIGN = 301,                  // ASSIGN
-    ISSET = 302,                   // ISSET
-    SECTION = 303,                 // SECTION
-    LDELIM = 304,                  // LDELIM
-    RDELIM = 305,                  // RDELIM
-    VERSION = 306,                 // VERSION
-    CYCLE = 307,                   // CYCLE
-    COUNTER = 308,                 // COUNTER
-    CAPITALIZE = 309,              // CAPITALIZE
-    CAT = 310,                     // CAT
-    COUNT_CHARACTERS = 311,        // COUNT_CHARACTERS
-    COUNT_SENTENCES = 312,         // COUNT_SENTENCES
-    COUNT_PARAGRAPHS = 313,        // COUNT_PARAGRAPHS
-    COUNT_WORDS = 314,             // COUNT_WORDS
-    DATE_FORMAT = 315,             // DATE_FORMAT
-    DEFAULT = 316,                 // DEFAULT
-    ESCAPE = 317,                  // ESCAPE
-    INDENT = 318,                  // INDENT
-    LOWER = 319,                   // LOWER
-    UPPER = 320,                   // UPPER
-    STRIP = 321,                   // STRIP
-    NL2BR = 322,                   // NL2BR
-    REGEX_REPLACE = 323,           // REGEX_REPLACE
-    REPLACE = 324,                 // REPLACE
-    SPACIFY = 325,                 // SPACIFY
-    STRING_FORMAT = 326,           // STRING_FORMAT
-    STRIP_TAGS = 327,              // STRIP_TAGS
-    TRUNCATE = 328,                // TRUNCATE
-    WORDWRAP = 329,                // WORDWRAP
-    INDIRECT_MEMBER = 330,         // INDIRECT_MEMBER
-    STRING_LITERAL = 331,          // STRING_LITERAL
-    NUMERIC_LITERAL = 332,         // NUMERIC_LITERAL
-    IDENTIFIER = 333,              // IDENTIFIER
-    CONST_ID = 334,                // CONST_ID
-    VAR_ATTRIB = 335,              // VAR_ATTRIB
-    VALUE_ATTRIB = 336,            // VALUE_ATTRIB
-    FILE_ATTRIB = 337,             // FILE_ATTRIB
-    FROM_ATTRIB = 338,             // FROM_ATTRIB
-    KEY_ATTRIB = 339,              // KEY_ATTRIB
-    NAME_ATTRIB = 340,             // NAME_ATTRIB
-    ITEM_ATTRIB = 341,             // ITEM_ATTRIB
-    FILE_NAME = 342,               // FILE_NAME
-    UNESCAPED_TEXT = 343,          // UNESCAPED_TEXT
-    IFX = 344,                     // IFX
-    ELSE = 345,                    // ELSE
-    ELSEIF = 346,                  // ELSEIF
-    IF = 347,                      // IF
-    WHILE = 348,                   // WHILE
-    BREAK = 349,                   // BREAK
-    GREATER_THAN_EQUAL = 350,      // GREATER_THAN_EQUAL
-    LESS_THAN_EQUAL = 351,         // LESS_THAN_EQUAL
-    EQUAL_SIGN = 352,              // EQUAL_SIGN
-    NOT_EQUAL = 353,               // NOT_EQUAL
-    LESS_THAN = 354,               // LESS_THAN
-    GREATER_THAN = 355,            // GREATER_THAN
-    PLUS = 356,                    // PLUS
-    MINUS = 357,                   // MINUS
-    ASTERISK = 358,                // ASTERISK
-    SLASH = 359,                   // SLASH
-    PERCENT_SIGN = 360,            // PERCENT_SIGN
-    UMINUS = 361                   // UMINUS
+    CAPTURE = 258,                 // CAPTURE
+    CONFIG_LOAD = 259,             // CONFIG_LOAD
+    INCLUDE = 260,                 // INCLUDE
+    REQUIRE = 261,                 // REQUIRE
+    REQUIRE_ONCE = 262,            // REQUIRE_ONCE
+    INSERT = 263,                  // INSERT
+    ASSIGN = 264,                  // ASSIGN
+    ISSET = 265,                   // ISSET
+    SECTION = 266,                 // SECTION
+    LDELIM = 267,                  // LDELIM
+    RDELIM = 268,                  // RDELIM
+    VERSION = 269,                 // VERSION
+    CYCLE = 270,                   // CYCLE
+    COUNTER = 271,                 // COUNTER
+    INDIRECT_MEMBER = 272,         // INDIRECT_MEMBER
+    ARRAY = 273,                   // ARRAY
+    STRING_LITERAL = 274,          // STRING_LITERAL
+    NUMERIC_LITERAL = 275,         // NUMERIC_LITERAL
+    IDENTIFIER = 276,              // IDENTIFIER
+    CONST_ID = 277,                // CONST_ID
+    CONST_SYMBOL = 278,            // CONST_SYMBOL
+    VAR_ATTRIB = 279,              // VAR_ATTRIB
+    VALUE_ATTRIB = 280,            // VALUE_ATTRIB
+    FILE_ATTRIB = 281,             // FILE_ATTRIB
+    FROM_ATTRIB = 282,             // FROM_ATTRIB
+    KEY_ATTRIB = 283,              // KEY_ATTRIB
+    NAME_ATTRIB = 284,             // NAME_ATTRIB
+    ITEM_ATTRIB = 285,             // ITEM_ATTRIB
+    FILE_NAME = 286,               // FILE_NAME
+    CAPITALIZE = 287,              // CAPITALIZE
+    CAT = 288,                     // CAT
+    COUNT_CHARACTERS = 289,        // COUNT_CHARACTERS
+    COUNT_SENTENCES = 290,         // COUNT_SENTENCES
+    COUNT_PARAGRAPHS = 291,        // COUNT_PARAGRAPHS
+    COUNT_WORDS = 292,             // COUNT_WORDS
+    DATE_FORMAT = 293,             // DATE_FORMAT
+    DEFAULT = 294,                 // DEFAULT
+    ESCAPE = 295,                  // ESCAPE
+    INDENT = 296,                  // INDENT
+    LOWER = 297,                   // LOWER
+    UPPER = 298,                   // UPPER
+    STRIP = 299,                   // STRIP
+    NL2BR = 300,                   // NL2BR
+    REGEX_REPLACE = 301,           // REGEX_REPLACE
+    REPLACE = 302,                 // REPLACE
+    SPACIFY = 303,                 // SPACIFY
+    STRING_FORMAT = 304,           // STRING_FORMAT
+    STRIP_TAGS = 305,              // STRIP_TAGS
+    TRUNCATE = 306,                // TRUNCATE
+    WORDWRAP = 307,                // WORDWRAP
+    CARROT = 308,                  // CARROT
+    OPEN_PAREN = 309,              // OPEN_PAREN
+    CLOSE_PAREN = 310,             // CLOSE_PAREN
+    DASH = 311,                    // DASH
+    BACKSLASH = 312,               // BACKSLASH
+    QUESTION_MARK = 313,           // QUESTION_MARK
+    SEMI_COLON = 314,              // SEMI_COLON
+    DOUBLE_QUOTE = 315,            // DOUBLE_QUOTE
+    SINGLE_QUOTE = 316,            // SINGLE_QUOTE
+    BACK_SLASH = 317,              // BACK_SLASH
+    AT = 318,                      // AT
+    AMPERSAND = 319,               // AMPERSAND
+    AND = 320,                     // AND
+    OR = 321,                      // OR
+    NOT = 322,                     // NOT
+    DOLLAR_SIGN = 323,             // DOLLAR_SIGN
+    COMMA = 324,                   // COMMA
+    VBAR = 325,                    // VBAR
+    COLON = 326,                   // COLON
+    HASH_MARK = 327,               // HASH_MARK
+    OPEN_BRACKET = 328,            // OPEN_BRACKET
+    CLOSE_BRACKET = 329,           // CLOSE_BRACKET
+    OPEN_BRACE = 330,              // OPEN_BRACE
+    CLOSE_BRACE = 331,             // CLOSE_BRACE
+    LPAREN = 332,                  // LPAREN
+    RPAREN = 333,                  // RPAREN
+    DOT = 334,                     // DOT
+    END_OF_FILES = 335,            // END_OF_FILES
+    MATCH = 336,                   // MATCH
+    UNDEFINED = 337,               // UNDEFINED
+    WHITESPACE = 338,              // WHITESPACE
+    ANYTHING = 339,                // ANYTHING
+    VALID_CHAR = 340,              // VALID_CHAR
+    SKIP_TOKEN = 341,              // SKIP_TOKEN
+    IFX = 342,                     // IFX
+    ELSE = 343,                    // ELSE
+    ELSEIF = 344,                  // ELSEIF
+    IF = 345,                      // IF
+    WHILE = 346,                   // WHILE
+    BREAK = 347,                   // BREAK
+    GREATER_THAN_EQUAL = 348,      // GREATER_THAN_EQUAL
+    LESS_THAN_EQUAL = 349,         // LESS_THAN_EQUAL
+    EQUAL_SIGN = 350,              // EQUAL_SIGN
+    NOT_EQUAL = 351,               // NOT_EQUAL
+    LESS_THAN = 352,               // LESS_THAN
+    GREATER_THAN = 353,            // GREATER_THAN
+    PLUS_SIGN = 354,               // PLUS_SIGN
+    MINUS = 355,                   // MINUS
+    ASTERISK = 356,                // ASTERISK
+    SLASH = 357,                   // SLASH
+    PERCENT_SIGN = 358,            // PERCENT_SIGN
+    UMINUS = 359                   // UMINUS
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -601,134 +606,134 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 107, ///< Number of tokens.
+        YYNTOKENS = 106, ///< Number of tokens.
         S_YYEMPTY = -2,
-        S_YYEOF = 0,                             // "end of input"
+        S_YYEOF = 0,                             // END
         S_YYerror = 1,                           // error
         S_YYUNDEF = 2,                           // "invalid token"
-        S_MATCH = 3,                             // MATCH
-        S_UNDEFINED = 4,                         // UNDEFINED
-        S_WHITESPACE = 5,                        // WHITESPACE
-        S_ANYTHING = 6,                          // ANYTHING
-        S_VALID_CHAR = 7,                        // VALID_CHAR
-        S_SKIP_TOKEN = 8,                        // SKIP_TOKEN
-        S_CONST_SYMBOL = 9,                      // CONST_SYMBOL
-        S_CARROT = 10,                           // CARROT
-        S_OPEN_PAREN = 11,                       // OPEN_PAREN
-        S_CLOSE_PAREN = 12,                      // CLOSE_PAREN
-        S_DASH = 13,                             // DASH
-        S_PLUS_SIGN = 14,                        // PLUS_SIGN
-        S_BACKSLASH = 15,                        // BACKSLASH
-        S_ARRAY = 16,                            // ARRAY
-        S_OPEN_BRACKET = 17,                     // OPEN_BRACKET
-        S_CLOSE_BRACKET = 18,                    // CLOSE_BRACKET
-        S_OPEN_BRACE = 19,                       // OPEN_BRACE
-        S_CLOSE_BRACE = 20,                      // CLOSE_BRACE
-        S_LPAREN = 21,                           // LPAREN
-        S_RPAREN = 22,                           // RPAREN
-        S_QUESTION_MARK = 23,                    // QUESTION_MARK
-        S_DOLLAR_SIGN = 24,                      // DOLLAR_SIGN
-        S_COMMA = 25,                            // COMMA
-        S_VBAR = 26,                             // VBAR
-        S_COLON = 27,                            // COLON
-        S_HASH_MARK = 28,                        // HASH_MARK
-        S_SEMI_COLON = 29,                       // SEMI_COLON
-        S_DOUBLE_QUOTE = 30,                     // DOUBLE_QUOTE
-        S_SINGLE_QUOTE = 31,                     // SINGLE_QUOTE
-        S_BACK_SLASH = 32,                       // BACK_SLASH
-        S_AT = 33,                               // AT
-        S_AMPERSAND = 34,                        // AMPERSAND
-        S_AND = 35,                              // AND
-        S_OR = 36,                               // OR
-        S_NOT = 37,                              // NOT
-        S_DOT = 38,                              // DOT
-        S_END_OF_FILES = 39,                     // END_OF_FILES
-        S_CAPTURE = 40,                          // CAPTURE
-        S_CONFIG_LOAD = 41,                      // CONFIG_LOAD
-        S_INCLUDE = 42,                          // INCLUDE
-        S_REQUIRE = 43,                          // REQUIRE
-        S_REQUIRE_ONCE = 44,                     // REQUIRE_ONCE
-        S_INSERT = 45,                           // INSERT
-        S_ASSIGN = 46,                           // ASSIGN
-        S_ISSET = 47,                            // ISSET
-        S_SECTION = 48,                          // SECTION
-        S_LDELIM = 49,                           // LDELIM
-        S_RDELIM = 50,                           // RDELIM
-        S_VERSION = 51,                          // VERSION
-        S_CYCLE = 52,                            // CYCLE
-        S_COUNTER = 53,                          // COUNTER
-        S_CAPITALIZE = 54,                       // CAPITALIZE
-        S_CAT = 55,                              // CAT
-        S_COUNT_CHARACTERS = 56,                 // COUNT_CHARACTERS
-        S_COUNT_SENTENCES = 57,                  // COUNT_SENTENCES
-        S_COUNT_PARAGRAPHS = 58,                 // COUNT_PARAGRAPHS
-        S_COUNT_WORDS = 59,                      // COUNT_WORDS
-        S_DATE_FORMAT = 60,                      // DATE_FORMAT
-        S_DEFAULT = 61,                          // DEFAULT
-        S_ESCAPE = 62,                           // ESCAPE
-        S_INDENT = 63,                           // INDENT
-        S_LOWER = 64,                            // LOWER
-        S_UPPER = 65,                            // UPPER
-        S_STRIP = 66,                            // STRIP
-        S_NL2BR = 67,                            // NL2BR
-        S_REGEX_REPLACE = 68,                    // REGEX_REPLACE
-        S_REPLACE = 69,                          // REPLACE
-        S_SPACIFY = 70,                          // SPACIFY
-        S_STRING_FORMAT = 71,                    // STRING_FORMAT
-        S_STRIP_TAGS = 72,                       // STRIP_TAGS
-        S_TRUNCATE = 73,                         // TRUNCATE
-        S_WORDWRAP = 74,                         // WORDWRAP
-        S_INDIRECT_MEMBER = 75,                  // INDIRECT_MEMBER
-        S_STRING_LITERAL = 76,                   // STRING_LITERAL
-        S_NUMERIC_LITERAL = 77,                  // NUMERIC_LITERAL
-        S_IDENTIFIER = 78,                       // IDENTIFIER
-        S_CONST_ID = 79,                         // CONST_ID
-        S_VAR_ATTRIB = 80,                       // VAR_ATTRIB
-        S_VALUE_ATTRIB = 81,                     // VALUE_ATTRIB
-        S_FILE_ATTRIB = 82,                      // FILE_ATTRIB
-        S_FROM_ATTRIB = 83,                      // FROM_ATTRIB
-        S_KEY_ATTRIB = 84,                       // KEY_ATTRIB
-        S_NAME_ATTRIB = 85,                      // NAME_ATTRIB
-        S_ITEM_ATTRIB = 86,                      // ITEM_ATTRIB
-        S_FILE_NAME = 87,                        // FILE_NAME
-        S_UNESCAPED_TEXT = 88,                   // UNESCAPED_TEXT
-        S_IFX = 89,                              // IFX
-        S_ELSE = 90,                             // ELSE
-        S_ELSEIF = 91,                           // ELSEIF
-        S_IF = 92,                               // IF
-        S_WHILE = 93,                            // WHILE
-        S_BREAK = 94,                            // BREAK
-        S_GREATER_THAN_EQUAL = 95,               // GREATER_THAN_EQUAL
-        S_LESS_THAN_EQUAL = 96,                  // LESS_THAN_EQUAL
-        S_EQUAL_SIGN = 97,                       // EQUAL_SIGN
-        S_NOT_EQUAL = 98,                        // NOT_EQUAL
-        S_LESS_THAN = 99,                        // LESS_THAN
-        S_GREATER_THAN = 100,                    // GREATER_THAN
-        S_PLUS = 101,                            // PLUS
-        S_MINUS = 102,                           // MINUS
-        S_ASTERISK = 103,                        // ASTERISK
-        S_SLASH = 104,                           // SLASH
-        S_PERCENT_SIGN = 105,                    // PERCENT_SIGN
-        S_UMINUS = 106,                          // UMINUS
-        S_YYACCEPT = 107,                        // $accept
-        S_complier = 108,                        // complier
-        S_files = 109,                           // files
-        S_file = 110,                            // file
-        S_blocks = 111,                          // blocks
-        S_block = 112,                           // block
-        S_assign_stmt = 113,                     // assign_stmt
-        S_stmt = 114,                            // stmt
-        S_expr = 115,                            // expr
-        S_qualafied_id = 116,                    // qualafied_id
-        S_sub_proc = 117,                        // sub_proc
-        S_array = 118,                           // array
-        S_params = 119,                          // params
-        S_param = 120,                           // param
-        S_symbol = 121,                          // symbol
-        S_modifier = 122,                        // modifier
-        S_built_in = 123,                        // built_in
-        S_attributes = 124,                      // attributes
-        S_attrib = 125                           // attrib
+        S_CAPTURE = 3,                           // CAPTURE
+        S_CONFIG_LOAD = 4,                       // CONFIG_LOAD
+        S_INCLUDE = 5,                           // INCLUDE
+        S_REQUIRE = 6,                           // REQUIRE
+        S_REQUIRE_ONCE = 7,                      // REQUIRE_ONCE
+        S_INSERT = 8,                            // INSERT
+        S_ASSIGN = 9,                            // ASSIGN
+        S_ISSET = 10,                            // ISSET
+        S_SECTION = 11,                          // SECTION
+        S_LDELIM = 12,                           // LDELIM
+        S_RDELIM = 13,                           // RDELIM
+        S_VERSION = 14,                          // VERSION
+        S_CYCLE = 15,                            // CYCLE
+        S_COUNTER = 16,                          // COUNTER
+        S_INDIRECT_MEMBER = 17,                  // INDIRECT_MEMBER
+        S_ARRAY = 18,                            // ARRAY
+        S_STRING_LITERAL = 19,                   // STRING_LITERAL
+        S_NUMERIC_LITERAL = 20,                  // NUMERIC_LITERAL
+        S_IDENTIFIER = 21,                       // IDENTIFIER
+        S_CONST_ID = 22,                         // CONST_ID
+        S_CONST_SYMBOL = 23,                     // CONST_SYMBOL
+        S_VAR_ATTRIB = 24,                       // VAR_ATTRIB
+        S_VALUE_ATTRIB = 25,                     // VALUE_ATTRIB
+        S_FILE_ATTRIB = 26,                      // FILE_ATTRIB
+        S_FROM_ATTRIB = 27,                      // FROM_ATTRIB
+        S_KEY_ATTRIB = 28,                       // KEY_ATTRIB
+        S_NAME_ATTRIB = 29,                      // NAME_ATTRIB
+        S_ITEM_ATTRIB = 30,                      // ITEM_ATTRIB
+        S_FILE_NAME = 31,                        // FILE_NAME
+        S_CAPITALIZE = 32,                       // CAPITALIZE
+        S_CAT = 33,                              // CAT
+        S_COUNT_CHARACTERS = 34,                 // COUNT_CHARACTERS
+        S_COUNT_SENTENCES = 35,                  // COUNT_SENTENCES
+        S_COUNT_PARAGRAPHS = 36,                 // COUNT_PARAGRAPHS
+        S_COUNT_WORDS = 37,                      // COUNT_WORDS
+        S_DATE_FORMAT = 38,                      // DATE_FORMAT
+        S_DEFAULT = 39,                          // DEFAULT
+        S_ESCAPE = 40,                           // ESCAPE
+        S_INDENT = 41,                           // INDENT
+        S_LOWER = 42,                            // LOWER
+        S_UPPER = 43,                            // UPPER
+        S_STRIP = 44,                            // STRIP
+        S_NL2BR = 45,                            // NL2BR
+        S_REGEX_REPLACE = 46,                    // REGEX_REPLACE
+        S_REPLACE = 47,                          // REPLACE
+        S_SPACIFY = 48,                          // SPACIFY
+        S_STRING_FORMAT = 49,                    // STRING_FORMAT
+        S_STRIP_TAGS = 50,                       // STRIP_TAGS
+        S_TRUNCATE = 51,                         // TRUNCATE
+        S_WORDWRAP = 52,                         // WORDWRAP
+        S_CARROT = 53,                           // CARROT
+        S_OPEN_PAREN = 54,                       // OPEN_PAREN
+        S_CLOSE_PAREN = 55,                      // CLOSE_PAREN
+        S_DASH = 56,                             // DASH
+        S_BACKSLASH = 57,                        // BACKSLASH
+        S_QUESTION_MARK = 58,                    // QUESTION_MARK
+        S_SEMI_COLON = 59,                       // SEMI_COLON
+        S_DOUBLE_QUOTE = 60,                     // DOUBLE_QUOTE
+        S_SINGLE_QUOTE = 61,                     // SINGLE_QUOTE
+        S_BACK_SLASH = 62,                       // BACK_SLASH
+        S_AT = 63,                               // AT
+        S_AMPERSAND = 64,                        // AMPERSAND
+        S_AND = 65,                              // AND
+        S_OR = 66,                               // OR
+        S_NOT = 67,                              // NOT
+        S_DOLLAR_SIGN = 68,                      // DOLLAR_SIGN
+        S_COMMA = 69,                            // COMMA
+        S_VBAR = 70,                             // VBAR
+        S_COLON = 71,                            // COLON
+        S_HASH_MARK = 72,                        // HASH_MARK
+        S_OPEN_BRACKET = 73,                     // OPEN_BRACKET
+        S_CLOSE_BRACKET = 74,                    // CLOSE_BRACKET
+        S_OPEN_BRACE = 75,                       // OPEN_BRACE
+        S_CLOSE_BRACE = 76,                      // CLOSE_BRACE
+        S_LPAREN = 77,                           // LPAREN
+        S_RPAREN = 78,                           // RPAREN
+        S_DOT = 79,                              // DOT
+        S_END_OF_FILES = 80,                     // END_OF_FILES
+        S_MATCH = 81,                            // MATCH
+        S_UNDEFINED = 82,                        // UNDEFINED
+        S_WHITESPACE = 83,                       // WHITESPACE
+        S_ANYTHING = 84,                         // ANYTHING
+        S_VALID_CHAR = 85,                       // VALID_CHAR
+        S_SKIP_TOKEN = 86,                       // SKIP_TOKEN
+        S_IFX = 87,                              // IFX
+        S_ELSE = 88,                             // ELSE
+        S_ELSEIF = 89,                           // ELSEIF
+        S_IF = 90,                               // IF
+        S_WHILE = 91,                            // WHILE
+        S_BREAK = 92,                            // BREAK
+        S_GREATER_THAN_EQUAL = 93,               // GREATER_THAN_EQUAL
+        S_LESS_THAN_EQUAL = 94,                  // LESS_THAN_EQUAL
+        S_EQUAL_SIGN = 95,                       // EQUAL_SIGN
+        S_NOT_EQUAL = 96,                        // NOT_EQUAL
+        S_LESS_THAN = 97,                        // LESS_THAN
+        S_GREATER_THAN = 98,                     // GREATER_THAN
+        S_PLUS_SIGN = 99,                        // PLUS_SIGN
+        S_MINUS = 100,                           // MINUS
+        S_ASTERISK = 101,                        // ASTERISK
+        S_SLASH = 102,                           // SLASH
+        S_PERCENT_SIGN = 103,                    // PERCENT_SIGN
+        S_UMINUS = 104,                          // UMINUS
+        S_105_ = 105,                            // '+'
+        S_YYACCEPT = 106,                        // $accept
+        S_complier = 107,                        // complier
+        S_files = 108,                           // files
+        S_file = 109,                            // file
+        S_blocks = 110,                          // blocks
+        S_block = 111,                           // block
+        S_assign_stmt = 112,                     // assign_stmt
+        S_stmt = 113,                            // stmt
+        S_expr = 114,                            // expr
+        S_qualafied_id = 115,                    // qualafied_id
+        S_sub_proc = 116,                        // sub_proc
+        S_array = 117,                           // array
+        S_params = 118,                          // params
+        S_param = 119,                           // param
+        S_symbol = 120,                          // symbol
+        S_modifier = 121,                        // modifier
+        S_built_in = 122,                        // built_in
+        S_attributes = 123,                      // attributes
+        S_attrib = 124,                          // attrib
+        S_attrib_name = 125                      // attrib_name
       };
     };
 
@@ -767,6 +772,11 @@ namespace yy {
         value.move<  std::pair<std::string, std::string>  > (std::move (that.value));
         break;
 
+      case symbol_kind::S_PLUS_SIGN: // PLUS_SIGN
+      case symbol_kind::S_MINUS: // MINUS
+        value.move< char > (std::move (that.value));
+        break;
+
       case symbol_kind::S_CAPTURE: // CAPTURE
       case symbol_kind::S_CONFIG_LOAD: // CONFIG_LOAD
       case symbol_kind::S_INCLUDE: // INCLUDE
@@ -781,6 +791,21 @@ namespace yy {
       case symbol_kind::S_VERSION: // VERSION
       case symbol_kind::S_CYCLE: // CYCLE
       case symbol_kind::S_COUNTER: // COUNTER
+      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
+      case symbol_kind::S_ARRAY: // ARRAY
+      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
+      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_CONST_ID: // CONST_ID
+      case symbol_kind::S_CONST_SYMBOL: // CONST_SYMBOL
+      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
+      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
+      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
+      case symbol_kind::S_FROM_ATTRIB: // FROM_ATTRIB
+      case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
+      case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
+      case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
+      case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_CAPITALIZE: // CAPITALIZE
       case symbol_kind::S_CAT: // CAT
       case symbol_kind::S_COUNT_CHARACTERS: // COUNT_CHARACTERS
@@ -802,20 +827,6 @@ namespace yy {
       case symbol_kind::S_STRIP_TAGS: // STRIP_TAGS
       case symbol_kind::S_TRUNCATE: // TRUNCATE
       case symbol_kind::S_WORDWRAP: // WORDWRAP
-      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
-      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
-      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
-      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_CONST_ID: // CONST_ID
-      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
-      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
-      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
-      case symbol_kind::S_FROM_ATTRIB: // FROM_ATTRIB
-      case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
-      case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
-      case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
-      case symbol_kind::S_FILE_NAME: // FILE_NAME
-      case symbol_kind::S_UNESCAPED_TEXT: // UNESCAPED_TEXT
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_stmt: // stmt
       case symbol_kind::S_expr: // expr
@@ -823,6 +834,8 @@ namespace yy {
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
+      case symbol_kind::S_modifier: // modifier
+      case symbol_kind::S_attrib_name: // attrib_name
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -859,6 +872,18 @@ namespace yy {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const  std::pair<std::string, std::string> & v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, char&& v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const char& v)
         : Base (t)
         , value (v)
       {}
@@ -916,6 +941,11 @@ switch (yykind)
         value.template destroy<  std::pair<std::string, std::string>  > ();
         break;
 
+      case symbol_kind::S_PLUS_SIGN: // PLUS_SIGN
+      case symbol_kind::S_MINUS: // MINUS
+        value.template destroy< char > ();
+        break;
+
       case symbol_kind::S_CAPTURE: // CAPTURE
       case symbol_kind::S_CONFIG_LOAD: // CONFIG_LOAD
       case symbol_kind::S_INCLUDE: // INCLUDE
@@ -930,6 +960,21 @@ switch (yykind)
       case symbol_kind::S_VERSION: // VERSION
       case symbol_kind::S_CYCLE: // CYCLE
       case symbol_kind::S_COUNTER: // COUNTER
+      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
+      case symbol_kind::S_ARRAY: // ARRAY
+      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
+      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_CONST_ID: // CONST_ID
+      case symbol_kind::S_CONST_SYMBOL: // CONST_SYMBOL
+      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
+      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
+      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
+      case symbol_kind::S_FROM_ATTRIB: // FROM_ATTRIB
+      case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
+      case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
+      case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
+      case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_CAPITALIZE: // CAPITALIZE
       case symbol_kind::S_CAT: // CAT
       case symbol_kind::S_COUNT_CHARACTERS: // COUNT_CHARACTERS
@@ -951,20 +996,6 @@ switch (yykind)
       case symbol_kind::S_STRIP_TAGS: // STRIP_TAGS
       case symbol_kind::S_TRUNCATE: // TRUNCATE
       case symbol_kind::S_WORDWRAP: // WORDWRAP
-      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
-      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
-      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
-      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_CONST_ID: // CONST_ID
-      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
-      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
-      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
-      case symbol_kind::S_FROM_ATTRIB: // FROM_ATTRIB
-      case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
-      case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
-      case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
-      case symbol_kind::S_FILE_NAME: // FILE_NAME
-      case symbol_kind::S_UNESCAPED_TEXT: // UNESCAPED_TEXT
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_stmt: // stmt
       case symbol_kind::S_expr: // expr
@@ -972,6 +1003,8 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
+      case symbol_kind::S_modifier: // modifier
+      case symbol_kind::S_attrib_name: // attrib_name
         value.template destroy< std::string > ();
         break;
 
@@ -1077,6 +1110,14 @@ switch (yykind)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, char v)
+        : super_type (token_kind_type (tok), std::move (v))
+#else
+      symbol_type (int tok, const char& v)
+        : super_type (token_kind_type (tok), v)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
       symbol_type (int tok, std::string v)
         : super_type (token_kind_type (tok), std::move (v))
 #else
@@ -1177,561 +1218,6 @@ switch (yykind)
       make_YYUNDEF ()
       {
         return symbol_type (token::YYUNDEF);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_MATCH ()
-      {
-        return symbol_type (token::MATCH);
-      }
-#else
-      static
-      symbol_type
-      make_MATCH ()
-      {
-        return symbol_type (token::MATCH);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_UNDEFINED ()
-      {
-        return symbol_type (token::UNDEFINED);
-      }
-#else
-      static
-      symbol_type
-      make_UNDEFINED ()
-      {
-        return symbol_type (token::UNDEFINED);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_WHITESPACE ()
-      {
-        return symbol_type (token::WHITESPACE);
-      }
-#else
-      static
-      symbol_type
-      make_WHITESPACE ()
-      {
-        return symbol_type (token::WHITESPACE);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_ANYTHING ()
-      {
-        return symbol_type (token::ANYTHING);
-      }
-#else
-      static
-      symbol_type
-      make_ANYTHING ()
-      {
-        return symbol_type (token::ANYTHING);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_VALID_CHAR ()
-      {
-        return symbol_type (token::VALID_CHAR);
-      }
-#else
-      static
-      symbol_type
-      make_VALID_CHAR ()
-      {
-        return symbol_type (token::VALID_CHAR);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_SKIP_TOKEN ()
-      {
-        return symbol_type (token::SKIP_TOKEN);
-      }
-#else
-      static
-      symbol_type
-      make_SKIP_TOKEN ()
-      {
-        return symbol_type (token::SKIP_TOKEN);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_CONST_SYMBOL ()
-      {
-        return symbol_type (token::CONST_SYMBOL);
-      }
-#else
-      static
-      symbol_type
-      make_CONST_SYMBOL ()
-      {
-        return symbol_type (token::CONST_SYMBOL);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_CARROT ()
-      {
-        return symbol_type (token::CARROT);
-      }
-#else
-      static
-      symbol_type
-      make_CARROT ()
-      {
-        return symbol_type (token::CARROT);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_OPEN_PAREN ()
-      {
-        return symbol_type (token::OPEN_PAREN);
-      }
-#else
-      static
-      symbol_type
-      make_OPEN_PAREN ()
-      {
-        return symbol_type (token::OPEN_PAREN);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_CLOSE_PAREN ()
-      {
-        return symbol_type (token::CLOSE_PAREN);
-      }
-#else
-      static
-      symbol_type
-      make_CLOSE_PAREN ()
-      {
-        return symbol_type (token::CLOSE_PAREN);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_DASH ()
-      {
-        return symbol_type (token::DASH);
-      }
-#else
-      static
-      symbol_type
-      make_DASH ()
-      {
-        return symbol_type (token::DASH);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_PLUS_SIGN ()
-      {
-        return symbol_type (token::PLUS_SIGN);
-      }
-#else
-      static
-      symbol_type
-      make_PLUS_SIGN ()
-      {
-        return symbol_type (token::PLUS_SIGN);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_BACKSLASH ()
-      {
-        return symbol_type (token::BACKSLASH);
-      }
-#else
-      static
-      symbol_type
-      make_BACKSLASH ()
-      {
-        return symbol_type (token::BACKSLASH);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_ARRAY ()
-      {
-        return symbol_type (token::ARRAY);
-      }
-#else
-      static
-      symbol_type
-      make_ARRAY ()
-      {
-        return symbol_type (token::ARRAY);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_OPEN_BRACKET ()
-      {
-        return symbol_type (token::OPEN_BRACKET);
-      }
-#else
-      static
-      symbol_type
-      make_OPEN_BRACKET ()
-      {
-        return symbol_type (token::OPEN_BRACKET);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_CLOSE_BRACKET ()
-      {
-        return symbol_type (token::CLOSE_BRACKET);
-      }
-#else
-      static
-      symbol_type
-      make_CLOSE_BRACKET ()
-      {
-        return symbol_type (token::CLOSE_BRACKET);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_OPEN_BRACE ()
-      {
-        return symbol_type (token::OPEN_BRACE);
-      }
-#else
-      static
-      symbol_type
-      make_OPEN_BRACE ()
-      {
-        return symbol_type (token::OPEN_BRACE);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_CLOSE_BRACE ()
-      {
-        return symbol_type (token::CLOSE_BRACE);
-      }
-#else
-      static
-      symbol_type
-      make_CLOSE_BRACE ()
-      {
-        return symbol_type (token::CLOSE_BRACE);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_LPAREN ()
-      {
-        return symbol_type (token::LPAREN);
-      }
-#else
-      static
-      symbol_type
-      make_LPAREN ()
-      {
-        return symbol_type (token::LPAREN);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_RPAREN ()
-      {
-        return symbol_type (token::RPAREN);
-      }
-#else
-      static
-      symbol_type
-      make_RPAREN ()
-      {
-        return symbol_type (token::RPAREN);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_QUESTION_MARK ()
-      {
-        return symbol_type (token::QUESTION_MARK);
-      }
-#else
-      static
-      symbol_type
-      make_QUESTION_MARK ()
-      {
-        return symbol_type (token::QUESTION_MARK);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_DOLLAR_SIGN ()
-      {
-        return symbol_type (token::DOLLAR_SIGN);
-      }
-#else
-      static
-      symbol_type
-      make_DOLLAR_SIGN ()
-      {
-        return symbol_type (token::DOLLAR_SIGN);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_COMMA ()
-      {
-        return symbol_type (token::COMMA);
-      }
-#else
-      static
-      symbol_type
-      make_COMMA ()
-      {
-        return symbol_type (token::COMMA);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_VBAR ()
-      {
-        return symbol_type (token::VBAR);
-      }
-#else
-      static
-      symbol_type
-      make_VBAR ()
-      {
-        return symbol_type (token::VBAR);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_COLON ()
-      {
-        return symbol_type (token::COLON);
-      }
-#else
-      static
-      symbol_type
-      make_COLON ()
-      {
-        return symbol_type (token::COLON);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_HASH_MARK ()
-      {
-        return symbol_type (token::HASH_MARK);
-      }
-#else
-      static
-      symbol_type
-      make_HASH_MARK ()
-      {
-        return symbol_type (token::HASH_MARK);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_SEMI_COLON ()
-      {
-        return symbol_type (token::SEMI_COLON);
-      }
-#else
-      static
-      symbol_type
-      make_SEMI_COLON ()
-      {
-        return symbol_type (token::SEMI_COLON);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_DOUBLE_QUOTE ()
-      {
-        return symbol_type (token::DOUBLE_QUOTE);
-      }
-#else
-      static
-      symbol_type
-      make_DOUBLE_QUOTE ()
-      {
-        return symbol_type (token::DOUBLE_QUOTE);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_SINGLE_QUOTE ()
-      {
-        return symbol_type (token::SINGLE_QUOTE);
-      }
-#else
-      static
-      symbol_type
-      make_SINGLE_QUOTE ()
-      {
-        return symbol_type (token::SINGLE_QUOTE);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_BACK_SLASH ()
-      {
-        return symbol_type (token::BACK_SLASH);
-      }
-#else
-      static
-      symbol_type
-      make_BACK_SLASH ()
-      {
-        return symbol_type (token::BACK_SLASH);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_AT ()
-      {
-        return symbol_type (token::AT);
-      }
-#else
-      static
-      symbol_type
-      make_AT ()
-      {
-        return symbol_type (token::AT);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_AMPERSAND ()
-      {
-        return symbol_type (token::AMPERSAND);
-      }
-#else
-      static
-      symbol_type
-      make_AMPERSAND ()
-      {
-        return symbol_type (token::AMPERSAND);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_AND ()
-      {
-        return symbol_type (token::AND);
-      }
-#else
-      static
-      symbol_type
-      make_AND ()
-      {
-        return symbol_type (token::AND);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_OR ()
-      {
-        return symbol_type (token::OR);
-      }
-#else
-      static
-      symbol_type
-      make_OR ()
-      {
-        return symbol_type (token::OR);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_NOT ()
-      {
-        return symbol_type (token::NOT);
-      }
-#else
-      static
-      symbol_type
-      make_NOT ()
-      {
-        return symbol_type (token::NOT);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_DOT ()
-      {
-        return symbol_type (token::DOT);
-      }
-#else
-      static
-      symbol_type
-      make_DOT ()
-      {
-        return symbol_type (token::DOT);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_END_OF_FILES ()
-      {
-        return symbol_type (token::END_OF_FILES);
-      }
-#else
-      static
-      symbol_type
-      make_END_OF_FILES ()
-      {
-        return symbol_type (token::END_OF_FILES);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1942,6 +1428,231 @@ switch (yykind)
       make_COUNTER (const std::string& v)
       {
         return symbol_type (token::COUNTER, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_INDIRECT_MEMBER (std::string v)
+      {
+        return symbol_type (token::INDIRECT_MEMBER, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_INDIRECT_MEMBER (const std::string& v)
+      {
+        return symbol_type (token::INDIRECT_MEMBER, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ARRAY (std::string v)
+      {
+        return symbol_type (token::ARRAY, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_ARRAY (const std::string& v)
+      {
+        return symbol_type (token::ARRAY, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STRING_LITERAL (std::string v)
+      {
+        return symbol_type (token::STRING_LITERAL, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_STRING_LITERAL (const std::string& v)
+      {
+        return symbol_type (token::STRING_LITERAL, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NUMERIC_LITERAL (std::string v)
+      {
+        return symbol_type (token::NUMERIC_LITERAL, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_NUMERIC_LITERAL (const std::string& v)
+      {
+        return symbol_type (token::NUMERIC_LITERAL, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IDENTIFIER (std::string v)
+      {
+        return symbol_type (token::IDENTIFIER, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_IDENTIFIER (const std::string& v)
+      {
+        return symbol_type (token::IDENTIFIER, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CONST_ID (std::string v)
+      {
+        return symbol_type (token::CONST_ID, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_CONST_ID (const std::string& v)
+      {
+        return symbol_type (token::CONST_ID, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CONST_SYMBOL (std::string v)
+      {
+        return symbol_type (token::CONST_SYMBOL, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_CONST_SYMBOL (const std::string& v)
+      {
+        return symbol_type (token::CONST_SYMBOL, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_VAR_ATTRIB (std::string v)
+      {
+        return symbol_type (token::VAR_ATTRIB, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_VAR_ATTRIB (const std::string& v)
+      {
+        return symbol_type (token::VAR_ATTRIB, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_VALUE_ATTRIB (std::string v)
+      {
+        return symbol_type (token::VALUE_ATTRIB, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_VALUE_ATTRIB (const std::string& v)
+      {
+        return symbol_type (token::VALUE_ATTRIB, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FILE_ATTRIB (std::string v)
+      {
+        return symbol_type (token::FILE_ATTRIB, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_FILE_ATTRIB (const std::string& v)
+      {
+        return symbol_type (token::FILE_ATTRIB, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FROM_ATTRIB (std::string v)
+      {
+        return symbol_type (token::FROM_ATTRIB, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_FROM_ATTRIB (const std::string& v)
+      {
+        return symbol_type (token::FROM_ATTRIB, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_KEY_ATTRIB (std::string v)
+      {
+        return symbol_type (token::KEY_ATTRIB, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_KEY_ATTRIB (const std::string& v)
+      {
+        return symbol_type (token::KEY_ATTRIB, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NAME_ATTRIB (std::string v)
+      {
+        return symbol_type (token::NAME_ATTRIB, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_NAME_ATTRIB (const std::string& v)
+      {
+        return symbol_type (token::NAME_ATTRIB, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ITEM_ATTRIB (std::string v)
+      {
+        return symbol_type (token::ITEM_ATTRIB, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_ITEM_ATTRIB (const std::string& v)
+      {
+        return symbol_type (token::ITEM_ATTRIB, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FILE_NAME (std::string v)
+      {
+        return symbol_type (token::FILE_NAME, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_FILE_NAME (const std::string& v)
+      {
+        return symbol_type (token::FILE_NAME, v);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -2262,211 +1973,511 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_INDIRECT_MEMBER (std::string v)
+      make_CARROT ()
       {
-        return symbol_type (token::INDIRECT_MEMBER, std::move (v));
+        return symbol_type (token::CARROT);
       }
 #else
       static
       symbol_type
-      make_INDIRECT_MEMBER (const std::string& v)
+      make_CARROT ()
       {
-        return symbol_type (token::INDIRECT_MEMBER, v);
+        return symbol_type (token::CARROT);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_STRING_LITERAL (std::string v)
+      make_OPEN_PAREN ()
       {
-        return symbol_type (token::STRING_LITERAL, std::move (v));
+        return symbol_type (token::OPEN_PAREN);
       }
 #else
       static
       symbol_type
-      make_STRING_LITERAL (const std::string& v)
+      make_OPEN_PAREN ()
       {
-        return symbol_type (token::STRING_LITERAL, v);
+        return symbol_type (token::OPEN_PAREN);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_NUMERIC_LITERAL (std::string v)
+      make_CLOSE_PAREN ()
       {
-        return symbol_type (token::NUMERIC_LITERAL, std::move (v));
+        return symbol_type (token::CLOSE_PAREN);
       }
 #else
       static
       symbol_type
-      make_NUMERIC_LITERAL (const std::string& v)
+      make_CLOSE_PAREN ()
       {
-        return symbol_type (token::NUMERIC_LITERAL, v);
+        return symbol_type (token::CLOSE_PAREN);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_IDENTIFIER (std::string v)
+      make_DASH ()
       {
-        return symbol_type (token::IDENTIFIER, std::move (v));
+        return symbol_type (token::DASH);
       }
 #else
       static
       symbol_type
-      make_IDENTIFIER (const std::string& v)
+      make_DASH ()
       {
-        return symbol_type (token::IDENTIFIER, v);
+        return symbol_type (token::DASH);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_CONST_ID (std::string v)
+      make_BACKSLASH ()
       {
-        return symbol_type (token::CONST_ID, std::move (v));
+        return symbol_type (token::BACKSLASH);
       }
 #else
       static
       symbol_type
-      make_CONST_ID (const std::string& v)
+      make_BACKSLASH ()
       {
-        return symbol_type (token::CONST_ID, v);
+        return symbol_type (token::BACKSLASH);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_VAR_ATTRIB (std::string v)
+      make_QUESTION_MARK ()
       {
-        return symbol_type (token::VAR_ATTRIB, std::move (v));
+        return symbol_type (token::QUESTION_MARK);
       }
 #else
       static
       symbol_type
-      make_VAR_ATTRIB (const std::string& v)
+      make_QUESTION_MARK ()
       {
-        return symbol_type (token::VAR_ATTRIB, v);
+        return symbol_type (token::QUESTION_MARK);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_VALUE_ATTRIB (std::string v)
+      make_SEMI_COLON ()
       {
-        return symbol_type (token::VALUE_ATTRIB, std::move (v));
+        return symbol_type (token::SEMI_COLON);
       }
 #else
       static
       symbol_type
-      make_VALUE_ATTRIB (const std::string& v)
+      make_SEMI_COLON ()
       {
-        return symbol_type (token::VALUE_ATTRIB, v);
+        return symbol_type (token::SEMI_COLON);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_FILE_ATTRIB (std::string v)
+      make_DOUBLE_QUOTE ()
       {
-        return symbol_type (token::FILE_ATTRIB, std::move (v));
+        return symbol_type (token::DOUBLE_QUOTE);
       }
 #else
       static
       symbol_type
-      make_FILE_ATTRIB (const std::string& v)
+      make_DOUBLE_QUOTE ()
       {
-        return symbol_type (token::FILE_ATTRIB, v);
+        return symbol_type (token::DOUBLE_QUOTE);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_FROM_ATTRIB (std::string v)
+      make_SINGLE_QUOTE ()
       {
-        return symbol_type (token::FROM_ATTRIB, std::move (v));
+        return symbol_type (token::SINGLE_QUOTE);
       }
 #else
       static
       symbol_type
-      make_FROM_ATTRIB (const std::string& v)
+      make_SINGLE_QUOTE ()
       {
-        return symbol_type (token::FROM_ATTRIB, v);
+        return symbol_type (token::SINGLE_QUOTE);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_KEY_ATTRIB (std::string v)
+      make_BACK_SLASH ()
       {
-        return symbol_type (token::KEY_ATTRIB, std::move (v));
+        return symbol_type (token::BACK_SLASH);
       }
 #else
       static
       symbol_type
-      make_KEY_ATTRIB (const std::string& v)
+      make_BACK_SLASH ()
       {
-        return symbol_type (token::KEY_ATTRIB, v);
+        return symbol_type (token::BACK_SLASH);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_NAME_ATTRIB (std::string v)
+      make_AT ()
       {
-        return symbol_type (token::NAME_ATTRIB, std::move (v));
+        return symbol_type (token::AT);
       }
 #else
       static
       symbol_type
-      make_NAME_ATTRIB (const std::string& v)
+      make_AT ()
       {
-        return symbol_type (token::NAME_ATTRIB, v);
+        return symbol_type (token::AT);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_ITEM_ATTRIB (std::string v)
+      make_AMPERSAND ()
       {
-        return symbol_type (token::ITEM_ATTRIB, std::move (v));
+        return symbol_type (token::AMPERSAND);
       }
 #else
       static
       symbol_type
-      make_ITEM_ATTRIB (const std::string& v)
+      make_AMPERSAND ()
       {
-        return symbol_type (token::ITEM_ATTRIB, v);
+        return symbol_type (token::AMPERSAND);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_FILE_NAME (std::string v)
+      make_AND ()
       {
-        return symbol_type (token::FILE_NAME, std::move (v));
+        return symbol_type (token::AND);
       }
 #else
       static
       symbol_type
-      make_FILE_NAME (const std::string& v)
+      make_AND ()
       {
-        return symbol_type (token::FILE_NAME, v);
+        return symbol_type (token::AND);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_UNESCAPED_TEXT (std::string v)
+      make_OR ()
       {
-        return symbol_type (token::UNESCAPED_TEXT, std::move (v));
+        return symbol_type (token::OR);
       }
 #else
       static
       symbol_type
-      make_UNESCAPED_TEXT (const std::string& v)
+      make_OR ()
       {
-        return symbol_type (token::UNESCAPED_TEXT, v);
+        return symbol_type (token::OR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NOT ()
+      {
+        return symbol_type (token::NOT);
+      }
+#else
+      static
+      symbol_type
+      make_NOT ()
+      {
+        return symbol_type (token::NOT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DOLLAR_SIGN ()
+      {
+        return symbol_type (token::DOLLAR_SIGN);
+      }
+#else
+      static
+      symbol_type
+      make_DOLLAR_SIGN ()
+      {
+        return symbol_type (token::DOLLAR_SIGN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMA ()
+      {
+        return symbol_type (token::COMMA);
+      }
+#else
+      static
+      symbol_type
+      make_COMMA ()
+      {
+        return symbol_type (token::COMMA);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_VBAR ()
+      {
+        return symbol_type (token::VBAR);
+      }
+#else
+      static
+      symbol_type
+      make_VBAR ()
+      {
+        return symbol_type (token::VBAR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COLON ()
+      {
+        return symbol_type (token::COLON);
+      }
+#else
+      static
+      symbol_type
+      make_COLON ()
+      {
+        return symbol_type (token::COLON);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_HASH_MARK ()
+      {
+        return symbol_type (token::HASH_MARK);
+      }
+#else
+      static
+      symbol_type
+      make_HASH_MARK ()
+      {
+        return symbol_type (token::HASH_MARK);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_OPEN_BRACKET ()
+      {
+        return symbol_type (token::OPEN_BRACKET);
+      }
+#else
+      static
+      symbol_type
+      make_OPEN_BRACKET ()
+      {
+        return symbol_type (token::OPEN_BRACKET);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CLOSE_BRACKET ()
+      {
+        return symbol_type (token::CLOSE_BRACKET);
+      }
+#else
+      static
+      symbol_type
+      make_CLOSE_BRACKET ()
+      {
+        return symbol_type (token::CLOSE_BRACKET);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_OPEN_BRACE ()
+      {
+        return symbol_type (token::OPEN_BRACE);
+      }
+#else
+      static
+      symbol_type
+      make_OPEN_BRACE ()
+      {
+        return symbol_type (token::OPEN_BRACE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CLOSE_BRACE ()
+      {
+        return symbol_type (token::CLOSE_BRACE);
+      }
+#else
+      static
+      symbol_type
+      make_CLOSE_BRACE ()
+      {
+        return symbol_type (token::CLOSE_BRACE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LPAREN ()
+      {
+        return symbol_type (token::LPAREN);
+      }
+#else
+      static
+      symbol_type
+      make_LPAREN ()
+      {
+        return symbol_type (token::LPAREN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RPAREN ()
+      {
+        return symbol_type (token::RPAREN);
+      }
+#else
+      static
+      symbol_type
+      make_RPAREN ()
+      {
+        return symbol_type (token::RPAREN);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DOT ()
+      {
+        return symbol_type (token::DOT);
+      }
+#else
+      static
+      symbol_type
+      make_DOT ()
+      {
+        return symbol_type (token::DOT);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_END_OF_FILES ()
+      {
+        return symbol_type (token::END_OF_FILES);
+      }
+#else
+      static
+      symbol_type
+      make_END_OF_FILES ()
+      {
+        return symbol_type (token::END_OF_FILES);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MATCH ()
+      {
+        return symbol_type (token::MATCH);
+      }
+#else
+      static
+      symbol_type
+      make_MATCH ()
+      {
+        return symbol_type (token::MATCH);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UNDEFINED ()
+      {
+        return symbol_type (token::UNDEFINED);
+      }
+#else
+      static
+      symbol_type
+      make_UNDEFINED ()
+      {
+        return symbol_type (token::UNDEFINED);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WHITESPACE ()
+      {
+        return symbol_type (token::WHITESPACE);
+      }
+#else
+      static
+      symbol_type
+      make_WHITESPACE ()
+      {
+        return symbol_type (token::WHITESPACE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ANYTHING ()
+      {
+        return symbol_type (token::ANYTHING);
+      }
+#else
+      static
+      symbol_type
+      make_ANYTHING ()
+      {
+        return symbol_type (token::ANYTHING);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_VALID_CHAR ()
+      {
+        return symbol_type (token::VALID_CHAR);
+      }
+#else
+      static
+      symbol_type
+      make_VALID_CHAR ()
+      {
+        return symbol_type (token::VALID_CHAR);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SKIP_TOKEN ()
+      {
+        return symbol_type (token::SKIP_TOKEN);
+      }
+#else
+      static
+      symbol_type
+      make_SKIP_TOKEN ()
+      {
+        return symbol_type (token::SKIP_TOKEN);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -2652,31 +2663,31 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_PLUS ()
+      make_PLUS_SIGN (char v)
       {
-        return symbol_type (token::PLUS);
+        return symbol_type (token::PLUS_SIGN, std::move (v));
       }
 #else
       static
       symbol_type
-      make_PLUS ()
+      make_PLUS_SIGN (const char& v)
       {
-        return symbol_type (token::PLUS);
+        return symbol_type (token::PLUS_SIGN, v);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_MINUS ()
+      make_MINUS (char v)
       {
-        return symbol_type (token::MINUS);
+        return symbol_type (token::MINUS, std::move (v));
       }
 #else
       static
       symbol_type
-      make_MINUS ()
+      make_MINUS (const char& v)
       {
-        return symbol_type (token::MINUS);
+        return symbol_type (token::MINUS, v);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -3043,8 +3054,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 197,     ///< Last index in yytable_.
-      yynnts_ = 19,  ///< Number of nonterminal symbols.
+      yylast_ = 227,     ///< Last index in yytable_.
+      yynnts_ = 20,  ///< Number of nonterminal symbols.
       yyfinal_ = 31 ///< Termination state number.
     };
 
@@ -3066,7 +3077,7 @@ switch (yykind)
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,   105,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -3097,11 +3108,10 @@ switch (yykind)
       65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
       75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
       85,    86,    87,    88,    89,    90,    91,    92,    93,    94,
-      95,    96,    97,    98,    99,   100,   101,   102,   103,   104,
-     105,   106
+      95,    96,    97,    98,    99,   100,   101,   102,   103,   104
     };
     // Last valid token kind.
-    const int code_max = 361;
+    const int code_max = 359;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -3123,6 +3133,11 @@ switch (yykind)
         value.copy<  std::pair<std::string, std::string>  > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_PLUS_SIGN: // PLUS_SIGN
+      case symbol_kind::S_MINUS: // MINUS
+        value.copy< char > (YY_MOVE (that.value));
+        break;
+
       case symbol_kind::S_CAPTURE: // CAPTURE
       case symbol_kind::S_CONFIG_LOAD: // CONFIG_LOAD
       case symbol_kind::S_INCLUDE: // INCLUDE
@@ -3137,6 +3152,21 @@ switch (yykind)
       case symbol_kind::S_VERSION: // VERSION
       case symbol_kind::S_CYCLE: // CYCLE
       case symbol_kind::S_COUNTER: // COUNTER
+      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
+      case symbol_kind::S_ARRAY: // ARRAY
+      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
+      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_CONST_ID: // CONST_ID
+      case symbol_kind::S_CONST_SYMBOL: // CONST_SYMBOL
+      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
+      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
+      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
+      case symbol_kind::S_FROM_ATTRIB: // FROM_ATTRIB
+      case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
+      case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
+      case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
+      case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_CAPITALIZE: // CAPITALIZE
       case symbol_kind::S_CAT: // CAT
       case symbol_kind::S_COUNT_CHARACTERS: // COUNT_CHARACTERS
@@ -3158,20 +3188,6 @@ switch (yykind)
       case symbol_kind::S_STRIP_TAGS: // STRIP_TAGS
       case symbol_kind::S_TRUNCATE: // TRUNCATE
       case symbol_kind::S_WORDWRAP: // WORDWRAP
-      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
-      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
-      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
-      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_CONST_ID: // CONST_ID
-      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
-      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
-      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
-      case symbol_kind::S_FROM_ATTRIB: // FROM_ATTRIB
-      case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
-      case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
-      case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
-      case symbol_kind::S_FILE_NAME: // FILE_NAME
-      case symbol_kind::S_UNESCAPED_TEXT: // UNESCAPED_TEXT
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_stmt: // stmt
       case symbol_kind::S_expr: // expr
@@ -3179,6 +3195,8 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
+      case symbol_kind::S_modifier: // modifier
+      case symbol_kind::S_attrib_name: // attrib_name
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
@@ -3222,6 +3240,11 @@ switch (yykind)
         value.move<  std::pair<std::string, std::string>  > (YY_MOVE (s.value));
         break;
 
+      case symbol_kind::S_PLUS_SIGN: // PLUS_SIGN
+      case symbol_kind::S_MINUS: // MINUS
+        value.move< char > (YY_MOVE (s.value));
+        break;
+
       case symbol_kind::S_CAPTURE: // CAPTURE
       case symbol_kind::S_CONFIG_LOAD: // CONFIG_LOAD
       case symbol_kind::S_INCLUDE: // INCLUDE
@@ -3236,6 +3259,21 @@ switch (yykind)
       case symbol_kind::S_VERSION: // VERSION
       case symbol_kind::S_CYCLE: // CYCLE
       case symbol_kind::S_COUNTER: // COUNTER
+      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
+      case symbol_kind::S_ARRAY: // ARRAY
+      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
+      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_CONST_ID: // CONST_ID
+      case symbol_kind::S_CONST_SYMBOL: // CONST_SYMBOL
+      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
+      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
+      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
+      case symbol_kind::S_FROM_ATTRIB: // FROM_ATTRIB
+      case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
+      case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
+      case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
+      case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_CAPITALIZE: // CAPITALIZE
       case symbol_kind::S_CAT: // CAT
       case symbol_kind::S_COUNT_CHARACTERS: // COUNT_CHARACTERS
@@ -3257,20 +3295,6 @@ switch (yykind)
       case symbol_kind::S_STRIP_TAGS: // STRIP_TAGS
       case symbol_kind::S_TRUNCATE: // TRUNCATE
       case symbol_kind::S_WORDWRAP: // WORDWRAP
-      case symbol_kind::S_INDIRECT_MEMBER: // INDIRECT_MEMBER
-      case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
-      case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
-      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_CONST_ID: // CONST_ID
-      case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
-      case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
-      case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
-      case symbol_kind::S_FROM_ATTRIB: // FROM_ATTRIB
-      case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
-      case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
-      case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
-      case symbol_kind::S_FILE_NAME: // FILE_NAME
-      case symbol_kind::S_UNESCAPED_TEXT: // UNESCAPED_TEXT
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_stmt: // stmt
       case symbol_kind::S_expr: // expr
@@ -3278,6 +3302,8 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_symbol: // symbol
+      case symbol_kind::S_modifier: // modifier
+      case symbol_kind::S_attrib_name: // attrib_name
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
@@ -3351,7 +3377,7 @@ switch (yykind)
 
 
 } // yy
-#line 3355 "build/pparser.tab.hh"
+#line 3381 "build/pparser.tab.hh"
 
 
 

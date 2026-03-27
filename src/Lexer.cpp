@@ -58,6 +58,10 @@ void lexer::init(const string &config_file, parser* pparser, const string& input
 
     //load_config( m_config_file );
     read_str( m_input_file, m_text );
+
+
+    read_lines( m_input_file, m_line_buffer );
+
     m_suffix = m_text;
     // set state
     set_state(gp_state);
@@ -297,7 +301,7 @@ parser::symbol_type lexer::get_token()
                 ptoken = &g_tokens[id];
 
                 // find match & lookup by sub_match index
-                token_match tmatch = {id, 0, 0, m.str(), ptoken};
+                token_match tmatch = {id, "", 0, 0, 0, m.str(), ptoken};
                 string match_str = m[i].str();
                 m_matches.push_back(&tmatch);
                 ++(*m_piter);
@@ -379,11 +383,18 @@ bool lexer::is_id( const token_def& token, const unsigned long& id )
 void lexer::set_context(string& current_input)
 {
     // reinit get_token iterators
-    m_rexp = boost::regex( m_expr, boost::regex::extended  );
+    m_rexp = boost::regex( m_expr, boost::regex::extended );
     m_text = current_input;
     m_begin = boost::sregex_iterator( m_text.begin( ), m_text.end( ), m_rexp );
     m_piter = &m_begin;
     m_end = boost::sregex_iterator();
+
+    //     m_context.expr = m_rexp;
+    //     m_context.input_text = m_text;
+    //     m_context.begin = m_begin;
+    //     m_context.end = m_end;
+    //     m_context.p_iter = m_piter;
+    //     m_context.state = get_state();
 }
 
 /**
@@ -449,6 +460,10 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 print_token(ptoken->id);
                 m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_PERCENT_SIGN();
+            case UL_PLUS_SIGN:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_PLUS_SIGN('+');
             case UL_DOT:
                 print_token(ptoken->id);
                 m_stream << " ~" << ptoken->value << "~ ";
@@ -469,6 +484,18 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 print_token(ptoken->id);
                 m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_VBAR();
+            case UL_CAPITALIZE:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_CAPITALIZE(ptoken->value);
+             case UL_TRUNCATE:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_TRUNCATE(ptoken->value);
+             case UL_STRIP:
+                print_token(ptoken->id);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_STRIP(ptoken->value);
             case UL_IDENTIFIER:
                 print_token(ptoken->id);
                 m_stream << " ~" << ptoken->value << "~ ";
@@ -536,6 +563,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
             case UL_DOUBLE_QUOTE: /** closing quote, DOUBLE_QUOTE -> ESCAPED **/
             {
                 set_state(&sESCAPED);
+
                 string qstr = g_stringstream.str();
                 g_stringstream.str("");
                 g_stringstream.clear();

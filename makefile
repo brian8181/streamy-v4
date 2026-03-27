@@ -57,7 +57,7 @@ $(BLD)/driver: $(BLD)/pparser.tab.cc $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/
 #$(BLD)/pparser.tab.o: $(SRC)/symtab.c $(SRC)/symtab.h $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh
 #	$(CC) $(CCFLAGS) -fPIC -c $< -o $@
 
-$(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy
+$(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.cpp $(BLD)/lexer.hpp
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
 	$(YACC) $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cc
 
