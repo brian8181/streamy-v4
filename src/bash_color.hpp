@@ -2,10 +2,9 @@
  * @file    streamy3.hpp
  * @version version 0.0.1
  * @date    Sun, 08 Mar 2026 16:09:45 +0000
- * @info    ...
- */
-#ifndef _BASH_COLOR_HPP
-#define _BASH_COLOR_HPP
+  */
+#ifndef BASH_COLOR_HPP_
+#define BASH_COLOR_HPP_
 
 #include <iostream>
 #include <string>

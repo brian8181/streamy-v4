@@ -11,10 +11,10 @@
 #include <string>
 #include <getopt.h>
 #include <set>
+#include "bash_color.hpp"
+#include "config.hpp"
 #include "driver.h"
 #include "lexer.hpp"
-#include "config.hpp"
-#include "bash_color.hpp"
 #include "pparser.tab.hh"
 
 using std::cout;
@@ -122,7 +122,6 @@ int parse_options(const int argc, char* argv[])
     cout << "start scan ..." << endl;
     yyparser.parse();
     cout << "finished scanning. " << endl;
-
     return 0;
 }
 

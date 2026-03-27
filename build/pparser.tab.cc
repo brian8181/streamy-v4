@@ -1160,7 +1160,7 @@ namespace yy {
 
   case 21: // stmt: IF LPAREN expr RPAREN
 #line 277 "src/pparser.yy"
-                                                                { cout << "PARSER stmt TEST: | IF LPAREN expr prec IFX RPAREN\n"; }
+                                                               { cout << "PARSER stmt TEST: | IF LPAREN expr prec IFX RPAREN\n"; }
 #line 1165 "build/pparser.tab.cc"
     break;
 
@@ -1215,31 +1215,31 @@ namespace yy {
 #line 1216 "build/pparser.tab.cc"
     break;
 
-  case 30: // expr: MINUS expr
+  case 30: // expr: symbol VBAR modifier
 #line 294 "src/pparser.yy"
                                                                 {
-                                                                    cout << "PARSER expr: | expr\n";
+
                                                                 }
 #line 1224 "build/pparser.tab.cc"
     break;
 
-  case 31: // expr: expr '+' expr
+  case 31: // expr: MINUS expr
 #line 297 "src/pparser.yy"
                                                                 {
-                                                                    cout << "PARSER expr: | expr '+' expr\n";
+                                                                    cout << "PARSER expr: | expr\n";
                                                                 }
 #line 1232 "build/pparser.tab.cc"
     break;
 
-  case 32: // expr: expr MINUS expr
+  case 32: // expr: expr '+' expr
 #line 300 "src/pparser.yy"
                                                                 {
-                                                                    cout << "PARSER expr: | expr\n";
+                                                                    cout << "PARSER expr: | expr '+' expr\n";
                                                                 }
 #line 1240 "build/pparser.tab.cc"
     break;
 
-  case 33: // expr: expr ASTERISK expr
+  case 33: // expr: expr MINUS expr
 #line 303 "src/pparser.yy"
                                                                 {
                                                                     cout << "PARSER expr: | expr\n";
@@ -1247,7 +1247,7 @@ namespace yy {
 #line 1248 "build/pparser.tab.cc"
     break;
 
-  case 34: // expr: expr SLASH expr
+  case 34: // expr: expr ASTERISK expr
 #line 306 "src/pparser.yy"
                                                                 {
                                                                     cout << "PARSER expr: | expr\n";
@@ -1255,7 +1255,7 @@ namespace yy {
 #line 1256 "build/pparser.tab.cc"
     break;
 
-  case 35: // expr: expr LESS_THAN expr
+  case 35: // expr: expr SLASH expr
 #line 309 "src/pparser.yy"
                                                                 {
                                                                     cout << "PARSER expr: | expr\n";
@@ -1263,7 +1263,7 @@ namespace yy {
 #line 1264 "build/pparser.tab.cc"
     break;
 
-  case 36: // expr: expr GREATER_THAN expr
+  case 36: // expr: expr LESS_THAN expr
 #line 312 "src/pparser.yy"
                                                                 {
                                                                     cout << "PARSER expr: | expr\n";
@@ -1271,7 +1271,7 @@ namespace yy {
 #line 1272 "build/pparser.tab.cc"
     break;
 
-  case 37: // expr: expr GREATER_THAN_EQUAL expr
+  case 37: // expr: expr GREATER_THAN expr
 #line 315 "src/pparser.yy"
                                                                 {
                                                                     cout << "PARSER expr: | expr\n";
@@ -1279,7 +1279,7 @@ namespace yy {
 #line 1280 "build/pparser.tab.cc"
     break;
 
-  case 38: // expr: expr LESS_THAN_EQUAL expr
+  case 38: // expr: expr GREATER_THAN_EQUAL expr
 #line 318 "src/pparser.yy"
                                                                 {
                                                                     cout << "PARSER expr: | expr\n";
@@ -1287,7 +1287,7 @@ namespace yy {
 #line 1288 "build/pparser.tab.cc"
     break;
 
-  case 39: // expr: expr NOT_EQUAL expr
+  case 39: // expr: expr LESS_THAN_EQUAL expr
 #line 321 "src/pparser.yy"
                                                                 {
                                                                     cout << "PARSER expr: | expr\n";
@@ -1295,7 +1295,7 @@ namespace yy {
 #line 1296 "build/pparser.tab.cc"
     break;
 
-  case 40: // expr: LPAREN expr RPAREN
+  case 40: // expr: expr NOT_EQUAL expr
 #line 324 "src/pparser.yy"
                                                                 {
                                                                     cout << "PARSER expr: | expr\n";
@@ -1303,265 +1303,273 @@ namespace yy {
 #line 1304 "build/pparser.tab.cc"
     break;
 
-  case 41: // qualafied_id: symbol DOT IDENTIFIER
-#line 347 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | symbol DOT IDENTIFIER" << FMT_RESET << endl; }
-#line 1310 "build/pparser.tab.cc"
+  case 41: // expr: LPAREN expr RPAREN
+#line 327 "src/pparser.yy"
+                                                                {
+                                                                    cout << "PARSER expr: | expr\n";
+                                                                }
+#line 1312 "build/pparser.tab.cc"
     break;
 
-  case 42: // qualafied_id: symbol INDIRECT_MEMBER IDENTIFIER
-#line 348 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | symbol INDIRECT_MEMBER IDENTIFIER" << FMT_RESET << endl; }
-#line 1316 "build/pparser.tab.cc"
-    break;
-
-  case 43: // qualafied_id: qualafied_id DOT IDENTIFIER
-#line 349 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | qualafied_id DOT IDENTIFIER" << FMT_RESET << endl; }
-#line 1322 "build/pparser.tab.cc"
-    break;
-
-  case 44: // qualafied_id: qualafied_id INDIRECT_MEMBER IDENTIFIER
+  case 42: // qualafied_id: symbol DOT IDENTIFIER
 #line 350 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | qualafied_id INDIRECT_MEMBER IDENTIFIER" << FMT_RESET << endl; }
-#line 1328 "build/pparser.tab.cc"
+                                                                { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | symbol DOT IDENTIFIER" << FMT_RESET << endl; }
+#line 1318 "build/pparser.tab.cc"
     break;
 
-  case 45: // sub_proc: symbol LPAREN params RPAREN
-#line 356 "src/pparser.yy"
+  case 43: // qualafied_id: symbol INDIRECT_MEMBER IDENTIFIER
+#line 351 "src/pparser.yy"
+                                                                { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | symbol INDIRECT_MEMBER IDENTIFIER" << FMT_RESET << endl; }
+#line 1324 "build/pparser.tab.cc"
+    break;
+
+  case 44: // qualafied_id: qualafied_id DOT IDENTIFIER
+#line 352 "src/pparser.yy"
+                                                                { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | qualafied_id DOT IDENTIFIER" << FMT_RESET << endl; }
+#line 1330 "build/pparser.tab.cc"
+    break;
+
+  case 45: // qualafied_id: qualafied_id INDIRECT_MEMBER IDENTIFIER
+#line 353 "src/pparser.yy"
+                                                                { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | qualafied_id INDIRECT_MEMBER IDENTIFIER" << FMT_RESET << endl; }
+#line 1336 "build/pparser.tab.cc"
+    break;
+
+  case 46: // sub_proc: symbol LPAREN params RPAREN
+#line 359 "src/pparser.yy"
                                                                 {
                                                                     cout << FMT_FG_YELLOW << "PARSER sub_proc: | symbol LPAREN params RPAREN" << FMT_RESET << endl;
                                                                     yylhs.value.as < std::string > ()=yystack_[3].value.as < std::string > ();
                                                                 }
-#line 1337 "build/pparser.tab.cc"
+#line 1345 "build/pparser.tab.cc"
     break;
 
-  case 46: // array: symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET
-#line 365 "src/pparser.yy"
+  case 47: // array: symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET
+#line 368 "src/pparser.yy"
                                                                 {
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER array: | symbol=\"" << yystack_[3].value.as < std::string > () << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << yystack_[1].value.as < std::string > () << "\" CLOSE_BRACKET"
                                                                         << FMT_RESET << endl;
                                                                     yylhs.value.as < std::string > ()=yystack_[3].value.as < std::string > ();
                                                                 }
-#line 1348 "build/pparser.tab.cc"
+#line 1356 "build/pparser.tab.cc"
     break;
 
-  case 47: // params: param
-#line 377 "src/pparser.yy"
+  case 48: // params: param
+#line 380 "src/pparser.yy"
                                                                 { cout << "PARSER params: | param\n" << endl; }
-#line 1354 "build/pparser.tab.cc"
+#line 1362 "build/pparser.tab.cc"
     break;
 
-  case 48: // params: params symbol
-#line 378 "src/pparser.yy"
+  case 49: // params: params symbol
+#line 381 "src/pparser.yy"
                                                                 { cout << FMT_FG_YELLOW << "PARSER qualafied_id: | params COMMA symbol" << FMT_RESET << endl; }
-#line 1360 "build/pparser.tab.cc"
+#line 1368 "build/pparser.tab.cc"
     break;
 
-  case 49: // param: symbol COMMA
-#line 385 "src/pparser.yy"
+  case 50: // param: symbol COMMA
+#line 388 "src/pparser.yy"
                                                                 { cout << FMT_FG_YELLOW << "PARSER param: | symbol" << FMT_RESET << endl; }
-#line 1366 "build/pparser.tab.cc"
+#line 1374 "build/pparser.tab.cc"
     break;
 
-  case 50: // symbol: DOLLAR_SIGN IDENTIFIER
-#line 391 "src/pparser.yy"
+  case 51: // symbol: DOLLAR_SIGN IDENTIFIER
+#line 394 "src/pparser.yy"
                                                                 {
                                                                     cout << FMT_FG_YELLOW << "PARSER symbol: | IDENTIFIER=\"" << yystack_[0].value.as < std::string > () << "\"" << FMT_RESET << endl;
                                                                     yylhs.value.as < std::string > ()=yystack_[0].value.as < std::string > ();
                                                                 }
-#line 1375 "build/pparser.tab.cc"
+#line 1383 "build/pparser.tab.cc"
     break;
 
-  case 51: // symbol: HASH_MARK CONST_ID HASH_MARK
-#line 395 "src/pparser.yy"
+  case 52: // symbol: HASH_MARK CONST_ID HASH_MARK
+#line 398 "src/pparser.yy"
                                                                 {
                                                                     cout << FMT_FG_YELLOW << "PARSER symbol: | HASH_MARK CONST_ID=\"" << yystack_[1].value.as < std::string > () << "\"" << FMT_RESET << endl;
                                                                     yylhs.value.as < std::string > ()=yystack_[1].value.as < std::string > ();
                                                                 }
-#line 1384 "build/pparser.tab.cc"
+#line 1392 "build/pparser.tab.cc"
     break;
 
-  case 52: // modifier: CAPITALIZE
-#line 404 "src/pparser.yy"
-                                                                { cout << "PARSER modifier: | CAPITALIZE\n"; }
-#line 1390 "build/pparser.tab.cc"
-    break;
-
-  case 53: // modifier: CAT
-#line 405 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | CAT\n"; }
-#line 1396 "build/pparser.tab.cc"
-    break;
-
-  case 54: // modifier: COUNT_CHARACTERS
-#line 406 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | COUNT_CHARACTERS\n"; }
-#line 1402 "build/pparser.tab.cc"
-    break;
-
-  case 55: // modifier: COUNT_SENTENCES
+  case 53: // modifier: CAPITALIZE
 #line 407 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | COUNT_SENTENCES\n"; }
-#line 1408 "build/pparser.tab.cc"
+                                                                { cout << "PARSER modifier: | CAPITALIZE\n"; }
+#line 1398 "build/pparser.tab.cc"
     break;
 
-  case 56: // modifier: COUNT_PARAGRAPHS
+  case 54: // modifier: CAT
 #line 408 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | COUNT_PARAGRAPHS\n"; }
-#line 1414 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | CAT\n"; }
+#line 1404 "build/pparser.tab.cc"
     break;
 
-  case 57: // modifier: COUNT_WORDS
+  case 55: // modifier: COUNT_CHARACTERS
 #line 409 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | COUNT_WORDS\n";}
-#line 1420 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | COUNT_CHARACTERS\n"; }
+#line 1410 "build/pparser.tab.cc"
     break;
 
-  case 58: // modifier: DATE_FORMAT
+  case 56: // modifier: COUNT_SENTENCES
 #line 410 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | DATE_FORMAT\n"; }
-#line 1426 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | COUNT_SENTENCES\n"; }
+#line 1416 "build/pparser.tab.cc"
     break;
 
-  case 59: // modifier: DEFAULT
+  case 57: // modifier: COUNT_PARAGRAPHS
 #line 411 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | DEFAULT\n"; }
-#line 1432 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | COUNT_PARAGRAPHS\n"; }
+#line 1422 "build/pparser.tab.cc"
     break;
 
-  case 60: // modifier: ESCAPE
+  case 58: // modifier: COUNT_WORDS
 #line 412 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | ESCAPE\n"; }
-#line 1438 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | COUNT_WORDS\n";}
+#line 1428 "build/pparser.tab.cc"
     break;
 
-  case 61: // modifier: INDENT
+  case 59: // modifier: DATE_FORMAT
 #line 413 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | INDENT\n"; }
-#line 1444 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | DATE_FORMAT\n"; }
+#line 1434 "build/pparser.tab.cc"
     break;
 
-  case 62: // modifier: STRIP
+  case 60: // modifier: DEFAULT
 #line 414 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | STRIPS\n"; }
-#line 1450 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | DEFAULT\n"; }
+#line 1440 "build/pparser.tab.cc"
     break;
 
-  case 63: // modifier: NL2BR
+  case 61: // modifier: ESCAPE
 #line 415 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | NL2BR\n";  }
-#line 1456 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | ESCAPE\n"; }
+#line 1446 "build/pparser.tab.cc"
     break;
 
-  case 64: // modifier: REPLACE
+  case 62: // modifier: INDENT
 #line 416 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | REPLACE\n"; }
-#line 1462 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | INDENT\n"; }
+#line 1452 "build/pparser.tab.cc"
     break;
 
-  case 65: // modifier: REGEX_REPLACE
+  case 63: // modifier: STRIP
 #line 417 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | REGEX_REPLACE\n"; }
-#line 1468 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | STRIPS\n"; }
+#line 1458 "build/pparser.tab.cc"
     break;
 
-  case 66: // modifier: SPACIFY
+  case 64: // modifier: NL2BR
 #line 418 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | SPACIFY\n"; }
-#line 1474 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | NL2BR\n";  }
+#line 1464 "build/pparser.tab.cc"
     break;
 
-  case 67: // modifier: STRING_FORMAT
+  case 65: // modifier: REPLACE
 #line 419 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | STRING_FORMAT\n"; }
-#line 1480 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | REPLACE\n"; }
+#line 1470 "build/pparser.tab.cc"
     break;
 
-  case 68: // modifier: STRIP_TAGS
+  case 66: // modifier: REGEX_REPLACE
 #line 420 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | STIP_TAGS\n"; }
-#line 1486 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | REGEX_REPLACE\n"; }
+#line 1476 "build/pparser.tab.cc"
     break;
 
-  case 69: // modifier: TRUNCATE
+  case 67: // modifier: SPACIFY
 #line 421 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | TRUNCATE\n"; }
-#line 1492 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | SPACIFY\n"; }
+#line 1482 "build/pparser.tab.cc"
     break;
 
-  case 70: // modifier: UPPER
+  case 68: // modifier: STRING_FORMAT
 #line 422 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | UPPER\n"; }
-#line 1498 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | STRING_FORMAT\n"; }
+#line 1488 "build/pparser.tab.cc"
     break;
 
-  case 71: // modifier: LOWER
+  case 69: // modifier: STRIP_TAGS
 #line 423 "src/pparser.yy"
-                                                                { cout  << "PARSER modifier: | LOWER\n"; }
-#line 1504 "build/pparser.tab.cc"
+                                                                { cout  << "PARSER modifier: | STIP_TAGS\n"; }
+#line 1494 "build/pparser.tab.cc"
     break;
 
-  case 72: // modifier: WORDWRAP
+  case 70: // modifier: TRUNCATE
 #line 424 "src/pparser.yy"
+                                                                { cout  << "PARSER modifier: | TRUNCATE\n"; }
+#line 1500 "build/pparser.tab.cc"
+    break;
+
+  case 71: // modifier: UPPER
+#line 425 "src/pparser.yy"
+                                                                { cout  << "PARSER modifier: | UPPER\n"; }
+#line 1506 "build/pparser.tab.cc"
+    break;
+
+  case 72: // modifier: LOWER
+#line 426 "src/pparser.yy"
+                                                                { cout  << "PARSER modifier: | LOWER\n"; }
+#line 1512 "build/pparser.tab.cc"
+    break;
+
+  case 73: // modifier: WORDWRAP
+#line 427 "src/pparser.yy"
                                                                 { cout  << "PARSER modifier: | WORDWRAP\n"; }
-#line 1510 "build/pparser.tab.cc"
+#line 1518 "build/pparser.tab.cc"
     break;
 
-  case 73: // built_in: CONFIG_LOAD attributes
-#line 430 "src/pparser.yy"
+  case 74: // built_in: CONFIG_LOAD attributes
+#line 433 "src/pparser.yy"
                                                                 {   cout << FMT_FG_YELLOW << "PARSER built_in: | CONFIG_LOAD FILE_ATTRIB=\"" << yystack_[1].value.as < std::string > () << "\" EQUAL STRING_LITERAL=\"" << "TEST" << "\"" << FMT_RESET << endl;  }
-#line 1516 "build/pparser.tab.cc"
+#line 1524 "build/pparser.tab.cc"
     break;
 
-  case 74: // built_in: INCLUDE attributes
-#line 431 "src/pparser.yy"
+  case 75: // built_in: INCLUDE attributes
+#line 434 "src/pparser.yy"
                                                                 {
                                                                     cout << FMT_FG_YELLOW << "PARSER built_in: | INCLUDE attributes" << FMT_RESET << endl;
                                                                     yylhs.value.as < std::vector< std::pair<std::string, std::string> >  > () = yystack_[0].value.as < std::vector< std::pair<std::string, std::string> >  > ();
                                                                 }
-#line 1525 "build/pparser.tab.cc"
+#line 1533 "build/pparser.tab.cc"
     break;
 
-  case 75: // built_in: REQUIRE attributes
-#line 435 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-#line 1531 "build/pparser.tab.cc"
-    break;
-
-  case 76: // built_in: REQUIRE_ONCE attributes
-#line 436 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-#line 1537 "build/pparser.tab.cc"
-    break;
-
-  case 77: // built_in: INSERT attributes
-#line 437 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-#line 1543 "build/pparser.tab.cc"
-    break;
-
-  case 78: // built_in: ASSIGN attributes
+  case 76: // built_in: REQUIRE attributes
 #line 438 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | ASSIGN FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-#line 1549 "build/pparser.tab.cc"
+                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+#line 1539 "build/pparser.tab.cc"
     break;
 
-  case 79: // built_in: ISSET attributes
+  case 77: // built_in: REQUIRE_ONCE attributes
 #line 439 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-#line 1555 "build/pparser.tab.cc"
+                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+#line 1545 "build/pparser.tab.cc"
     break;
 
-  case 80: // built_in: VERSION attributes
+  case 78: // built_in: INSERT attributes
 #line 440 "src/pparser.yy"
-                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-#line 1561 "build/pparser.tab.cc"
+                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+#line 1551 "build/pparser.tab.cc"
     break;
 
-  case 81: // attributes: attrib
-#line 446 "src/pparser.yy"
+  case 79: // built_in: ASSIGN attributes
+#line 441 "src/pparser.yy"
+                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | ASSIGN FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+#line 1557 "build/pparser.tab.cc"
+    break;
+
+  case 80: // built_in: ISSET attributes
+#line 442 "src/pparser.yy"
+                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+#line 1563 "build/pparser.tab.cc"
+    break;
+
+  case 81: // built_in: VERSION attributes
+#line 443 "src/pparser.yy"
+                                                                { cout << FMT_FG_YELLOW << "PARSER built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+#line 1569 "build/pparser.tab.cc"
+    break;
+
+  case 82: // attributes: attrib
+#line 449 "src/pparser.yy"
                                                                {
                                                                     cout << FMT_FG_YELLOW << "PARSER attribute: | push -> attrib={name=\"" << yystack_[0].value.as <  std::pair<std::string, std::string>  > ().first  << "\"; value=\"" << yystack_[0].value.as <  std::pair<std::string, std::string>  > ().second << "\"}\n" << FMT_RESET << endl;
                                                                     std::pair<std::string, std::string>  p(yystack_[0].value.as <  std::pair<std::string, std::string>  > ());
@@ -1569,21 +1577,21 @@ namespace yy {
                                                                     v.push_back( p );
                                                                     yylhs.value.as < std::vector< std::pair<std::string, std::string> >  > () = v;
                                                                }
-#line 1573 "build/pparser.tab.cc"
+#line 1581 "build/pparser.tab.cc"
     break;
 
-  case 82: // attributes: attributes attrib
-#line 453 "src/pparser.yy"
+  case 83: // attributes: attributes attrib
+#line 456 "src/pparser.yy"
                                                                {
                                                                     cout << FMT_FG_YELLOW << "PARSER attribute: | attributes : push-> attrib={name=\"" << yystack_[0].value.as <  std::pair<std::string, std::string>  > ().first  << "\"; value=\"" << yystack_[0].value.as <  std::pair<std::string, std::string>  > ().second << "\"}\n" << FMT_RESET << endl;
                                                                     yystack_[1].value.as < std::vector< std::pair<std::string, std::string> >  > ().push_back( yystack_[0].value.as <  std::pair<std::string, std::string>  > () );
                                                                     yylhs.value.as < std::vector< std::pair<std::string, std::string> >  > () = yystack_[1].value.as < std::vector< std::pair<std::string, std::string> >  > ();
                                                                }
-#line 1583 "build/pparser.tab.cc"
+#line 1591 "build/pparser.tab.cc"
     break;
 
-  case 83: // attrib: VALUE_ATTRIB EQUAL_SIGN STRING_LITERAL
-#line 463 "src/pparser.yy"
+  case 84: // attrib: VALUE_ATTRIB EQUAL_SIGN STRING_LITERAL
+#line 466 "src/pparser.yy"
                                                                {
                                                                     cout << FMT_FG_YELLOW << "PARSER name_value: | VALUE_ATTRIB=\""
                                                                         << yystack_[2].value.as < std::string > () << "\" EQUAL_SIGN STRING_LITERAL=\""
@@ -1592,11 +1600,11 @@ namespace yy {
                                                                     std::pair<std::string, std::string>  pair(yystack_[2].value.as < std::string > (), yystack_[0].value.as < std::string > ());
                                                                     yylhs.value.as <  std::pair<std::string, std::string>  > () = pair;
                                                                }
-#line 1596 "build/pparser.tab.cc"
+#line 1604 "build/pparser.tab.cc"
     break;
 
-  case 84: // attrib: VAR_ATTRIB EQUAL_SIGN STRING_LITERAL
-#line 471 "src/pparser.yy"
+  case 85: // attrib: VAR_ATTRIB EQUAL_SIGN STRING_LITERAL
+#line 474 "src/pparser.yy"
                                                                {
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\""
@@ -1605,11 +1613,11 @@ namespace yy {
                                                                     std::pair<std::string, std::string>  pair(yystack_[2].value.as < std::string > (), yystack_[0].value.as < std::string > ());
                                                                     yylhs.value.as <  std::pair<std::string, std::string>  > () = pair;
                                                                }
-#line 1609 "build/pparser.tab.cc"
+#line 1617 "build/pparser.tab.cc"
     break;
 
-  case 85: // attrib: FILE_ATTRIB EQUAL_SIGN STRING_LITERAL
-#line 479 "src/pparser.yy"
+  case 86: // attrib: FILE_ATTRIB EQUAL_SIGN STRING_LITERAL
+#line 482 "src/pparser.yy"
                                                                {
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER name_value: | FILE_ATTRIB=\""
@@ -1620,11 +1628,11 @@ namespace yy {
                                                                     std::pair<std::string, std::string>  pair(yystack_[2].value.as < std::string > (), yystack_[0].value.as < std::string > ());
                                                                     yylhs.value.as <  std::pair<std::string, std::string>  > () = pair;
                                                                }
-#line 1624 "build/pparser.tab.cc"
+#line 1632 "build/pparser.tab.cc"
     break;
 
-  case 86: // attrib: attrib_name EQUAL_SIGN STRING_LITERAL
-#line 489 "src/pparser.yy"
+  case 87: // attrib: attrib_name EQUAL_SIGN STRING_LITERAL
+#line 492 "src/pparser.yy"
                                                                {
                                                                       cout << FMT_FG_YELLOW
                                                                         << "PARSER name_value: | " << yystack_[2].value.as < std::string > () << "=\""
@@ -1635,41 +1643,41 @@ namespace yy {
                                                                     std::pair<std::string, std::string>  pair(yystack_[2].value.as < std::string > (), yystack_[0].value.as < std::string > ());
                                                                     yylhs.value.as <  std::pair<std::string, std::string>  > () = pair;
                                                                }
-#line 1639 "build/pparser.tab.cc"
+#line 1647 "build/pparser.tab.cc"
     break;
 
-  case 88: // attrib_name: VALUE_ATTRIB
-#line 505 "src/pparser.yy"
-      { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 1645 "build/pparser.tab.cc"
-    break;
-
-  case 89: // attrib_name: FROM_ATTRIB
-#line 506 "src/pparser.yy"
-      { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 1651 "build/pparser.tab.cc"
-    break;
-
-  case 90: // attrib_name: ITEM_ATTRIB
-#line 507 "src/pparser.yy"
-      { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 1657 "build/pparser.tab.cc"
-    break;
-
-  case 91: // attrib_name: KEY_ATTRIB
+  case 89: // attrib_name: VALUE_ATTRIB
 #line 508 "src/pparser.yy"
       { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 1663 "build/pparser.tab.cc"
+#line 1653 "build/pparser.tab.cc"
     break;
 
-  case 92: // attrib_name: NAME_ATTRIB
+  case 90: // attrib_name: FROM_ATTRIB
 #line 509 "src/pparser.yy"
       { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 1669 "build/pparser.tab.cc"
+#line 1659 "build/pparser.tab.cc"
+    break;
+
+  case 91: // attrib_name: ITEM_ATTRIB
+#line 510 "src/pparser.yy"
+      { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
+#line 1665 "build/pparser.tab.cc"
+    break;
+
+  case 92: // attrib_name: KEY_ATTRIB
+#line 511 "src/pparser.yy"
+      { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
+#line 1671 "build/pparser.tab.cc"
+    break;
+
+  case 93: // attrib_name: NAME_ATTRIB
+#line 512 "src/pparser.yy"
+      { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
+#line 1677 "build/pparser.tab.cc"
     break;
 
 
-#line 1673 "build/pparser.tab.cc"
+#line 1681 "build/pparser.tab.cc"
 
             default:
               break;
@@ -1858,122 +1866,126 @@ namespace yy {
 
 
 
-  const signed char parser::yypact_ninf_ = -96;
+  const short parser::yypact_ninf_ = -128;
 
-  const signed char parser::yytable_ninf_ = -88;
+  const signed char parser::yytable_ninf_ = -89;
 
   const short
   parser::yypact_[] =
   {
-     -48,    -3,    12,   -48,   -96,     9,   -96,   163,   163,   163,
-     163,   163,   163,   163,   163,   -96,     8,    18,   -11,   -59,
-     -15,   -11,   -19,     2,     7,   -44,    -4,    29,    30,     0,
-      31,   -96,   -96,   -96,   -96,    13,    37,    44,   -96,   -96,
-     -96,   -96,    -5,   -96,    48,    -5,    -5,    -5,    -5,    -5,
-      -5,    -5,   -96,    22,   -63,   -11,   -11,    16,    68,   -96,
-     -96,   114,   -96,   -11,   -11,   -11,   -11,   -11,   -11,   -11,
-     -11,   -11,   148,    97,   157,   127,   128,   185,   114,   187,
-     -96,   -17,   188,    66,   -96,   189,   191,   192,   -96,   193,
-     -96,   -96,    26,    40,   -96,   -96,   -96,   -96,   -96,   -96,
-     -96,   -96,   -96,   -96,   -96,   -96,   -96,   -96,   -96,   -96,
-     -96,   -96,   -96,   -96,   -96,   -96,   137,   -57,   -57,   -57,
-     -57,   -57,   100,    16,    16,    74,   -96,   -96,   -96,   138,
-     141,    57,   -96,   147,   -96,   -96,   -96,   -96,   -96,   -96,
-     -96,    -9,    -9,   -96,   -96,   -96,   -96,   -96,   -96,   -74,
-      24,   142,   143,    19,   -96,    -9,   130,   -96,   -96,   -96,
-     145,   146,   -96,   -96
+     -63,    -3,    15,   -63,  -128,    10,  -128,   207,   207,   207,
+     207,   207,   207,   207,   207,  -128,    22,    23,   -10,   -26,
+     -14,   -10,   -22,    -6,    -5,    40,    -4,     1,     2,    25,
+       6,  -128,  -128,  -128,  -128,   -19,   -12,    -9,  -128,  -128,
+    -128,  -128,    -2,  -128,    11,    -2,    -2,    -2,    -2,    -2,
+      -2,    -2,  -128,    12,   -64,     3,   -10,   -10,   -13,    18,
+    -128,  -128,   165,  -128,   -10,   -10,   -10,   -10,   -10,   -10,
+     -10,   -10,   -10,    75,    35,    92,    38,    41,    98,   165,
+     108,  -128,    -8,   109,     0,  -128,   110,   112,   116,  -128,
+     120,  -128,  -128,   165,    74,    91,  -128,  -128,  -128,  -128,
+    -128,  -128,  -128,  -128,  -128,  -128,  -128,  -128,  -128,  -128,
+    -128,  -128,  -128,  -128,  -128,  -128,  -128,  -128,    70,   -46,
+     -46,   -46,   -46,   -46,   -53,   -13,   -13,   125,  -128,  -128,
+    -128,    71,    79,   -28,  -128,    80,  -128,  -128,  -128,  -128,
+    -128,  -128,  -128,  -128,   -11,   -11,  -128,  -128,  -128,  -128,
+    -128,  -128,   -67,    29,    72,    78,    30,  -128,   -11,    65,
+    -128,  -128,  -128,    97,   101,  -128,  -128
   };
 
   const signed char
   parser::yydefact_[] =
   {
-       0,     0,     0,     2,     3,     0,     6,    87,    87,    87,
-      87,    87,    87,    87,    87,    29,     0,     0,     0,     0,
+       0,     0,     0,     2,     3,     0,     6,    88,    88,    88,
+      88,    88,    88,    88,    88,    29,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     1,     4,     5,     7,     0,     0,     0,    89,    91,
-      92,    90,    73,    81,     0,    74,    75,    76,    77,    78,
-      79,    80,    50,     0,     0,     0,     0,    30,     0,    13,
-      16,     0,    19,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    14,     0,     8,     9,     0,     0,     0,
-      10,     0,     0,     0,    15,     0,     0,     0,    82,     0,
-      51,    40,     0,     0,    23,    52,    53,    54,    55,    56,
-      57,    58,    59,    60,    61,    71,    70,    62,    63,    65,
-      64,    66,    67,    68,    69,    72,     0,    37,    38,    39,
-      35,    36,    32,    33,    34,    31,    44,    43,    42,     0,
-       0,     0,    47,     0,    41,    18,    17,    84,    83,    85,
-      86,    21,     0,    27,    12,    46,    45,    48,    49,     0,
-       0,     0,     0,     0,    20,     0,     0,    28,    25,    26,
-       0,     0,    24,    22
+       0,     1,     4,     5,     7,     0,     0,     0,    90,    92,
+      93,    91,    74,    82,     0,    75,    76,    77,    78,    79,
+      80,    81,    51,     0,     0,     0,     0,     0,    31,     0,
+      13,    16,     0,    19,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    14,     0,     8,     9,     0,     0,
+       0,    10,     0,     0,     0,    15,     0,     0,     0,    83,
+       0,    52,    41,     0,     0,     0,    23,    53,    54,    55,
+      56,    57,    58,    59,    60,    61,    62,    72,    71,    63,
+      64,    66,    65,    67,    68,    69,    70,    73,     0,    38,
+      39,    40,    36,    37,    33,    34,    35,    32,    45,    44,
+      43,    30,     0,     0,    48,     0,    42,    18,    17,    85,
+      84,    86,    87,    30,    21,     0,    27,    12,    47,    46,
+      49,    50,     0,     0,     0,     0,     0,    20,     0,     0,
+      28,    25,    26,     0,     0,    24,    22
   };
 
   const short
   parser::yypgoto_[] =
   {
-     -96,   -96,   -96,   214,   -96,   218,   -96,   -95,    46,   223,
-     224,   225,   -96,   -96,    -1,   149,   -96,   186,   135,   -96
+    -128,  -128,  -128,   153,  -128,   173,  -128,  -127,    94,   179,
+     180,   181,  -128,  -128,    -1,   -40,  -128,   230,    76,  -128
   };
 
   const unsigned char
   parser::yydefgoto_[] =
   {
-       0,     2,     3,     4,     5,     6,    23,    24,    25,   150,
-     151,   152,   131,   132,   153,   116,    30,    42,    43,    44
+       0,     2,     3,     4,     5,     6,    23,    24,    25,   153,
+     154,   155,   133,   134,    55,   118,    30,    42,    43,    44
   };
 
   const short
   parser::yytable_[] =
   {
-      29,     7,     8,     9,    10,    11,    12,    13,    15,    33,
-      15,    14,    31,    72,   155,    91,    15,    77,    55,    35,
-      36,    37,    38,    39,    40,    41,    61,     1,   156,    52,
-      63,    64,    62,    65,    66,    67,    77,    68,    69,    70,
-      53,    72,    71,    68,    69,    70,   149,   154,    71,    63,
-      64,    16,    65,    66,    67,    17,    68,    69,    70,    16,
-     160,    71,    56,    17,    54,    16,    18,    57,    18,    17,
-      78,    58,    73,    79,    18,    74,    80,    81,    59,    82,
-     133,    19,    20,    60,     1,   135,   136,    19,    20,    21,
-     -87,    21,    79,    22,    90,    83,    81,    21,    82,    22,
-     157,    92,    93,    74,   141,    75,    76,    84,    85,   117,
-     118,   119,   120,   121,   122,   123,   124,   125,   142,    63,
-      64,    71,    65,    66,    67,    16,    68,    69,    70,    17,
-     147,    71,    86,    63,    64,   146,    65,    66,    67,    87,
-      68,    69,    70,    89,    94,    71,    95,    96,    97,    98,
-      99,   100,   101,   102,   103,   104,   105,   106,   107,   108,
-     109,   110,   111,   112,   113,   114,   115,    63,    64,   126,
-      65,    66,    67,   -28,    68,    69,    70,    88,   127,    71,
-      88,    88,    88,    88,    88,    88,    88,    35,    36,    37,
-      38,    39,    40,    41,    45,    46,    47,    48,    49,    50,
-      51,    69,    70,   -25,   -26,    71,   128,   130,   137,   134,
-     138,   139,   140,   143,   144,   145,   148,    32,   158,   159,
-     161,   162,   163,    34,    26,    27,    28,   129
+      29,     7,     8,     9,    10,    11,    12,    13,    15,    15,
+      33,    14,     1,    73,    92,    31,    15,   152,   157,   137,
+     138,   158,    35,    36,    37,    38,    39,    40,    41,    64,
+      65,   163,    66,    67,    68,   159,    69,    70,    71,   131,
+      16,    72,    78,    52,    17,    53,    73,    78,    70,    71,
+     149,    56,    72,   143,    69,    70,    71,    16,    16,    72,
+      16,    17,    17,    57,    17,    16,    18,    18,    59,    17,
+      60,    61,    74,    93,    18,    75,    86,    76,    77,    19,
+      20,   135,    85,    87,    91,     1,    88,    19,    20,    21,
+      21,    22,    72,   -88,    96,    79,   128,    21,    80,    22,
+      93,    81,    82,    80,    83,   160,    90,    82,    75,    83,
+      62,   -28,    54,   129,   -25,    58,    63,   -26,    89,   130,
+      84,    89,    89,    89,    89,    89,    89,    89,   132,   139,
+     136,   140,   150,    64,    65,   141,    66,    67,    68,   142,
+      69,    70,    71,   156,   156,    72,   146,   147,   161,   151,
+      94,    95,   144,   148,   162,   164,    32,   156,   119,   120,
+     121,   122,   123,   124,   125,   126,   127,    64,    65,   145,
+      66,    67,    68,   165,    69,    70,    71,   166,    34,    72,
+      26,    27,    28,     0,    64,    65,     0,    66,    67,    68,
+       0,    69,    70,    71,     0,     0,    72,    97,    98,    99,
+     100,   101,   102,   103,   104,   105,   106,   107,   108,   109,
+     110,   111,   112,   113,   114,   115,   116,   117,    64,    65,
+       0,    66,    67,    68,     0,    69,    70,    71,     0,     0,
+      72,    35,    36,    37,    38,    39,    40,    41,    45,    46,
+      47,    48,    49,    50,    51
   };
 
-  const unsigned char
+  const short
   parser::yycheck_[] =
   {
-       1,     4,     5,     6,     7,     8,     9,    10,    19,     0,
-      19,    14,     0,    17,    88,    78,    19,    17,    77,    24,
-      25,    26,    27,    28,    29,    30,    70,    75,   102,    21,
-      93,    94,    76,    96,    97,    98,    17,   100,   101,   102,
-      22,    17,   105,   100,   101,   102,   141,   142,   105,    93,
-      94,    68,    96,    97,    98,    72,   100,   101,   102,    68,
-     155,   105,    77,    72,    18,    68,    77,    21,    77,    72,
-      70,    90,    76,    73,    77,    79,    76,    77,    76,    79,
-      81,    90,    91,    76,    75,    19,    20,    90,    91,   100,
-      95,   100,    73,   102,    72,    95,    77,   100,    79,   102,
-      76,    55,    56,    79,    78,    76,    76,    76,    95,    63,
-      64,    65,    66,    67,    68,    69,    70,    71,    78,    93,
-      94,   105,    96,    97,    98,    68,   100,   101,   102,    72,
-     131,   105,    95,    93,    94,    78,    96,    97,    98,    95,
-     100,   101,   102,    95,    76,   105,    32,    33,    34,    35,
-      36,    37,    38,    39,    40,    41,    42,    43,    44,    45,
-      46,    47,    48,    49,    50,    51,    52,    93,    94,    21,
-      96,    97,    98,    76,   100,   101,   102,    42,    21,   105,
-      45,    46,    47,    48,    49,    50,    51,    24,    25,    26,
-      27,    28,    29,    30,     8,     9,    10,    11,    12,    13,
-      14,   101,   102,    76,    76,   105,    21,    20,    19,    21,
-      19,    19,    19,    76,    76,    74,    69,     3,    76,    76,
-      90,    76,    76,     5,     1,     1,     1,    78
+       1,     4,     5,     6,     7,     8,     9,    10,    19,    19,
+       0,    14,    75,    17,    78,     0,    19,   144,   145,    19,
+      20,    88,    24,    25,    26,    27,    28,    29,    30,    93,
+      94,   158,    96,    97,    98,   102,   100,   101,   102,    79,
+      68,   105,    17,    21,    72,    22,    17,    17,   101,   102,
+      78,    77,   105,    93,   100,   101,   102,    68,    68,   105,
+      68,    72,    72,    77,    72,    68,    77,    77,    90,    72,
+      76,    76,    76,    70,    77,    79,    95,    76,    76,    90,
+      91,    82,    76,    95,    72,    75,    95,    90,    91,   100,
+     100,   102,   105,    95,    76,    70,    21,   100,    73,   102,
+      70,    76,    77,    73,    79,    76,    95,    77,    79,    79,
+      70,    76,    18,    21,    76,    21,    76,    76,    42,    21,
+      95,    45,    46,    47,    48,    49,    50,    51,    20,    19,
+      21,    19,   133,    93,    94,    19,    96,    97,    98,    19,
+     100,   101,   102,   144,   145,   105,    76,    76,    76,    69,
+      56,    57,    78,    74,    76,    90,     3,   158,    64,    65,
+      66,    67,    68,    69,    70,    71,    72,    93,    94,    78,
+      96,    97,    98,    76,   100,   101,   102,    76,     5,   105,
+       1,     1,     1,    -1,    93,    94,    -1,    96,    97,    98,
+      -1,   100,   101,   102,    -1,    -1,   105,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    52,    93,    94,
+      -1,    96,    97,    98,    -1,   100,   101,   102,    -1,    -1,
+     105,    24,    25,    26,    27,    28,    29,    30,     8,     9,
+      10,    11,    12,    13,    14
   };
 
   const signed char
@@ -1984,18 +1996,18 @@ namespace yy {
       91,   100,   102,   112,   113,   114,   115,   116,   117,   120,
      122,     0,   109,     0,   111,    24,    25,    26,    27,    28,
       29,    30,   123,   124,   125,   123,   123,   123,   123,   123,
-     123,   123,    21,    22,   114,    77,    77,   114,    90,    76,
-      76,    70,    76,    93,    94,    96,    97,    98,   100,   101,
-     102,   105,    17,    76,    79,    76,    76,    17,    70,    73,
-      76,    77,    79,    95,    76,    95,    95,    95,   124,    95,
-      72,    78,   114,   114,    76,    32,    33,    34,    35,    36,
-      37,    38,    39,    40,    41,    42,    43,    44,    45,    46,
-      47,    48,    49,    50,    51,    52,   121,   114,   114,   114,
-     114,   114,   114,   114,   114,   114,    21,    21,    21,   121,
-      20,   118,   119,   120,    21,    19,    20,    19,    19,    19,
-      19,    78,    78,    76,    76,    74,    78,   120,    69,   113,
-     115,   116,   117,   120,   113,    88,   102,    76,    76,    76,
-     113,    90,    76,    76
+     123,   123,    21,    22,   114,   120,    77,    77,   114,    90,
+      76,    76,    70,    76,    93,    94,    96,    97,    98,   100,
+     101,   102,   105,    17,    76,    79,    76,    76,    17,    70,
+      73,    76,    77,    79,    95,    76,    95,    95,    95,   124,
+      95,    72,    78,    70,   114,   114,    76,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    52,   121,   114,
+     114,   114,   114,   114,   114,   114,   114,   114,    21,    21,
+      21,   121,    20,   118,   119,   120,    21,    19,    20,    19,
+      19,    19,    19,   121,    78,    78,    76,    76,    74,    78,
+     120,    69,   113,   115,   116,   117,   120,   113,    88,   102,
+      76,    76,    76,   113,    90,    76,    76
   };
 
   const signed char
@@ -2005,12 +2017,12 @@ namespace yy {
      111,   111,   111,   111,   111,   111,   111,   112,   112,   113,
      113,   113,   113,   113,   113,   113,   113,   113,   113,   114,
      114,   114,   114,   114,   114,   114,   114,   114,   114,   114,
-     114,   115,   115,   115,   115,   116,   117,   118,   118,   119,
-     120,   120,   121,   121,   121,   121,   121,   121,   121,   121,
+     114,   114,   115,   115,   115,   115,   116,   117,   118,   118,
+     119,   120,   120,   121,   121,   121,   121,   121,   121,   121,
      121,   121,   121,   121,   121,   121,   121,   121,   121,   121,
-     121,   121,   121,   122,   122,   122,   122,   122,   122,   122,
-     122,   123,   123,   124,   124,   124,   124,   125,   125,   125,
-     125,   125,   125
+     121,   121,   121,   121,   122,   122,   122,   122,   122,   122,
+     122,   122,   123,   123,   124,   124,   124,   124,   125,   125,
+     125,   125,   125,   125
   };
 
   const signed char
@@ -2019,13 +2031,13 @@ namespace yy {
        0,     2,     1,     1,     2,     2,     1,     2,     3,     3,
        3,     3,     5,     3,     3,     3,     3,     3,     3,     2,
        5,     4,     8,     3,     8,     2,     2,     4,     2,     1,
-       2,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     4,     4,     1,     2,     2,
-       2,     3,     1,     1,     1,     1,     1,     1,     1,     1,
+       3,     2,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     4,     4,     1,     2,
+       2,     2,     3,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     2,     2,     2,     2,     2,     2,     2,
-       2,     1,     2,     3,     3,     3,     3,     0,     1,     1,
-       1,     1,     1
+       1,     1,     1,     1,     2,     2,     2,     2,     2,     2,
+       2,     2,     1,     2,     3,     3,     3,     3,     0,     1,
+       1,     1,     1,     1
   };
 
 
@@ -2070,12 +2082,12 @@ namespace yy {
      161,   170,   179,   208,   211,   221,   245,   251,   266,   275,
      276,   277,   278,   279,   280,   281,   282,   283,   284,   290,
      294,   297,   300,   303,   306,   309,   312,   315,   318,   321,
-     324,   347,   348,   349,   350,   356,   365,   377,   378,   385,
-     391,   395,   404,   405,   406,   407,   408,   409,   410,   411,
-     412,   413,   414,   415,   416,   417,   418,   419,   420,   421,
-     422,   423,   424,   430,   431,   435,   436,   437,   438,   439,
-     440,   446,   453,   463,   471,   479,   489,   504,   505,   506,
-     507,   508,   509
+     324,   327,   350,   351,   352,   353,   359,   368,   380,   381,
+     388,   394,   398,   407,   408,   409,   410,   411,   412,   413,
+     414,   415,   416,   417,   418,   419,   420,   421,   422,   423,
+     424,   425,   426,   427,   433,   434,   438,   439,   440,   441,
+     442,   443,   449,   456,   466,   474,   482,   492,   507,   508,
+     509,   510,   511,   512
   };
 
   void
@@ -2107,9 +2119,9 @@ namespace yy {
 
 
 } // yy
-#line 2111 "build/pparser.tab.cc"
+#line 2123 "build/pparser.tab.cc"
 
-#line 512 "src/pparser.yy"
+#line 515 "src/pparser.yy"
 
 
 bool is_name(const std::pair<string, string>& p, const string& str)
@@ -2154,17 +2166,6 @@ void free_all_nvalues()
         next = cur->next;
     }
 }
-
-#ifdef YYERROR_FUNC
-int yyerror(char * s)
-{
-    fprintf(stderr, "%s\n", s);
-    return 0;
-};
-#endif
-
-#ifdef MAIN_FUNC
-#endif
 
 namespace yy
 {

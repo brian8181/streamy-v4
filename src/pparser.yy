@@ -274,7 +274,7 @@ assign_stmt:
 stmt:
      expr CLOSE_BRACE                                           { cout << FMT_FG_YELLOW << "PARSER stmt: | expr CLOSE_BRACE\n" << FMT_RESET; }
     | WHILE LPAREN expr RPAREN stmt                             { cout << "PARSER stmt: | WHILE LPAREN expr RPAREN stmt\n";}
-     | IF LPAREN expr %prec IFX RPAREN                          { cout << "PARSER stmt TEST: | IF LPAREN expr prec IFX RPAREN\n"; }
+    | IF LPAREN expr %prec IFX RPAREN                          { cout << "PARSER stmt TEST: | IF LPAREN expr prec IFX RPAREN\n"; }
     | IF LPAREN expr RPAREN stmt %prec IFX SLASH IF CLOSE_BRACE { cout << "PARSER stmt: | IF LPAREN expr RPAREN stmt prec IFX CLOSE_BRACE\n"; }
     | SLASH IF CLOSE_BRACE                                      { cout << "PARSER stmt: | IF LPAREN expr RPAREN stmt ELSE stmt CLOSE_BRACE\n"; }
     | IF LPAREN expr RPAREN stmt ELSE stmt CLOSE_BRACE          { cout << "PARSER stmt: | IF LPAREN expr RPAREN stmt ELSE stmt CLOSE_BRACE\n"; }
@@ -290,6 +290,9 @@ expr:
     STRING_LITERAL                                              {
                                                                     cout << FMT_FG_YELLOW << "PARSER expr: | STRING_LITERAL" << FMT_RESET << endl;
                                                                     $$=$1;
+                                                                }
+    | symbol VBAR modifier                                      {
+
                                                                 }
     | MINUS expr %prec UMINUS                                   {
                                                                     cout << "PARSER expr: | expr\n";
@@ -553,17 +556,6 @@ void free_all_nvalues()
         next = cur->next;
     }
 }
-
-#ifdef YYERROR_FUNC
-int yyerror(char * s)
-{
-    fprintf(stderr, "%s\n", s);
-    return 0;
-};
-#endif
-
-#ifdef MAIN_FUNC
-#endif
 
 namespace yy
 {
