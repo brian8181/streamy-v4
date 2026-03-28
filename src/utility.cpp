@@ -76,10 +76,10 @@ map<string, string>& get_config(const string& path, /* out */ map<string, string
 }
 
 /**
- * @brief single match
- * @param pattern
- * @param text
- * @param match
+ * @brief  single match
+ * @param  pattern
+ * @param  text
+ * @param  match
  * @return true if only one match & match string size equals text size
  */
 bool match_single(const string& pattern, const string& text, /* out */ smatch& match)
@@ -93,9 +93,9 @@ bool match_single(const string& pattern, const string& text, /* out */ smatch& m
 }
 
 /**
- * @brief single match
- * @param pattern
- * @param text
+ * @brief  single match
+ * @param  pattern
+ * @param  text
  * @return true if only one match & match string size equals text size
  */
 bool match_single(const string& pattern, const string& text)
@@ -110,9 +110,9 @@ bool match_single(const string& pattern, const string& text)
 }
 
 /**
- * @brief split string
- * @param s : input string
- * @param c : delimter
+ * @brief  split string
+ * @param  s : input string
+ * @param  c : delimter
  * @return std::vector<std::string> // ???
  */
 std::vector<std::string> split(const std::string& s, const char c)
@@ -133,9 +133,9 @@ std::vector<std::string> split(const std::string& s, const char c)
 }
 
 /**
- * @brief split string
- * @param str: std::string
- * @param regex : std::string
+ * @brief  split string
+ * @param  str: std::string
+ * @param  regex : std::string
  * @return std::vector<std::string>
  * */
 std::vector<std::string> split(const std::string &str, const std::string &regex)
@@ -157,10 +157,10 @@ int digits10(int n)
 }
 
 /**
- * @name itoa
- * @brief int to ascii
- * @param n, to eval
- * @param s, out parma
+ * @name   itoa
+ * @brief  int to ascii
+ * @param  n, to eval
+ * @param  s, out parma
  * @return void
 */
 void itoa(const int& n, char* s)
@@ -177,9 +177,9 @@ void itoa(const int& n, char* s)
 }
 
 /**
- * @name itos
- * @brief int to string
- * @param i : number to eval
+ * @name   itos
+ * @brief  int to string
+ * @param  i : number to eval
  * @return string
  */
 string itos(const int i)	// convert int to string
@@ -210,9 +210,9 @@ int atoi(const char* ptr)
 }
 
 /**
- * @brief to_lower: transform string chars to lower case
- * @param s: string parameter to transform
- * @param r: out param same as return value
+ * @brief  to_lower: transform string chars to lower case
+ * @param  s: string parameter to transform
+ * @param  r: out param same as return value
  * @return string&: same as out param
  */
 string& to_lower(const string& s, /* out */ string& r)
@@ -228,8 +228,8 @@ string& to_lower(const string& s, /* out */ string& r)
 }
 
 /**
- * @brief to_lower: transform string chars to lower case
- * @param s: string parameter to transform
+ * @brief  to_lower: transform string chars to lower case
+ * @param  s: string parameter to transform
  * @return string&
  */
 string& to_lower(string& s) // in place
@@ -244,9 +244,9 @@ string& to_lower(string& s) // in place
 }
 
 /**
- * @brief to_upper: transform string chars to upper case
- * @param s: string parameter to transform
- * @param r: out param same as return value
+ * @brief  to_upper: transform string chars to upper case
+ * @param  s: string parameter to transform
+ * @param  r: out param same as return value
  * @return string&: same as out param
  */
 string& to_upper(const string& s, /* out */ string& r)
@@ -262,8 +262,8 @@ string& to_upper(const string& s, /* out */ string& r)
 }
 
 /**
- * @brief to_upper: transform string chars to upper case
- * @param s: string parameter to transform
+ * @brief  to_upper: transform string chars to upper case
+ * @param  s: string parameter to transform
  * @return string&
  */
 string& to_upper(string& s) // in place
@@ -278,8 +278,8 @@ string& to_upper(string& s) // in place
 }
 
 /**
- * @brief left trim
- * @param s : input string
+ * @brief  left trim
+ * @param  s : input string
  * @return string&
  */
 string& ltrim(std::string &s)
@@ -297,8 +297,8 @@ string& ltrim(std::string &s)
 }
 
 /**
- * @brief right trim
- * @param s : input string
+ * @brief  right trim
+ * @param  s : input string
  * @return string&
  */
 string& rtrim(std::string &s)
@@ -316,8 +316,8 @@ string& rtrim(std::string &s)
 }
 
 /**
- * @brief trim left & right
- * @param s : input string
+ * @brief  trim left & right
+ * @param  s : input string
  * @return string&
  */
 string& trim(std::string &s)
@@ -328,9 +328,9 @@ string& trim(std::string &s)
 }
 
 /**
- * @brief trim left & right
- * @param s : input string
- * @param c : char to trim
+ * @brief  trim left & right
+ * @param  s : input string
+ * @param  c : char to trim
  * @return string&
  */
 string& trim(string &s, char c)
@@ -342,9 +342,9 @@ string& trim(string &s, char c)
 
 
 /**
- * @brief
- * @param m
- * @return
+ * @name   read_bits
+ * @param  const smatch& m
+ * @return int
  */
 int read_bits(const smatch& m)
 {

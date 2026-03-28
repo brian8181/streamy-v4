@@ -3,14 +3,15 @@
 # @version: 0.0.1
 
 APP = driver
-CXX = g++
+#CXX = g++
+CXX = x86_64-pc-cygwin-g++
 CC = gcc
 #LEX = reflex
 LEX = flex
 #YACC = bison -y
 YACC = bison
-YFLAGS =
-CXXFLAGS = -g -std=gnu++17 -fPIC -DLEX_TEST -DCYGWIN
+YFLAGS = -YYDEBUG
+CXXFLAGS = -g -std=gnu++17 -fPIC -DLEX_TEST -DCYGWIN -DDEBUG -DYYDEBUG -I$(BLD) -I$(SRC)
 CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
 #LDFLAGS += /usr/lib/libcppunit.dll.a
 LDFLAGS=/usr/local/lib/libfmt.a
@@ -46,24 +47,15 @@ FMT_CYAN='\e[36m'
 #	LDFLAGS += -lfmt -lcppunit
 #endif
 
-CXXFLAGS+=-DDEBUG -DYYDEBUG
-
 all: $(BLD)/driver
 
-$(BLD)/driver: $(BLD)/pparser.tab.cc $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/driver.h $(SRC)/lexer.cpp $(BLD)/lexer.hpp $(SRC)/utility.cpp $(BLD)/ast.o
+$(BLD)/driver: $(BLD)/pparser.tab.cc $(OBJ)/fileio.o $(OBJ)/driver.o $(SRC)/driver.h $(OBJ)/lexer.o $(OBJ)/lexer.hpp $(OBJ)/utility.o $(OBJ)/ast.o
 	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/driver\"$(FMT_RESET) ...\n"
-	$(CXX) $(CXXFLAGS) -I$(BLD) -I$(SRC) -I"/home/brian/src/boost_1_89_0" $(BLD)/pparser.tab.cc $(SRC)/fileio.cpp $(SRC)/driver.cpp $(SRC)/lexer.cpp $(SRC)/utility.cpp $(LDFLAGS) -o $@
-
-#$(BLD)/pparser.tab.o: $(SRC)/symtab.c $(SRC)/symtab.h $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh
-#	$(CC) $(CCFLAGS) -fPIC -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I"/home/brian/src/boost_1_89_0" $(OBJ)/pparser.tab.cc $(OBJ)/fileio.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
 
 $(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.cpp $(BLD)/lexer.hpp
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
-	$(YACC) $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cc
-
-# $(BLD)/pparser.tab.o: $(BLD)/bash_color.hpp $(BLD)/symtab.h $(BLD)/pparser.tab.hh $(BLD)/pparser.tab.cc
-# 	@echo -e "$(FMT_GREEN)\nBuilding \"parser.tab.o\"$(FMT_RESET) ...\n"
-# 	$(CXX) $(CXXFLAGS) -g -I$(BLD) -I$(SRC) -c $(BLD)/pparser.tab.cc -o $@
+	$(YACC) --debug $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cc
 
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h
@@ -73,10 +65,10 @@ $(BLD)/%.hpp: $(SRC)/%.hpp
 	cp $^ $@
 
 $(OBJ)/%.o: $(SRC)/%.c
-	$(CC) $(CCFLAGS) -I$(BLD) -c $< -o $@
+	$(CC) $(CCFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: $(SRC)/%.cpp
-	$(CXX) $(CXXFLAGS) -I$(BLD) -I"/home/brian/src/boost_1_89_0" -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I"/home/brian/src/boost_1_89_0" -c $< -o $@
 
 .PHONY: all rebuild dist install uninstall clean help
 rebuild: clean all

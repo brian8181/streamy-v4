@@ -21,26 +21,26 @@ using std::smatch;
 std::map<string, string>& get_config(const string& path, /* out */ map<string, string>& config);
 
 /**
- * @brief single match
- * @param pattern
- * @param text
- * @param match
+ * @brief  single match
+ * @param  pattern
+ * @param  text
+ * @param  match
  * @return true if only one match & match string size equals text size
  */
 bool match_single(const string& pattern, const string& text, /* out */ smatch& match);
 
 /**
- * @brief single match
- * @param pattern
- * @param text
+ * @brief  single match
+ * @param  pattern
+ * @param  text
  * @return true if only one match & match string size equals text size
  */
 bool match_single(const string& pattern, const string& text);
 
 /**
- * @brief split string
- * @param s : input string
- * @param c : delimter
+ * @brief  split string
+ * @param  s : input string
+ * @param  c : delimter
  * @return std::vector<std::string> // ???
  */
 std::vector<std::string> split(const std::string& s, char c);
@@ -57,60 +57,60 @@ std::vector<std::string> split(const std::string &str, const std::string &regex)
 void color_print(const string& s, fmt::text_style ts);
 
 /**
- * @brief to_lower: transform string chars to lower case
- * @param s: string parameter to transform
- * @param r: out param same as return value
+ * @brief  to_lower: transform string chars to lower case
+ * @param  s: string parameter to transform
+ * @param  r: out param same as return value
  * @return string&: same as out param
  */
 string& to_lower(const string& s, /* out */ string& r);
 
 /**
- * @brief to_lower: transform string chars to lower case
- * @param s: string parameter to transform
+ * @brief  to_lower: transform string chars to lower case
+ * @param  s: string parameter to transform
  * @return string&
  */
 string& to_lower(string& s);
 
 /**
- * @brief to_upper: transform string chars to upper case
- * @param s: string parameter to transform
- * @param r: out param same as return value
+ * @brief  to_upper: transform string chars to upper case
+ * @param  s: string parameter to transform
+ * @param  r: out param same as return value
  * @return string&: same as out param
  */
 string& to_upper(const string& s, /* out */ string& r);
 
 /**
- * @brief to_upper: transform string chars to upper case
- * @param s: string parameter to transform
+ * @brief  to_upper: transform string chars to upper case
+ * @param  s: string parameter to transform
  * @return string&
  */
 string& to_upper(string& s);
 
 /**
- * @brief left trim
- * @param s : input string
+ * @brief  left trim
+ * @param  s : input string
  * @return string&
  */
 string& ltrim(std::string &s);
 
 /**
- * @brief right trim
- * @param s : input string
+ * @brief  right trim
+ * @param  s : input string
  * @return string&
  */
 string& rtrim(std::string &s);
 
 /**
- * @brief trim left & right
- * @param s : input string
+ * @brief  trim left & right
+ * @param  s : input string
  * @return string&
  */
 string& trim(std::string &s);
 
 /**
- * @brief trim left & right
- * @param s : input string
- * @param c : char to trim
+ * @brief  trim left & right
+ * @param  s : input string
+ * @param  c : char to trim
  * @return string&
  */
 string& trim(string &s, char c);
@@ -123,20 +123,20 @@ string& trim(string &s, char c);
 int digits10(int n);
 
 /**
- * @name itoa
- * @brief int to ascii
- * @param n
- * @param number to eval
- * @param s, out parma
+ * @name  itoa
+ * @brief  int to ascii
+ * @param  n
+ * @param  number to eval
+ * @param  s, out parma
  * @return void
 */
 void itoa(const int& n, char* s);
 
 
 /**
- * @name itos
- * @brief int to string
- * @param i : number to eval
+ * @name   itos
+ * @brief  int to string
+ * @param  i : number to eval
  * @return string
  */
 string itos(int i);
