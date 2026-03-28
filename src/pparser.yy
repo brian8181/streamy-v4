@@ -1,5 +1,10 @@
 %require "3.2"
 %language "c++"
+
+%{
+    #define YYDEBUG 1
+%}
+
 %define api.value.type variant
 %code
 {
@@ -500,8 +505,7 @@ attrib:
  * @brief attribute name
  */
 attrib_name:
-    VALUE_ATTRIB
-    | FROM_ATTRIB
+    FROM_ATTRIB
     | ITEM_ATTRIB
     | KEY_ATTRIB
     | NAME_ATTRIB

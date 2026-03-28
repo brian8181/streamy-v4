@@ -7,6 +7,7 @@
  */
 #ifndef SCANNER_HPP_
 #define SCANNER_HPP_
+#define YYDEBUG 1
 
 #include "pparser.tab.hh"
 

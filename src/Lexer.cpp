@@ -415,6 +415,9 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 print_token(ptoken->id);
                 m_stream << " ~"<< ptoken->value << "~ ";
                 return parser::make_OPEN_BRACE();
+            case UL_COMMENT:
+                print_token(ptoken->id);
+                return parser::make_SKIP_TOKEN();
             case UL_SKIP_TOKEN:
                 print_token(ptoken->id);
                 cout << "default: SKIP_TOKEN" << endl;

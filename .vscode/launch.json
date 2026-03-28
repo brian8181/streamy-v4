@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/driver",
-            "args": [],
+            "args": ["-ctest/config.txt", "test/scan3.txt"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
@@ -34,13 +34,13 @@
             ]
         },
         {
-            "name": "C/C++: g++.exe build and debug active file",
+            "name": "DRIVER",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "program": "${workspaceFolder}/build/driver",
+            "args": ["-ctest/config.txt", "test/scan3.txt"],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -58,8 +58,8 @@
                 }
             ],
             "existing": false,
-            "preLaunchTask": "C/C++: g++.exe build active file",
-            "detail": "preLaunchTask: C/C++: g++.exe build active file",
+            "preLaunchTask": "MAKE",
+            "detail": "preLaunchTask: MAKE",
             "taskDetail": "compiler: C:\\cygwin64\\bin\\g++.exe",
             "taskStatus": "Detected Task"
         }

@@ -11,7 +11,7 @@ LEX = flex
 #YACC = bison -y
 YACC = bison
 YFLAGS = -YYDEBUG
-CXXFLAGS = -g -std=gnu++17 -fPIC -DLEX_TEST -DCYGWIN -DDEBUG -DYYDEBUG -I$(BLD) -I$(SRC)
+CXXFLAGS = -std=gnu++17 -fPIC -I./$(BLD) -I./$(SRC)
 CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
 #LDFLAGS += /usr/lib/libcppunit.dll.a
 LDFLAGS=/usr/local/lib/libfmt.a
@@ -35,9 +35,9 @@ FMT_CYAN='\e[36m'
 #endif
 
 #
-# ifndef RELEASE
-# 	CXXFLAGS +=-ggdb -DDEBU
-# endif
+ifndef RELEASE
+	CXXFLAGS +=-ggdb -DDEBUG -DDEBUG -DYYDEBUG -DLEX_TEST
+endif
 
 #CYGWIN=TRUE
 #ifdef CYGWIN
@@ -49,13 +49,16 @@ FMT_CYAN='\e[36m'
 
 all: $(BLD)/driver
 
-$(BLD)/driver: $(BLD)/pparser.tab.cc $(OBJ)/fileio.o $(OBJ)/driver.o $(SRC)/driver.h $(OBJ)/lexer.o $(OBJ)/lexer.hpp $(OBJ)/utility.o $(OBJ)/ast.o
+$(BLD)/driver: $(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(SRC)/driver.h $(OBJ)/lexer.o $(SRC)/lexer.hpp $(OBJ)/utility.o $(OBJ)/ast.o
 	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/driver\"$(FMT_RESET) ...\n"
-	$(CXX) $(CXXFLAGS) -I"/home/brian/src/boost_1_89_0" $(OBJ)/pparser.tab.cc $(OBJ)/fileio.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) -I"/home/brian/src/boost_1_89_0" $(OBJ)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
 
-$(BLD)/pparser.tab.cc $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.cpp $(BLD)/lexer.hpp
+$(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
-	$(YACC) --debug $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cc
+	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cpp
+
+$(BLD)/pparser.tab.o: $(BLD)/pparser.tab.cpp
+	$(CXX) $(CXXFLAGS) -c $^ -o $@
 
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h

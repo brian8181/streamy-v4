@@ -4,7 +4,7 @@
 		{
 			"label": "MAKE",
 			"type": "shell",
-			"command": "make -f ${workspaceFolder}/makefile",
+			"command": "make -f ${workspaceFolder}\\makefile",
 			"problemMatcher": [
 				"$gcc"
 			],

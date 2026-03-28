@@ -4,8 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/build",
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/build"
+                "${workspaceFolder}/src"
             ],
             "defines": [
                 "_DEBUG",
@@ -20,7 +19,8 @@
             "recursiveIncludes": {
                 "reduce": "never"
             },
-            "intelliSenseMode": "linux-gcc-x64"
+            "intelliSenseMode": "linux-gcc-x64",
+            "mergeConfigurations": true
         }
     ],
     "version": 4
