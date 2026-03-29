@@ -7,7 +7,16 @@
 #include <iostream>
 #include <cstring>
 #include <unistd.h>         /* for STDIN_FILENO */
-#include <sys/select.h>     /* for pselect   */
+#if defined(_WIN32)
+    // Windows-specific code (e.g., MSYS2 UCRT64)
+    #include <winsock2.h>
+#elif defined(__linux__)
+    // Linux-specific code (e.g., Fedora, Ubuntu)
+    #include <sys/select.h>
+#elif defined(__unix__)
+    // Other Unix-like systems (e.g., BSD, macOS)
+    #include <sys/select.h>
+#endif
 #include <string>
 #include <getopt.h>
 #include <set>
@@ -162,6 +171,7 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+        #ifdef PARAM_PIPE
 		char* argv_cpy[ sizeof(char*) * argc + 1 ];
 		if(stdin_ready(STDIN_FILENO))
 		{
@@ -172,6 +182,7 @@ int main(int argc, char* argv[])
 			++argc;
 			return parse_options(argc, argv_cpy);
 		}
+        #endif
 		return parse_options(argc, argv);
 	}
 	catch(std::runtime_error& ex)
