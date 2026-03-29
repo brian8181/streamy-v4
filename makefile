@@ -14,7 +14,6 @@ YFLAGS = -YYDEBUG
 CXXFLAGS = -std=gnu++17 -fPIC -I./$(BLD) -I./$(SRC)
 CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
 #LDFLAGS += /usr/lib/libcppunit.dll.a
-LDFLAGS=/usr/local/lib/libfmt.a
 FLEXFLAGS = --flex
 BISONFLAGS = -y -d --html --graph
 BLD = build
@@ -40,12 +39,14 @@ ifndef RELEASE
 endif
 
 #CYGWIN=TRUE
-#ifdef CYGWIN
-#	CXXFLAGS +=-DCYGWIN
-#	//LDFLAGS += -lfmt -lcppunit.dll
-#else
-#	LDFLAGS += -lfmt -lcppunit
-#endif
+ifdef CYGWIN
+	CXXFLAGS += -DCYGWIN -I"/home/brian/src/boost_1_89_0"
+	//LDFLAGS += -lfmt -lcppunit.dll
+	LDFLAGS = /usr/local/lib/libfmt.a
+else
+	CXXFLAGS += -I/ucrt64/include/boost
+	LDFLAGS += -lfmt
+endif
 
 all: $(BLD)/driver
 
@@ -71,7 +72,7 @@ $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: $(SRC)/%.cpp
-	$(CXX) $(CXXFLAGS) -I"/home/brian/src/boost_1_89_0" -c $< -o $@
+	$(CXX) $(CXXFLAGS) -$(LDFLAGS) -c $< -o $@
 
 .PHONY: all rebuild dist install uninstall clean help
 rebuild: clean all
