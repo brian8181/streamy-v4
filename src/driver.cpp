@@ -25,9 +25,10 @@ using std::string;
 constexpr int SRC_IDX_OFFSET = 0;
 constexpr int CONFIG_IDX_OFFSET = 0;
 
-static string g_config_file;
-static string g_input_file;
-static string g_output_file;
+static string g_config_file = "default.conf";
+static string g_output_file = "out.txt";
+static string g_input_file = "in.txt";
+
 static bool config_flag = false;
 static bool output_file_flag = false;
 static bool dump_flag = false;
@@ -100,18 +101,18 @@ int parse_options(const int argc, char* argv[])
     // symbol_table["y"] = "2";
     // symbol_table["z"] = "3";
 
-    // configure driver ...
-    if( argc > (optind + CONFIG_IDX_OFFSET) )
-        g_config_file = argv[optind + CONFIG_IDX_OFFSET];
-
     // input file ...
     if( argc > (optind + SRC_IDX_OFFSET))
         g_input_file = argv[optind + SRC_IDX_OFFSET];
 
-    cout << FMT_FG_BLUE << "input files=\"" << FMT_RESET
-         << FMT_FG_GREEN << FMT_ITALIC <<  g_input_file << "\"" << FMT_RESET << endl;
+    cout << FMT_FG_CYAN << "input files = " << FMT_RESET
+            << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << g_input_file << "\"" << FMT_RESET << endl
+        << FMT_FG_CYAN << "ouput file  = " << FMT_RESET
+            << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << g_output_file << "\"" << FMT_RESET << endl
+        << FMT_FG_CYAN << "config file = " << FMT_RESET
+            << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << g_config_file << "\"" << FMT_RESET << endl;
 
-    lexer::instance().init(g_config_file, &yyparser, g_input_file, "test/a.txt");
+    lexer::instance().init(g_config_file, &yyparser, g_input_file, g_output_file);
     if (dump_flag)
     {
         cout << "dumping configuration ... " << endl;

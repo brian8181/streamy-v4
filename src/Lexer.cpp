@@ -20,6 +20,7 @@
 #include <boost/regex.hpp>
 #include <fmt/core.h>
 #include <fmt/format.h>
+#include "bash_color.hpp"
 #include "fileio.hpp"
 #include "lexer.hpp"
 #include "driver.h"
@@ -246,8 +247,8 @@ void lexer::set_state(state_t* pstate)
     set_context(m_suffix);
 
 #ifdef DEBUG
-    cout << "EXPR=\"" << m_expr << "\"" << endl;
-    cout << "STATE=" << pstate->id << " : " << pstate->name << endl;
+    //cout << "EXPR=\"" << m_expr << "\"" << " #" << __LINE__ << endl;
+    cout << "STATE=" << pstate->id << " : " << pstate->name << " #" << __LINE__ << endl;
 #endif
 }
 
@@ -278,14 +279,15 @@ parser::symbol_type lexer::get_token()
         {
             if(m[i].matched)
             {
-#ifdef DEBUG
-                cout << "MATCH=\"" << m.prefix() << "\" : \"" << m.str() << "\" : \"" << m.suffix() << "\""<<  endl;
-#endif
+//#ifdef DEBUG
+                //cout << "MATCH=\"" << m.prefix() << "\" : \"" << m.str() << "\" : \"" << m.suffix() << "\""<<  endl;
+
+//#endif
                 if(m.prefix().matched)
                 {
                     if (gp_state->id != UL_INITIAL_STATE)
                     {
-                        cout << "error: unexpected token ... \"" << m.prefix() << "\"" << endl;
+                        cout << "error: unexpected token ... \"" << m.prefix() << "\"" << " #" << __LINE__ << endl;
                         return parser::make_YYerror();
                     }
                     // stream prefix (unescaped text)
@@ -295,6 +297,8 @@ parser::symbol_type lexer::get_token()
                 // get id by index value "i-1" zero based vector
                 unsigned long id = (*g_tokens_by_state_id[gp_state->id])[i-1];
                 ptoken = &g_tokens[id];
+
+                cout << FMT_FG_CYAN <<  "match[ " << "i=" << i << " ] = " << ptoken->name << "( \"" << m[i].str() << "\" );" << FMT_RESET << " #" << __LINE__ << endl;
 
                 // find match & lookup by sub_match index
                 token_match tmatch = {id, "", 0, 0, 0, m.str(), ptoken};
@@ -345,12 +349,15 @@ const string& lexer::get_expr() const
 void lexer::print_token(token_match* m)
 {
     const token *ptoken = &g_tokens[m->id];
-    cout << "TOKEN={" << setw(5) << left << "\n\t id: "
-            << setw(10) << right << m->id << setw(5) << left
-            << "\n\t name: " << setw(10) << right << ptoken->name << setw(5) << left
-            << "\n\t stype: " << setw(10) << right
-            << "\n\t rexp: " << setw(10) << right << ptoken->rexp << setw(5) << left
-            << "\n\t value: " << setw(10) << left << "\"" << m->value << "\"" << setw(5) << left << setw(10) << right << "\n}\n";
+    cout << "token"
+            << "\n{"
+                << "\n    id   : "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << m->id << FMT_RESET
+                << "\n    name : "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->name << FMT_RESET
+                << "\n    stype: "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->stype << FMT_RESET
+                << "\n    rexp : "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->rexp << FMT_RESET
+                << "\n    value: "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << m->value << "\"" << FMT_RESET
+                << "\n    line#: "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->_line_ << FMT_RESET
+             << "\n}" << " #" << __LINE__ << endl;
 }
 
 /**
@@ -439,10 +446,14 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 set_state(&sIF_BLOCK);
                 print_token(ptoken);
                 return parser::make_IF();
-            case UL_DOLLAR_SIGN:
+            case UL_SYMBOL:
                 print_token(ptoken);
                 m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_DOLLAR_SIGN();
+                return parser::make_SYMBOL(ptoken->value);
+            case UL_CONST_SYMBOL:
+                print_token(ptoken);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_CONST_SYMBOL(ptoken->value);
             case UL_PERCENT_SIGN:
                 print_token(ptoken);
                 m_stream << " ~" << ptoken->value << "~ ";
@@ -483,10 +494,6 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 print_token(ptoken);
                 m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_STRIP(ptoken->value);
-            case UL_IDENTIFIER:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_IDENTIFIER(ptoken->value);
             case UL_EQUAL_SIGN:
                 print_token(ptoken);
                 m_stream << " ~" << ptoken->value << "~ ";

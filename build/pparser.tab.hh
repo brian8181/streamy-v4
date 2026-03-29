@@ -399,9 +399,8 @@ namespace yy {
       // ARRAY
       // STRING_LITERAL
       // NUMERIC_LITERAL
-      // IDENTIFIER
-      // CONST_ID
       // CONST_SYMBOL
+      // SYMBOL
       // VAR_ATTRIB
       // VALUE_ATTRIB
       // FILE_ATTRIB
@@ -409,7 +408,6 @@ namespace yy {
       // KEY_ATTRIB
       // NAME_ATTRIB
       // ITEM_ATTRIB
-      // FILE_NAME
       // CAPITALIZE
       // CAT
       // COUNT_CHARACTERS
@@ -510,90 +508,88 @@ namespace yy {
     ARRAY = 273,                   // ARRAY
     STRING_LITERAL = 274,          // STRING_LITERAL
     NUMERIC_LITERAL = 275,         // NUMERIC_LITERAL
-    IDENTIFIER = 276,              // IDENTIFIER
-    CONST_ID = 277,                // CONST_ID
-    CONST_SYMBOL = 278,            // CONST_SYMBOL
-    VAR_ATTRIB = 279,              // VAR_ATTRIB
-    VALUE_ATTRIB = 280,            // VALUE_ATTRIB
-    FILE_ATTRIB = 281,             // FILE_ATTRIB
-    FROM_ATTRIB = 282,             // FROM_ATTRIB
-    KEY_ATTRIB = 283,              // KEY_ATTRIB
-    NAME_ATTRIB = 284,             // NAME_ATTRIB
-    ITEM_ATTRIB = 285,             // ITEM_ATTRIB
-    FILE_NAME = 286,               // FILE_NAME
-    CAPITALIZE = 287,              // CAPITALIZE
-    CAT = 288,                     // CAT
-    COUNT_CHARACTERS = 289,        // COUNT_CHARACTERS
-    COUNT_SENTENCES = 290,         // COUNT_SENTENCES
-    COUNT_PARAGRAPHS = 291,        // COUNT_PARAGRAPHS
-    COUNT_WORDS = 292,             // COUNT_WORDS
-    DATE_FORMAT = 293,             // DATE_FORMAT
-    DEFAULT = 294,                 // DEFAULT
-    ESCAPE = 295,                  // ESCAPE
-    INDENT = 296,                  // INDENT
-    LOWER = 297,                   // LOWER
-    UPPER = 298,                   // UPPER
-    STRIP = 299,                   // STRIP
-    NL2BR = 300,                   // NL2BR
-    REGEX_REPLACE = 301,           // REGEX_REPLACE
-    REPLACE = 302,                 // REPLACE
-    SPACIFY = 303,                 // SPACIFY
-    STRING_FORMAT = 304,           // STRING_FORMAT
-    STRIP_TAGS = 305,              // STRIP_TAGS
-    TRUNCATE = 306,                // TRUNCATE
-    WORDWRAP = 307,                // WORDWRAP
-    CARROT = 308,                  // CARROT
-    OPEN_PAREN = 309,              // OPEN_PAREN
-    CLOSE_PAREN = 310,             // CLOSE_PAREN
-    DASH = 311,                    // DASH
-    BACKSLASH = 312,               // BACKSLASH
-    QUESTION_MARK = 313,           // QUESTION_MARK
-    SEMI_COLON = 314,              // SEMI_COLON
-    DOUBLE_QUOTE = 315,            // DOUBLE_QUOTE
-    SINGLE_QUOTE = 316,            // SINGLE_QUOTE
-    BACK_SLASH = 317,              // BACK_SLASH
-    AT = 318,                      // AT
-    AMPERSAND = 319,               // AMPERSAND
-    AND = 320,                     // AND
-    OR = 321,                      // OR
-    NOT = 322,                     // NOT
-    DOLLAR_SIGN = 323,             // DOLLAR_SIGN
-    COMMA = 324,                   // COMMA
-    VBAR = 325,                    // VBAR
-    COLON = 326,                   // COLON
-    HASH_MARK = 327,               // HASH_MARK
-    OPEN_BRACKET = 328,            // OPEN_BRACKET
-    CLOSE_BRACKET = 329,           // CLOSE_BRACKET
-    OPEN_BRACE = 330,              // OPEN_BRACE
-    CLOSE_BRACE = 331,             // CLOSE_BRACE
-    LPAREN = 332,                  // LPAREN
-    RPAREN = 333,                  // RPAREN
-    DOT = 334,                     // DOT
-    END_OF_FILES = 335,            // END_OF_FILES
-    MATCH = 336,                   // MATCH
-    UNDEFINED = 337,               // UNDEFINED
-    WHITESPACE = 338,              // WHITESPACE
-    ANYTHING = 339,                // ANYTHING
-    VALID_CHAR = 340,              // VALID_CHAR
-    SKIP_TOKEN = 341,              // SKIP_TOKEN
-    IFX = 342,                     // IFX
-    ELSE = 343,                    // ELSE
-    ELSEIF = 344,                  // ELSEIF
-    IF = 345,                      // IF
-    WHILE = 346,                   // WHILE
-    BREAK = 347,                   // BREAK
-    GREATER_THAN_EQUAL = 348,      // GREATER_THAN_EQUAL
-    LESS_THAN_EQUAL = 349,         // LESS_THAN_EQUAL
-    EQUAL_SIGN = 350,              // EQUAL_SIGN
-    NOT_EQUAL = 351,               // NOT_EQUAL
-    LESS_THAN = 352,               // LESS_THAN
-    GREATER_THAN = 353,            // GREATER_THAN
-    PLUS_SIGN = 354,               // PLUS_SIGN
-    MINUS = 355,                   // MINUS
-    ASTERISK = 356,                // ASTERISK
-    SLASH = 357,                   // SLASH
-    PERCENT_SIGN = 358,            // PERCENT_SIGN
-    UMINUS = 359                   // UMINUS
+    CONST_SYMBOL = 276,            // CONST_SYMBOL
+    SYMBOL = 277,                  // SYMBOL
+    VAR_ATTRIB = 278,              // VAR_ATTRIB
+    VALUE_ATTRIB = 279,            // VALUE_ATTRIB
+    FILE_ATTRIB = 280,             // FILE_ATTRIB
+    FROM_ATTRIB = 281,             // FROM_ATTRIB
+    KEY_ATTRIB = 282,              // KEY_ATTRIB
+    NAME_ATTRIB = 283,             // NAME_ATTRIB
+    ITEM_ATTRIB = 284,             // ITEM_ATTRIB
+    CAPITALIZE = 285,              // CAPITALIZE
+    CAT = 286,                     // CAT
+    COUNT_CHARACTERS = 287,        // COUNT_CHARACTERS
+    COUNT_SENTENCES = 288,         // COUNT_SENTENCES
+    COUNT_PARAGRAPHS = 289,        // COUNT_PARAGRAPHS
+    COUNT_WORDS = 290,             // COUNT_WORDS
+    DATE_FORMAT = 291,             // DATE_FORMAT
+    DEFAULT = 292,                 // DEFAULT
+    ESCAPE = 293,                  // ESCAPE
+    INDENT = 294,                  // INDENT
+    LOWER = 295,                   // LOWER
+    UPPER = 296,                   // UPPER
+    STRIP = 297,                   // STRIP
+    NL2BR = 298,                   // NL2BR
+    REGEX_REPLACE = 299,           // REGEX_REPLACE
+    REPLACE = 300,                 // REPLACE
+    SPACIFY = 301,                 // SPACIFY
+    STRING_FORMAT = 302,           // STRING_FORMAT
+    STRIP_TAGS = 303,              // STRIP_TAGS
+    TRUNCATE = 304,                // TRUNCATE
+    WORDWRAP = 305,                // WORDWRAP
+    CARROT = 306,                  // CARROT
+    OPEN_PAREN = 307,              // OPEN_PAREN
+    CLOSE_PAREN = 308,             // CLOSE_PAREN
+    DASH = 309,                    // DASH
+    BACKSLASH = 310,               // BACKSLASH
+    QUESTION_MARK = 311,           // QUESTION_MARK
+    SEMI_COLON = 312,              // SEMI_COLON
+    DOUBLE_QUOTE = 313,            // DOUBLE_QUOTE
+    SINGLE_QUOTE = 314,            // SINGLE_QUOTE
+    BACK_SLASH = 315,              // BACK_SLASH
+    AT = 316,                      // AT
+    AMPERSAND = 317,               // AMPERSAND
+    AND = 318,                     // AND
+    OR = 319,                      // OR
+    NOT = 320,                     // NOT
+    DOLLAR_SIGN = 321,             // DOLLAR_SIGN
+    COMMA = 322,                   // COMMA
+    VBAR = 323,                    // VBAR
+    COLON = 324,                   // COLON
+    HASH_MARK = 325,               // HASH_MARK
+    OPEN_BRACKET = 326,            // OPEN_BRACKET
+    CLOSE_BRACKET = 327,           // CLOSE_BRACKET
+    OPEN_BRACE = 328,              // OPEN_BRACE
+    CLOSE_BRACE = 329,             // CLOSE_BRACE
+    LPAREN = 330,                  // LPAREN
+    RPAREN = 331,                  // RPAREN
+    DOT = 332,                     // DOT
+    END_OF_FILES = 333,            // END_OF_FILES
+    MATCH = 334,                   // MATCH
+    UNDEFINED = 335,               // UNDEFINED
+    WHITESPACE = 336,              // WHITESPACE
+    ANYTHING = 337,                // ANYTHING
+    VALID_CHAR = 338,              // VALID_CHAR
+    SKIP_TOKEN = 339,              // SKIP_TOKEN
+    IFX = 340,                     // IFX
+    ELSE = 341,                    // ELSE
+    ELSEIF = 342,                  // ELSEIF
+    IF = 343,                      // IF
+    WHILE = 344,                   // WHILE
+    BREAK = 345,                   // BREAK
+    GREATER_THAN_EQUAL = 346,      // GREATER_THAN_EQUAL
+    LESS_THAN_EQUAL = 347,         // LESS_THAN_EQUAL
+    EQUAL_SIGN = 348,              // EQUAL_SIGN
+    NOT_EQUAL = 349,               // NOT_EQUAL
+    LESS_THAN = 350,               // LESS_THAN
+    GREATER_THAN = 351,            // GREATER_THAN
+    PLUS_SIGN = 352,               // PLUS_SIGN
+    MINUS = 353,                   // MINUS
+    ASTERISK = 354,                // ASTERISK
+    SLASH = 355,                   // SLASH
+    PERCENT_SIGN = 356,            // PERCENT_SIGN
+    UMINUS = 357                   // UMINUS
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -610,7 +606,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 105, ///< Number of tokens.
+        YYNTOKENS = 103, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // END
         S_YYerror = 1,                           // error
@@ -633,112 +629,110 @@ namespace yy {
         S_ARRAY = 18,                            // ARRAY
         S_STRING_LITERAL = 19,                   // STRING_LITERAL
         S_NUMERIC_LITERAL = 20,                  // NUMERIC_LITERAL
-        S_IDENTIFIER = 21,                       // IDENTIFIER
-        S_CONST_ID = 22,                         // CONST_ID
-        S_CONST_SYMBOL = 23,                     // CONST_SYMBOL
-        S_VAR_ATTRIB = 24,                       // VAR_ATTRIB
-        S_VALUE_ATTRIB = 25,                     // VALUE_ATTRIB
-        S_FILE_ATTRIB = 26,                      // FILE_ATTRIB
-        S_FROM_ATTRIB = 27,                      // FROM_ATTRIB
-        S_KEY_ATTRIB = 28,                       // KEY_ATTRIB
-        S_NAME_ATTRIB = 29,                      // NAME_ATTRIB
-        S_ITEM_ATTRIB = 30,                      // ITEM_ATTRIB
-        S_FILE_NAME = 31,                        // FILE_NAME
-        S_CAPITALIZE = 32,                       // CAPITALIZE
-        S_CAT = 33,                              // CAT
-        S_COUNT_CHARACTERS = 34,                 // COUNT_CHARACTERS
-        S_COUNT_SENTENCES = 35,                  // COUNT_SENTENCES
-        S_COUNT_PARAGRAPHS = 36,                 // COUNT_PARAGRAPHS
-        S_COUNT_WORDS = 37,                      // COUNT_WORDS
-        S_DATE_FORMAT = 38,                      // DATE_FORMAT
-        S_DEFAULT = 39,                          // DEFAULT
-        S_ESCAPE = 40,                           // ESCAPE
-        S_INDENT = 41,                           // INDENT
-        S_LOWER = 42,                            // LOWER
-        S_UPPER = 43,                            // UPPER
-        S_STRIP = 44,                            // STRIP
-        S_NL2BR = 45,                            // NL2BR
-        S_REGEX_REPLACE = 46,                    // REGEX_REPLACE
-        S_REPLACE = 47,                          // REPLACE
-        S_SPACIFY = 48,                          // SPACIFY
-        S_STRING_FORMAT = 49,                    // STRING_FORMAT
-        S_STRIP_TAGS = 50,                       // STRIP_TAGS
-        S_TRUNCATE = 51,                         // TRUNCATE
-        S_WORDWRAP = 52,                         // WORDWRAP
-        S_CARROT = 53,                           // CARROT
-        S_OPEN_PAREN = 54,                       // OPEN_PAREN
-        S_CLOSE_PAREN = 55,                      // CLOSE_PAREN
-        S_DASH = 56,                             // DASH
-        S_BACKSLASH = 57,                        // BACKSLASH
-        S_QUESTION_MARK = 58,                    // QUESTION_MARK
-        S_SEMI_COLON = 59,                       // SEMI_COLON
-        S_DOUBLE_QUOTE = 60,                     // DOUBLE_QUOTE
-        S_SINGLE_QUOTE = 61,                     // SINGLE_QUOTE
-        S_BACK_SLASH = 62,                       // BACK_SLASH
-        S_AT = 63,                               // AT
-        S_AMPERSAND = 64,                        // AMPERSAND
-        S_AND = 65,                              // AND
-        S_OR = 66,                               // OR
-        S_NOT = 67,                              // NOT
-        S_DOLLAR_SIGN = 68,                      // DOLLAR_SIGN
-        S_COMMA = 69,                            // COMMA
-        S_VBAR = 70,                             // VBAR
-        S_COLON = 71,                            // COLON
-        S_HASH_MARK = 72,                        // HASH_MARK
-        S_OPEN_BRACKET = 73,                     // OPEN_BRACKET
-        S_CLOSE_BRACKET = 74,                    // CLOSE_BRACKET
-        S_OPEN_BRACE = 75,                       // OPEN_BRACE
-        S_CLOSE_BRACE = 76,                      // CLOSE_BRACE
-        S_LPAREN = 77,                           // LPAREN
-        S_RPAREN = 78,                           // RPAREN
-        S_DOT = 79,                              // DOT
-        S_END_OF_FILES = 80,                     // END_OF_FILES
-        S_MATCH = 81,                            // MATCH
-        S_UNDEFINED = 82,                        // UNDEFINED
-        S_WHITESPACE = 83,                       // WHITESPACE
-        S_ANYTHING = 84,                         // ANYTHING
-        S_VALID_CHAR = 85,                       // VALID_CHAR
-        S_SKIP_TOKEN = 86,                       // SKIP_TOKEN
-        S_IFX = 87,                              // IFX
-        S_ELSE = 88,                             // ELSE
-        S_ELSEIF = 89,                           // ELSEIF
-        S_IF = 90,                               // IF
-        S_WHILE = 91,                            // WHILE
-        S_BREAK = 92,                            // BREAK
-        S_GREATER_THAN_EQUAL = 93,               // GREATER_THAN_EQUAL
-        S_LESS_THAN_EQUAL = 94,                  // LESS_THAN_EQUAL
-        S_EQUAL_SIGN = 95,                       // EQUAL_SIGN
-        S_NOT_EQUAL = 96,                        // NOT_EQUAL
-        S_LESS_THAN = 97,                        // LESS_THAN
-        S_GREATER_THAN = 98,                     // GREATER_THAN
-        S_PLUS_SIGN = 99,                        // PLUS_SIGN
-        S_MINUS = 100,                           // MINUS
-        S_ASTERISK = 101,                        // ASTERISK
-        S_SLASH = 102,                           // SLASH
-        S_PERCENT_SIGN = 103,                    // PERCENT_SIGN
-        S_UMINUS = 104,                          // UMINUS
-        S_YYACCEPT = 105,                        // $accept
-        S_complier = 106,                        // complier
-        S_files = 107,                           // files
-        S_file = 108,                            // file
-        S_blocks = 109,                          // blocks
-        S_block = 110,                           // block
-        S_assign_stmt = 111,                     // assign_stmt
-        S_expr = 112,                            // expr
-        S_qualafied_id = 113,                    // qualafied_id
-        S_sub_proc = 114,                        // sub_proc
-        S_array = 115,                           // array
-        S_params = 116,                          // params
-        S_param = 117,                           // param
-        S_modifiers = 118,                       // modifiers
-        S_modifier = 119,                        // modifier
-        S_colon_sep_params = 120,                // colon_sep_params
-        S_colon_sep_param = 121,                 // colon_sep_param
-        S_symbol = 122,                          // symbol
-        S_built_in = 123,                        // built_in
-        S_attributes = 124,                      // attributes
-        S_attrib = 125,                          // attrib
-        S_attrib_name = 126                      // attrib_name
+        S_CONST_SYMBOL = 21,                     // CONST_SYMBOL
+        S_SYMBOL = 22,                           // SYMBOL
+        S_VAR_ATTRIB = 23,                       // VAR_ATTRIB
+        S_VALUE_ATTRIB = 24,                     // VALUE_ATTRIB
+        S_FILE_ATTRIB = 25,                      // FILE_ATTRIB
+        S_FROM_ATTRIB = 26,                      // FROM_ATTRIB
+        S_KEY_ATTRIB = 27,                       // KEY_ATTRIB
+        S_NAME_ATTRIB = 28,                      // NAME_ATTRIB
+        S_ITEM_ATTRIB = 29,                      // ITEM_ATTRIB
+        S_CAPITALIZE = 30,                       // CAPITALIZE
+        S_CAT = 31,                              // CAT
+        S_COUNT_CHARACTERS = 32,                 // COUNT_CHARACTERS
+        S_COUNT_SENTENCES = 33,                  // COUNT_SENTENCES
+        S_COUNT_PARAGRAPHS = 34,                 // COUNT_PARAGRAPHS
+        S_COUNT_WORDS = 35,                      // COUNT_WORDS
+        S_DATE_FORMAT = 36,                      // DATE_FORMAT
+        S_DEFAULT = 37,                          // DEFAULT
+        S_ESCAPE = 38,                           // ESCAPE
+        S_INDENT = 39,                           // INDENT
+        S_LOWER = 40,                            // LOWER
+        S_UPPER = 41,                            // UPPER
+        S_STRIP = 42,                            // STRIP
+        S_NL2BR = 43,                            // NL2BR
+        S_REGEX_REPLACE = 44,                    // REGEX_REPLACE
+        S_REPLACE = 45,                          // REPLACE
+        S_SPACIFY = 46,                          // SPACIFY
+        S_STRING_FORMAT = 47,                    // STRING_FORMAT
+        S_STRIP_TAGS = 48,                       // STRIP_TAGS
+        S_TRUNCATE = 49,                         // TRUNCATE
+        S_WORDWRAP = 50,                         // WORDWRAP
+        S_CARROT = 51,                           // CARROT
+        S_OPEN_PAREN = 52,                       // OPEN_PAREN
+        S_CLOSE_PAREN = 53,                      // CLOSE_PAREN
+        S_DASH = 54,                             // DASH
+        S_BACKSLASH = 55,                        // BACKSLASH
+        S_QUESTION_MARK = 56,                    // QUESTION_MARK
+        S_SEMI_COLON = 57,                       // SEMI_COLON
+        S_DOUBLE_QUOTE = 58,                     // DOUBLE_QUOTE
+        S_SINGLE_QUOTE = 59,                     // SINGLE_QUOTE
+        S_BACK_SLASH = 60,                       // BACK_SLASH
+        S_AT = 61,                               // AT
+        S_AMPERSAND = 62,                        // AMPERSAND
+        S_AND = 63,                              // AND
+        S_OR = 64,                               // OR
+        S_NOT = 65,                              // NOT
+        S_DOLLAR_SIGN = 66,                      // DOLLAR_SIGN
+        S_COMMA = 67,                            // COMMA
+        S_VBAR = 68,                             // VBAR
+        S_COLON = 69,                            // COLON
+        S_HASH_MARK = 70,                        // HASH_MARK
+        S_OPEN_BRACKET = 71,                     // OPEN_BRACKET
+        S_CLOSE_BRACKET = 72,                    // CLOSE_BRACKET
+        S_OPEN_BRACE = 73,                       // OPEN_BRACE
+        S_CLOSE_BRACE = 74,                      // CLOSE_BRACE
+        S_LPAREN = 75,                           // LPAREN
+        S_RPAREN = 76,                           // RPAREN
+        S_DOT = 77,                              // DOT
+        S_END_OF_FILES = 78,                     // END_OF_FILES
+        S_MATCH = 79,                            // MATCH
+        S_UNDEFINED = 80,                        // UNDEFINED
+        S_WHITESPACE = 81,                       // WHITESPACE
+        S_ANYTHING = 82,                         // ANYTHING
+        S_VALID_CHAR = 83,                       // VALID_CHAR
+        S_SKIP_TOKEN = 84,                       // SKIP_TOKEN
+        S_IFX = 85,                              // IFX
+        S_ELSE = 86,                             // ELSE
+        S_ELSEIF = 87,                           // ELSEIF
+        S_IF = 88,                               // IF
+        S_WHILE = 89,                            // WHILE
+        S_BREAK = 90,                            // BREAK
+        S_GREATER_THAN_EQUAL = 91,               // GREATER_THAN_EQUAL
+        S_LESS_THAN_EQUAL = 92,                  // LESS_THAN_EQUAL
+        S_EQUAL_SIGN = 93,                       // EQUAL_SIGN
+        S_NOT_EQUAL = 94,                        // NOT_EQUAL
+        S_LESS_THAN = 95,                        // LESS_THAN
+        S_GREATER_THAN = 96,                     // GREATER_THAN
+        S_PLUS_SIGN = 97,                        // PLUS_SIGN
+        S_MINUS = 98,                            // MINUS
+        S_ASTERISK = 99,                         // ASTERISK
+        S_SLASH = 100,                           // SLASH
+        S_PERCENT_SIGN = 101,                    // PERCENT_SIGN
+        S_UMINUS = 102,                          // UMINUS
+        S_YYACCEPT = 103,                        // $accept
+        S_complier = 104,                        // complier
+        S_files = 105,                           // files
+        S_file = 106,                            // file
+        S_blocks = 107,                          // blocks
+        S_block = 108,                           // block
+        S_assign_stmt = 109,                     // assign_stmt
+        S_expr = 110,                            // expr
+        S_qualafied_id = 111,                    // qualafied_id
+        S_sub_proc = 112,                        // sub_proc
+        S_array = 113,                           // array
+        S_params = 114,                          // params
+        S_param = 115,                           // param
+        S_modifiers = 116,                       // modifiers
+        S_modifier = 117,                        // modifier
+        S_colon_sep_params = 118,                // colon_sep_params
+        S_colon_sep_param = 119,                 // colon_sep_param
+        S_symbol = 120,                          // symbol
+        S_built_in = 121,                        // built_in
+        S_attributes = 122,                      // attributes
+        S_attrib = 123,                          // attrib
+        S_attrib_name = 124                      // attrib_name
       };
     };
 
@@ -800,9 +794,8 @@ namespace yy {
       case symbol_kind::S_ARRAY: // ARRAY
       case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
       case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
-      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_CONST_ID: // CONST_ID
       case symbol_kind::S_CONST_SYMBOL: // CONST_SYMBOL
+      case symbol_kind::S_SYMBOL: // SYMBOL
       case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
       case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
       case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
@@ -810,7 +803,6 @@ namespace yy {
       case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
       case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
       case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
-      case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_CAPITALIZE: // CAPITALIZE
       case symbol_kind::S_CAT: // CAT
       case symbol_kind::S_COUNT_CHARACTERS: // COUNT_CHARACTERS
@@ -986,9 +978,8 @@ switch (yykind)
       case symbol_kind::S_ARRAY: // ARRAY
       case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
       case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
-      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_CONST_ID: // CONST_ID
       case symbol_kind::S_CONST_SYMBOL: // CONST_SYMBOL
+      case symbol_kind::S_SYMBOL: // SYMBOL
       case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
       case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
       case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
@@ -996,7 +987,6 @@ switch (yykind)
       case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
       case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
       case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
-      case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_CAPITALIZE: // CAPITALIZE
       case symbol_kind::S_CAT: // CAT
       case symbol_kind::S_COUNT_CHARACTERS: // COUNT_CHARACTERS
@@ -1520,36 +1510,6 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_IDENTIFIER (std::string v)
-      {
-        return symbol_type (token::IDENTIFIER, std::move (v));
-      }
-#else
-      static
-      symbol_type
-      make_IDENTIFIER (const std::string& v)
-      {
-        return symbol_type (token::IDENTIFIER, v);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_CONST_ID (std::string v)
-      {
-        return symbol_type (token::CONST_ID, std::move (v));
-      }
-#else
-      static
-      symbol_type
-      make_CONST_ID (const std::string& v)
-      {
-        return symbol_type (token::CONST_ID, v);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
       make_CONST_SYMBOL (std::string v)
       {
         return symbol_type (token::CONST_SYMBOL, std::move (v));
@@ -1560,6 +1520,21 @@ switch (yykind)
       make_CONST_SYMBOL (const std::string& v)
       {
         return symbol_type (token::CONST_SYMBOL, v);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SYMBOL (std::string v)
+      {
+        return symbol_type (token::SYMBOL, std::move (v));
+      }
+#else
+      static
+      symbol_type
+      make_SYMBOL (const std::string& v)
+      {
+        return symbol_type (token::SYMBOL, v);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1665,21 +1640,6 @@ switch (yykind)
       make_ITEM_ATTRIB (const std::string& v)
       {
         return symbol_type (token::ITEM_ATTRIB, v);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_FILE_NAME (std::string v)
-      {
-        return symbol_type (token::FILE_NAME, std::move (v));
-      }
-#else
-      static
-      symbol_type
-      make_FILE_NAME (const std::string& v)
-      {
-        return symbol_type (token::FILE_NAME, v);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -2821,7 +2781,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -3081,9 +3041,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 156,     ///< Last index in yytable_.
+      yylast_ = 169,     ///< Last index in yytable_.
       yynnts_ = 22,  ///< Number of nonterminal symbols.
-      yyfinal_ = 27 ///< Termination state number.
+      yyfinal_ = 33 ///< Termination state number.
     };
 
 
@@ -3135,10 +3095,10 @@ switch (yykind)
       65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
       75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
       85,    86,    87,    88,    89,    90,    91,    92,    93,    94,
-      95,    96,    97,    98,    99,   100,   101,   102,   103,   104
+      95,    96,    97,    98,    99,   100,   101,   102
     };
     // Last valid token kind.
-    const int code_max = 359;
+    const int code_max = 357;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -3183,9 +3143,8 @@ switch (yykind)
       case symbol_kind::S_ARRAY: // ARRAY
       case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
       case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
-      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_CONST_ID: // CONST_ID
       case symbol_kind::S_CONST_SYMBOL: // CONST_SYMBOL
+      case symbol_kind::S_SYMBOL: // SYMBOL
       case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
       case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
       case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
@@ -3193,7 +3152,6 @@ switch (yykind)
       case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
       case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
       case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
-      case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_CAPITALIZE: // CAPITALIZE
       case symbol_kind::S_CAT: // CAT
       case symbol_kind::S_COUNT_CHARACTERS: // COUNT_CHARACTERS
@@ -3295,9 +3253,8 @@ switch (yykind)
       case symbol_kind::S_ARRAY: // ARRAY
       case symbol_kind::S_STRING_LITERAL: // STRING_LITERAL
       case symbol_kind::S_NUMERIC_LITERAL: // NUMERIC_LITERAL
-      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-      case symbol_kind::S_CONST_ID: // CONST_ID
       case symbol_kind::S_CONST_SYMBOL: // CONST_SYMBOL
+      case symbol_kind::S_SYMBOL: // SYMBOL
       case symbol_kind::S_VAR_ATTRIB: // VAR_ATTRIB
       case symbol_kind::S_VALUE_ATTRIB: // VALUE_ATTRIB
       case symbol_kind::S_FILE_ATTRIB: // FILE_ATTRIB
@@ -3305,7 +3262,6 @@ switch (yykind)
       case symbol_kind::S_KEY_ATTRIB: // KEY_ATTRIB
       case symbol_kind::S_NAME_ATTRIB: // NAME_ATTRIB
       case symbol_kind::S_ITEM_ATTRIB: // ITEM_ATTRIB
-      case symbol_kind::S_FILE_NAME: // FILE_NAME
       case symbol_kind::S_CAPITALIZE: // CAPITALIZE
       case symbol_kind::S_CAT: // CAT
       case symbol_kind::S_COUNT_CHARACTERS: // COUNT_CHARACTERS
@@ -3414,7 +3370,7 @@ switch (yykind)
 
 
 } // yy
-#line 3418 "build/pparser.tab.hh"
+#line 3374 "build/pparser.tab.hh"
 
 
 

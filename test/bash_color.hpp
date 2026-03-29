@@ -1,5 +1,5 @@
 /**
- * @file    streamy3.hpp
+ * @file    bash_color.hpp
  * @version version 0.0.1
  * @date    Sun, 08 Mar 2026 16:09:45 +0000
  * @info    ...

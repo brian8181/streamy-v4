@@ -60,3 +60,21 @@ stmt:
     | array CLOSE_BRACE                                         { cout  << "PARSER stmt: | array CLOSE_BRACE\n"; }
     | expr VBAR modifier CLOSE_BRACE                            { cout << "PARSER stmt: | symbol VBAR CLOSE_BRACE\n"; }
     | qualafied_id CLOSE_BRACE                                  { cout  << "PARSER stmt: | qualafied_id CLOSE_BRACE\n"; }
+
+
+/**
+ * @name symbol
+ */
+symbol:
+    DOLLAR_SIGN IDENTIFIER                                      {
+                                                                    cout << FMT_FG_YELLOW << "PARSER symbol: | IDENTIFIER=\"" << $2 << "\"" << FMT_RESET << endl;
+                                                                    $$=$2;
+                                                                }
+    | CONST_SYMBOL                                         {}
+                                                                ;
+const_indentifier:
+    HASH_MARK IDENTIFIER HASH_MARK                              {
+                                                                    cout << FMT_FG_YELLOW << "PARSER symbol: | HASH_MARK CONST_ID=\"" << $2 << "\"" << FMT_RESET << endl;
+                                                                    $$=$2;
+                                                                }
+                                                                ;
