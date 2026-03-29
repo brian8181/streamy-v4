@@ -78,3 +78,5 @@ const_indentifier:
                                                                     $$=$2;
                                                                 }
                                                                 ;
+
+%token now const capture config section foreach template version ldelim rdelim

@@ -429,6 +429,7 @@ namespace yy {
       // STRIP_TAGS
       // TRUNCATE
       // WORDWRAP
+      // block
       // assign_stmt
       // expr
       // qualafied_id
@@ -824,6 +825,7 @@ namespace yy {
       case symbol_kind::S_STRIP_TAGS: // STRIP_TAGS
       case symbol_kind::S_TRUNCATE: // TRUNCATE
       case symbol_kind::S_WORDWRAP: // WORDWRAP
+      case symbol_kind::S_block: // block
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_expr: // expr
       case symbol_kind::S_qualafied_id: // qualafied_id
@@ -1008,6 +1010,7 @@ switch (yykind)
       case symbol_kind::S_STRIP_TAGS: // STRIP_TAGS
       case symbol_kind::S_TRUNCATE: // TRUNCATE
       case symbol_kind::S_WORDWRAP: // WORDWRAP
+      case symbol_kind::S_block: // block
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_expr: // expr
       case symbol_kind::S_qualafied_id: // qualafied_id
@@ -2781,7 +2784,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const short yypact_[];
+    static const signed char yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -2789,7 +2792,7 @@ switch (yykind)
     static const signed char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
-    static const short yypgoto_[];
+    static const signed char yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
     static const unsigned char yydefgoto_[];
@@ -3041,9 +3044,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 169,     ///< Last index in yytable_.
+      yylast_ = 175,     ///< Last index in yytable_.
       yynnts_ = 22,  ///< Number of nonterminal symbols.
-      yyfinal_ = 33 ///< Termination state number.
+      yyfinal_ = 32 ///< Termination state number.
     };
 
 
@@ -3173,6 +3176,7 @@ switch (yykind)
       case symbol_kind::S_STRIP_TAGS: // STRIP_TAGS
       case symbol_kind::S_TRUNCATE: // TRUNCATE
       case symbol_kind::S_WORDWRAP: // WORDWRAP
+      case symbol_kind::S_block: // block
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_expr: // expr
       case symbol_kind::S_qualafied_id: // qualafied_id
@@ -3283,6 +3287,7 @@ switch (yykind)
       case symbol_kind::S_STRIP_TAGS: // STRIP_TAGS
       case symbol_kind::S_TRUNCATE: // TRUNCATE
       case symbol_kind::S_WORDWRAP: // WORDWRAP
+      case symbol_kind::S_block: // block
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_expr: // expr
       case symbol_kind::S_qualafied_id: // qualafied_id
@@ -3370,7 +3375,7 @@ switch (yykind)
 
 
 } // yy
-#line 3374 "build/pparser.tab.hh"
+#line 3379 "build/pparser.tab.hh"
 
 
 

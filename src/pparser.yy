@@ -82,11 +82,14 @@
     void free_all_nvalues();
     typedef std::pair< std::string, std::string > attribute;
 
+    bool get_value(const string& name, /*out*/ string& val);
+    bool set_value(const string& name, const string& val);
+
+
     // declare
     typedef map<string, string> symbol_table_t;
-
     // test
-    symbol_table_t symbol_table =  { {"a", "a_val"}, {"b", "b_val"}, {"c", "c_val"}, {"x", "x"}, {"y", "y"}, {"z", "z"}};
+    symbol_table_t symbol_table =  { {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"}, {"$x", "x"}, {"$y", "y"}, {"$z", "z"}};
     bool is_name(const std::pair<string, string>& p, const string& str);
 
     //%type<std::vector< modifier_t > > modifiers
@@ -105,9 +108,11 @@
 %token END 0
 %token END_OF_FILES MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
 
-%type files file block blocks
+
+%type files file blocks
 %type< std::pair<std::string, std::string> > attrib
 %type<std::vector< std::pair<std::string, std::string> > > attributes built_in
+%type<std::string> block
 %type<std::string> expr
 %type<std::string> assign_stmt
 %type<std::string> colon_sep_params
@@ -171,7 +176,16 @@ blocks:
  * @name block
  */
 block:
-    OPEN_BRACE expr CLOSE_BRACE                                 {
+    OPEN_BRACE symbol CLOSE_BRACE                               {
+                                                                    std::string s;
+                                                                    get_value($2, s);
+                                                                    cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE symbol = [" << s << "] CLOSE_BRACE"
+                                                                        << FMT_ITALIC
+                                                                            << "file: \"" << __FILE__ << "\" - " << "line: \"" << __LINE__ << "\""
+                                                                        << FMT_RESET << endl;
+                                                                    $$ = s;
+                                                                }
+    | OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE expr CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
@@ -187,11 +201,9 @@ block:
                                                                     cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE qualafied_id CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     // bkp todo, look up in symbol table & do replace
                                                                     // bkp todo qualified lookup
-                                                                    if(symbol_table.find($2) != symbol_table.end())
-                                                                    {
-                                                                        string val = symbol_table[$2];
-                                                                        cout << FMT_FG_RED << $2 << " = " << val << FMT_RESET << endl;
-                                                                    }
+                                                                    std::string s;
+                                                                    get_value($2, s);
+                                                                    $$ = s;
                                                                 }
     | OPEN_BRACE built_in CLOSE_BRACE                           {
                                                                     cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE built_in CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
@@ -224,28 +236,12 @@ block:
 assign_stmt:
     symbol EQUAL_SIGN NUMERIC_LITERAL                           {
                                                                     cout << FMT_FG_DARK_GREY << "assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL - line#=" << __LINE__  << FMT_RESET << endl;
-                                                                    if(symbol_table.find($1) != symbol_table.end())
-                                                                    {
-                                                                        symbol_table[$1] = $3;
-                                                                        cout << FMT_FG_GREEN << "symbol updated: " << $1 << " = " << $3 << FMT_RESET << endl;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        cout << FMT_FG_RED << "symbol, (" << $1 << "), not found!" << FMT_RESET << endl;
-                                                                    }
+                                                                    set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
     | symbol EQUAL_SIGN STRING_LITERAL                          {
                                                                     cout << FMT_FG_DARK_GREY << "assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL - line#=" << __LINE__  << FMT_RESET << endl;
-                                                                    if(symbol_table.find($1) != symbol_table.end())
-                                                                    {
-                                                                        symbol_table[$1] = $3;
-                                                                        cout << FMT_FG_GREEN << "symbol updated: " << $1 << " = " << $3 << FMT_RESET << endl;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        cout << FMT_FG_RED << "symbol, (" << $1 << "), not found!" << FMT_RESET << endl;
-                                                                    }
+                                                                    set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
                                                                 ;
@@ -254,18 +250,14 @@ assign_stmt:
  * @brief Numerical / logical exprssions
  */
 expr:
-    STRING_LITERAL                                              {
-                                                                    cout << FMT_FG_DARK_GREY << "expr: | STRING_LITERAL - line#=" << __LINE__  << FMT_RESET << endl;
-                                                                    $$=$1;
-                                                                }
-    | symbol                                                    {
-                                                                    cout << "PARSER expr: | symbol "
-                                                                        << FMT_FG_DARK_GREY << FMT_ITALIC
-                                                                        << "file: \"" << __FILE__ << "\" - " << "line: \"" << __LINE__ << "\""
+    symbol VBAR modifiers                                       {
+                                                                    cout << FMT_FG_DARK_GREY << "expr: | symbol VBAR modifiers "
+                                                                        << FMT_ITALIC
+                                                                            << "file: \"" << __FILE__ << "\" - " << "line: \"" << __LINE__ << "\""
                                                                         << FMT_RESET << endl;
-                                                                }
-    | expr VBAR modifiers                                       {
-                                                                     cout << "PARSER expr: | symbol VBAR modifiers\n";
+                                                                    std::string s;
+                                                                    get_value($1, s);
+                                                                    $$ = s;
                                                                 }
     | MINUS expr %prec UMINUS                                   {
                                                                     cout << "PARSER expr: | expr\n";
@@ -352,8 +344,9 @@ param:
 modifiers:
     modifier                                                    {
                                                                      std::vector< std::string > v;
-                                                                     v.push_back($1);
-                                                                     $$ = v;
+                                                                     //v.push_back($1);
+                                                                     //$$ = v;
+                                                                     $$.push_back($1);
                                                                 }
    | modifiers VBAR modifier                                    {
                                                                     $1.push_back($3);
@@ -505,6 +498,16 @@ attrib:
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
+    | FILE_ATTRIB EQUAL_SIGN symbol                    {
+                                                                    cout << FMT_FG_YELLOW
+                                                                        << "PARSER name_value: | FILE_ATTRIB=\""
+                                                                        << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
+                                                                        << $3 << "\""
+                                                                        << FMT_RESET << endl;
+
+                                                                    std::pair<std::string, std::string>  pair($1, $3);
+                                                                    $$ = pair;
+                                                               }
     | attrib_name EQUAL_SIGN STRING_LITERAL                    {
                                                                       cout << FMT_FG_YELLOW
                                                                         << "PARSER name_value: | " << $1 << "=\""
@@ -528,6 +531,29 @@ attrib_name:
     ;
 
 %%
+
+bool get_value(const string& name, /*out*/ string& val)
+{
+    if(symbol_table.find(name) != symbol_table.end())
+    {
+        val = symbol_table[name];
+        return true;
+    }
+    cout << FMT_FG_RED << "symbol, (" << name << "), not found!" << FMT_RESET << endl;
+    return false;
+}
+
+bool set_value(const string& name, const string& val)
+{
+    if(symbol_table.find(name) != symbol_table.end())
+    {
+        symbol_table[name] = val;
+        cout << FMT_FG_GREEN << "symbol updated: " << name << " = " << val << FMT_RESET << endl;\
+        return true;
+    }
+    cout << FMT_FG_RED << "symbol, (" << name << "), not found!" << FMT_RESET << endl;
+    return false;
+}
 
 bool is_name(const std::pair<string, string>& p, const string& str)
 {
