@@ -85,7 +85,7 @@
     // declare
     typedef map<string, string> symbol_table_t;
     // test
-    symbol_table_t symbol_table =  { {"a", "a_val"}, {"b", "b_val"}, {"c", "c_val"} };
+    symbol_table_t symbol_table =  { {"a", "a_val"}, {"b", "b_val"}, {"c", "c_val"}, {"x", "x"}, {"y", "y"}, {"z", "z"}};
     bool is_name(const std::pair<string, string>& p, const string& str);
 
     //%type<std::vector< modifier_t > > modifiers
@@ -224,22 +224,29 @@ block:
 assign_stmt:
     symbol EQUAL_SIGN NUMERIC_LITERAL                           {
                                                                     cout << FMT_FG_YELLOW << "PARSER assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL" << FMT_RESET << endl;
-                                                                    // bkp todo, look up in symbol table & do replace
-                                                                    // if(symbol_table.find($2) != symbol_table.end())
-                                                                    // {
-                                                                    //     symbol_table[$1] = $3;
-                                                                    //     cout << $1 << " = " << $3 << endl;
-                                                                    // }
-
-                                                                    // if(auto iter = stab.find($1) != stab.end())
-                                                                    // {
-                                                                    //     //iter->second = $3;
-                                                                    // }
+                                                                    if(symbol_table.find($1) != symbol_table.end())
+                                                                    {
+                                                                        symbol_table[$1] = $3;
+                                                                        cout << FMT_FG_GREEN << "symbol updated: " << $1 << " = " << $3 << FMT_RESET << endl;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        cout << FMT_FG_RED << "symbol, (" << $1 << "), not found!" << FMT_RESET << endl;
+                                                                    }
                                                                     $$ = $3;
                                                                 }
     | symbol EQUAL_SIGN STRING_LITERAL                          {
-                                                                    cout << FMT_FG_YELLOW << "PARSER assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL=" << FMT_RESET << $3 << "\n";
-                                                                    $$ = $1;
+                                                                    cout << FMT_FG_YELLOW << "PARSER assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL" << FMT_RESET << endl;
+                                                                    if(symbol_table.find($1) != symbol_table.end())
+                                                                    {
+                                                                        symbol_table[$1] = $3;
+                                                                        cout << FMT_FG_GREEN << "symbol updated: " << $1 << " = " << $3 << FMT_RESET << endl;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        cout << FMT_FG_RED << "symbol, (" << $1 << "), not found!" << FMT_RESET << endl;
+                                                                    }
+                                                                    $$ = $3;
                                                                 }
                                                                 ;
  /**
@@ -403,15 +410,15 @@ modifier:
  * @brief ( $x:$y:$x ) | 1:2:"three"
  */
 colon_sep_params:
-        colon_sep_param                                         { cout << "colon_sep_params: | colon_sep_param\n"; $$=$1; }
-        | colon_sep_params colon_sep_param                      { cout << "colon_sep_params: | colon_sep_params colon_sep_param" << endl; $$=$1.append($2); }
+        /*empty*/
+        | colon_sep_params colon_sep_param                      { cout << FMT_FG_YELLOW << "PARSER colon_sep_params: | colon_sep_params colon_sep_param" << FMT_RESET << endl; $$=$1.append($2); }
                                                                 ;
 /**
  * @name colon_sep_param
  * @brief colon seperated param {$x|trim:3:' '}
  */
 colon_sep_param:
-        COLON NUMERIC_LITERAL                                   { cout << "colon_sep_param: | COLON NUMERIC_LITERAL" << endl; $$=":" + $2; }
+        COLON NUMERIC_LITERAL                                   { cout << FMT_FG_YELLOW << "PARSER colon_sep_param: | COLON NUMERIC_LITERAL" << FMT_RESET << endl; string s(":"); s.append($2); $$=s; }
                                                                 ;
 /**
  * @name symbol
@@ -430,7 +437,10 @@ symbol:
  * @name built-in
  */
 built_in:
-    CONFIG_LOAD attributes                                      {   cout << FMT_FG_YELLOW << "PARSER built_in: | CONFIG_LOAD FILE_ATTRIB=\"" << $1 << "\" EQUAL STRING_LITERAL=\"" << "TEST" << "\"" << FMT_RESET << endl;  }
+    CONFIG_LOAD attributes                                      {
+                                                                    cout << FMT_FG_YELLOW << "PARSER built_in: | CONFIG_LOAD attributes" << FMT_RESET << endl;
+                                                                    $$ = $2;
+                                                                }
     | INCLUDE attributes                                        {
                                                                     cout << FMT_FG_YELLOW << "PARSER built_in: | INCLUDE attributes" << FMT_RESET << endl;
                                                                     $$ = $2;

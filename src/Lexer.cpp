@@ -349,7 +349,8 @@ void lexer::print_token(token_match* m)
             << setw(10) << right << m->id << setw(5) << left
             << "\n\t name: " << setw(10) << right << ptoken->name << setw(5) << left
             << "\n\t stype: " << setw(10) << right
-            << "\n\t rexp: " << setw(10) << right << ptoken->rexp << setw(5) << left << setw(10) << right << "\n}\n";
+            << "\n\t rexp: " << setw(10) << right << ptoken->rexp << setw(5) << left
+            << "\n\t value: " << setw(10) << left << "\"" << m->value << "\"" << setw(5) << left << setw(10) << right << "\n}\n";
 }
 
 /**

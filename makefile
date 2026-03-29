@@ -3,8 +3,8 @@
 # @version: 0.0.1
 
 APP = driver
-#CXX = g++
-CXX = x86_64-pc-cygwin-g++
+CXX = g++
+#CXX = x86_64-pc-cygwin-g++
 CC = gcc
 #LEX = reflex
 LEX = flex
