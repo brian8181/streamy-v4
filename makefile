@@ -45,14 +45,14 @@ ifdef CYGWIN
 	LDFLAGS = /usr/local/lib/libfmt.a
 else
 	CXXFLAGS += -I/ucrt64/include/boost
-	LDFLAGS += -lfmt
+	LDFLAGS += /usr/lib/libfmt.dll.a
 endif
 
 all: $(BLD)/driver
 
 $(BLD)/driver: $(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(SRC)/driver.h $(OBJ)/lexer.o $(SRC)/lexer.hpp $(OBJ)/utility.o $(OBJ)/ast.o
 	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/driver\"$(FMT_RESET) ...\n"
-	$(CXX) $(CXXFLAGS) -I"/home/brian/src/boost_1_89_0" $(OBJ)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(OBJ)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
 
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
@@ -72,7 +72,7 @@ $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: $(SRC)/%.cpp
-	$(CXX) $(CXXFLAGS) -$(LDFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c $< -o $@
 
 .PHONY: all rebuild dist install uninstall clean help
 rebuild: clean all

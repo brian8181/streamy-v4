@@ -233,7 +233,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_UNESCAPED_TEXT,     token{"UNESCAPED_TEXT",     S_TYPE,  R"([^{]+)",                                     __LINE__ }},
     {UL_WHITESPACE,         token{"WHITESPACE",         S_TYPE,  R"([ \t\n]*)",                                  __LINE__ }},
     {UL_FILE_ATTRIB,        token{"FILE_ATTRIB",        S_TYPE,  R"(file)",                                      __LINE__ }},
-    //{UL_VALID_CHAR,         token{"VALID_CHAR",         S_TYPE,  R"([A-Za-z0-9*@_~+-./ ])",                      __LINE__ }},
+    {UL_VALID_CHAR,         token{"VALID_CHAR",         S_TYPE,  R"([A-Za-z0-9*@_~+-./ ])",                      __LINE__ }},
     {UL_NUMERIC_LITERAL,    token{"NUMERIC_LITERAL",    S_TYPE,  R"([0-9]+)",                                    __LINE__ }},
     {UL_CAPITALIZE,         token{"UL_CAPITALIZE",      S_TYPE,  R"(capitalize)",                                __LINE__ }},
     {UL_STRING_LITERAL,     token{"STRING_LITERAL",     S_TYPE,  R"("[A-Za-z0-9*@_.~+-/ ]+")",                   __LINE__ }},
@@ -333,8 +333,8 @@ inline state_t sIF_CONDITION  = {UL_IF_CONDITION_STATE, "IF_CONDITION"};
  */
 inline vector<unsigned long> INITIAL_STATE_TOKENS = {UL_COMMENT, UL_OPEN_BRACE};
 
-inline vector<unsigned long> ESCAPED_STATE_TOKENS = { UL_CLOSE_BRACE, UL_DOUBLE_QUOTE, UL_FILE_ATTRIB, UL_INCLUDE, UL_NUMERIC_LITERAL,
-                                                        UL_CAPITALIZE, UL_TRUNCATE, UL_VBAR, UL_COLON, UL_STRIP, UL_SYMBOL, UL_CONST_SYMBOL, UL_WHITESPACE };
+inline vector<unsigned long> ESCAPED_STATE_TOKENS = { UL_CLOSE_BRACE, UL_DOUBLE_QUOTE, UL_FILE_ATTRIB, UL_INCLUDE, UL_NUMERIC_LITERAL, UL_EQUAL_SIGN,
+                                                        UL_CAPITALIZE, UL_TRUNCATE, UL_VBAR, UL_COLON, UL_STRIP, UL_SYMBOL, UL_CONST_SYMBOL, UL_WHITESPACE, UL_VALID_CHAR };
 
 inline vector<unsigned long> COMMENT_STATE_TOKENS       = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
 inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {UL_DOUBLE_QUOTE, UL_VALID_CHAR};

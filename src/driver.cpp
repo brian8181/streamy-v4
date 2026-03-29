@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-        #ifdef PARAM_PIPE
+        #ifdef PARAM_PIPE_
 		char* argv_cpy[ sizeof(char*) * argc + 1 ];
 		if(stdin_ready(STDIN_FILENO))
 		{

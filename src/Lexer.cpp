@@ -247,7 +247,7 @@ void lexer::set_state(state_t* pstate)
     set_context(m_suffix);
 
 #ifdef DEBUG
-    //cout << "EXPR=\"" << m_expr << "\"" << " #" << __LINE__ << endl;
+    cout << "EXPR=\"" << m_expr << "\"" << " #" << __LINE__ << endl;
     cout << "STATE=" << pstate->id << " : " << pstate->name << " #" << __LINE__ << endl;
 #endif
 }
