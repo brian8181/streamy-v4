@@ -91,8 +91,8 @@ typedef struct context_t
 } context_t;
 
 // bkp todo cleanup!
-const string TOKEN_TYPE           = R"([A-Za-z][A-Za-z_]*((::)[A-Za-z_]*)?)";
-const string TOKEN_TYPE_          = R"([A-Za-z][A-Za-z_]*)";
+const string GTOKEN_TYPE__           = R"([A-Za-z][A-Za-z_]*((::)[A-Za-z_]*)?)";
+const string GTOKEN_TYPE_          = R"([A-Za-z][A-Za-z_]*)";
 const string VALID_SYMBOL_CHARS   = R"([A-Za-z0-9_])"; /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
 const string VALID_CHARS          = R"([[:punct:][:alnum:]])"; // [:punct:] = !"#$%&'()*+,-./:;<=>?@[\]^_{|}~`);
 const string CONFIG_STATES        = R"((?<states>^\s*(?<state>[A-Za-z][A-Za-z0-9_]*)\s*=\s*\s*\{(?<tokens>[A-Za-z][A-Za-z0-9_]*(, [A-Za-z][A-Za-z0-9_]*)*)\}\s*\s*$))";
