@@ -228,16 +228,26 @@ const string CONFIG               = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comme
  * @brief global token vector - all tokens
  */
 inline map<unsigned long, token_def> g_tokens = {
-    {UL_UNDEFINED,          token{"UNDEFINED",          S_TYPE,  R"(.)",                                         }},
     {UL_MATCH,              token{"MATCH",              S_TYPE,  R"(match)",                                     }},
     {UL_UNESCAPED_TEXT,     token{"UNESCAPED_TEXT",     S_TYPE,  R"([^{]+)",                                     }},
     {UL_WHITESPACE,         token{"WHITESPACE",         S_TYPE,  R"([ \t\n]*)",                                  }},
-    {UL_DOLLAR_SIGN,        token{"DOLLAR_SIGN",        S_TYPE,  R"(\$)",                                        }},
     {UL_FILE_ATTRIB,        token{"FILE_ATTRIB",        S_TYPE,  R"(file)",                                      }},
     {UL_VALID_CHAR,         token{"VALID_CHAR",         S_TYPE,  R"([A-Za-z0-9*@_~+-./ ])",                      }},
     {UL_NUMERIC_LITERAL,    token{"NUMERIC_LITERAL",    S_TYPE,  R"([0-9]+)",                                    }},
-    {UL_DOUBLE_QUOTE,       token{"DOUBLE_QUOTE",       S_TYPE,  R"(")",                                         }},
     {UL_CAPITALIZE,         token{"UL_CAPITALIZE",      S_TYPE,  R"(capitalize)",                                }},
+    {UL_STRING_LITERAL,     token{"STRING_LITERAL",     S_TYPE,  R"("[A-Za-z0-9*@_.~+-/ ]+")",                   }},
+    {UL_ARRAY,              token{"ARRAY",              S_TYPE,  R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", }},
+    {UL_IDENTIFIER,         token{"IDENTIFIER",         S_TYPE,  R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)",          }},
+    {UL_COMMENT,            token{"COMMENT",            S_TYPE,  R"(\{[ ]*\*[^*}]*\*[ ]*\})",                    }},
+    {UL_CONST_SYMBOL,       token{"CONST_SYMBOL",       S_TYPE,  R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)",      }},
+    {UL_VAR_ATTRIB,         token{"VAR_ATTRIB",         S_TYPE,  R"(var='[^']*')",                               }},
+    {UL_VALUE_ATTRIB,       token{"VALUE_ATTRIB",       S_TYPE,  R"(value='[^']*')",                             }},
+    {UL_FROM_ATTRIB,        token{"FROM_ATTRIB",        S_TYPE,  R"(from='[^']*')",                              }},
+    {UL_ITEM_ATTRIB,        token{"ITEM_ATTRIB",        S_TYPE,  R"(item='[^']*')",                              }},
+    {UL_KEY_ATTRIB,         token{"KEY_ATTRIB",         S_TYPE,  R"(key='[^']*')",                               }},
+    {UL_NAME_ATTRIB,        token{"NAME_ATTRIB",        S_TYPE,  R"(name='[^']*")",                              }},
+    {UL_DOLLAR_SIGN,        token{"DOLLAR_SIGN",        S_TYPE,  R"(\$)",                                        }},
+    {UL_DOUBLE_QUOTE,       token{"DOUBLE_QUOTE",       S_TYPE,  R"(")",                                         }},
     {UL_TILDE,              token{"TILDE",              S_TYPE,  R"(~)",                                         }},
     {UL_EXCLAMATION,        token{"EXCLAMATION",        S_TYPE,  R"(!)",                                         }},
     {UL_AT_SYMBOL,          token{"AT_SYMBOL",          S_TYPE,  R"(@)",                                         }},
@@ -247,7 +257,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_ASTERISK,           token{"ASTERISK",           S_TYPE,  R"(\*)",                                        }},
     {UL_OPEN_PAREN,         token{"LPAREN",             S_TYPE,  R"(\()",                                        }},
     {UL_CLOSE_PAREN,        token{"RPAREN",             S_TYPE,  R"(\))",                                        }},
-    {UL_DASH,               token{"MINUS",              S_TYPE,  "-",                                            }},
+    {UL_DASH,               token{"MINUS",              S_TYPE,  R"(-)",                                            }},
     {UL_PLUS_SIGN,          token{"PLUS",               S_TYPE,  R"(\+)",                                        }},
     {UL_EQUAL_SIGN,         token{"EQUAL_SIGN",         S_TYPE,  R"(=)",                                         }},
     {UL_CLOSE_BRACKET,      token{"RBRACKET",           S_TYPE,  R"(\])",                                        }},
@@ -256,7 +266,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_OPEN_BRACKET,       token{"LBRACKET",           S_TYPE,  R"(\[)",                                        }},
     {UL_VBAR,               token{"VBAR",               S_TYPE,  R"(\|)",                                        }},
     {UL_BACKSLASH,          token{"BACKSLASH",          S_TYPE,  R"(\\)",                                        }},
-    {UL_COLON,              token{"COLON",              S_TYPE,  ":",                                            }},
+    {UL_COLON,              token{"COLON",              S_TYPE,  R"(:)",                                            }},
     {UL_HASH_MARK,          token{"HASH_MARK",          S_TYPE,  R"(#)",                                         }},
     {UL_SEMI_COLON,         token{"SEMI_COLON",         S_TYPE,  R"(;)",                                         }},
     {UL_SINGLE_QUOTE,       token{"SINGLE_QUOTE",       S_TYPE,  R"(')",                                         }},
@@ -267,30 +277,19 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_SLASH,              token{"SLASH",              S_TYPE,  R"(/)",                                         }},
     {UL_GREATER_THAN_EQUAL, token{"GREATER_THAN_EQUAL", S_TYPE,  R"(>=)",                                        }},
     {UL_LESS_THAN_EQUAL,    token{"LESS_THAN_EQUAL",    S_TYPE,  R"(<=)",                                        }},
-    {UL_STRING_LITERAL,     token{"STRING_LITERAL",     S_TYPE,  R"("[A-Za-z0-9*@_.~+-/ ]+")",                   }},
-    {UL_ARRAY,              token{"ARRAY",              S_TYPE,  R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", }},
-    {UL_IDENTIFIER,         token{"IDENTIFIER",         S_TYPE,  R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)",          }},
-    {UL_COMMENT,            token{"COMMENT",            S_TYPE,  R"(\{[ ]*\*[^*}]*\*[ ]*\})",                    }},
-    {UL_CONST_SYMBOL,       token{"CONST_SYMBOL",       S_TYPE,  R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)",      }},
-    {UL_IF,                 token{"IF",                 S_TYPE,  "if",                                           }},
-    {UL_ELSEIF,             token{"ELSEIF",             S_TYPE,  "elseif",                                       }},
-    {UL_WHILE,              token{"WHILE",              S_TYPE,  "while",                                        }},
-    {UL_ASSIGN,             token{"ASSIGN",             S_TYPE,  "assign",                                       }},
-    {UL_BREAK,              token{"BREAK",              S_TYPE,  "break",                                        }},
-    {UL_REQUIRE,            token{"REQUIRE",            S_TYPE,  "require",                                      }},
-    {UL_INCLUDE,            token{"INCLUDE",            S_TYPE,  "include",                                      }},
-    {UL_CONFIG_LOAD,        token{"CONFIG_LOAD",        S_TYPE,  "config_load",                                  }},
-    {UL_INSERT,             token{"INSERT",             S_TYPE,  "insert",                                       }},
-    {UL_VAR_ATTRIB,         token{"VAR_ATTRIB",         S_TYPE,  R"(var='[^']*')",                               }},
-    {UL_VALUE_ATTRIB,       token{"VALUE_ATTRIB",       S_TYPE,  R"(value='[^']*')",                             }},
-    {UL_FROM_ATTRIB,        token{"FROM_ATTRIB",        S_TYPE,  R"(from='[^']*')",                              }},
-    {UL_ITEM_ATTRIB,        token{"ITEM_ATTRIB",        S_TYPE,  R"(item='[^']*')",                              }},
-    {UL_KEY_ATTRIB,         token{"KEY_ATTRIB",         S_TYPE,  R"(key='[^']*')",                               }},
-    {UL_NAME_ATTRIB,        token{"NAME_ATTRIB",        S_TYPE,  R"(name='[^']*")",                              }},
-    {UL_COUNT_PARAGRAPHS,   token{"COUNT_PARAGRAPHS",   S_TYPE,  "count_paragraphs",                             }},
-    {UL_COUNT_SENTENCES,    token{"COUNT_SENTENCES",    S_TYPE,  "count_sentences",                              }},
-    {UL_COUNT_WORDS,        token{"COUNT_WORDS",        S_TYPE,  "count_words",                                  }},
-    {UL_DATE_FORMAT,        token{"DATE_FORMAT",        S_TYPE,  "date_format",                                  }},
+    {UL_IF,                 token{"IF",                 S_TYPE,  R"(if)",                                           }},
+    {UL_ELSEIF,             token{"ELSEIF",             S_TYPE,  R"(elseif)",                                       }},
+    {UL_WHILE,              token{"WHILE",              S_TYPE,  R"(while)",                                        }},
+    {UL_ASSIGN,             token{"ASSIGN",             S_TYPE,  R"(assign)",                                       }},
+    {UL_BREAK,              token{"BREAK",              S_TYPE,  R"(break)",                                        }},
+    {UL_REQUIRE,            token{"REQUIRE",            S_TYPE,  R"(require)",                                      }},
+    {UL_INCLUDE,            token{"INCLUDE",            S_TYPE,  R"(include)",                                      }},
+    {UL_CONFIG_LOAD,        token{"CONFIG_LOAD",        S_TYPE,  R"(config_load)",                                  }},
+    {UL_INSERT,             token{"INSERT",             S_TYPE,  R"(insert)",                                       }},
+    {UL_COUNT_PARAGRAPHS,   token{"COUNT_PARAGRAPHS",   S_TYPE,  R"(count_paragraphs)",                             }},
+    {UL_COUNT_SENTENCES,    token{"COUNT_SENTENCES",    S_TYPE,  R"(count_sentences)",                              }},
+    {UL_COUNT_WORDS,        token{"COUNT_WORDS",        S_TYPE,  R"(count_words)",                                  }},
+    {UL_DATE_FORMAT,        token{"DATE_FORMAT",        S_TYPE,  R"(date_format)",                                  }},
     {UL_NULL,               token{"DEFAULT",            S_TYPE,  R"(default)",                                   }},
     {UL_ESCAPE,             token{"ESCAPE",             S_TYPE,  R"(escape)",                                    }},
     {UL_INDENT,             token{"INDENT",             S_TYPE,  R"(indent)",                                    }},
@@ -511,11 +510,11 @@ void build_expr();
 
 /**
  * @name  print_token
- * @def   void print_token(int id)
+ * @def   void lexer::print_token(token_match m)
  * @brief print token to stdout
- * @param int id
+ * @param token_match m
  */
-void print_token(unsigned long id);
+void print_token(token_match* ptoken);
 
 /**
  * @name   is_id
