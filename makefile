@@ -29,6 +29,12 @@ FMT_YELLOW='\e[33m'
 FMT_BLUE='\e[34m'
 FMT_CYAN='\e[36m'
 
+# lib settings
+# LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64
+# INCLUDES=-I/usr/local/include/cppunit/
+# LDFLAGS=$(INCLUDES) $(LIBS)
+
+
 #ifdef CLANG
 #	CXX=clang++
 #endif
@@ -48,7 +54,7 @@ else
 	LDFLAGS += /usr/lib/libfmt.dll.a
 endif
 
-all: $(BLD)/driver
+all: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libSmartPtr.a
 
 $(BLD)/driver: $(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(SRC)/driver.h $(OBJ)/lexer.o $(SRC)/lexer.hpp $(OBJ)/utility.o $(OBJ)/ast.o
 	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/driver\"$(FMT_RESET) ...\n"
@@ -58,8 +64,23 @@ $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.hpp
 	@echo -e "$(FMT_GREEN)\nGenerate \"parser.tab.c\"$(FMT_RESET) ...\n"
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cpp
 
-$(BLD)/pparser.tab.o: $(BLD)/pparser.tab.cpp
+$(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp
+	@echo -e "$(FMT_GREEN)\nBuilding \"$(OBJ)/pparser.tab.o\"$(FMT_RESET) ...\n"
 	$(CXX) $(CXXFLAGS) -c $^ -o $@
+
+$(BLD)/lib$(APP).so: $(BLD)/$(APP).o
+	$(CXX) $(CXXFLAGS) --shared $(OBJ)/$(APP).o -o $(BLD)/lib$(APP).so
+	chmod 755 $(BLD)/lib$(APP).so
+
+$(BLD)/libSmartPtr.a: $(BLD)/$(APP).o
+	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/libSmartPtr.a\"$(FMT_RESET) ...\n"
+	ar rvs $(BLD)/libSmartPtr.a $(OBJ)/$(APP).o
+	chmod 755 $(BLD)/libSmartPtr.a
+
+$(BLD)/lib$(APP).a: $(BLD)/$(APP).o
+	@echo -e "$(FMT_GREEN)\nBuilding \"$(BLD)/lib$(APP).a\"$(FMT_RESET) ...\n"
+	ar rvs $(BLD)/lib$(APP).a $(OBJ)/$(APP).o
+	chmod 755 $(BLD)/lib$(APP).a
 
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h

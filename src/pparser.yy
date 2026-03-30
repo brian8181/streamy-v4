@@ -104,7 +104,7 @@
 %token<std::string> CAPITALIZE CAT COUNT_CHARACTERS COUNT_SENTENCES COUNT_PARAGRAPHS COUNT_WORDS DATE_FORMAT DEFAULT ESCAPE
 %token<std::string> INDENT LOWER UPPER STRIP NL2BR REGEX_REPLACE REPLACE SPACIFY STRING_FORMAT STRIP_TAGS TRUNCATE WORDWRAP
 %token CARROT OPEN_PAREN CLOSE_PAREN DASH BACKSLASH QUESTION_MARK SEMI_COLON DOUBLE_QUOTE SINGLE_QUOTE BACK_SLASH AT AMPERSAND AND OR NOT
-%token DOLLAR_SIGN COMMA VBAR COLON HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
+%token DOLLAR_SIGN COMMA COLON VBAR HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
 %token END 0
 %token END_OF_FILES MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
 
@@ -148,15 +148,15 @@ complier:
  * @name files
  */
 files:
-    file                                                        { cout << FMT_FG_DARK_GREY << "files: | file - line#=" << __LINE__  << FMT_RESET << endl; }
-    | files file                                                { cout << FMT_FG_DARK_GREY << "files: | files file - line#=" << __LINE__  << FMT_RESET << endl; }
+    file                                                        { cout << FMT_FG_DARK_GREY << "files: | file - line#=" << __LINE__  << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | files file                                                { cout << FMT_FG_DARK_GREY << "files: | files file - line#=" << __LINE__  << " - line#=" << __LINE__  << FMT_RESET << endl; }
                                                                 ;
 /**
  * @name file
  */
 file:
     blocks END                                                  {
-                                                                    cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE - line#=" << __LINE__  << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
@@ -176,16 +176,7 @@ blocks:
  * @name block
  */
 block:
-    OPEN_BRACE symbol CLOSE_BRACE                               {
-                                                                    std::string s;
-                                                                    get_value($2, s);
-                                                                    cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE symbol = [" << s << "] CLOSE_BRACE"
-                                                                        << FMT_ITALIC
-                                                                            << "file: \"" << __FILE__ << "\" - " << "line: \"" << __LINE__ << "\""
-                                                                        << FMT_RESET << endl;
-                                                                    $$ = s;
-                                                                }
-    | OPEN_BRACE expr CLOSE_BRACE                               {
+   OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE expr CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
@@ -227,7 +218,7 @@ block:
                                                                     // set the suffix a.k.a "current search buffer"
                                                                     lexer::instance().set_remaining( (*include_buffer).str() );
                                                                     lexer::instance().set_state(&sINITIAL);
-                                                                    cout << FMT_FG_RED << "file=\"" << FMT_ITALIC << path << "\"" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_RED << "file=\"" << FMT_ITALIC << path << "\"" << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
                                                                 ;
 /**
@@ -260,54 +251,54 @@ expr:
                                                                     $$ = s;
                                                                 }
     | MINUS expr %prec UMINUS                                   {
-                                                                    cout << "PARSER expr: | expr\n";
+                                                                    cout << "PARSER expr: | expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr PLUS_SIGN expr                                       {
-                                                                    cout << "PARSER expr: | expr PLUS_SIGN expr\n";
+                                                                    cout << "PARSER expr: | expr PLUS_SIGN expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr MINUS expr                                           {
-                                                                    cout << "PARSER expr: | expr MINUS expr\n";
+                                                                    cout << "PARSER expr: | expr MINUS expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr ASTERISK expr                                        {
-                                                                    cout << "PARSER expr: | expr ASTERISK expr\n";
+                                                                    cout << "PARSER expr: | expr ASTERISK expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr SLASH expr                                           {
-                                                                    cout << "PARSER expr: | expr SLASH expr\n";
+                                                                    cout << "PARSER expr: | expr SLASH expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr LESS_THAN expr                                       {
-                                                                    cout << "PARSER expr: | expr LESS_THAN expr\n";
+                                                                    cout << "PARSER expr: | expr LESS_THAN expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr GREATER_THAN expr                                    {
-                                                                    cout << "PARSER expr: | | expr GREATER_THAN expr\n";
+                                                                    cout << "PARSER expr: | | expr GREATER_THAN expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr GREATER_THAN_EQUAL expr                              {
-                                                                    cout << "PARSER expr: | expr GREATER_THAN_EQUAL expr\n";
+                                                                    cout << "PARSER expr: | expr GREATER_THAN_EQUAL expr <<  - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr LESS_THAN_EQUAL expr                                 {
-                                                                    cout << "PARSER expr: | expr LESS_THAN_EQUAL expr\n";
+                                                                    cout << "PARSER expr: | expr LESS_THAN_EQUAL expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | expr NOT_EQUAL expr                                       {
-                                                                    cout << "PARSER expr: | expr NOT_EQUAL expr\n";
+                                                                    cout << "PARSER expr: | expr NOT_EQUAL expr << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
     | LPAREN expr RPAREN                                        {
-                                                                    cout << "PARSER expr: | LPAREN expr RPAREN\n";
+                                                                    cout << "PARSER expr: | LPAREN expr RPAREN << - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
                                                                 ;
 /**
  * @name qualafied_id
  */
 qualafied_id:
-    symbol DOT symbol                                       { cout << FMT_FG_DARK_GREY << "qualafied_id: | symbol DOT symbol" << FMT_RESET << endl; }
-    | symbol INDIRECT_MEMBER symbol                         { cout << FMT_FG_DARK_GREY << "qualafied_id: | symbol INDIRECT_MEMBER symbol" << FMT_RESET << endl; }
-    | qualafied_id DOT symbol                               { cout << FMT_FG_DARK_GREY << "qualafied_id: | qualafied_id DOT symbol" << FMT_RESET << endl; }
-    | qualafied_id INDIRECT_MEMBER symbol                   { cout << FMT_FG_DARK_GREY << "qualafied_id: | qualafied_id INDIRECT_MEMBER symbol" << FMT_RESET << endl; }
+    symbol DOT symbol                                       { cout << FMT_FG_DARK_GREY << "qualafied_id: | symbol DOT symbol - line#=" << __LINE__  << FMT_RESET << endl; }
+    | symbol INDIRECT_MEMBER symbol                         { cout << FMT_FG_DARK_GREY << "qualafied_id: | symbol INDIRECT_MEMBER symbol - line#=" << __LINE__  << FMT_RESET << endl; }
+    | qualafied_id DOT symbol                               { cout << FMT_FG_DARK_GREY << "qualafied_id: | qualafied_id DOT symbol - line#=" << __LINE__  << FMT_RESET << endl; }
+    | qualafied_id INDIRECT_MEMBER symbol                   { cout << FMT_FG_DARK_GREY << "qualafied_id: | qualafied_id INDIRECT_MEMBER symbol - line#=" << __LINE__  << FMT_RESET << endl; }
                                                                 ;
 /**
  * @name sub_proc
  */
 sub_proc:
     symbol LPAREN params RPAREN                                 {
-                                                                    cout << FMT_FG_DARK_GREY << "sub_proc: | symbol LPAREN params RPAREN" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "sub_proc: | symbol LPAREN params RPAREN" << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     $$=$1;
                                                                 }
                                                                 ;
@@ -318,7 +309,7 @@ array:
     symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET           {
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET"
-                                                                        << FMT_RESET << endl;
+                                                                        << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     $$=$1;
                                                                 }
                                                                 ;
@@ -328,14 +319,14 @@ array:
  */
 params:
     param                                                       { cout << "PARSER params: | param\n" << endl; }
-    | params symbol                                             { cout << FMT_FG_DARK_GREY << "qualafied_id: | params COMMA symbol" << FMT_RESET << endl; }
+    | params symbol                                             { cout << FMT_FG_DARK_GREY << "qualafied_id: | params COMMA symbol" << " - line#=" << __LINE__  << FMT_RESET << endl; }
                                                                 ;
 /**
  * @name param
  * @brief param (i.e. $x, )
  */
 param:
-        symbol COMMA                                            { cout << FMT_FG_DARK_GREY << "param: | symbol" << FMT_RESET << endl; }
+        symbol COMMA                                            { cout << FMT_FG_DARK_GREY << "param: | symbol" << " - line#=" << __LINE__  << FMT_RESET << endl; }
                                                                 ;
 /**
  * @name modifiers
@@ -358,7 +349,7 @@ modifiers:
  */
 modifier:
     modifier colon_sep_params                                   {
-                                                                    cout << "PARSER modifier : | " << FMT_FG_MAGENTA << " modifier=" << $1 << " COLON NUMERIC_LITERAL=" << $2 << FMT_RESET << "\n";
+                                                                    cout << "modifier : | " << FMT_FG_DARK_GREY << " modifier=" << $1 << " COLON NUMERIC_LITERAL=" << $2 << FMT_RESET << "\n";
                                                                     // $1.params.append("|");
                                                                     // $1.params.append($2);
                                                                 }
@@ -431,39 +422,39 @@ symbol:
  */
 built_in:
     CONFIG_LOAD attributes                                      {
-                                                                    cout << FMT_FG_DARK_GREY << "built_in: | CONFIG_LOAD attributes" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "built_in: | CONFIG_LOAD attributes" << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     $$ = $2;
                                                                 }
     | INCLUDE attributes                                        {
-                                                                    cout << FMT_FG_DARK_GREY << "built_in: | INCLUDE attributes" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "built_in: | INCLUDE attributes" << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     $$ = $2;
                                                                 }
-    | REQUIRE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | REQUIRE_ONCE attributes                                   { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | INSERT attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | ASSIGN attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | ASSIGN FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | ISSET attributes                                          { cout << FMT_FG_DARK_GREY << "built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | CAPTURE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | SECTION attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | COUNTER attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | COUNTER FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | CYCLE attributes                                          { cout << FMT_FG_DARK_GREY << "built_in: | CYCLE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | LDELIM attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | LDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | RDELIM attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | RDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
-    | VERSION attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << FMT_RESET << endl; }
+    | REQUIRE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | REQUIRE_ONCE attributes                                   { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | INSERT attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | ASSIGN attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | ASSIGN FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | ISSET attributes                                          { cout << FMT_FG_DARK_GREY << "built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | CAPTURE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | SECTION attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | COUNTER attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | COUNTER FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | CYCLE attributes                                          { cout << FMT_FG_DARK_GREY << "built_in: | CYCLE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | LDELIM attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | LDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | RDELIM attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | RDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | VERSION attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
                                                                 ;
 /**
  * @name attributes
  */
 attributes:
     attrib                                                     {
-                                                                    cout << FMT_FG_DARK_GREY << "attribute: | push -> attrib={name=\"" << $1.first  << "\"; value=\"" << $1.second << "\"}\n" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "attribute: | push -> attrib={name=\"" << $1.first  << "\"; value=\"" << $1.second << "\"}\n" << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     std::pair<std::string, std::string>  p($1);
                                                                     std::vector< std::pair<std::string, std::string> > v;
                                                                     v.push_back( p );
                                                                     $$ = v;
                                                                }
     | attributes attrib                                        {
-                                                                    cout << FMT_FG_DARK_GREY << "attribute: | attributes : push-> attrib={name=\"" << $2.first  << "\"; value=\"" << $2.second << "\"}\n" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "attribute: | attributes : push-> attrib={name=\"" << $2.first  << "\"; value=\"" << $2.second << "\"}\n" << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     $1.push_back( $2 );
                                                                     $$ = $1;
                                                                }
@@ -475,7 +466,7 @@ attrib:
     VALUE_ATTRIB EQUAL_SIGN STRING_LITERAL                     {
                                                                     cout << FMT_BG_DARK_GREY << "name_value: | VALUE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << buf << "\"" << FMT_RESET << endl;
+                                                                        << buf << "\"" << " - line#=" << __LINE__  << FMT_RESET << endl;
 
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
@@ -483,7 +474,7 @@ attrib:
     | VAR_ATTRIB EQUAL_SIGN STRING_LITERAL                     {
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\""
-                                                                        << FMT_FG_GREEN << FMT_RESET << endl;
+                                                                        << FMT_FG_GREEN << " - line#=" << __LINE__  << FMT_RESET << endl;
 
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
@@ -493,7 +484,7 @@ attrib:
                                                                         << "PARSER name_value: | FILE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\""
-                                                                        << FMT_RESET << endl;
+                                                                        << " - line#=" << __LINE__  << FMT_RESET << endl;
 
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
@@ -503,7 +494,7 @@ attrib:
                                                                         << "PARSER name_value: | FILE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\""
-                                                                        << FMT_RESET << endl;
+                                                                        << " - line#=" << __LINE__  << FMT_RESET << endl;
 
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
@@ -513,7 +504,7 @@ attrib:
                                                                         << "PARSER name_value: | " << $1 << "=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\""
-                                                                        << FMT_RESET << endl;
+                                                                        << " - line#=" << __LINE__  << FMT_RESET << endl;
 
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
@@ -539,7 +530,7 @@ bool get_value(const string& name, /*out*/ string& val)
         val = symbol_table[name];
         return true;
     }
-    cout << FMT_FG_RED << "symbol, (" << name << "), not found!" << FMT_RESET << endl;
+    cout << FMT_FG_RED << "symbol, (" << name << "), not found!" << " - line#=" << __LINE__  << FMT_RESET << endl;
     return false;
 }
 
@@ -548,10 +539,10 @@ bool set_value(const string& name, const string& val)
     if(symbol_table.find(name) != symbol_table.end())
     {
         symbol_table[name] = val;
-        cout << FMT_FG_GREEN << "symbol updated: " << name << " = " << val << FMT_RESET << endl;\
+        cout << FMT_FG_GREEN << "symbol updated: " << name << " = " << val << " - line#=" << __LINE__  << FMT_RESET << endl;\
         return true;
     }
-    cout << FMT_FG_RED << "symbol, (" << name << "), not found!" << FMT_RESET << endl;
+    cout << FMT_FG_RED << "symbol, (" << name << "), not found!" << " - line#=" << __LINE__  << FMT_RESET << endl;
     return false;
 }
 

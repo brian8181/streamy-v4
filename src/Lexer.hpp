@@ -266,6 +266,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_CLOSE_BRACE,        token{"CLOSE_BRACE",        S_TYPE,  R"(\})",                                        __LINE__ }},
     {UL_OPEN_BRACKET,       token{"LBRACKET",           S_TYPE,  R"(\[)",                                        __LINE__ }},
     {UL_VBAR,               token{"VBAR",               S_TYPE,  R"(\|)",                                        __LINE__ }},
+
     {UL_BACKSLASH,          token{"BACKSLASH",          S_TYPE,  R"(\\)",                                        __LINE__ }},
     {UL_COLON,              token{"COLON",              S_TYPE,  R"(:)",                                         __LINE__ }},
     {UL_SEMI_COLON,         token{"SEMI_COLON",         S_TYPE,  R"(;)",                                         __LINE__ }},

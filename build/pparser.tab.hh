@@ -556,8 +556,8 @@ namespace yy {
     NOT = 320,                     // NOT
     DOLLAR_SIGN = 321,             // DOLLAR_SIGN
     COMMA = 322,                   // COMMA
-    VBAR = 323,                    // VBAR
-    COLON = 324,                   // COLON
+    COLON = 323,                   // COLON
+    VBAR = 324,                    // VBAR
     HASH_MARK = 325,               // HASH_MARK
     OPEN_BRACKET = 326,            // OPEN_BRACKET
     CLOSE_BRACKET = 327,           // CLOSE_BRACKET
@@ -677,8 +677,8 @@ namespace yy {
         S_NOT = 65,                              // NOT
         S_DOLLAR_SIGN = 66,                      // DOLLAR_SIGN
         S_COMMA = 67,                            // COMMA
-        S_VBAR = 68,                             // VBAR
-        S_COLON = 69,                            // COLON
+        S_COLON = 68,                            // COLON
+        S_VBAR = 69,                             // VBAR
         S_HASH_MARK = 70,                        // HASH_MARK
         S_OPEN_BRACKET = 71,                     // OPEN_BRACKET
         S_CLOSE_BRACKET = 72,                    // CLOSE_BRACKET
@@ -2218,31 +2218,31 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_VBAR ()
+      make_COLON ()
       {
-        return symbol_type (token::VBAR);
+        return symbol_type (token::COLON);
       }
 #else
       static
       symbol_type
-      make_VBAR ()
+      make_COLON ()
       {
-        return symbol_type (token::VBAR);
+        return symbol_type (token::COLON);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_COLON ()
+      make_VBAR ()
       {
-        return symbol_type (token::COLON);
+        return symbol_type (token::VBAR);
       }
 #else
       static
       symbol_type
-      make_COLON ()
+      make_VBAR ()
       {
-        return symbol_type (token::COLON);
+        return symbol_type (token::VBAR);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -2784,7 +2784,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -2792,7 +2792,7 @@ switch (yykind)
     static const signed char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
-    static const signed char yypgoto_[];
+    static const short yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
     static const unsigned char yydefgoto_[];
@@ -2802,7 +2802,7 @@ switch (yykind)
     // number is the opposite.  If YYTABLE_NINF, syntax error.
     static const short yytable_[];
 
-    static const short yycheck_[];
+    static const unsigned char yycheck_[];
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
@@ -3044,7 +3044,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 175,     ///< Last index in yytable_.
+      yylast_ = 166,     ///< Last index in yytable_.
       yynnts_ = 22,  ///< Number of nonterminal symbols.
       yyfinal_ = 32 ///< Termination state number.
     };
