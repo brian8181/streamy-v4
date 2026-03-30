@@ -196,29 +196,32 @@ block:
                                                                     get_value($2, s);
                                                                     $$ = s;
                                                                 }
-    | OPEN_BRACE built_in CLOSE_BRACE                           {
-                                                                    cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE built_in CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
-                                                                    size_t len = $2.size();
-                                                                    int i = 0;
-                                                                    for(; i < len; ++i)
-                                                                    {
-                                                                        if($2[i].first == "file")
-                                                                            break;
-                                                                    }
-                                                                    string path = $2[i].second;
-                                                                    // read include path
-                                                                    string sout;
-                                                                    read_str(path, sout);
-                                                                    //  append include path output to buffer
-                                                                    string* p_rstr = lexer::instance().get_remaining();
-                                                                    stringstream* include_buffer = lexer::instance().get_include_buffer();
-                                                                    *include_buffer << sout << *p_rstr;
+    | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
+                                                                    // cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE built_in CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    // size_t len = $2.size();
+                                                                    // int i = 0;
+                                                                    // for(; i < len; ++i)
+                                                                    // {
+                                                                    //     if($2[i].first == "file")
+                                                                    //         break;
+                                                                    // }
+                                                                    // string path = $2[i].second;
+                                                                    // // read include path
+                                                                    // string sout;
+                                                                    // read_str(path, sout);
+                                                                    // //  append include path output to buffer
+                                                                    // string* p_rstr = lexer::instance().get_remaining();
+                                                                    // stringstream* include_buffer = lexer::instance().get_include_buffer();
+                                                                    // *include_buffer << sout << *p_rstr;
 
-                                                                    cout << FMT_FG_RED << include_buffer->str() << FMT_RESET;
-                                                                    // set the suffix a.k.a "current search buffer"
-                                                                    lexer::instance().set_remaining( (*include_buffer).str() );
-                                                                    lexer::instance().set_state(&sINITIAL);
-                                                                    cout << FMT_FG_RED << "file=\"" << FMT_ITALIC << path << "\"" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    // cout << FMT_FG_RED << include_buffer->str() << FMT_RESET;
+                                                                    // // set the suffix a.k.a "current search buffer"
+                                                                    // lexer::instance().set_remaining( (*include_buffer).str() );
+                                                                    // lexer::instance().set_state(&sINITIAL);
+                                                                    // cout << FMT_FG_RED << "file=\"" << FMT_ITALIC << path << "\"" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                }
+    | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  {
+                                                                     cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
                                                                 }
                                                                 ;
 /**
@@ -425,14 +428,17 @@ built_in:
                                                                     cout << FMT_FG_DARK_GREY << "built_in: | CONFIG_LOAD attributes" << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     $$ = $2;
                                                                 }
-    | INCLUDE attributes                                        {
+    | '#' INCLUDE attributes                                        {
                                                                     cout << FMT_FG_DARK_GREY << "built_in: | INCLUDE attributes" << " - line#=" << __LINE__  << FMT_RESET << endl;
                                                                     $$ = $2;
                                                                 }
     | REQUIRE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
     | REQUIRE_ONCE attributes                                   { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
     | INSERT attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | ASSIGN attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | ASSIGN FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | '#' ASSIGN attributes                                         {
+                                                                    cout << FMT_FG_DARK_GREY << "built_in: | ASSIGN attributes" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    $$ = $2;
+                                                                }
     | ISSET attributes                                          { cout << FMT_FG_DARK_GREY << "built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
     | CAPTURE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
     | SECTION attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }

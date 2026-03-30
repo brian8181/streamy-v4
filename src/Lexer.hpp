@@ -266,7 +266,6 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_CLOSE_BRACE,        token{"CLOSE_BRACE",        S_TYPE,  R"(\})",                                        __LINE__ }},
     {UL_OPEN_BRACKET,       token{"LBRACKET",           S_TYPE,  R"(\[)",                                        __LINE__ }},
     {UL_VBAR,               token{"VBAR",               S_TYPE,  R"(\|)",                                        __LINE__ }},
-
     {UL_BACKSLASH,          token{"BACKSLASH",          S_TYPE,  R"(\\)",                                        __LINE__ }},
     {UL_COLON,              token{"COLON",              S_TYPE,  R"(:)",                                         __LINE__ }},
     {UL_SEMI_COLON,         token{"SEMI_COLON",         S_TYPE,  R"(;)",                                         __LINE__ }},
@@ -334,7 +333,7 @@ inline state_t sIF_CONDITION  = {UL_IF_CONDITION_STATE, "IF_CONDITION"};
  */
 inline vector<unsigned long> INITIAL_STATE_TOKENS = {UL_COMMENT, UL_OPEN_BRACE};
 
-inline vector<unsigned long> ESCAPED_STATE_TOKENS = { UL_CLOSE_BRACE, UL_DOUBLE_QUOTE, UL_FILE_ATTRIB, UL_INCLUDE, UL_NUMERIC_LITERAL, UL_EQUAL_SIGN,
+inline vector<unsigned long> ESCAPED_STATE_TOKENS = { UL_CLOSE_BRACE, UL_DOUBLE_QUOTE, UL_FILE_ATTRIB, UL_INCLUDE, UL_ASSIGN, UL_NUMERIC_LITERAL, UL_EQUAL_SIGN,
                                                         UL_CAPITALIZE, UL_TRUNCATE, UL_VBAR, UL_COLON, UL_STRIP, UL_SYMBOL, UL_CONST_SYMBOL, UL_WHITESPACE, UL_VALID_CHAR };
 
 inline vector<unsigned long> COMMENT_STATE_TOKENS       = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};

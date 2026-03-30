@@ -442,7 +442,6 @@ namespace yy {
       // attrib_name
       char dummy3[sizeof (std::string)];
 
-      // built_in
       // attributes
       char dummy4[sizeof (std::vector< std::pair<std::string, std::string> > )];
 
@@ -607,7 +606,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 103, ///< Number of tokens.
+        YYNTOKENS = 104, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // END
         S_YYerror = 1,                           // error
@@ -712,25 +711,25 @@ namespace yy {
         S_SLASH = 100,                           // SLASH
         S_PERCENT_SIGN = 101,                    // PERCENT_SIGN
         S_UMINUS = 102,                          // UMINUS
-        S_YYACCEPT = 103,                        // $accept
-        S_complier = 104,                        // complier
-        S_files = 105,                           // files
-        S_file = 106,                            // file
-        S_blocks = 107,                          // blocks
-        S_block = 108,                           // block
-        S_assign_stmt = 109,                     // assign_stmt
-        S_expr = 110,                            // expr
-        S_qualafied_id = 111,                    // qualafied_id
-        S_sub_proc = 112,                        // sub_proc
-        S_array = 113,                           // array
-        S_params = 114,                          // params
-        S_param = 115,                           // param
-        S_modifiers = 116,                       // modifiers
-        S_modifier = 117,                        // modifier
-        S_colon_sep_params = 118,                // colon_sep_params
-        S_colon_sep_param = 119,                 // colon_sep_param
-        S_symbol = 120,                          // symbol
-        S_built_in = 121,                        // built_in
+        S_103_ = 103,                            // '#'
+        S_YYACCEPT = 104,                        // $accept
+        S_complier = 105,                        // complier
+        S_files = 106,                           // files
+        S_file = 107,                            // file
+        S_blocks = 108,                          // blocks
+        S_block = 109,                           // block
+        S_assign_stmt = 110,                     // assign_stmt
+        S_expr = 111,                            // expr
+        S_qualafied_id = 112,                    // qualafied_id
+        S_sub_proc = 113,                        // sub_proc
+        S_array = 114,                           // array
+        S_params = 115,                          // params
+        S_param = 116,                           // param
+        S_modifiers = 117,                       // modifiers
+        S_modifier = 118,                        // modifier
+        S_colon_sep_params = 119,                // colon_sep_params
+        S_colon_sep_param = 120,                 // colon_sep_param
+        S_symbol = 121,                          // symbol
         S_attributes = 122,                      // attributes
         S_attrib = 123,                          // attrib
         S_attrib_name = 124                      // attrib_name
@@ -839,7 +838,6 @@ namespace yy {
         value.move< std::string > (std::move (that.value));
         break;
 
-      case symbol_kind::S_built_in: // built_in
       case symbol_kind::S_attributes: // attributes
         value.move< std::vector< std::pair<std::string, std::string> >  > (std::move (that.value));
         break;
@@ -1024,7 +1022,6 @@ switch (yykind)
         value.template destroy< std::string > ();
         break;
 
-      case symbol_kind::S_built_in: // built_in
       case symbol_kind::S_attributes: // attributes
         value.template destroy< std::vector< std::pair<std::string, std::string> >  > ();
         break;
@@ -2752,7 +2749,7 @@ switch (yykind)
 
 
     /// Stored state numbers (used for stacks).
-    typedef unsigned char state_type;
+    typedef signed char state_type;
 
     /// Compute post-reduction state.
     /// \param yystate   the current state
@@ -2784,7 +2781,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const short yypact_[];
+    static const signed char yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -2795,14 +2792,14 @@ switch (yykind)
     static const short yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
-    static const unsigned char yydefgoto_[];
+    static const signed char yydefgoto_[];
 
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
-    static const short yytable_[];
+    static const signed char yytable_[];
 
-    static const unsigned char yycheck_[];
+    static const signed char yycheck_[];
 
     // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
     // state STATE-NUM.
@@ -3044,9 +3041,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 166,     ///< Last index in yytable_.
-      yynnts_ = 22,  ///< Number of nonterminal symbols.
-      yyfinal_ = 32 ///< Termination state number.
+      yylast_ = 145,     ///< Last index in yytable_.
+      yynnts_ = 21,  ///< Number of nonterminal symbols.
+      yyfinal_ = 19 ///< Termination state number.
     };
 
 
@@ -3066,7 +3063,7 @@ switch (yykind)
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,   103,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -3190,7 +3187,6 @@ switch (yykind)
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
-      case symbol_kind::S_built_in: // built_in
       case symbol_kind::S_attributes: // attributes
         value.copy< std::vector< std::pair<std::string, std::string> >  > (YY_MOVE (that.value));
         break;
@@ -3301,7 +3297,6 @@ switch (yykind)
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
-      case symbol_kind::S_built_in: // built_in
       case symbol_kind::S_attributes: // attributes
         value.move< std::vector< std::pair<std::string, std::string> >  > (YY_MOVE (s.value));
         break;
@@ -3375,7 +3370,7 @@ switch (yykind)
 
 
 } // yy
-#line 3379 "build/pparser.tab.hh"
+#line 3374 "build/pparser.tab.hh"
 
 
 

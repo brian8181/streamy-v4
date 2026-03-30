@@ -512,6 +512,10 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 m_stream << " ~" << ptoken->value << "~ ";
                 //goto SKIP;
                 return parser::make_INCLUDE(ptoken->value);
+            case UL_ASSIGN:
+                print_token(ptoken);
+                m_stream << " ~" << ptoken->value << "~ ";
+                return parser::make_ASSIGN(ptoken->value);
             case UL_DOUBLE_QUOTE:
                 set_state(&sDOUBLE_QUOTED);
                 m_stream << " ~" << ptoken->value << "~ ";
