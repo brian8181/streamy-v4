@@ -413,6 +413,7 @@ colon_sep_param:
 symbol:
     SYMBOL                                                      {
                                                                     cout << FMT_FG_DARK_GREY << "symbol: | SYMBOL=\"" << $1 << "\" - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("SYMBOL testing");
                                                                     $$=$1;
                                                                 }
     | CONST_SYMBOL                                              {

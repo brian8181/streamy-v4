@@ -3,8 +3,8 @@
  * @version 0.0.1
  * @date    Fri, 26 Sep 2025 17:05:10 +0000
  */
-#ifndef Lexer_HPP_
-#define Lexer_HPP_
+#ifndef LEXER_HPP_
+#define LEXER_HPP_
 
 #ifdef _MSC_VER
     #define forceinline __forceinline
@@ -91,8 +91,6 @@ typedef struct context_t
 } context_t;
 
 // bkp todo cleanup!
-const string GTOKEN_TYPE__           = R"([A-Za-z][A-Za-z_]*((::)[A-Za-z_]*)?)";
-const string GTOKEN_TYPE_          = R"([A-Za-z][A-Za-z_]*)";
 const string VALID_SYMBOL_CHARS   = R"([A-Za-z0-9_])"; /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
 const string VALID_CHARS          = R"([[:punct:][:alnum:]])"; // [:punct:] = !"#$%&'()*+,-./:;<=>?@[\]^_{|}~`);
 const string CONFIG_STATES        = R"((?<states>^\s*(?<state>[A-Za-z][A-Za-z0-9_]*)\s*=\s*\s*\{(?<tokens>[A-Za-z][A-Za-z0-9_]*(, [A-Za-z][A-Za-z0-9_]*)*)\}\s*\s*$))";
@@ -100,6 +98,7 @@ const string CONFIG_SECTIONS      = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>grou
 const string CONFIG_PAIR          = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
 const string CONFIG_COMMENT       = R"(^\s*#.*$)";
 const string CONFIG               = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
+const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./'";
 /**
  * @brief token definitions : unsigned long integers
  */

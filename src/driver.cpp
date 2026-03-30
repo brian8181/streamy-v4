@@ -63,6 +63,7 @@ yy::parser::symbol_type lex()
  */
 int parse_options(const int argc, char* argv[])
 {
+    LOG("test log ...");
     int option;
     const auto options_string = "hVdc:o:v";
     const struct option long_options[] = {
@@ -135,6 +136,7 @@ int parse_options(const int argc, char* argv[])
     return 0;
 }
 
+#ifdef _WIN32
 /**
  * @brief  stdin_ready function
  * @param filedes
@@ -160,6 +162,7 @@ int stdin_ready (int filedes)
         return select(filedes + 1, &set, nullptr, nullptr, &timeout);
 #endif
 }
+#endif
 
 /**
  * @brief main function
@@ -171,7 +174,7 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-        #ifdef PARAM_PIPE_
+        #ifdef _WIN32
 		char* argv_cpy[ sizeof(char*) * argc + 1 ];
 		if(stdin_ready(STDIN_FILENO))
 		{

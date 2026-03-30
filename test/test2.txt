@@ -1,6 +1,4 @@
-unsigned char c;
-long; static float myfloat;
-double x1;
-int x2;
-
-char c = "testing"
+{include file="test/scan.txt}
+Hello {$x|capitalize} World!
+Test0 {$y|truncate:20:19:18:17} Test1
+{$z}

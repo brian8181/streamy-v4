@@ -21,29 +21,40 @@ if(CMAKE_SYSTEM_NAME STREQUAL "CYGWIN")
     add_definitions(-DCYGWIN)
 endif()
 
-#set(Boost_DIR  "/home/brian/src/boost_1_89_0/tools/cmake/config/")  # only find static libs
+set(Boost_DIR  "/home/brian/src/boost_1_89_0/tools/cmake/config/")  # only find static libs
 include_directories(${Boost_INCLUDE_DIRS})
 # Find the Boost package, requiring the 'regex' component
 # 'CONFIG' mode is generally preferred with modern Boost versions (1.70+)
-#find_package(Boost 1.66.0 CONFIG REQUIRED COMPONENTS regex)
+find_package(Boost 1.66.0 CONFIG REQUIRED COMPONENTS regex)
 
 #
-find_package(Boost 1.66.0)
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-    add_executable(foo foo.cc)
-endif()
+# find_package(Boost 1.66.0)
+# if(Boost_FOUND)
+#     include_directories(${Boost_INCLUDE_DIRS})
+#     add_executable(foo foo.cc)
+# endif()
+
+# Add source files
+set(BISON_parser_OUTPUTS
+        src/parser.yy
+)
 
 
 # Find Bison package
-#find_package(BISON REQUIRED)
-#if(NOT BISON_FOUND)
-#    message(FATAL_ERROR "Bison not found")
-#endif()
+find_package(BISON REQUIRED)
 
-# Now you can use BISON_TARGET
-BISON_TARGET(build/parser.tab.c parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
-        DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
+if(BISON_FOUND)
+    # Your BISON_TARGET call goes here
+    # Now you can use BISON_TARGET
+    bison_target(build/parser.tab.c parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
+    # ... other configurations
+endif()
+
+bison_target(build/parser.cpp src/parser.yy )
+add_executable(driver driver.cpp ${BISON_parser_OUTPUTS})
+# add_executable(MyCompiler ${GRAMMAR_SOURCES} ${LEXER_SOURCES}) # Add the generated sources here
+# add_dependencies(MyCompiler MyParser MyScanner) # Link the targets
+# target_link_libraries(MyCompiler ${FLEX_LIBRARIES} ${BISON_LIBRARIES}) # Link any required libraries
 
 # Rest of your original code
 #find_package(FLEX)
@@ -71,10 +82,7 @@ set(SOURCES
         build/parser.tab.c
         src/fileio.cpp
         src/driver.cpp
-        #src/driver.h
-        #src/tokens.hpp
-        src/Lexer.cpp
-        #build/Lexer.hpp
+        src/lexer.cpp
         src/utility.cpp
         src/ast.cpp
 )

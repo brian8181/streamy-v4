@@ -59,6 +59,21 @@ const string FMT_BG_LIGHT_MAGENTA  = "\033[105m";
 const string FMT_BG_LIGHT_CYAN     = "\033[106m";
 const string FMT_BG_WHITE          = "\033[107m";
 
+#define ITALIC(str) FMT_ITALIC << str << FMT_RESET
+#define UNDERLINE(str) FMT_UNDERLINE << str << FMT_RESET_UNDERLINE
+#define BOLD(str) FMT_BOLD << str << FMT_RESET_BOLD
+#define DIM(str) FMT_DIM << str << FMT_RESET_DIM
+#define HIDDEN(str) << FMT_HIDDEN << str << FMT_RESET_HIDDEN
+#define GREEN(str) FMT_FG_GREEN << str << FMT_RESET
+#define RED(str) FMT_FG_RED << str << FMT_RESET
+#define BLUE(str) FMT_FG_BLUE << str << FMT_RESET
+#define YELLOW(str) FMT_FG_YELLOW << str << FMT_RESET
+#define GREY(str) FMT_FG_DARK_GREY << str << FMT_RESET
+#define CYAN(str) FMT_FG_CYAN << str << FMT_RESET
+#define MAGENTA(str) FMT_FG_MAGENTA << str << FMT_RESET
+#define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
+#define LOG(str) cout << ITALIC("INFO: ") << GREEN(str) << FMT_ITALIC << " line: " << __LINE__ << " file: " << __FILE__ << FMT_RESET << endl
+
 // string& FMT_STRING(string& s, const string& format)
 // {
 //     s = format + s + FMT_RESET;

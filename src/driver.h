@@ -9,7 +9,9 @@
 #define SCANNER_HPP_
 #define YYDEBUG 1
 
+#include "config.h"
 #include "pparser.tab.hh"
+#include "bash_color.hpp"
 
 /**
  * @brief parse command line options
