@@ -85,7 +85,6 @@
     bool get_value(const string& name, /*out*/ string& val);
     bool set_value(const string& name, const string& val);
 
-
     // declare
     typedef map<string, string> symbol_table_t;
     // test
@@ -222,9 +221,7 @@ block:
                                                                     // lexer::instance().set_state(&sINITIAL);
                                                                     // INFO("file=\"" << FMT_ITALIC << path << "\"" << "");
                                                                 }
-    | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  {
-                                                                     INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE");
-                                                                }
+    | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
                                                                 ;
 /**
  * @name assign_stmt
@@ -252,39 +249,17 @@ expr:
                                                                     get_value($1, s);
                                                                     $$ = s;
                                                                 }
-    | MINUS expr %prec UMINUS                                   {
-                                                                    INFO("PARSER expr: | expr <<");
-                                                                }
-    | expr PLUS_SIGN expr                                       {
-                                                                    INFO("PARSER expr: | expr PLUS_SIGN expr <<");
-                                                                }
-    | expr MINUS expr                                           {
-                                                                    INFO("PARSER expr: | expr MINUS expr <<");
-                                                                }
-    | expr ASTERISK expr                                        {
-                                                                    INFO("PARSER expr: | expr ASTERISK expr <<");
-                                                                }
-    | expr SLASH expr                                           {
-                                                                    INFO("PARSER expr: | expr SLASH expr <<");
-                                                                }
-    | expr LESS_THAN expr                                       {
-                                                                    INFO("PARSER expr: | expr LESS_THAN expr <<");
-                                                                }
-    | expr GREATER_THAN expr                                    {
-                                                                    INFO("PARSER expr: | | expr GREATER_THAN expr <<");
-                                                                }
-    | expr GREATER_THAN_EQUAL expr                              {
-                                                                    INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << ");
-                                                                }
-    | expr LESS_THAN_EQUAL expr                                 {
-                                                                    INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<");
-                                                                }
-    | expr NOT_EQUAL expr                                       {
-                                                                    INFO("PARSER expr: | expr NOT_EQUAL expr <<");
-                                                                }
-    | LPAREN expr RPAREN                                        {
-                                                                    INFO("PARSER expr: | LPAREN expr RPAREN <<");
-                                                                }
+    | MINUS expr %prec UMINUS                                   { INFO("PARSER expr: | expr <<"); }
+    | expr PLUS_SIGN expr                                       { INFO("PARSER expr: | expr PLUS_SIGN expr <<"); }
+    | expr MINUS expr                                           { INFO("PARSER expr: | expr MINUS expr <<"); }
+    | expr ASTERISK expr                                        { INFO("PARSER expr: | expr ASTERISK expr <<"); }
+    | expr SLASH expr                                           { INFO("PARSER expr: | expr SLASH expr <<"); }
+    | expr LESS_THAN expr                                       { INFO("PARSER expr: | expr LESS_THAN expr <<"); }
+    | expr GREATER_THAN expr                                    { INFO("PARSER expr: | | expr GREATER_THAN expr <<"); }
+    | expr GREATER_THAN_EQUAL expr                              { INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << "); }
+    | expr LESS_THAN_EQUAL expr                                 { INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<"); }
+    | expr NOT_EQUAL expr                                       { INFO("PARSER expr: | expr NOT_EQUAL expr <<"); }
+    | LPAREN expr RPAREN                                        { INFO("PARSER expr: | LPAREN expr RPAREN <<"); }
                                                                 ;
 /**
  * @name qualafied_id
@@ -412,7 +387,6 @@ colon_sep_param:
 symbol:
     SYMBOL                                                      {
                                                                     INFO("symbol: | SYMBOL=\"" << $1 << "\"");
-                                                                    //INFO("SYMBOL testing");
                                                                     $$=$1;
                                                                 }
     | CONST_SYMBOL                                              {
@@ -453,14 +427,14 @@ built_in:
  */
 attributes:
     attrib                                                     {
-                                                                    //INFO("attribute: | push -> attrib={name=\"" << $1.first  << "\" value=\"" << $1.second << "\"");
+                                                                    //INFO("attribute: | push -> attrib={name=\"" << $1.first << "\" value=\"" << $1.second << "\"");
                                                                     std::pair<std::string, std::string>  p($1);
                                                                     std::vector< std::pair<std::string, std::string> > v;
                                                                     v.push_back( p );
                                                                     $$ = v;
                                                                }
     | attributes attrib                                        {
-                                                                    //INFO("attribute: | attributes : push-> attrib={name=\"" << $2.first  << "\" value=\"" << $2.second << "\"");
+                                                                    //INFO("attribute: | attributes : push-> attrib={name=\"" << $2.first << "\" value=\"" << $2.second << "\"");
                                                                     $1.push_back( $2 );
                                                                     $$ = $1;
                                                                }
