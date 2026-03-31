@@ -111,28 +111,30 @@ int parse_options(const int argc, char* argv[])
     // symbol_table["y"] = "2";
     // symbol_table["z"] = "3";
 
-    // input file ...
-    if( argc > (optind + SRC_IDX_OFFSET))
+    int offset = optind + SRC_IDX_OFFSET;
+    for(int i = offset; i < argc; ++i)
+    {
         g_input_file = argv[optind + SRC_IDX_OFFSET];
 
-    cout << FMT_FG_CYAN << "input files = " << FMT_RESET
-            << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << g_input_file << "\"" << FMT_RESET << endl
-        << FMT_FG_CYAN << "ouput file  = " << FMT_RESET
-            << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << g_output_file << "\"" << FMT_RESET << endl
-        << FMT_FG_CYAN << "config file = " << FMT_RESET
-            << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << g_config_file << "\"" << FMT_RESET << endl;
+        stringstream log;
+        log << "input:\"" << g_input_file
+            << "\" - ouput:\"" << g_output_file
+            << "\" - config file:\"" << g_config_file << "\"" << endl;
+        LOG(log.str());
 
-    lexer::instance().init(g_config_file, &yyparser, g_input_file, g_output_file);
-    if (dump_flag)
-    {
-        cout << "dumping configuration ... " << endl;
-        lexer::instance().dump_config();
-        cout << lexer::instance().get_expr() << endl;
-        cout << "configuration dumped." << endl;
+        lexer::instance().init(g_config_file, &yyparser, g_input_file, g_output_file);
+        if (dump_flag)
+        {
+            cout << "dumping configuration ... " << endl;
+            lexer::instance().dump_config();
+            cout << lexer::instance().get_expr() << endl;
+            cout << "configuration dumped." << endl;
+        }
+        cout << "start scan ..." << endl;
+        yyparser.parse();
+        cout << "finished scanning. " << endl;
     }
-    cout << "start scan ..." << endl;
-    yyparser.parse();
-    cout << "finished scanning. " << endl;
+    LOG("EOFS");
     return 0;
 }
 
