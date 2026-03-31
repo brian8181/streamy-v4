@@ -138,7 +138,7 @@
  */
 complier:
     files                                                       {
-                                                                    LOG("PARSER complier: | files");
+                                                                    cout << FMT_FG_DARK_GREY << "PARSER complier: | files" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "************************* Done ************************" << FMT_RESET << endl;
@@ -156,7 +156,7 @@ files:
  */
 file:
     blocks END                                                  {
-                                                                    LOG("file: | blocks END_OF_FILE");
+                                                                    cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
@@ -215,11 +215,11 @@ block:
                                                                     // stringstream* include_buffer = lexer::instance().get_include_buffer();
                                                                     // *include_buffer << sout << *p_rstr;
 
-                                                                    // cout << FMT_FG_RED << include_buffer->str() << FMT_RESET;
+                                                                    // LOG(include_buffer->str() << FMT_RESET;
                                                                     // // set the suffix a.k.a "current search buffer"
                                                                     // lexer::instance().set_remaining( (*include_buffer).str() );
                                                                     // lexer::instance().set_state(&sINITIAL);
-                                                                    // cout << FMT_FG_RED << "file=\"" << FMT_ITALIC << path << "\"" << "");
+                                                                    // LOG("file=\"" << FMT_ITALIC << path << "\"" << "");
                                                                 }
     | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  {
                                                                      LOG("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE");
@@ -353,40 +353,40 @@ modifier:
                                                                     // $1.params.append($2);
                                                                 }
     | CAPITALIZE                                                {
-                                                                    LOG("PARSER modifier: | CAPITALIZE");
+                                                                    LOG("modifier | CAPITALIZE");
                                                                     // modifier_t m;
                                                                     // m.name = "capitalize";
                                                                     // m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "capitalize";
                                                                 }
-    | CAT                                                       { LOG("PARSER modifier: | CAT"); $$="cat"; }
-    | COUNT_CHARACTERS                                          { LOG("PARSER modifier: | COUNT_CHARACTERS"); $$="count_characters"; }
-    | COUNT_SENTENCES                                           { LOG("PARSER modifier: | COUNT_SENTENCES"); $$="count_sentences"; }
-    | COUNT_PARAGRAPHS                                          { LOG("PARSER modifier: | COUNT_PARAGRAPHS"); $$="count_paragraphs"; }
-    | COUNT_WORDS                                               { LOG("PARSER modifier: | COUNT_WORDS"); $$="count_words"; }
-    | DATE_FORMAT                                               { LOG("PARSER modifier: | DATE_FORMAT"); $$="date_format"; }
-    | DEFAULT                                                   { LOG("PARSER modifier: | DEFAULT"); $$="default"; }
-    | ESCAPE                                                    { LOG("PARSER modifier: | ESCAPE"); $$="esacpe"; }
-    | INDENT                                                    { LOG("PARSER modifier: | INDENT"); $$="indent"; }
-    | STRIP                                                     { LOG("PARSER modifier: | STRIPS"); $$="strip"; }
-    | NL2BR                                                     { LOG("PARSER modifier: | NL2BR"); $$="nl2br"; }
-    | REPLACE                                                   { LOG("PARSER modifier: | REPLACE"); $$="replace"; }
-    | REGEX_REPLACE                                             { LOG("PARSER modifier: | REGEX_REPLACE"); $$="regex_replsce"; }
-    | SPACIFY                                                   { LOG("PARSER modifier: | SPACIFY"); $$="spacify"; }
-    | STRING_FORMAT                                             { LOG("PARSER modifier: | STRING_FORMAT"); $$="string_format"; }
-    | STRIP_TAGS                                                { LOG("PARSER modifier: | STIP_TAGS"); $$="strip_tags"; }
+    | CAT                                                       { LOG("modifier | CAT"); $$="cat"; }
+    | COUNT_CHARACTERS                                          { LOG("modifier | COUNT_CHARACTERS"); $$="count_characters"; }
+    | COUNT_SENTENCES                                           { LOG("modifier | COUNT_SENTENCES"); $$="count_sentences"; }
+    | COUNT_PARAGRAPHS                                          { LOG("modifier | COUNT_PARAGRAPHS"); $$="count_paragraphs"; }
+    | COUNT_WORDS                                               { LOG("modifier | COUNT_WORDS"); $$="count_words"; }
+    | DATE_FORMAT                                               { LOG("modifier | DATE_FORMAT"); $$="date_format"; }
+    | DEFAULT                                                   { LOG("modifier | DEFAULT"); $$="default"; }
+    | ESCAPE                                                    { LOG("modifier | ESCAPE"); $$="esacpe"; }
+    | INDENT                                                    { LOG("modifier | INDENT"); $$="indent"; }
+    | STRIP                                                     { LOG("modifier | STRIPS"); $$="strip"; }
+    | NL2BR                                                     { LOG("modifier | NL2BR"); $$="nl2br"; }
+    | REPLACE                                                   { LOG("modifier | REPLACE"); $$="replace"; }
+    | REGEX_REPLACE                                             { LOG("modifier | REGEX_REPLACE"); $$="regex_replsce"; }
+    | SPACIFY                                                   { LOG("modifier | SPACIFY"); $$="spacify"; }
+    | STRING_FORMAT                                             { LOG("modifier | STRING_FORMAT"); $$="string_format"; }
+    | STRIP_TAGS                                                { LOG("modifier | STIP_TAGS"); $$="strip_tags"; }
     | TRUNCATE                                                  {
-                                                                    LOG("TRUNCATE"); $$="truncate";
+                                                                    LOG("modifier | TRUNCATE"); $$="truncate";
                                                                     // modifier_t m;
                                                                     // m.name = "truncate";
                                                                     // m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "truncate";
                                                                 }
-    | UPPER                                                     { LOG("PARSER modifier: | UPPER"); $$="upper"; }
-    | LOWER                                                     { LOG("PARSER modifier: | LOWER"); $$="lower"; }
-    | WORDWRAP                                                  { LOG("PARSER modifier: | WORDWRAP"); $$="word_wrap"; }
+    | UPPER                                                     { LOG("modifier | UPPER"); $$="upper"; }
+    | LOWER                                                     { LOG("modifier | LOWER"); $$="lower"; }
+    | WORDWRAP                                                  { LOG("modifier | WORDWRAP"); $$="word_wrap"; }
                                                                 ;
 /**
  * @name colon_sep_params
@@ -408,12 +408,12 @@ colon_sep_param:
  */
 symbol:
     SYMBOL                                                      {
-                                                                    LOG("symbol: | SYMBOL=\"" + $1 + "\"");
+                                                                    LOG("symbol: | SYMBOL=\"" << $1 << "\"");
                                                                     //LOG("SYMBOL testing");
                                                                     $$=$1;
                                                                 }
     | CONST_SYMBOL                                              {
-                                                                    cout << FMT_FG_DARK_GREY << "symbol: | CONST_SYMBOL=\"" << $1 << "\" - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
                                                                     $$=$1;
                                                                 }
                                                                 ;
@@ -425,39 +425,39 @@ built_in:
                                                                     LOG("built_in: | CONFIG_LOAD attributes");
                                                                     $$ = $2;
                                                                 }
-    | '#' INCLUDE attributes                                        {
+    | '#' INCLUDE attributes                                    {
                                                                     LOG("built_in: | INCLUDE attributes");
                                                                     $$ = $2;
                                                                 }
-    | REQUIRE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | REQUIRE_ONCE attributes                                   { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | INSERT attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | REQUIRE attributes                                        { LOG("built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | REQUIRE_ONCE attributes                                   { LOG("buitl_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | INSERT attributes                                         { LOG("built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
     | '#' ASSIGN attributes                                     {
                                                                     LOG("built_in: | ASSIGN attributes");
                                                                     $$ = $2;
                                                                 }
-    | ISSET attributes                                          { cout << FMT_FG_DARK_GREY << "built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | CAPTURE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | SECTION attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | COUNTER attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | COUNTER FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | CYCLE attributes                                          { cout << FMT_FG_DARK_GREY << "built_in: | CYCLE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | LDELIM attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | LDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | RDELIM attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | RDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | VERSION attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    | ISSET attributes                                          { LOG("built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | CAPTURE attributes                                        { LOG("built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | SECTION attributes                                        { LOG("built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | COUNTER attributes                                        { LOG("built_in: | COUNTER FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | CYCLE attributes                                          { LOG("built_in: | CYCLE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | LDELIM attributes                                         { LOG("built_in: | LDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | RDELIM attributes                                         { LOG("built_in: | RDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | VERSION attributes                                        { LOG("built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
                                                                 ;
 /**
  * @name attributes
  */
 attributes:
     attrib                                                     {
-                                                                    cout << FMT_FG_DARK_GREY << "attribute: | push -> attrib={name=\"" << $1.first  << "\"; value=\"" << $1.second << "\"}\n" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    //LOG("attribute: | push -> attrib={name=\"" << $1.first  << "\" value=\"" << $1.second << "\"");
                                                                     std::pair<std::string, std::string>  p($1);
                                                                     std::vector< std::pair<std::string, std::string> > v;
                                                                     v.push_back( p );
                                                                     $$ = v;
                                                                }
     | attributes attrib                                        {
-                                                                    cout << FMT_FG_DARK_GREY << "attribute: | attributes : push-> attrib={name=\"" << $2.first  << "\"; value=\"" << $2.second << "\"}\n" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    //LOG("attribute: | attributes : push-> attrib={name=\"" << $2.first  << "\" value=\"" << $2.second << "\"");
                                                                     $1.push_back( $2 );
                                                                     $$ = $1;
                                                                }
@@ -467,43 +467,35 @@ attributes:
  */
 attrib:
     VALUE_ATTRIB EQUAL_SIGN STRING_LITERAL                     {
-                                                                    cout << FMT_BG_DARK_GREY << "name_value: | VALUE_ATTRIB=\""
+                                                                    LOG("name_value: | VALUE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << buf << "\"" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                        << buf << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
     | VAR_ATTRIB EQUAL_SIGN STRING_LITERAL                     {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\""
-                                                                        << FMT_FG_GREEN << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
     | FILE_ATTRIB EQUAL_SIGN STRING_LITERAL                    {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER name_value: | FILE_ATTRIB=\""
+                                                                    LOG("name_value: | FILE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\""
-                                                                        << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                        << $3 << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
     | FILE_ATTRIB EQUAL_SIGN symbol                    {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER name_value: | FILE_ATTRIB=\""
+                                                                    LOG("name_value: | FILE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\""
-                                                                        << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                        << $3 << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
     | attrib_name EQUAL_SIGN STRING_LITERAL                    {
-                                                                      cout << FMT_FG_YELLOW
-                                                                        << "PARSER name_value: | " << $1 << "=\""
+                                                                      LOG("name_value: | " << $1 << "=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\""
-                                                                        << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                        << $3 << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
@@ -528,7 +520,7 @@ bool get_value(const string& name, /*out*/ string& val)
         val = symbol_table[name];
         return true;
     }
-    cout << FMT_FG_RED << "symbol, (" << name << "), not found!" << " - line#=" << __LINE__  << FMT_RESET << endl;
+    //LOG("symbol, (" << name << "), not found!");
     return false;
 }
 
@@ -537,10 +529,10 @@ bool set_value(const string& name, const string& val)
     if(symbol_table.find(name) != symbol_table.end())
     {
         symbol_table[name] = val;
-        cout << FMT_FG_GREEN << "symbol updated: " << name << " = " << val << " - line#=" << __LINE__  << FMT_RESET << endl;\
+        LOG("symbol updated: " << name << " = " << val);
         return true;
     }
-    cout << FMT_FG_RED << "symbol, (" << name << "), not found!" << " - line#=" << __LINE__  << FMT_RESET << endl;
+    //LOG("symbol, (" << name << "), not found!");
     return false;
 }
 
