@@ -15,6 +15,7 @@
 #include <fmt/format.h>
 #include "math.h"
 #include "utility.hpp"
+#include "auto_ptr.hpp"
 
 using std::regex;
 using std::smatch;
@@ -34,16 +35,45 @@ constexpr int ASCII_OFFSET = 48;
  * @brief print color
  * @param s
  */
-void color_print(const string& s, fmt::text_style ts)
+void color_print(const fmt::v11::text_style& ts, fmt::v11::format_string<double> fmt, double&& args)
 {
-    fmt::print(ts, "{}", s);
+    /**
+     * Formats a string and prints it to stdout using ANSI escape sequences to
+     * specify text formatting.
+     *
+     * **Example**:
+     *
+     *     fmt::print(fmt::emphasis::bold | fg(fmt::color::red),
+     *                "Elapsed time: {0:.2f} seconds", 1.23);
+     */
+    fmt::print(ts, fmt, args);
 }
 
-// string color_fmt(const string& s, fmt::text_style ts)
-// {
-//     string out = fmt::format(s, ts);
-//     return out;
-// }
+/**
+ * @name color_fmt
+ * @param s
+ * @param ts
+ * @return string
+ */
+string* color_fmt(fmt::v11::format_string<int> fmt, int&& args)
+{
+    /**
+     * Formats `args` according to specifications in `fmt` and returns the result
+     * as a string.
+     *
+     * **Example**:
+     *
+     *     #include <fmt/format.h>
+     *     std::string message = fmt::format("The answer is {}.", 42);
+     */
+    std::string message = fmt::format(fmt, args);
+    return 0;
+}
+
+string to_string(long n)
+{
+    return fmt::to_string(n);
+}
 
 /**
  * @name   get_config
@@ -115,21 +145,21 @@ bool match_single(const string& pattern, const string& text)
  * @param  c : delimter
  * @return std::vector<std::string> // ???
  */
-std::vector<std::string> split(const std::string& s, const char c)
+std::vector<std::string>* split(const std::string& s, const char c)
 {
-  std::vector<std::string> result;
+  std::vector<std::string>* presult = new std::vector<std::string>();
   size_t begin = 0;
   while (true)
   {
     const size_t end = s.find_first_of(c, begin);
-    result.push_back(s.substr(begin, end - begin));
+    presult->push_back(s.substr(begin, end - begin));
     if (end == std::string::npos)
     {
       break;
     }
     begin = end + 1;
   }
-  return result;
+  return presult;
 }
 
 /**
@@ -138,12 +168,14 @@ std::vector<std::string> split(const std::string& s, const char c)
  * @param  regex : std::string
  * @return std::vector<std::string>
  * */
-std::vector<std::string> split(const std::string &str, const std::string &regex)
+std::vector<std::string>* split(const std::string &str, const std::string &regex)
 {
     const std::regex r{ regex };
     std::sregex_token_iterator start{ str.begin(), str.end(), r, -1 };
     const std::sregex_token_iterator end;
-    return std::vector<std::string>(start, end);
+
+    std::vector<std::string>* pv = new std::vector<std::string>(start, end);
+    return pv;
 }
 
 /**

@@ -1,5 +1,5 @@
-#ifndef _CONFIG_HPP_
-#define _CONFIF_HPP_
+#ifndef _CONFIG_H_
+#define _CONFIF_H_
 
 #ifndef CYGWIN
 #define CYGWIN true

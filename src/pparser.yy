@@ -138,7 +138,7 @@
  */
 complier:
     files                                                       {
-                                                                    cout <<  FMT_FG_DARK_GREY << "PARSER complier: | files - line#=" << __LINE__ << FMT_RESET << endl;
+                                                                    LOG("PARSER complier: | files");
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "************************* Done ************************" << FMT_RESET << endl;
@@ -148,15 +148,15 @@ complier:
  * @name files
  */
 files:
-    file                                                        { cout << FMT_FG_DARK_GREY << "files: | file - line#=" << __LINE__  << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | files file                                                { cout << FMT_FG_DARK_GREY << "files: | files file - line#=" << __LINE__  << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    file                                                        { LOG("files: file"); }
+    | files file                                                { LOG("files: | files file"); }
                                                                 ;
 /**
  * @name file
  */
 file:
     blocks END                                                  {
-                                                                    cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE - line#=" << __LINE__  << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("file: | blocks END_OF_FILE");
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
@@ -166,9 +166,9 @@ file:
  * @name blocks
  */
 blocks:
-    block                                                       { cout << FMT_FG_DARK_GREY << "PARSER blocks: | block - line#=" << __LINE__  << FMT_RESET << endl; }
+    block                                                       { LOG("PARSER blocks: | block"); }
     | blocks block                                              {
-                                                                    cout << FMT_FG_DARK_GREY << "blocks: | blocks block - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("blocks: | blocks block");
                                                                     lexer::instance().dump_config();
                                                                 }
                                                                 ;
@@ -177,19 +177,19 @@ blocks:
  */
 block:
    OPEN_BRACE expr CLOSE_BRACE                               {
-                                                                    cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE expr CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
-                                                                    cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE sub_porc CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("block: | OPEN_BRACE sub_porc CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE array CLOSE_BRACE                              {
-                                                                    cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE array CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("block: | OPEN_BRACE array CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE assign_stmt CLOSE_BRACE                        {
-                                                                    cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE assign_stmt CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE qualafied_id CLOSE_BRACE                       {
-                                                                    cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE qualafied_id CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
                                                                     // bkp todo, look up in symbol table & do replace
                                                                     // bkp todo qualified lookup
                                                                     std::string s;
@@ -197,7 +197,8 @@ block:
                                                                     $$ = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
-                                                                    // cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE built_in CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("block: OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
+                                                                    // LOG("block: | OPEN_BRACE built_in CLOSE_BRACE");
                                                                     // size_t len = $2.size();
                                                                     // int i = 0;
                                                                     // for(; i < len; ++i)
@@ -218,10 +219,10 @@ block:
                                                                     // // set the suffix a.k.a "current search buffer"
                                                                     // lexer::instance().set_remaining( (*include_buffer).str() );
                                                                     // lexer::instance().set_state(&sINITIAL);
-                                                                    // cout << FMT_FG_RED << "file=\"" << FMT_ITALIC << path << "\"" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    // cout << FMT_FG_RED << "file=\"" << FMT_ITALIC << path << "\"" << "");
                                                                 }
     | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  {
-                                                                     cout << FMT_FG_DARK_GREY << "block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                     LOG("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE");
                                                                 }
                                                                 ;
 /**
@@ -229,12 +230,12 @@ block:
  */
 assign_stmt:
     symbol EQUAL_SIGN NUMERIC_LITERAL                           {
-                                                                    cout << FMT_FG_DARK_GREY << "assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL");
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
     | symbol EQUAL_SIGN STRING_LITERAL                          {
-                                                                    cout << FMT_FG_DARK_GREY << "assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL");
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
@@ -245,63 +246,60 @@ assign_stmt:
  */
 expr:
     symbol VBAR modifiers                                       {
-                                                                    cout << FMT_FG_DARK_GREY << "expr: | symbol VBAR modifiers "
-                                                                        << FMT_ITALIC
-                                                                            << "file: \"" << __FILE__ << "\" - " << "line: \"" << __LINE__ << "\""
-                                                                        << FMT_RESET << endl;
+                                                                    LOG("expr: | symbol VBAR modifiers ");
                                                                     std::string s;
                                                                     get_value($1, s);
                                                                     $$ = s;
                                                                 }
     | MINUS expr %prec UMINUS                                   {
-                                                                    cout << "PARSER expr: | expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr <<");
                                                                 }
     | expr PLUS_SIGN expr                                       {
-                                                                    cout << "PARSER expr: | expr PLUS_SIGN expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr PLUS_SIGN expr <<");
                                                                 }
     | expr MINUS expr                                           {
-                                                                    cout << "PARSER expr: | expr MINUS expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr MINUS expr <<");
                                                                 }
     | expr ASTERISK expr                                        {
-                                                                    cout << "PARSER expr: | expr ASTERISK expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr ASTERISK expr <<");
                                                                 }
     | expr SLASH expr                                           {
-                                                                    cout << "PARSER expr: | expr SLASH expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr SLASH expr <<");
                                                                 }
     | expr LESS_THAN expr                                       {
-                                                                    cout << "PARSER expr: | expr LESS_THAN expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr LESS_THAN expr <<");
                                                                 }
     | expr GREATER_THAN expr                                    {
-                                                                    cout << "PARSER expr: | | expr GREATER_THAN expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | | expr GREATER_THAN expr <<");
                                                                 }
     | expr GREATER_THAN_EQUAL expr                              {
-                                                                    cout << "PARSER expr: | expr GREATER_THAN_EQUAL expr <<  - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr GREATER_THAN_EQUAL expr << ");
                                                                 }
     | expr LESS_THAN_EQUAL expr                                 {
-                                                                    cout << "PARSER expr: | expr LESS_THAN_EQUAL expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr LESS_THAN_EQUAL expr <<");
                                                                 }
     | expr NOT_EQUAL expr                                       {
-                                                                    cout << "PARSER expr: | expr NOT_EQUAL expr << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | expr NOT_EQUAL expr <<");
                                                                 }
     | LPAREN expr RPAREN                                        {
-                                                                    cout << "PARSER expr: | LPAREN expr RPAREN << - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER expr: | LPAREN expr RPAREN <<");
                                                                 }
                                                                 ;
 /**
  * @name qualafied_id
  */
 qualafied_id:
-    symbol DOT symbol                                       { cout << FMT_FG_DARK_GREY << "qualafied_id: | symbol DOT symbol - line#=" << __LINE__  << FMT_RESET << endl; }
-    | symbol INDIRECT_MEMBER symbol                         { cout << FMT_FG_DARK_GREY << "qualafied_id: | symbol INDIRECT_MEMBER symbol - line#=" << __LINE__  << FMT_RESET << endl; }
-    | qualafied_id DOT symbol                               { cout << FMT_FG_DARK_GREY << "qualafied_id: | qualafied_id DOT symbol - line#=" << __LINE__  << FMT_RESET << endl; }
-    | qualafied_id INDIRECT_MEMBER symbol                   { cout << FMT_FG_DARK_GREY << "qualafied_id: | qualafied_id INDIRECT_MEMBER symbol - line#=" << __LINE__  << FMT_RESET << endl; }
+    symbol DOT symbol                                       { LOG("qualafied_id: | symbol DOT symbol"); }
+    | symbol INDIRECT_MEMBER symbol                         { LOG("qualafied_id: | symbol INDIRECT_MEMBER symbol"); }
+    | qualafied_id DOT symbol                               { LOG("qualafied_id: | qualafied_id DOT symbol"); }
+    | qualafied_id INDIRECT_MEMBER symbol                   { LOG("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol"); }
                                                                 ;
 /**
  * @name sub_proc
  */
 sub_proc:
     symbol LPAREN params RPAREN                                 {
-                                                                    cout << FMT_FG_DARK_GREY << "sub_proc: | symbol LPAREN params RPAREN" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("sub_proc: | symbol LPAREN params RPAREN" << "");
                                                                     $$=$1;
                                                                 }
                                                                 ;
@@ -310,9 +308,7 @@ sub_proc:
  */
 array:
     symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET           {
-                                                                    cout << FMT_FG_YELLOW
-                                                                        << "PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET"
-                                                                        << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
                                                                     $$=$1;
                                                                 }
                                                                 ;
@@ -321,15 +317,15 @@ array:
  * @brief params (i.e. $x, $y, $x)
  */
 params:
-    param                                                       { cout << "PARSER params: | param\n" << endl; }
-    | params symbol                                             { cout << FMT_FG_DARK_GREY << "qualafied_id: | params COMMA symbol" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+    param                                                       { LOG("PARSER params: | param"); }
+    | params symbol                                             { LOG("qualafied_id: | params COMMA symbol"); }
                                                                 ;
 /**
  * @name param
  * @brief param (i.e. $x, )
  */
 param:
-        symbol COMMA                                            { cout << FMT_FG_DARK_GREY << "param: | symbol" << " - line#=" << __LINE__  << FMT_RESET << endl; }
+        symbol COMMA                                            { LOG("param: | symbol"); }
                                                                 ;
 /**
  * @name modifiers
@@ -352,45 +348,45 @@ modifiers:
  */
 modifier:
     modifier colon_sep_params                                   {
-                                                                    cout << "modifier : | " << FMT_FG_DARK_GREY << " modifier=" << $1 << " COLON NUMERIC_LITERAL=" << $2 << FMT_RESET << "\n";
+                                                                    LOG(" modifier: modifier colon_sep_params");
                                                                     // $1.params.append("|");
                                                                     // $1.params.append($2);
                                                                 }
     | CAPITALIZE                                                {
-                                                                    cout << "PARSER modifier: | CAPITALIZE\n";
+                                                                    LOG("PARSER modifier: | CAPITALIZE");
                                                                     // modifier_t m;
                                                                     // m.name = "capitalize";
                                                                     // m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "capitalize";
                                                                 }
-    | CAT                                                       { cout  << "PARSER modifier: | CAT\n"; $$="cat"; }
-    | COUNT_CHARACTERS                                          { cout  << "PARSER modifier: | COUNT_CHARACTERS\n"; $$="count_characters"; }
-    | COUNT_SENTENCES                                           { cout  << "PARSER modifier: | COUNT_SENTENCES\n"; $$="count_sentences"; }
-    | COUNT_PARAGRAPHS                                          { cout  << "PARSER modifier: | COUNT_PARAGRAPHS\n"; $$="count_paragraphs"; }
-    | COUNT_WORDS                                               { cout  << "PARSER modifier: | COUNT_WORDS\n"; $$="count_words"; }
-    | DATE_FORMAT                                               { cout  << "PARSER modifier: | DATE_FORMAT\n"; $$="date_format"; }
-    | DEFAULT                                                   { cout  << "PARSER modifier: | DEFAULT\n"; $$="default"; }
-    | ESCAPE                                                    { cout  << "PARSER modifier: | ESCAPE\n"; $$="esacpe"; }
-    | INDENT                                                    { cout  << "PARSER modifier: | INDENT\n"; $$="indent"; }
-    | STRIP                                                     { cout  << "PARSER modifier: | STRIPS\n"; $$="strip"; }
-    | NL2BR                                                     { cout  << "PARSER modifier: | NL2BR\n"; $$="nl2br"; }
-    | REPLACE                                                   { cout  << "PARSER modifier: | REPLACE\n"; $$="replace"; }
-    | REGEX_REPLACE                                             { cout  << "PARSER modifier: | REGEX_REPLACE\n"; $$="regex_replsce"; }
-    | SPACIFY                                                   { cout  << "PARSER modifier: | SPACIFY\n"; $$="spacify"; }
-    | STRING_FORMAT                                             { cout  << "PARSER modifier: | STRING_FORMAT\n"; $$="string_format"; }
-    | STRIP_TAGS                                                { cout  << "PARSER modifier: | STIP_TAGS\n"; $$="strip_tags"; }
+    | CAT                                                       { LOG("PARSER modifier: | CAT"); $$="cat"; }
+    | COUNT_CHARACTERS                                          { LOG("PARSER modifier: | COUNT_CHARACTERS"); $$="count_characters"; }
+    | COUNT_SENTENCES                                           { LOG("PARSER modifier: | COUNT_SENTENCES"); $$="count_sentences"; }
+    | COUNT_PARAGRAPHS                                          { LOG("PARSER modifier: | COUNT_PARAGRAPHS"); $$="count_paragraphs"; }
+    | COUNT_WORDS                                               { LOG("PARSER modifier: | COUNT_WORDS"); $$="count_words"; }
+    | DATE_FORMAT                                               { LOG("PARSER modifier: | DATE_FORMAT"); $$="date_format"; }
+    | DEFAULT                                                   { LOG("PARSER modifier: | DEFAULT"); $$="default"; }
+    | ESCAPE                                                    { LOG("PARSER modifier: | ESCAPE"); $$="esacpe"; }
+    | INDENT                                                    { LOG("PARSER modifier: | INDENT"); $$="indent"; }
+    | STRIP                                                     { LOG("PARSER modifier: | STRIPS"); $$="strip"; }
+    | NL2BR                                                     { LOG("PARSER modifier: | NL2BR"); $$="nl2br"; }
+    | REPLACE                                                   { LOG("PARSER modifier: | REPLACE"); $$="replace"; }
+    | REGEX_REPLACE                                             { LOG("PARSER modifier: | REGEX_REPLACE"); $$="regex_replsce"; }
+    | SPACIFY                                                   { LOG("PARSER modifier: | SPACIFY"); $$="spacify"; }
+    | STRING_FORMAT                                             { LOG("PARSER modifier: | STRING_FORMAT"); $$="string_format"; }
+    | STRIP_TAGS                                                { LOG("PARSER modifier: | STIP_TAGS"); $$="strip_tags"; }
     | TRUNCATE                                                  {
-                                                                    cout  << "PARSER modifier: | " << FMT_FG_MAGENTA << " TRUNCATE" << FMT_RESET << endl; $$="truncate";
+                                                                    LOG("TRUNCATE"); $$="truncate";
                                                                     // modifier_t m;
                                                                     // m.name = "truncate";
                                                                     // m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "truncate";
                                                                 }
-    | UPPER                                                     { cout  << "PARSER modifier: | UPPER\n"; $$="upper"; }
-    | LOWER                                                     { cout  << "PARSER modifier: | LOWER\n"; $$="lower"; }
-    | WORDWRAP                                                  { cout  << "PARSER modifier: | WORDWRAP\n"; $$="word_wrap"; }
+    | UPPER                                                     { LOG("PARSER modifier: | UPPER"); $$="upper"; }
+    | LOWER                                                     { LOG("PARSER modifier: | LOWER"); $$="lower"; }
+    | WORDWRAP                                                  { LOG("PARSER modifier: | WORDWRAP"); $$="word_wrap"; }
                                                                 ;
 /**
  * @name colon_sep_params
@@ -398,22 +394,22 @@ modifier:
  */
 colon_sep_params:
         /*empty*/
-        | colon_sep_params colon_sep_param                      { cout << FMT_FG_DARK_GREY << "colon_sep_params: | colon_sep_params colon_sep_param - line#=" << __LINE__  << FMT_RESET << endl; $$=$1.append($2); }
+        | colon_sep_params colon_sep_param                      { LOG("colon_sep_params: | colon_sep_params colon_sep_param"); $$=$1.append($2); }
                                                                 ;
 /**
  * @name colon_sep_param
  * @brief colon seperated param {$x|trim:3:' '}
  */
 colon_sep_param:
-        COLON NUMERIC_LITERAL                                   { cout << FMT_FG_DARK_GREY << "colon_sep_param: | COLON NUMERIC_LITERAL - line#=" << __LINE__  << FMT_RESET << endl; string s(":"); s.append($2); $$=s; }
+        COLON NUMERIC_LITERAL                                   { LOG("colon_sep_param: | COLON NUMERIC_LITERAL"); string s(":"); s.append($2); $$=s; }
                                                                 ;
 /**
  * @name symbol
  */
 symbol:
     SYMBOL                                                      {
-                                                                    cout << FMT_FG_DARK_GREY << "symbol: | SYMBOL=\"" << $1 << "\" - line#=" << __LINE__  << FMT_RESET << endl;
-                                                                    LOG("SYMBOL testing");
+                                                                    LOG("symbol: | SYMBOL=\"" + $1 + "\"");
+                                                                    //LOG("SYMBOL testing");
                                                                     $$=$1;
                                                                 }
     | CONST_SYMBOL                                              {
@@ -426,18 +422,18 @@ symbol:
  */
 built_in:
     CONFIG_LOAD attributes                                      {
-                                                                    cout << FMT_FG_DARK_GREY << "built_in: | CONFIG_LOAD attributes" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("built_in: | CONFIG_LOAD attributes");
                                                                     $$ = $2;
                                                                 }
     | '#' INCLUDE attributes                                        {
-                                                                    cout << FMT_FG_DARK_GREY << "built_in: | INCLUDE attributes" << " - line#=" << __LINE__  << FMT_RESET << endl;
+                                                                    LOG("built_in: | INCLUDE attributes");
                                                                     $$ = $2;
                                                                 }
     | REQUIRE attributes                                        { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
     | REQUIRE_ONCE attributes                                   { cout << FMT_FG_DARK_GREY << "built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
     | INSERT attributes                                         { cout << FMT_FG_DARK_GREY << "built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
-    | '#' ASSIGN attributes                                         {
-                                                                    cout << FMT_FG_DARK_GREY << "built_in: | ASSIGN attributes" << " - line#=" << __LINE__  << FMT_RESET << endl;
+    | '#' ASSIGN attributes                                     {
+                                                                    LOG("built_in: | ASSIGN attributes");
                                                                     $$ = $2;
                                                                 }
     | ISSET attributes                                          { cout << FMT_FG_DARK_GREY << "built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"" << " - line#=" << __LINE__  << FMT_RESET << endl; }
@@ -474,7 +470,6 @@ attrib:
                                                                     cout << FMT_BG_DARK_GREY << "name_value: | VALUE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << buf << "\"" << " - line#=" << __LINE__  << FMT_RESET << endl;
-
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
@@ -482,7 +477,6 @@ attrib:
                                                                     cout << FMT_FG_YELLOW
                                                                         << "PARSER name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\""
                                                                         << FMT_FG_GREEN << " - line#=" << __LINE__  << FMT_RESET << endl;
-
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
@@ -492,7 +486,6 @@ attrib:
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\""
                                                                         << " - line#=" << __LINE__  << FMT_RESET << endl;
-
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
@@ -502,7 +495,6 @@ attrib:
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\""
                                                                         << " - line#=" << __LINE__  << FMT_RESET << endl;
-
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
@@ -512,7 +504,6 @@ attrib:
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\""
                                                                         << " - line#=" << __LINE__  << FMT_RESET << endl;
-
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }

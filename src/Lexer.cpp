@@ -41,7 +41,6 @@ using yy::parser;
  * @name g_stringstream
  */
 stringstream g_stringstream;
-
 /**
  * @brief global state_t state
  * @name  gp_state

@@ -43,12 +43,12 @@ bool match_single(const string& pattern, const string& text);
  * @param  c : delimter
  * @return std::vector<std::string> // ???
  */
-std::vector<std::string> split(const std::string& s, char c);
+std::vector<std::string>* split(const std::string& s, char c);
 
 /**
  *
  */
-std::vector<std::string> split(const std::string &str, const std::string &regex);
+std::vector<std::string>* split(const std::string &str, const std::string &regex);
 
 /**
  * @brief print color

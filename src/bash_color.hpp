@@ -72,7 +72,12 @@ const string FMT_BG_WHITE          = "\033[107m";
 #define CYAN(str) FMT_FG_CYAN << str << FMT_RESET
 #define MAGENTA(str) FMT_FG_MAGENTA << str << FMT_RESET
 #define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
-#define LOG(str) cout << ITALIC("INFO: ") << GREEN(str) << FMT_ITALIC << " line: " << __LINE__ << " file: " << __FILE__ << FMT_RESET << endl
+
+#define LOG(str) cout << "INFO: " << FMT_ITALIC << FMT_FG_BLUE << str << FMT_RESET << "  ---> " \
+<< FMT_FG_DARK_GREY <<  " line:" << __LINE__ << FMT_FG_WHITE << " ~ " << FMT_FG_DARK_GREY \
+<< "file:\"" << __FILE__ << "\"" << FMT_RESET << endl;
+
+//FMT_ITALIC << FMT_FG_GREEN << str << FMT_RESET << FMT_RESET
 
 // string& FMT_STRING(string& s, const string& format)
 // {
