@@ -160,6 +160,7 @@ file:
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
+                                                                    ERROR("testing error log ...");
                                                                 }
                                                                 ;
 /**
@@ -197,7 +198,7 @@ block:
                                                                     $$ = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
-                                                                    LOG("block: OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
+                                                                    ERROR("block: OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
                                                                     // LOG("block: | OPEN_BRACE built_in CLOSE_BRACE");
                                                                     // size_t len = $2.size();
                                                                     // int i = 0;
@@ -333,12 +334,14 @@ param:
  */
 modifiers:
     modifier                                                    {
-                                                                     std::vector< std::string > v;
-                                                                     //v.push_back($1);
-                                                                     //$$ = v;
-                                                                     $$.push_back($1);
+                                                                    WARN("modifiers: modifier");
+                                                                    std::vector< std::string > v;
+                                                                    //v.push_back($1);
+                                                                    //$$ = v;
+                                                                    $$.push_back($1);
                                                                 }
    | modifiers VBAR modifier                                    {
+                                                                    WARN("modifiers: modifier");
                                                                     $1.push_back($3);
                                                                     $$ = $1;
                                                                 }
