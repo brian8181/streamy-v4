@@ -192,11 +192,11 @@ void lexer::dump_config( const string& file ) const
 void lexer::dump_config( ) const
 {
     // bkp todo, not what I would call a good dump ...
-    cout << "config_file: " << m_config_file << endl;
-    cout << "input file: " << m_input_file << endl;
-    cout << "input text: " << m_text << endl;
-    cout << "regexp: " << m_expr << endl;
-    cout << "state: " << gp_state->name << endl;
+    LOG("config_file: " << m_config_file);
+    LOG("input file: " << m_input_file);
+    LOG("input text: " << m_text);
+    LOG("regexp: " << m_expr);
+    LOG("state: " << gp_state->name);
 }
 
 /**
@@ -246,8 +246,8 @@ void lexer::set_state(state_t* pstate)
     set_context(m_suffix);
 
 #ifdef DEBUG
-    cout << "EXPR=\"" << m_expr << "\"" << " #" << __LINE__ << endl;
-    cout << "STATE=" << pstate->id << " : " << pstate->name << " #" << __LINE__ << endl;
+    LOG("EXPR=\"" << m_expr << "\"")
+    LOG("STATE=" << pstate->id << " : " << pstate->name);
 #endif
 }
 
@@ -278,15 +278,14 @@ parser::symbol_type lexer::get_token()
         {
             if(m[i].matched)
             {
-//#ifdef DEBUG
-                //cout << "MATCH=\"" << m.prefix() << "\" : \"" << m.str() << "\" : \"" << m.suffix() << "\""<<  endl;
-
-//#endif
+#ifdef DEBUG
+                LOG("MATCH=\"" << m.prefix() << "\" : \"" << m.str() << "\" : \"" << m.suffix() << "\"");
+#endif
                 if(m.prefix().matched)
                 {
                     if (gp_state->id != UL_INITIAL_STATE)
                     {
-                        cout << "error: unexpected token ... \"" << m.prefix() << "\"" << " #" << __LINE__ << endl;
+                        LOG("error: unexpected token ... \"" << m.prefix() << "\"");
                         return parser::make_YYerror();
                     }
                     // stream prefix (unescaped text)
@@ -297,7 +296,7 @@ parser::symbol_type lexer::get_token()
                 unsigned long id = (*g_tokens_by_state_id[gp_state->id])[i-1];
                 ptoken = &g_tokens[id];
 
-                cout << FMT_FG_CYAN <<  "match[ " << "i=" << i << " ] = " << ptoken->name << "( \"" << m[i].str() << "\" );" << FMT_RESET << " #" << __LINE__ << endl;
+                LOG("match[ " << "i=" << i << " ] = " << ptoken->name << "( \"" << m[i].str() << "\"");
 
                 // find match & lookup by sub_match index
                 token_match tmatch = {id, "", 0, 0, 0, m.str(), ptoken};
@@ -309,7 +308,7 @@ parser::symbol_type lexer::get_token()
                 yy::parser::symbol_type rtoken = on_token( &tmatch );
                 if (rtoken.kind() == yy::parser::symbol_type( parser::token::SKIP_TOKEN).kind())
                 {
-                    cout << "skipping... " << endl;
+                    LOG("skipping... ");
                     goto SKIP;
                 }
                 return rtoken;
