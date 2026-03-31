@@ -73,17 +73,13 @@ const string FMT_BG_WHITE          = "\033[107m";
 #define MAGENTA(str) FMT_FG_MAGENTA << str << FMT_RESET
 #define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
 
-#define LOG(str) cout << "INFO: " << FMT_ITALIC << FMT_FG_GREEN << str << FMT_RESET << "  ---> " \
-<< FMT_FG_DARK_GREY <<  " line:" << __LINE__ << FMT_FG_WHITE << " ~ " << FMT_FG_DARK_GREY \
-<< "file:\"" << __FILE__ << "\"" << FMT_RESET << endl;
+#define LOG(type, color, str) cout << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> " \
+<< FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" | file:\"" << __FILE__ << "\" | " <<  "line:" << __LINE__ << " | " \
+<< "STD-C++:" << __cplusplus << " | " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl;
 
-#define WARN(str) cout << "WARN: " << FMT_ITALIC << FMT_FG_YELLOW << str << FMT_RESET << "  ---> " \
-<< FMT_FG_DARK_GREY <<  " line:" << __LINE__ << FMT_FG_WHITE << " ~ " << FMT_FG_DARK_GREY \
-<< "file:\"" << __FILE__ << "\"" << FMT_RESET << endl;
-
-#define ERROR(str) cout << "ERROR: " << FMT_ITALIC << FMT_FG_RED << str << FMT_RESET << "  ---> " \
-<< FMT_FG_DARK_GREY <<  " line:" << __LINE__ << FMT_FG_WHITE << " ~ " << FMT_FG_DARK_GREY \
-<< "file:\"" << __FILE__ << "\"" << FMT_RESET << endl;
+#define INFO(str) LOG("INFO: ", FMT_FG_GREEN, str)
+#define WARN(str) LOG("WARN: ", FMT_FG_YELLOW, str)
+#define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 
 //FMT_ITALIC << FMT_FG_GREEN << str << FMT_RESET << FMT_RESET
 

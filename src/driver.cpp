@@ -63,7 +63,7 @@ yy::parser::symbol_type lex()
  */
 int parse_options(const int argc, char* argv[])
 {
-    LOG("test log ...");
+    INFO("test log ...");
     int option;
     const auto options_string = "hVdc:o:v";
     const struct option long_options[] = {
@@ -115,12 +115,13 @@ int parse_options(const int argc, char* argv[])
     for(int i = offset; i < argc; ++i)
     {
         g_input_file = argv[optind + SRC_IDX_OFFSET];
+        LOG("ATTENSION: ", FMT_FG_RED, "scannning file: " << g_input_file);
 
         stringstream log;
         log << "input:\"" << g_input_file
             << "\" - ouput:\"" << g_output_file
             << "\" - config file:\"" << g_config_file << "\"" << endl;
-        LOG(log.str());
+        LOG("ATTENSION: ", FMT_FG_RED ,log.str());
 
         lexer::instance().init(g_config_file, &yyparser, g_input_file, g_output_file);
         if (dump_flag)
@@ -130,11 +131,10 @@ int parse_options(const int argc, char* argv[])
             cout << lexer::instance().get_expr() << endl;
             cout << "configuration dumped." << endl;
         }
-        cout << "start scan ..." << endl;
         yyparser.parse();
-        cout << "finished scanning. " << endl;
+        LOG("ATTENSION: ", FMT_FG_RED, "finished file: " << g_input_file);
     }
-    LOG("EOFS");
+    INFO("EOFS");
     return 0;
 }
 
