@@ -110,7 +110,8 @@
 
 %type files file blocks
 %type< std::pair<std::string, std::string> > attrib
-%type<std::vector< std::pair<std::string, std::string> > > attributes built_in
+%type<std::vector< std::pair<std::string, std::string> > > attributes 
+%type<std::vector< std::pair<std::string, std::string> > > built_in
 %type<std::string> block
 %type<std::string> expr
 %type<std::string> assign_stmt
@@ -169,7 +170,7 @@ blocks:
     block                                                       { INFO("PARSER blocks: | block"); }
     | blocks block                                              {
                                                                     INFO("blocks: | blocks block");
-                                                                    lexer::instance().dump_config();
+                                                                    //lexer::instance().dump_config();
                                                                 }
                                                                 ;
 /**
@@ -197,29 +198,29 @@ block:
                                                                     $$ = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
-                                                                    ERROR("block: OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
-                                                                    // INFO("block: | OPEN_BRACE built_in CLOSE_BRACE");
-                                                                    // size_t len = $2.size();
-                                                                    // int i = 0;
-                                                                    // for(; i < len; ++i)
-                                                                    // {
-                                                                    //     if($2[i].first == "file")
-                                                                    //         break;
-                                                                    // }
-                                                                    // string path = $2[i].second;
-                                                                    // // read include path
-                                                                    // string sout;
-                                                                    // read_str(path, sout);
-                                                                    // //  append include path output to buffer
-                                                                    // string* p_rstr = lexer::instance().get_remaining();
-                                                                    // stringstream* include_buffer = lexer::instance().get_include_buffer();
-                                                                    // *include_buffer << sout << *p_rstr;
+                                                                    //ERROR("block: OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
+                                                                    INFO("block: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
+                                                                    size_t len = $3.size();
+                                                                    int i = 0;
+                                                                    for(; i < len; ++i)
+                                                                    {
+                                                                         if($3[i].first == "file")
+                                                                             break;
+                                                                    }
+                                                                    string path = $3[i].second;
+                                                                    // read include path
+                                                                    string sout;
+                                                                    read_str(path, sout);
+                                                                    // append include path output to buffer
+                                                                    string* p_rstr = lexer::instance().get_remaining();
+                                                                    stringstream* include_buffer = lexer::instance().get_include_buffer();
+                                                                    *include_buffer << sout << *p_rstr;
 
-                                                                    // INFO(include_buffer->str() << FMT_RESET;
-                                                                    // // set the suffix a.k.a "current search buffer"
-                                                                    // lexer::instance().set_remaining( (*include_buffer).str() );
-                                                                    // lexer::instance().set_state(&sINITIAL);
-                                                                    // INFO("file=\"" << FMT_ITALIC << path << "\"" << "");
+                                                                    INFO(include_buffer->str());
+                                                                    // set the suffix a.k.a "current search buffer"
+                                                                    lexer::instance().set_remaining( (*include_buffer).str() );
+                                                                    lexer::instance().set_state(&sINITIAL);
+                                                                    INFO("file=\"" << FMT_ITALIC << path << "\"");
                                                                 }
     | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
                                                                 ;
