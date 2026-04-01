@@ -46,6 +46,14 @@ static bool verbose_flag = false;
 // create parser & lexer
 static yy::parser yyparser;
 
+#define DEBUGG
+#ifdef DEBUGG
+#define LOGG // cout << "test" << endl;
+#else 
+#define LOGG cout << "test" << endl;
+#endif
+
+
 /**
  * @name lex
  * @return yy::parser::symbol_type
@@ -63,6 +71,8 @@ yy::parser::symbol_type lex()
  */
 int parse_options(const int argc, char* argv[])
 {
+    LOGG 
+
     INFO("test log ...");
     int option;
     const auto options_string = "hVdc:o:v";
@@ -118,9 +128,9 @@ int parse_options(const int argc, char* argv[])
         LOG("ATTENSION: ", FMT_FG_RED, "scannning file: " << g_input_file);
 
         stringstream log;
-        log << "input:\"" << g_input_file
-            << "\" - ouput:\"" << g_output_file
-            << "\" - config file:\"" << g_config_file << "\"" << endl;
+        log << "in:\"" << g_input_file
+            << "\" - out:\"" << g_output_file
+            << "\" - conf:\"" << g_config_file << "\"" << endl;
         LOG("ATTENSION: ", FMT_FG_RED ,log.str());
 
         lexer::instance().init(g_config_file, &yyparser, g_input_file, g_output_file);
