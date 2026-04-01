@@ -428,6 +428,7 @@ built_in:
  */
 attributes:
     attrib                                                     {
+                                                                    INFO("attribute: | attib push --> attributes");
                                                                     //INFO("attribute: | push -> attrib={name=\"" << $1.first << "\" value=\"" << $1.second << "\"");
                                                                     std::pair<std::string, std::string>  p($1);
                                                                     std::vector< std::pair<std::string, std::string> > v;
@@ -435,6 +436,7 @@ attributes:
                                                                     $$ = v;
                                                                }
     | attributes attrib                                        {
+                                                                    INFO("attribute: | attib push --> attributes");
                                                                     //INFO("attribute: | attributes : push-> attrib={name=\"" << $2.first << "\" value=\"" << $2.second << "\"");
                                                                     $1.push_back( $2 );
                                                                     $$ = $1;
