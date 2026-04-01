@@ -20,7 +20,7 @@
 #include <boost/regex.hpp>
 #include <fmt/core.h>
 #include <fmt/format.h>
-#include "bash_color.hpp"
+#include "log.hpp"
 #include "fileio.hpp"
 #include "lexer.hpp"
 #include "driver.h"

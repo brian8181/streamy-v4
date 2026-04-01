@@ -4,8 +4,8 @@
  * @date    Tue Mar 31 13:39:39 CDT 2026
   */
 
-#ifndef BASH_COLOR_HPP_
-#define BASH_COLOR_HPP_
+#ifndef LOG_HPP_
+#define LOG_HPP_
 
 #include <iostream>
 #include <string>
@@ -13,10 +13,29 @@
 
 using std::string;
 
-#define LOG(type, color, str) cout << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> " \
-<< FMT_FG_DARK_GREY <<  " line:" << __LINE__ << FMT_FG_WHITE << " ~ " << FMT_FG_DARK_GREY \
-<< "file:\"" << __FILE__ << "\" - " << __cplusplus << " - " << __TIME__ << FMT_RESET << endl;
+#define ITALIC(str) FMT_ITALIC << str << FMT_RESET
+#define UNDERLINE(str) FMT_UNDERLINE << str << FMT_RESET_UNDERLINE
+#define BOLD(str) FMT_BOLD << str << FMT_RESET_BOLD
+#define DIM(str) FMT_DIM << str << FMT_RESET_DIM
+#define HIDDEN(str) << FMT_HIDDEN << str << FMT_RESET_HIDDEN
+#define GREEN(str) FMT_FG_GREEN << str << FMT_RESET
+#define RED(str) FMT_FG_RED << str << FMT_RESET
+#define BLUE(str) FMT_FG_BLUE << str << FMT_RESET
+#define YELLOW(str) FMT_FG_YELLOW << str << FMT_RESET
+#define GREY(str) FMT_FG_DARK_GREY << str << FMT_RESET
+#define CYAN(str) FMT_FG_CYAN << str << FMT_RESET
+#define MAGENTA(str) FMT_FG_MAGENTA << str << FMT_RESET
+#define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
 
-#define INFO(str) LOG("INFO", FMT_FG_GREEN, str)
-#define WARN(str) LOG("WARN", FMT_FG_YELLOW, str)
-#define WARN(str) LOG("ERROR", FMT_FG_RED, str)
+#define TRACE cout << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << \
+"\" ~ " <<  "line:" << __LINE__ << " ~ " << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl;
+
+#define LOG(type, color, str) cout << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> " \
+<< FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " <<  "line:" << __LINE__ << " ~ " \
+<< "STD-C++:" << __cplusplus << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl;
+
+#define INFO(str) LOG("INFO: ", FMT_FG_GREEN, str)
+#define WARN(str) LOG("WARN: ", FMT_FG_YELLOW, str)
+#define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
+
+#endif

@@ -11,7 +11,8 @@
 
 #include "config.h"
 #include "pparser.tab.hh"
-#include "bash_color.hpp"
+#include "log.hpp"
+
 
 /**
  * @brief parse command line options

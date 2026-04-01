@@ -18,7 +18,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include "fileio.hpp"
-    #include "bash_color.hpp"
+    #include "log.hpp"
     #include "symtab.h"
     #include "driver.h"
     #include "lexer.hpp"

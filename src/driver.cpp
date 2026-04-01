@@ -20,7 +20,6 @@
 #include <string>
 #include <getopt.h>
 #include <set>
-#include "bash_color.hpp"
 #include "config.hpp"
 #include "driver.h"
 #include "lexer.hpp"
@@ -167,7 +166,7 @@ int stdin_ready (int filedes)
         timeval timeout = { .tv_sec = 0 };
 #endif
         // initialize the file descriptor set
-        FD_ZERO(&set);
+        FD_ZERO(&set);  
         FD_SET(filedes, &set);
         // check stdin_ready is ready on filedes
 #ifndef CYGWIN
