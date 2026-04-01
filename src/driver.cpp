@@ -60,6 +60,7 @@ static yy::parser yyparser;
  */
 yy::parser::symbol_type lex()
 {
+    TRACE
     return lexer::instance().get_token();
 }
 
@@ -71,9 +72,8 @@ yy::parser::symbol_type lex()
  */
 int parse_options(const int argc, char* argv[])
 {
-    LOGG 
-
-    INFO("test log ...");
+    TRACE
+    
     int option;
     const auto options_string = "hVdc:o:v";
     const struct option long_options[] = {
@@ -124,8 +124,9 @@ int parse_options(const int argc, char* argv[])
     int offset = optind + SRC_IDX_OFFSET;
     for(int i = offset; i < argc; ++i)
     {
+        TRACE
         g_input_file = argv[optind + SRC_IDX_OFFSET];
-        LOG("ATTENSION: ", FMT_FG_RED, "scannning file: " << g_input_file);
+        LOG("ATTENSION: ", FMT_FG_RED, "scannning file:\"" << g_input_file << "\"");
 
         stringstream log;
         log << "in:\"" << g_input_file
@@ -142,13 +143,14 @@ int parse_options(const int argc, char* argv[])
             cout << "configuration dumped." << endl;
         }
         yyparser.parse();
-        LOG("ATTENSION: ", FMT_FG_RED, "finished file: " << g_input_file);
+        LOG("ATTENSION: ", FMT_FG_RED, "finished file:\"" << g_input_file << "\"");
     }
+    TRACE
     INFO("EOFS");
     return 0;
 }
 
-#ifdef _WIN32
+#ifndef _WIN32
 /**
  * @brief  stdin_ready function
  * @param filedes
@@ -186,8 +188,9 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-        #ifdef _WIN32
-		char* argv_cpy[ sizeof(char*) * argc + 1 ];
+        #ifndef _WIN32
+		TRACE
+         char* argv_cpy[ sizeof(char*) * argc + 1 ];
 		if(stdin_ready(STDIN_FILENO))
 		{
 			std::string buffer;

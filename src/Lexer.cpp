@@ -56,6 +56,7 @@ inline state_t* gp_state = &sINITIAL;
  */
 void lexer::init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
 {
+    TRACE
     m_config_file = config_file;
     m_input_file = input_file;
     m_output_file = output_file;
@@ -217,6 +218,7 @@ state_t *lexer::get_state() const
  */
 void lexer::set_state(state_t* pstate)
 {
+    TRACE
     m_tokens.clear();
     m_idx_tab.clear();
     m_name_tab.clear();
@@ -258,6 +260,7 @@ void lexer::set_state(state_t* pstate)
  */
 parser::symbol_type lexer::get_token()
 {
+    TRACE
     SKIP:
     if((*m_piter) != m_end)
     {
@@ -379,6 +382,7 @@ bool lexer::is_id( const token_def& token, const unsigned long& id )
  */
 void lexer::set_context(string& current_input)
 {
+    TRACE
     // reinit get_token iterators
     m_rexp = boost::regex( m_expr, boost::regex::extended );
     m_text = current_input;
@@ -410,6 +414,7 @@ inline unsigned long lexer::on_state(state_t *pstate)
  */
 inline parser::symbol_type lexer::on_token( token_match* ptoken )
 {
+    TRACE
     switch (gp_state->id)
     {
         case UL_INITIAL_STATE:
