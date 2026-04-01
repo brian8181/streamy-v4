@@ -13,10 +13,10 @@
 using std::cout;
 
 #define ITALIC(str) FMT_ITALIC << str << FMT_RESET
-#define UNDERLINE(str) FMT_UNDERLINE << str << FMT_RESET_UNDERLINE
-#define BOLD(str) FMT_BOLD << str << FMT_RESET_BOLD
-#define DIM(str) FMT_DIM << str << FMT_RESET_DIM
-#define HIDDEN(str) << FMT_HIDDEN << str << FMT_RESET_HIDDEN
+#define UNDERLINE(str) FMT_UNDERLINE << str << FMT_RESET
+#define BOLD(str) FMT_BOLD << str << FMT_RESET
+#define DIM(str) FMT_DIM << str << FMT_RESET
+#define HIDDEN(str) << FMT_HIDDEN << str << FMT_RESET
 #define GREEN(str) FMT_FG_GREEN << str << FMT_RESET
 #define RED(str) FMT_FG_RED << str << FMT_RESET
 #define BLUE(str) FMT_FG_BLUE << str << FMT_RESET

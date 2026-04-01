@@ -124,7 +124,7 @@ int parse_options(const int argc, char* argv[])
     for(int i = offset; i < argc; ++i)
     {
         TRACE
-        g_input_file = argv[optind + SRC_IDX_OFFSET];
+        g_input_file = argv[i];
         LOG("ATTENSION: ", FMT_FG_RED, "scannning file:\"" << g_input_file << "\"");
 
         stringstream log;
