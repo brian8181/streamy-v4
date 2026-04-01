@@ -8,10 +8,9 @@
 #define LOG_HPP_
 
 #include <iostream>
-#include <string>
 #include "bash_color.hpp"
 
-using std::string;
+using std::cout;
 
 #define ITALIC(str) FMT_ITALIC << str << FMT_RESET
 #define UNDERLINE(str) FMT_UNDERLINE << str << FMT_RESET_UNDERLINE
@@ -27,15 +26,27 @@ using std::string;
 #define MAGENTA(str) FMT_FG_MAGENTA << str << FMT_RESET
 #define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
 
-#define TRACE cout << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << \
-"\" ~ " <<  "line:" << __LINE__ << " ~ " << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl;
-
 #define LOG(type, color, str) cout << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> " \
 << FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " <<  "line:" << __LINE__ << " ~ " \
 << "STD-C++:" << __cplusplus << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl;
 
+// tracing
+#ifdef TRACING
+#define TRACE cout << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << \
+"\" ~ " <<  "line:" << __LINE__ << " ~ " << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl;
+#else
+#define TRACE //
+#endif
+
+// debugging 
+#ifdef DEBUG
 #define INFO(str) LOG("INFO: ", FMT_FG_GREEN, str)
 #define WARN(str) LOG("WARN: ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
+#else
+#define INFO(str) // str
+#define WARN(str) // str
+#define ERROR(str) // str
+#endif
 
 #endif

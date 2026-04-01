@@ -42,7 +42,7 @@ ifdef CLANG
 endif
 
 ifndef RELEASE
-	CXXFLAGS+=-ggdb -DDEBUG -DDEBUG -DYYDEBUG -DLEX_TEST
+	CXXFLAGS+=-ggdb -DDEBUG -DDEBUG -DTRACING -DYYDEBUG -DLEX_TEST
 endif
 
 #CYGWIN=TRUE
@@ -54,6 +54,11 @@ else
 	CXXFLAGS += -I/ucrt64/include/boost
 	LDFLAGS += /usr/lib/libfmt.dll.a
 endif
+
+# ifdef TRACEING
+# CXXFLAGS += -DTRACING
+# endif
+
 
 all: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
 
