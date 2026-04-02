@@ -4,3 +4,4 @@ Test0 {$y|truncate:20:19:18:17} Test1
 {$z="test"}
 {$abc=3}
 {$z=3}
+{* check *}

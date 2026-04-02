@@ -31,14 +31,31 @@ R"(~)"|R"(!)"|R"(@)"|R"(#)"|R"($)"|R"(%)"|R"(^)"|R"(&)"|R"(*)"|R"(()"|R"())"|R"(
 R"(`)"|R"(~)"|R"(!)"|R"(@)"|R"(#)"|R"($)"|R"(%)"|R"(^)"|R"(&)"|R"(*)"|R"(()"|R"())"|R"(-)"|R"(_)"|R"(=)"|R"(+)"|R"([)"|R"({)"|R"(])"|R"(})"|R"(\)"|R"(|)"|R"(;)"|R"(:)"|R"(')"|R"(")"|R"(,)"|R"(<)"|R"(.)"|R"(>)"|R"(/)"|R"(?)"
 sed -E "s/[@#$%^&*()-_=+]/ x /g"
 
- echo "][-@#$%^&*()_+{}|:<>?='" | sed -E "s/[][-@#$%^&*()_+{}|:<>?=']/ x /g"
+echo "][-@#$%^&*()_+{}|:<>?='" | sed -E "s/[][-@#$%^&*()_+{}|:<>?=']/ x /g"
   echo "-[]@#$%^&*()_+{}|:<>?=\;',./'" | sed -E "s~[-[@#$%^&*()_+{}:<>?=\;',./]~ x ~g"
 
 
 
 // match ever symbol on keyboard besides closing brace ']' !!
 
-echo "-[@#$%^&*()_+{}|:\"<>?=\;',./" | sed -E 's/[][~@#$%^&*()_+{}|:\"<>?=\;',.\/-]/ x /g'
+echo "][~@#$%^&*()_+{}|:\"<>?=\;',.\/-" | sed -E 's/[][~@#$%^&*()_+{}|:\"<>?=\;',./-]/ x /g'
 
 
 echo "-[@#$%^&*()_+{}|:\"<>?=\;',.\/[-" | sed -E  "s/[]~@#$%^&*()_+{}|:\"<>?=\;',.\/[-]/xxx/g"
+
+ echo "][-@#$%^&*()_+{}|:<>?='"         | sed -E "s/[][~@#$%^&*()_+{}|:<>?='-]/ x /g"
+
+
+// match ever symbol on keyboard
+echo "][~@#$%^&*()_+{}|:<>?=\\;',./-" | sed -E "s/[][~@#$%^&*()_+{}|:<>?=\;',./-]/ x /g"
+
+order based on bracket expression 
+]ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890[~@#$%^&*()_+{}|:<>?=\;',./-
+
+// match ever symbol on keyboard including letters & digits
+echo "]ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890[~@#$%^&*()_+{}|:<>?=\;',./-" | sed -E "s/[]ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890[~@#$%^&*()_+{}|:<>?=\;',./-]/ . /g"
+
+# with output
+echo "]ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890[~@#$%^&*()_+{}|:<>?=\;',./-" && echo "]ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890[~@#$%^&*()_+{}|:<>?=\;',./-" | sed -E "s/[]ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890[~@#$%^&*()_+{}|:<>?=\;',./-]/./g"
+]ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890[~@#$%^&*()_+{}|:<>?=\;',./-
+..........................................................................................

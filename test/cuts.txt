@@ -94,3 +94,7 @@ const_indentifier:
                                                                 ;
 
 %token now const capture config section foreach template version ldelim rdelim
+
+%destructor { free ($$); } <*>
+%destructor { free ($$); printf ("%d", @$.first_line); } STRING_LITERAL NUMERIC_LITERAL
+%destructor { printf ("Discarding tagless symbol.\n"); } <>

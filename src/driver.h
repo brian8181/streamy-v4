@@ -13,6 +13,11 @@
 #include "pparser.tab.hh"
 #include "log.hpp"
 
+static string g_config_file = "default.conf";
+static string g_output_dir = "./test/build";
+static string g_output_file = "out.obj";
+static string g_input_file = "in.txt";
+
 
 /**
  * @brief parse command line options

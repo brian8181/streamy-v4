@@ -377,9 +377,13 @@ namespace yy {
       // attrib
       char dummy1[sizeof ( std::pair<std::string, std::string> )];
 
+      // modifiers
+      // colon_sep_params
+      char dummy2[sizeof ( std::vector< std::string > )];
+
       // PLUS_SIGN
       // MINUS
-      char dummy2[sizeof (char)];
+      char dummy3[sizeof (char)];
 
       // CAPTURE
       // CONFIG_LOAD
@@ -436,17 +440,13 @@ namespace yy {
       // sub_proc
       // array
       // modifier
-      // colon_sep_params
       // colon_sep_param
       // symbol
       // attrib_name
-      char dummy3[sizeof (std::string)];
+      char dummy4[sizeof (std::string)];
 
       // attributes
-      char dummy4[sizeof (std::vector< std::pair<std::string, std::string> > )];
-
-      // modifiers
-      char dummy5[sizeof (std::vector< std::string > )];
+      char dummy5[sizeof (std::vector< std::pair<std::string, std::string> > )];
     };
 
     /// The size of the largest semantic type.
@@ -572,24 +572,25 @@ namespace yy {
     ANYTHING = 337,                // ANYTHING
     VALID_CHAR = 338,              // VALID_CHAR
     SKIP_TOKEN = 339,              // SKIP_TOKEN
-    IFX = 340,                     // IFX
-    ELSE = 341,                    // ELSE
-    ELSEIF = 342,                  // ELSEIF
-    IF = 343,                      // IF
-    WHILE = 344,                   // WHILE
-    BREAK = 345,                   // BREAK
-    GREATER_THAN_EQUAL = 346,      // GREATER_THAN_EQUAL
-    LESS_THAN_EQUAL = 347,         // LESS_THAN_EQUAL
-    EQUAL_SIGN = 348,              // EQUAL_SIGN
-    NOT_EQUAL = 349,               // NOT_EQUAL
-    LESS_THAN = 350,               // LESS_THAN
-    GREATER_THAN = 351,            // GREATER_THAN
-    PLUS_SIGN = 352,               // PLUS_SIGN
-    MINUS = 353,                   // MINUS
-    ASTERISK = 354,                // ASTERISK
-    SLASH = 355,                   // SLASH
-    PERCENT_SIGN = 356,            // PERCENT_SIGN
-    UMINUS = 357                   // UMINUS
+    NEWLINE = 340,                 // NEWLINE
+    IFX = 341,                     // IFX
+    ELSE = 342,                    // ELSE
+    ELSEIF = 343,                  // ELSEIF
+    IF = 344,                      // IF
+    WHILE = 345,                   // WHILE
+    BREAK = 346,                   // BREAK
+    GREATER_THAN_EQUAL = 347,      // GREATER_THAN_EQUAL
+    LESS_THAN_EQUAL = 348,         // LESS_THAN_EQUAL
+    EQUAL_SIGN = 349,              // EQUAL_SIGN
+    NOT_EQUAL = 350,               // NOT_EQUAL
+    LESS_THAN = 351,               // LESS_THAN
+    GREATER_THAN = 352,            // GREATER_THAN
+    PLUS_SIGN = 353,               // PLUS_SIGN
+    MINUS = 354,                   // MINUS
+    ASTERISK = 355,                // ASTERISK
+    SLASH = 356,                   // SLASH
+    PERCENT_SIGN = 357,            // PERCENT_SIGN
+    UMINUS = 358                   // UMINUS
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -606,7 +607,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 104, ///< Number of tokens.
+        YYNTOKENS = 105, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // END
         S_YYerror = 1,                           // error
@@ -693,46 +694,47 @@ namespace yy {
         S_ANYTHING = 82,                         // ANYTHING
         S_VALID_CHAR = 83,                       // VALID_CHAR
         S_SKIP_TOKEN = 84,                       // SKIP_TOKEN
-        S_IFX = 85,                              // IFX
-        S_ELSE = 86,                             // ELSE
-        S_ELSEIF = 87,                           // ELSEIF
-        S_IF = 88,                               // IF
-        S_WHILE = 89,                            // WHILE
-        S_BREAK = 90,                            // BREAK
-        S_GREATER_THAN_EQUAL = 91,               // GREATER_THAN_EQUAL
-        S_LESS_THAN_EQUAL = 92,                  // LESS_THAN_EQUAL
-        S_EQUAL_SIGN = 93,                       // EQUAL_SIGN
-        S_NOT_EQUAL = 94,                        // NOT_EQUAL
-        S_LESS_THAN = 95,                        // LESS_THAN
-        S_GREATER_THAN = 96,                     // GREATER_THAN
-        S_PLUS_SIGN = 97,                        // PLUS_SIGN
-        S_MINUS = 98,                            // MINUS
-        S_ASTERISK = 99,                         // ASTERISK
-        S_SLASH = 100,                           // SLASH
-        S_PERCENT_SIGN = 101,                    // PERCENT_SIGN
-        S_UMINUS = 102,                          // UMINUS
-        S_103_ = 103,                            // '#'
-        S_YYACCEPT = 104,                        // $accept
-        S_complier = 105,                        // complier
-        S_files = 106,                           // files
-        S_file = 107,                            // file
-        S_blocks = 108,                          // blocks
-        S_block = 109,                           // block
-        S_assign_stmt = 110,                     // assign_stmt
-        S_expr = 111,                            // expr
-        S_qualafied_id = 112,                    // qualafied_id
-        S_sub_proc = 113,                        // sub_proc
-        S_array = 114,                           // array
-        S_params = 115,                          // params
-        S_param = 116,                           // param
-        S_modifiers = 117,                       // modifiers
-        S_modifier = 118,                        // modifier
-        S_colon_sep_params = 119,                // colon_sep_params
-        S_colon_sep_param = 120,                 // colon_sep_param
-        S_symbol = 121,                          // symbol
-        S_attributes = 122,                      // attributes
-        S_attrib = 123,                          // attrib
-        S_attrib_name = 124                      // attrib_name
+        S_NEWLINE = 85,                          // NEWLINE
+        S_IFX = 86,                              // IFX
+        S_ELSE = 87,                             // ELSE
+        S_ELSEIF = 88,                           // ELSEIF
+        S_IF = 89,                               // IF
+        S_WHILE = 90,                            // WHILE
+        S_BREAK = 91,                            // BREAK
+        S_GREATER_THAN_EQUAL = 92,               // GREATER_THAN_EQUAL
+        S_LESS_THAN_EQUAL = 93,                  // LESS_THAN_EQUAL
+        S_EQUAL_SIGN = 94,                       // EQUAL_SIGN
+        S_NOT_EQUAL = 95,                        // NOT_EQUAL
+        S_LESS_THAN = 96,                        // LESS_THAN
+        S_GREATER_THAN = 97,                     // GREATER_THAN
+        S_PLUS_SIGN = 98,                        // PLUS_SIGN
+        S_MINUS = 99,                            // MINUS
+        S_ASTERISK = 100,                        // ASTERISK
+        S_SLASH = 101,                           // SLASH
+        S_PERCENT_SIGN = 102,                    // PERCENT_SIGN
+        S_UMINUS = 103,                          // UMINUS
+        S_104_ = 104,                            // '#'
+        S_YYACCEPT = 105,                        // $accept
+        S_complier = 106,                        // complier
+        S_files = 107,                           // files
+        S_file = 108,                            // file
+        S_blocks = 109,                          // blocks
+        S_block = 110,                           // block
+        S_assign_stmt = 111,                     // assign_stmt
+        S_expr = 112,                            // expr
+        S_qualafied_id = 113,                    // qualafied_id
+        S_sub_proc = 114,                        // sub_proc
+        S_array = 115,                           // array
+        S_params = 116,                          // params
+        S_param = 117,                           // param
+        S_modifiers = 118,                       // modifiers
+        S_modifier = 119,                        // modifier
+        S_colon_sep_params = 120,                // colon_sep_params
+        S_colon_sep_param = 121,                 // colon_sep_param
+        S_symbol = 122,                          // symbol
+        S_attributes = 123,                      // attributes
+        S_attrib = 124,                          // attrib
+        S_attrib_name = 125                      // attrib_name
       };
     };
 
@@ -769,6 +771,11 @@ namespace yy {
     {
       case symbol_kind::S_attrib: // attrib
         value.move<  std::pair<std::string, std::string>  > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_modifiers: // modifiers
+      case symbol_kind::S_colon_sep_params: // colon_sep_params
+        value.move<  std::vector< std::string >  > (std::move (that.value));
         break;
 
       case symbol_kind::S_PLUS_SIGN: // PLUS_SIGN
@@ -831,7 +838,6 @@ namespace yy {
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
-      case symbol_kind::S_colon_sep_params: // colon_sep_params
       case symbol_kind::S_colon_sep_param: // colon_sep_param
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
@@ -840,10 +846,6 @@ namespace yy {
 
       case symbol_kind::S_attributes: // attributes
         value.move< std::vector< std::pair<std::string, std::string> >  > (std::move (that.value));
-        break;
-
-      case symbol_kind::S_modifiers: // modifiers
-        value.move< std::vector< std::string >  > (std::move (that.value));
         break;
 
       default:
@@ -874,6 +876,18 @@ namespace yy {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const  std::pair<std::string, std::string> & v)
+        : Base (t)
+        , value (v)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t,  std::vector< std::string > && v)
+        : Base (t)
+        , value (std::move (v))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const  std::vector< std::string > & v)
         : Base (t)
         , value (v)
       {}
@@ -915,18 +929,6 @@ namespace yy {
       {}
 #endif
 
-#if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::vector< std::string > && v)
-        : Base (t)
-        , value (std::move (v))
-      {}
-#else
-      basic_symbol (typename Base::kind_type t, const std::vector< std::string > & v)
-        : Base (t)
-        , value (v)
-      {}
-#endif
-
       /// Destroy the symbol.
       ~basic_symbol ()
       {
@@ -953,6 +955,11 @@ switch (yykind)
     {
       case symbol_kind::S_attrib: // attrib
         value.template destroy<  std::pair<std::string, std::string>  > ();
+        break;
+
+      case symbol_kind::S_modifiers: // modifiers
+      case symbol_kind::S_colon_sep_params: // colon_sep_params
+        value.template destroy<  std::vector< std::string >  > ();
         break;
 
       case symbol_kind::S_PLUS_SIGN: // PLUS_SIGN
@@ -1015,7 +1022,6 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
-      case symbol_kind::S_colon_sep_params: // colon_sep_params
       case symbol_kind::S_colon_sep_param: // colon_sep_param
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
@@ -1024,10 +1030,6 @@ switch (yykind)
 
       case symbol_kind::S_attributes: // attributes
         value.template destroy< std::vector< std::pair<std::string, std::string> >  > ();
-        break;
-
-      case symbol_kind::S_modifiers: // modifiers
-        value.template destroy< std::vector< std::string >  > ();
         break;
 
       default:
@@ -2470,6 +2472,21 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_NEWLINE ()
+      {
+        return symbol_type (token::NEWLINE);
+      }
+#else
+      static
+      symbol_type
+      make_NEWLINE ()
+      {
+        return symbol_type (token::NEWLINE);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_IFX ()
       {
         return symbol_type (token::IFX);
@@ -3041,7 +3058,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 145,     ///< Last index in yytable_.
+      yylast_ = 150,     ///< Last index in yytable_.
       yynnts_ = 21,  ///< Number of nonterminal symbols.
       yyfinal_ = 19 ///< Termination state number.
     };
@@ -3063,7 +3080,7 @@ switch (yykind)
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,   103,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,   104,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -3095,10 +3112,10 @@ switch (yykind)
       65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
       75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
       85,    86,    87,    88,    89,    90,    91,    92,    93,    94,
-      95,    96,    97,    98,    99,   100,   101,   102
+      95,    96,    97,    98,    99,   100,   101,   102,   103
     };
     // Last valid token kind.
-    const int code_max = 357;
+    const int code_max = 358;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -3118,6 +3135,11 @@ switch (yykind)
     {
       case symbol_kind::S_attrib: // attrib
         value.copy<  std::pair<std::string, std::string>  > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_modifiers: // modifiers
+      case symbol_kind::S_colon_sep_params: // colon_sep_params
+        value.copy<  std::vector< std::string >  > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_PLUS_SIGN: // PLUS_SIGN
@@ -3180,7 +3202,6 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
-      case symbol_kind::S_colon_sep_params: // colon_sep_params
       case symbol_kind::S_colon_sep_param: // colon_sep_param
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
@@ -3189,10 +3210,6 @@ switch (yykind)
 
       case symbol_kind::S_attributes: // attributes
         value.copy< std::vector< std::pair<std::string, std::string> >  > (YY_MOVE (that.value));
-        break;
-
-      case symbol_kind::S_modifiers: // modifiers
-        value.copy< std::vector< std::string >  > (YY_MOVE (that.value));
         break;
 
       default:
@@ -3228,6 +3245,11 @@ switch (yykind)
     {
       case symbol_kind::S_attrib: // attrib
         value.move<  std::pair<std::string, std::string>  > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_modifiers: // modifiers
+      case symbol_kind::S_colon_sep_params: // colon_sep_params
+        value.move<  std::vector< std::string >  > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_PLUS_SIGN: // PLUS_SIGN
@@ -3290,7 +3312,6 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
-      case symbol_kind::S_colon_sep_params: // colon_sep_params
       case symbol_kind::S_colon_sep_param: // colon_sep_param
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
@@ -3299,10 +3320,6 @@ switch (yykind)
 
       case symbol_kind::S_attributes: // attributes
         value.move< std::vector< std::pair<std::string, std::string> >  > (YY_MOVE (s.value));
-        break;
-
-      case symbol_kind::S_modifiers: // modifiers
-        value.move< std::vector< std::string >  > (YY_MOVE (s.value));
         break;
 
       default:
@@ -3370,7 +3387,7 @@ switch (yykind)
 
 
 } // yy
-#line 3374 "build/pparser.tab.hh"
+#line 3391 "build/pparser.tab.hh"
 
 
 

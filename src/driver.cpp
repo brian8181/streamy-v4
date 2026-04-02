@@ -35,26 +35,14 @@ namespace fs = std::filesystem;
 constexpr int SRC_IDX_OFFSET = 0;
 constexpr int CONFIG_IDX_OFFSET = 0;
 
-static string g_config_file = "default.conf";
-static string g_output_dir = "./test/build";
-static string g_output_file = "out.obj";
-static string g_input_file = "in.txt";
 
 static bool config_flag = false;
 static bool output_file_flag = false;
 static bool dump_flag = false;
 static bool verbose_flag = false;
 
-// create parser & lexer
+// create parser
 static yy::parser yyparser;
-
-#define DEBUGG
-#ifdef DEBUGG
-#define LOGG // cout << "test" << endl;
-#else 
-#define LOGG cout << "test" << endl;
-#endif
-
 
 /**
  * @name lex
@@ -133,7 +121,7 @@ int parse_options(const int argc, char* argv[])
             << "\" - conf:\"" << g_config_file << "\"" << endl;
         LOG("ATTENSION: ", FMT_FG_RED ,log.str());
 
-        lexer::instance().init(g_config_file, &yyparser, g_input_file, g_output_file);
+        lexer::instance().init(g_config_file, g_input_file, g_output_file);
         if (dump_flag)
         {
             cout << "dumping configuration ... " << endl;

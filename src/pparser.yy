@@ -106,6 +106,7 @@
 %token DOLLAR_SIGN COMMA COLON VBAR HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
 %token END 0
 %token END_OF_FILES MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
+%token NEWLINE
 
 
 %type files file blocks
@@ -115,9 +116,9 @@
 %type<std::string> block
 %type<std::string> expr
 %type<std::string> assign_stmt
-%type<std::string> colon_sep_params
+%type< std::vector< std::string > > colon_sep_params
 %type<std::string> colon_sep_param
-%type<std::vector< std::string > > modifiers
+%type< std::vector< std::string > > modifiers
 %type<std::string> modifier
 %type<std::string> attrib_name
 %type<std::string> const_indentifier
@@ -311,15 +312,12 @@ param:
 modifiers:
     modifier                                                    {
                                                                     WARN("modifiers: modifier");
-                                                                    std::vector< std::string > v;
-                                                                    //v.push_back($1);
-                                                                    //$$ = v;
-                                                                    $$.push_back($1);
+                                                                    //std::swap($$, $1);
                                                                 }
    | modifiers VBAR modifier                                    {
                                                                     WARN("modifiers: modifier");
-                                                                    $1.push_back($3);
-                                                                    $$ = $1;
+                                                                    // std::swap($$, $1);
+                                                                    // $$.push_back($3);
                                                                 }
                                                                 ;
 /**
@@ -373,14 +371,29 @@ modifier:
  */
 colon_sep_params:
         /*empty*/
-        | colon_sep_params colon_sep_param                      { INFO("colon_sep_params: | colon_sep_params colon_sep_param"); $$=$1.append($2); }
+        | colon_sep_params colon_sep_param                      { 
+                                                                   INFO("colon_sep_params: | colon_sep_params colon_sep_param"); 
+                                                                    //std::swap($$, $1);
+                                                                    //$$.push_back($2);
+                                                                }
                                                                 ;
 /**
  * @name colon_sep_param
  * @brief colon seperated param {$x|trim:3:' '}
  */
 colon_sep_param:
-        COLON NUMERIC_LITERAL                                   { INFO("colon_sep_param: | COLON NUMERIC_LITERAL"); string s(":"); s.append($2); $$=s; }
+        COLON NUMERIC_LITERAL                                   { 
+                                                                    INFO("colon_sep_param: | COLON NUMERIC_LITERAL"); 
+                                                                    //$$=$2; 
+                                                                }
+        | COLON STRING_LITERAL                                  { 
+                                                                    INFO("colon_sep_param: | COLON STRING_LITERAL"); 
+                                                                    //$$=$2;
+                                                                }
+        | COLON symbol                                          { 
+                                                                    INFO("colon_sep_param: | COLON symbol");
+                                                                    //$$=$2;
+                                                                } 
                                                                 ;
 /**
  * @name symbol

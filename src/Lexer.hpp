@@ -71,12 +71,22 @@ typedef struct state_t
 	string name;
 } state_t;
 
-// bkp todo
-typedef struct context_t
+
+class file_context
 {
+    string name;
+    string* parent;
+    state_t state;
+};
+
+// bkp todo
+class context
+{
+    context(string& input, string& output, const string& parent);
     std::string&               conf_path;
 	std::string&               in_path;
     std::string&               out_path;
+    std::string&               parent;
     boost::regex&              rexp;
 	boost::sregex_iterator&    begin;
 	boost::sregex_iterator&    end;
@@ -88,7 +98,7 @@ typedef struct context_t
     string&                    prefix;
     string&                    suffix;
 	vector<token_def*>*        matches;
-} context_t;
+};
 
 // bkp todo cleanup!
 const string VALID_SYMBOL_CHARS   = R"([A-Za-z0-9_])"; /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
@@ -212,7 +222,8 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 #define UL_COMMENT               120ul
 #define UL_WHITESPACE            121ul
 #define UL_FILE_NAME             122ul
-#define UL_HAS_SIGN              127ul
+#define UL_HAS_SIGN              123ul
+#define UL_NEWLINE               124ul
 #define UL_SKIP_TOKEN            0xFF0000ul
 #define UL_UNESCAPED_TEXT        0x00FF00ul
 #define UL_ERROR                 0x0000FFul
@@ -230,7 +241,8 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 inline map<unsigned long, token_def> g_tokens = {
     {UL_MATCH,              token{"MATCH",              S_TYPE,  R"(match)",                                     __LINE__ }},
     {UL_UNESCAPED_TEXT,     token{"UNESCAPED_TEXT",     S_TYPE,  R"([^{]+)",                                     __LINE__ }},
-    {UL_WHITESPACE,         token{"WHITESPACE",         S_TYPE,  R"([ \t\n]*)",                                  __LINE__ }},
+    {UL_WHITESPACE,         token{"WHITESPACE",         S_TYPE,  R"([ \t]*)",                                    __LINE__ }},
+    {UL_NEWLINE,            token{"NEWLINE",            S_TYPE,  R"([\R])",                                     __LINE__ }},
     {UL_FILE_ATTRIB,        token{"FILE_ATTRIB",        S_TYPE,  R"(file)",                                      __LINE__ }},
     {UL_VALID_CHAR,         token{"VALID_CHAR",         S_TYPE,  R"([A-Za-z0-9*@_~+-./ ])",                      __LINE__ }},
     {UL_NUMERIC_LITERAL,    token{"NUMERIC_LITERAL",    S_TYPE,  R"([0-9]+)",                                    __LINE__ }},
@@ -303,6 +315,7 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_STRIP_TAGS,         token{"STRIP_TAGS",         S_TYPE,  R"(strip_tags)",                                __LINE__ }},
     {UL_WORDWRAP,           token{"WORDWRAP",           S_TYPE,  R"(wordwrap)",                                  __LINE__ }},
     {UL_TRUNCATE,           token{"TRUNCATE",           S_TYPE,  R"(truncate)",                                  __LINE__ }},
+
 };
 /**
  * @brief unsigned long states
@@ -330,9 +343,9 @@ inline state_t sIF_CONDITION  = {UL_IF_CONDITION_STATE, "IF_CONDITION"};
 /**
  * @brief token list -> by state
  */
-inline vector<unsigned long> INITIAL_STATE_TOKENS = {UL_COMMENT, UL_OPEN_BRACE};
+inline vector<unsigned long> INITIAL_STATE_TOKENS = {UL_COMMENT, UL_NEWLINE, UL_OPEN_BRACE};
 
-inline vector<unsigned long> ESCAPED_STATE_TOKENS = { UL_CLOSE_BRACE, UL_DOUBLE_QUOTE, UL_FILE_ATTRIB, UL_INCLUDE, UL_ASSIGN, UL_NUMERIC_LITERAL, UL_EQUAL_SIGN,
+inline vector<unsigned long> ESCAPED_STATE_TOKENS = { UL_NEWLINE, UL_CLOSE_BRACE, UL_DOUBLE_QUOTE, UL_FILE_ATTRIB, UL_INCLUDE, UL_ASSIGN, UL_NUMERIC_LITERAL, UL_EQUAL_SIGN,
                                                         UL_CAPITALIZE, UL_TRUNCATE, UL_VBAR, UL_COLON, UL_STRIP, UL_SYMBOL, UL_CONST_SYMBOL, UL_WHITESPACE, UL_VALID_CHAR };
 
 inline vector<unsigned long> COMMENT_STATE_TOKENS       = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
@@ -397,11 +410,10 @@ public:
 
 /**
  * @name   init
- * @def    void init(const string &config_file, parser* pparser, const string& input_file, const string& output_file)
  * @brief  initialize state
  * @return bool
  */
-void init(const string &config_file, parser* pparser, const string& input_file, const string& output_file);
+void init(const string &config_file, string& input_file, const string& output_file);
 
 /**
  * @name reset
@@ -544,42 +556,29 @@ inline unsigned long on_state(state_t* pstate);
 inline parser::symbol_type on_token( token_match* ptoken );
 
 protected:
-	parser*                                     m_pparser;
-	string                                      m_config_file;
-    string                                      m_input_file;
-    string                                      m_output_file;
-
-	// bkp todo, using globals!
-	vector<token_def*>                          m_tokens;
-	map<unsigned long, token_def*>              m_idx_tab;  // idx  -> token_def
-	map<unsigned long, token_def*>              m_id_tab;   // id   -> token_def
-	map<string, token_def*>                     m_name_tab; // name -> token_def
-	vector<token_match*>                        m_matches;
-
 	// current context
 	string                                      m_text;
 	boost::regex                                m_rexp;
 	boost::sregex_iterator                      m_begin;
 	boost::sregex_iterator                      m_end;
 	boost::sregex_iterator*                     m_piter;
-  	int                                         m_pos;
-	int                                         m_len;
+  	//int                                         m_pos;
+	//int                                         m_len;
 	string                                      m_expr;
-    string                                      m_str;
+    string                                      m_match;
     string                                      m_prefix;
     string                                      m_suffix;
 
-    // bkp todo
     stringstream                                m_sout;
     ofstream                                    m_stream;
+    ofstream                                    m_debug1_stream;
+    ofstream                                    m_debug2_stream;
 
     string                                      m_include_path;
 	stringstream                                m_include_buffer;
-	// bkp todo
-    vector<string>                              m_line_buffer;
-
-    //context_t                                 m_context;
+	//context_t                                 m_context;
 	//stack<string>                             filestack;
+    int                                         m_line;
 };
 
 #endif
