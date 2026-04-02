@@ -42,7 +42,7 @@ ifdef CLANG
 endif
 
 ifndef RELEASE
-	CXXFLAGS+=-ggdb -DDEBUG -DDEBUG -DTRACING -DYYDEBUG -DLEX_TEST
+	CXXFLAGS+=-ggdb -DDEBUG -DWARNINGS -DTRACING -DYYDEBUG -DLEX_TEST
 endif
 
 #CYGWIN=TRUE
@@ -58,7 +58,6 @@ endif
 # ifdef TRACEING
 # CXXFLAGS += -DTRACING
 # endif
-
 
 all: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
 

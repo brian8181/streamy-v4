@@ -20,6 +20,7 @@
 #include <string>
 #include <getopt.h>
 #include <set>
+#include <filesystem>
 #include "config.hpp"
 #include "driver.h"
 #include "lexer.hpp"
@@ -29,12 +30,14 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::string;
+namespace fs = std::filesystem;
 
 constexpr int SRC_IDX_OFFSET = 0;
 constexpr int CONFIG_IDX_OFFSET = 0;
 
 static string g_config_file = "default.conf";
-static string g_output_file = "out.txt";
+static string g_output_dir = "./test/build";
+static string g_output_file = "out.obj";
 static string g_input_file = "in.txt";
 
 static bool config_flag = false;
@@ -115,11 +118,6 @@ int parse_options(const int argc, char* argv[])
         }
     }
 
-    //test
-    // symbol_table["x"] = "1";
-    // symbol_table["y"] = "2";
-    // symbol_table["z"] = "3";
-
     int offset = optind + SRC_IDX_OFFSET;
     for(int i = offset; i < argc; ++i)
     {
@@ -127,6 +125,8 @@ int parse_options(const int argc, char* argv[])
         g_input_file = argv[i];
         LOG("ATTENSION: ", FMT_FG_RED, "scannning file:\"" << g_input_file << "\"");
 
+        fs::path p = g_input_file;
+        g_output_file = "build/" + p.filename().string() + ".obj";
         stringstream log;
         log << "in:\"" << g_input_file
             << "\" - out:\"" << g_output_file
@@ -143,6 +143,7 @@ int parse_options(const int argc, char* argv[])
         }
         yyparser.parse();
         LOG("ATTENSION: ", FMT_FG_RED, "finished file:\"" << g_input_file << "\"");
+        LOG("ATTENSION: ", FMT_FG_RED, "write output to file:\"" << g_output_file << "\"");
     }
     TRACE
     INFO("EOFS");

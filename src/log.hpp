@@ -43,10 +43,14 @@ using std::cout;
 #define INFO(str) LOG("INFO: ", FMT_FG_GREEN, str)
 #define WARN(str) LOG("WARN: ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
+#elif WARNINGS
+#define INFO(str) // str
+#define WARN(str) LOG("WARN: ", FMT_FG_YELLOW, str)
+#define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #else
 #define INFO(str) // str
 #define WARN(str) // str
-#define ERROR(str) // str
+#define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #endif
 
 #endif

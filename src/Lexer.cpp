@@ -281,9 +281,8 @@ parser::symbol_type lexer::get_token()
         {
             if(m[i].matched)
             {
-#ifdef DEBUG
+
                 INFO("MATCH=\"" << m.prefix() << "\" : \"" << m.str() << "\" : \"" << m.suffix() << "\"");
-#endif
                 if(m.prefix().matched)
                 {
                     if (gp_state->id != UL_INITIAL_STATE)
