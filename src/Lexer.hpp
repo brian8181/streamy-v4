@@ -555,6 +555,23 @@ inline unsigned long on_state(state_t* pstate);
  */
 inline parser::symbol_type on_token( token_match* ptoken );
 
+/**
+ * @name   write_stream
+ * @def    parser::symbol_type get_token()
+ * @return int
+ */
+inline void write_stream(const string& s)
+{
+    m_stream << s;
+}
+
+
+inline ofstream& operator <<(string& s)
+{
+    m_stream << s;
+    return m_stream;
+}
+
 protected:
 	// current context
 	string                                      m_text;

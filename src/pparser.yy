@@ -178,7 +178,14 @@ blocks:
  * @name block
  */
 block:
-   OPEN_BRACE expr CLOSE_BRACE                               {
+    OPEN_BRACE symbol CLOSE_BRACE                               {
+                                                                    INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
+                                                                    // bkp todo 
+                                                                    string sym_value;
+                                                                    get_value($2, sym_value);
+                                                                    lexer::instance() << sym_value;
+                                                                }
+    | OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
@@ -267,9 +274,11 @@ expr:
  * @name qualafied_id
  */
 qualafied_id:
-    symbol DOT symbol                                       { INFO("qualafied_id: | symbol DOT symbol"); }
-    | symbol INDIRECT_MEMBER symbol                         { INFO("qualafied_id: | symbol INDIRECT_MEMBER symbol"); }
-    | qualafied_id DOT symbol                               { INFO("qualafied_id: | qualafied_id DOT symbol"); }
+    symbol DOT symbol                                       { 
+                                                                INFO("qualafied_id: | qualafied_id DOT symbol"); 
+                                                                $$ = $3;    
+                                                            }
+    | qualafied_id DOT symbol
     | qualafied_id INDIRECT_MEMBER symbol                   { INFO("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol"); }
                                                                 ;
 /**
