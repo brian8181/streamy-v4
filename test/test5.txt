@@ -1,0 +1,4 @@
+Hello{* TEST *}World!
+a={$a}
+b={$b}
+c={$c}

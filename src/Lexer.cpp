@@ -155,7 +155,7 @@ void lexer::load_config( const string& file )
             while (std::getline(ss, str_token, ','))
             {
                 //token_def* ptoken = m_name_tab[str_token];
-               //tokens.push_back(*ptoken);
+                //tokens.push_back(*ptoken);
                 //_state_tokens_tab[pstate->id] = tokens;
             }
         }
@@ -261,7 +261,6 @@ parser::symbol_type lexer::get_token()
         m_prefix = m.prefix().matched ? m.prefix() : string("");
         m_suffix = m.suffix().matched ? m.suffix() : string("");
         m_debug1_stream << m_prefix << m_match;
-
         m_debug2_stream << "match.sz:" << m_match.size() << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size() << endl;
         m_debug2_stream << FMT_FG_BLUE << m_prefix << FMT_FG_GREEN << m_match << FMT_FG_DARK_GREY << m_suffix << FMT_RESET << endl << endl;
 
@@ -353,7 +352,7 @@ void lexer::print_token(token_match* m)
  */
 bool lexer::is_id( const token_def& token, const unsigned long& id )
 {
-       // return (token.id == id);
+    // return (token.id == id);
     return true;
 }
 
@@ -401,7 +400,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
             case UL_OPEN_BRACE:
                 set_state(&sESCAPED);
                 print_token(ptoken);
-                m_stream << " ~"<< ptoken->value << "~ ";
+                //m_stream << " ~"<< ptoken->value << "~ ";
                 return parser::make_OPEN_BRACE();
             case UL_COMMENT:
                 print_token(ptoken);
@@ -426,7 +425,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
             case UL_CLOSE_BRACE:
                 set_state(&sINITIAL);
                 print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
+                //m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_CLOSE_BRACE();
             case UL_IF:
                 set_state(&sIF_BLOCK);
@@ -434,7 +433,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 return parser::make_IF();
             case UL_SYMBOL:
                 print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
+                //m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_SYMBOL(ptoken->value);
             case UL_CONST_SYMBOL:
                 print_token(ptoken);
@@ -458,7 +457,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 return parser::make_HASH_MARK();
             case UL_COLON:
                 print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
+                //m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_COLON();
             case UL_COMMA:
                 print_token(ptoken);
@@ -466,11 +465,11 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 return parser::make_COMMA();
             case UL_VBAR:
                 print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
+                //m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_VBAR();
             case UL_CAPITALIZE:
                 print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
+                //m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_CAPITALIZE(ptoken->value);
              case UL_TRUNCATE:
                 print_token(ptoken);
