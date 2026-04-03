@@ -228,8 +228,7 @@ block:
                                                                     string file = $3[i].second;
                                                                     INFO("file=\"" << FMT_ITALIC << file << "\"");
                                                                     //INFO(include_buffer->str());
-
-                                                                    lexer::instance().reset(file);
+                                                                    lexer::instance().push(file);
                                                                     // read include path
                                                                     // string sout;
                                                                     // read_str(path, sout);

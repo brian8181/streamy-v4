@@ -71,14 +71,42 @@ void lexer::init(const string &config_file, string& input_file, const string& ou
  * @name reset
  * @def  void lexer::reset()
  */
-void lexer::reset(string& input_file)
+void lexer::push(string& input_file)
 {
+    file_ptrs.push(g_input);
     g_input = new file_ptr(input_file);
+    
+    filestack.push(g_input_file);
     g_input_file = input_file;
+
     fs::path p = g_input_file;
     g_output_file = "build/" + p.filename().string() + ".obj";
     read_str( input_file, m_text );
-    g_input = new file_ptr(input_file);
+    m_suffix = m_text;
+    // set state
+    set_state(gp_state);
+}
+
+
+/**
+ * @name pop
+ * @def  void lexer::reset()
+ */
+void lexer::pop()
+{
+    if(file_ptrs.empty())
+        parser::make_END_OF_FILES();
+    g_input = file_ptrs.top();
+    file_ptrs.pop();
+    
+    if(filestack.empty())
+        parser::make_END_OF_FILES();
+    g_input_file = filestack.top();
+    filestack.pop();
+
+    fs::path p = g_input_file;
+    g_output_file = "build/" + p.filename().string() + ".obj";
+    read_str( g_input->path, m_text );
     m_suffix = m_text;
     // set state
     set_state(gp_state);
@@ -519,7 +547,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 string qstr = g_stringstream.str();
                 g_stringstream.str("");
                 g_stringstream.clear();
-                m_stream << qstr  << "\"";
+                m_stream << qstr;
                 return parser::make_STRING_LITERAL(qstr);
             }
             case UL_SKIP_TOKEN:

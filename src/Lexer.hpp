@@ -444,10 +444,16 @@ public:
 void init(const string &config_file, string& input_file, const string& output_file);
 
 /**
- * @name reset
- * @def  void reset()
+ * @name push 
+ * @brief  push dir on stack
  */
-void reset(string& input_file);
+void push(string& input_file);
+
+/**
+ * @name pop
+ * @brief pop dir off stack
+ */
+void pop();
 
 /**
  * @name   load_config
@@ -623,6 +629,7 @@ protected:
 	stringstream                                m_include_buffer;
 	//context_t                                 m_context;
 	std::stack<string>                             filestack;
+    std::stack<file_ptr*>                          file_ptrs;
     int                                         m_line;
 };
 
