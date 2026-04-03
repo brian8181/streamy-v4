@@ -11,12 +11,20 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 using std::string;
 using std::vector;
 using std::ifstream;
 using std::ofstream;
 using std::stringstream;
+
+/**
+ * 
+ */
+long file_size(const string& path);
 
 /**
  * @brief  check if file exist

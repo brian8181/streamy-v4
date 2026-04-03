@@ -41,6 +41,7 @@ static bool output_file_flag = false;
 static bool dump_flag = false;
 static bool verbose_flag = false;
 
+
 // create parser
 static yy::parser yyparser;
 
@@ -110,6 +111,7 @@ int parse_options(const int argc, char* argv[])
     for(int i = offset; i < argc; ++i)
     {
         TRACE();
+        g_input = new file_ptr(argv[i]);
         g_input_file = argv[i];
         LOG("ATTENSION: ", FMT_FG_RED, "scannning file:\"" << g_input_file << "\"");
 

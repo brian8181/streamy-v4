@@ -24,11 +24,13 @@
 #include <iterator>
 #include <list>
 #include <map>
+#include <stack>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
+#include <iomanip>
 #include <boost/regex.hpp>
 #include "pparser.tab.hh"
 
@@ -70,34 +72,61 @@ typedef struct state_t
 	string name;
 } state_t;
 
-
 class file_context
 {
     string name;
     string* parent;
-    state_t state;
+    char text[];
 };
 
-// bkp todo
-class context
+class file_ptr
 {
-    context(string& input, string& output, const string& parent);
-    std::string&               conf_path;
-	std::string&               in_path;
-    std::string&               out_path;
-    std::string&               parent;
-    boost::regex&              rexp;
-	boost::sregex_iterator&    begin;
-	boost::sregex_iterator&    end;
-	boost::sregex_iterator*    p_iter;
-	state_t*                   state;
-    string&                    all_text;
-    string&                    remaining_text;
-	string&                    expr;
-    string&                    prefix;
-    string&                    suffix;
-	vector<token_def*>*        matches;
+
+    public:
+    file_ptr(string path)
+    {
+        // size = file_size(path);
+        // unsigned char* buffer = new unsigned char[size];
+        string buffer;
+        size = read_str(path, buffer);
+        beg = &buffer[0];
+        pos = beg;
+        mbeg = pos;
+        mlen = 0;
+        end = &buffer[size-1];
+        buf = beg;
+    }
+    
+
+    void set_pos(int offset)
+    {
+        mbeg = pos; // move pos
+        mlen = offset;
+        pos += offset; // move pos
+    }
+
+    string path;
+    char* beg;
+    char* pos;
+    char* end;
+    char* mbeg;
+    long mlen;
+    char* buf;
+    long size;
+
+    void log()
+    {
+
+        cout << std::hex << "0x" << (unsigned long)beg << " " << " : 0x" << (unsigned long)pos << " : 0x" << (unsigned long)end << " : 0x" 
+            << (unsigned long)mbeg << " : " <<  std::dec << mlen << " : 0x" << std::hex << (long)buf << " : " << std::dec << size << " BUF:SZ:" << strlen(buf) << endl; 
+        stringstream ss;
+        ss << "pos:" << (long)(pos-beg) << " ~ mbeg:" << (long)(mbeg-beg) << " ~ mlen:" << mlen << " ~ size:" << size;
+        INFO(ss.str());
+    }
 };
+
+static file_ptr* g_input;
+
 
 // bkp todo cleanup!
 const string VALID_SYMBOL_CHARS   = R"([A-Za-z0-9_])"; /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
@@ -418,7 +447,7 @@ void init(const string &config_file, string& input_file, const string& output_fi
  * @name reset
  * @def  void reset()
  */
-void reset();
+void reset(string& input_file);
 
 /**
  * @name   load_config
@@ -593,7 +622,7 @@ protected:
     string                                      m_include_path;
 	stringstream                                m_include_buffer;
 	//context_t                                 m_context;
-	//stack<string>                             filestack;
+	std::stack<string>                             filestack;
     int                                         m_line;
 };
 

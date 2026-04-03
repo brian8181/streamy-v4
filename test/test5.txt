@@ -1,4 +1,4 @@
-Hello {* TEST *} World!
+{include file="test/test1.txt"}
 a={$a}
 b={$b}
 c={$c}

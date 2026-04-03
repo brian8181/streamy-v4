@@ -18,6 +18,20 @@ using std::ofstream;
 using std::pair;
 using std::ios;
 
+long file_size(const string& path)
+{
+    try 
+    {
+        std::uintmax_t size = fs::file_size(path);
+        return size;
+    } 
+    catch (const fs::filesystem_error& e) 
+    {
+        std::cerr << "Error: " << e.what() << '\n';
+        return -1;
+    }
+    return -1;
+}
 /**
  * @brief  check if file exist
  * @param  const string& : path to file

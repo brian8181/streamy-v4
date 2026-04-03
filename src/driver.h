@@ -12,11 +12,33 @@
 #include "config.h"
 #include "pparser.tab.hh"
 #include "log.hpp"
+#include "fileio.hpp"
 
 static string g_config_file = "default.conf";
 static string g_output_dir = "./test/build";
 static string g_output_file = "out.obj";
 static string g_input_file = "in.txt";
+
+// bkp todo
+// class context
+// {
+//     context(string& input, string& output, const string& parent);
+//     std::string&               conf_path;
+// 	std::string&               in_path;
+//     std::string&               out_path;
+//     std::string&               parent;
+//     boost::regex&              rexp;
+// 	boost::sregex_iterator&    begin;
+// 	boost::sregex_iterator&    end;
+// 	boost::sregex_iterator*    p_iter;
+// 	//state_t*                   state;
+//     string&                    all_text;
+//     string&                    remaining_text;
+// 	string&                    expr;
+//     string&                    prefix;
+//     string&                    suffix;
+// 	//vector<token_def*>*        matches;
+// };
 
 
 /**

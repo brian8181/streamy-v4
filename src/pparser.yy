@@ -98,7 +98,7 @@
     // declare
     typedef map<string, string> symbol_table_t;
     // test
-    symbol_table_t symbol_table =  { {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"}, {"$x", "x"}, {"$y", "y"}, {"$z", "z"}, {"$xxx", "testxxx"}, {"$yyy", "testyyyy"}, {"$zzz", "testzzzz"}};
+    symbol_table_t symbol_table =  { {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"}, {"$x", "x"}, {"$y", "y"}, {"$z", "z"}, {"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"}};
     bool is_name(const std::pair<string, string>& p, const string& str);
 
     //%type<std::vector< modifier_t > > modifiers
@@ -225,20 +225,24 @@ block:
                                                                          if($3[i].first == "file")
                                                                              break;
                                                                     }
-                                                                    string path = $3[i].second;
-                                                                    // read include path
-                                                                    string sout;
-                                                                    read_str(path, sout);
-                                                                    // append include path output to buffer
-                                                                    string* p_rstr = lexer::instance().get_remaining();
-                                                                    stringstream* include_buffer = lexer::instance().get_include_buffer();
-                                                                    *include_buffer << sout << *p_rstr;
+                                                                    string file = $3[i].second;
+                                                                    INFO("file=\"" << FMT_ITALIC << file << "\"");
+                                                                    //INFO(include_buffer->str());
 
-                                                                    INFO(include_buffer->str());
+                                                                    lexer::instance().reset(file);
+                                                                    // read include path
+                                                                    // string sout;
+                                                                    // read_str(path, sout);
+                                                                    // // append include path output to buffer
+                                                                    // string* p_rstr = lexer::instance().get_remaining();
+                                                                    // stringstream* include_buffer = lexer::instance().get_include_buffer();
+                                                                    // *include_buffer << sout << *p_rstr;
+
+                                                                    
                                                                     // set the suffix a.k.a "current search buffer"
-                                                                    lexer::instance().set_remaining( (*include_buffer).str() );
-                                                                    lexer::instance().set_state(&sINITIAL);
-                                                                    INFO("file=\"" << FMT_ITALIC << path << "\"");
+                                                                    // lexer::instance().set_remaining( (*include_buffer).str() );
+                                                                    // lexer::instance().set_state(&sINITIAL);
+                                                                   
                                                                 }
     | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
                                                                 ;
@@ -418,17 +422,17 @@ qualafied_id:
  * @name symbol
  */
 SYM:
-    SYMBOL   '$'                                                {
+    SYMBOL  '$'                                                {
                                                                     INFO("symbol: | SYMBOL=\"" << $1 << "\"");
                                                                     symbol_t s = { $1, 0 };
                                                                     $$=s;
                                                                 }
-    | CONST_SYMBOL   '$'                                        {
+    | CONST_SYMBOL  '$'                                        {
                                                                     INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
                                                                     symbol_t s = { $1, 0 };
                                                                     $$=s;
                                                                 }
-    | SYM DOT SYM   '$'                                   {
+    | SYM DOT SYM  '$'                                         {
                                                                     INFO("symbol: | symbol DOT symbol");
                                                                     symbol_t s1 = { $1, 0 };
                                                                     symbol_t s2 = { $1, s1 };

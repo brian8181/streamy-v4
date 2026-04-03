@@ -16,6 +16,9 @@
 using std::vector;
 using std::stringstream;
 using std::cout;
+using std::endl;
+
+void log( std::string msg, int line_number );
 
 #define ITALIC(str) FMT_ITALIC << str << FMT_RESET
 #define UNDERLINE(str) FMT_UNDERLINE << str << FMT_RESET

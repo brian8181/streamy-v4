@@ -37,6 +37,7 @@ using std::left;
 using std::right;
 using yy::parser;
 
+
 /**
  * @name g_stringstream
  */
@@ -57,6 +58,7 @@ void lexer::init(const string &config_file, string& input_file, const string& ou
 {
     TRACE();
     read_str( input_file, m_text );
+    g_input = new file_ptr(input_file);
     m_suffix = m_text;
     // set state
     set_state(gp_state);
@@ -69,9 +71,17 @@ void lexer::init(const string &config_file, string& input_file, const string& ou
  * @name reset
  * @def  void lexer::reset()
  */
-void lexer::reset()
+void lexer::reset(string& input_file)
 {
-    
+    g_input = new file_ptr(input_file);
+    g_input_file = input_file;
+    fs::path p = g_input_file;
+    g_output_file = "build/" + p.filename().string() + ".obj";
+    read_str( input_file, m_text );
+    g_input = new file_ptr(input_file);
+    m_suffix = m_text;
+    // set state
+    set_state(gp_state);
 }
 
 /**
@@ -261,6 +271,11 @@ parser::symbol_type lexer::get_token()
         m_debug2_stream << "match.sz:" << m_match.size() << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size() << endl;
         m_debug2_stream << FMT_FG_BLUE << m_prefix << FMT_FG_GREEN << m_match << FMT_FG_DARK_GREY << m_suffix << FMT_RESET << endl << endl;
 
+        int pos = g_input->size - m_suffix.size(); 
+        g_input->set_pos(pos);
+        g_input->log();
+        
+
         // find matched
         for(int i = 1; i < len; ++i)
         {
@@ -404,6 +419,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
             case UL_NEWLINE:
                 TRACE();
                 m_line++;
+                m_stream << ptoken->pmatch->str();
                 return parser::make_SKIP_TOKEN();
             case UL_SKIP_TOKEN:
                 return parser::make_OPEN_BRACE();
@@ -452,8 +468,6 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
             case UL_FILE_ATTRIB:
                 return parser::make_FILE_ATTRIB(ptoken->pmatch->str());
             case UL_INCLUDE:
-                //set_state(&sINCLUDING);
-                //goto SKIP;
                 return parser::make_INCLUDE(ptoken->pmatch->str());
             case UL_ASSIGN:
                 return parser::make_ASSIGN(ptoken->pmatch->str());
@@ -564,5 +578,13 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
             break;
         }
     }
+
+    // pop stack
+    if(filestack.empty())
+        parser::make_END_OF_FILES();
+
+    string dir = filestack.top();
+    filestack.pop();
+
     return parser::make_END();
 }
