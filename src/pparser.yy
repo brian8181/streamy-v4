@@ -48,6 +48,13 @@
 
     std::map<string, string> stab;
 
+    typedef struct symbol_t
+    {
+        std::string name;
+        symbol_t* parent;
+        std::vector<symbol_t> members;
+    } symbol_t;
+
     typedef struct modifier_t
     {
         std::string name;
@@ -180,7 +187,6 @@ blocks:
 block:
     OPEN_BRACE symbol CLOSE_BRACE                               {
                                                                     INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
-                                                                    // bkp todo 
                                                                     string sym_value;
                                                                     get_value($2, sym_value);
                                                                     lexer::instance() << sym_value;
@@ -271,23 +277,12 @@ expr:
     | LPAREN expr RPAREN                                        { INFO("PARSER expr: | LPAREN expr RPAREN <<"); }
                                                                 ;
 /**
- * @name qualafied_id
- */
-qualafied_id:
-    symbol DOT symbol                                       { 
-                                                                INFO("qualafied_id: | qualafied_id DOT symbol"); 
-                                                                $$ = $3;    
-                                                            }
-    | qualafied_id DOT symbol
-    | qualafied_id INDIRECT_MEMBER symbol                   { INFO("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol"); }
-                                                                ;
-/**
  * @name sub_proc
  */
 sub_proc:
     symbol LPAREN params RPAREN                                 {
                                                                     INFO("sub_proc: | symbol LPAREN params RPAREN" << "");
-                                                                    $$=$1;
+                                                                    //$$=$1;
                                                                 }
                                                                 ;
 /**
@@ -296,7 +291,7 @@ sub_proc:
 array:
     symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET           {
                                                                     INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
-                                                                    $$=$1;
+                                                                    //$$=$1;
                                                                 }
                                                                 ;
 /**
@@ -405,17 +400,61 @@ colon_sep_param:
                                                                 } 
                                                                 ;
 /**
+ * @name qualafied_id
+ */
+qualafied_id:
+    symbol DOT symbol                                       { 
+                                                                INFO("qualafied_id: | qualafied_id DOT symbol"); 
+                                                                $$ = $3;    
+                                                            }
+    | qualafied_id DOT symbol
+    | qualafied_id INDIRECT_MEMBER symbol                   { INFO("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol"); }
+                                                            ;
+/**
+ * @name symbol
+ */
+_SYM_:
+    SYMBOL   '$'                                                {
+                                                                    INFO("symbol: | SYMBOL=\"" << $1 << "\"");
+                                                                    symbol_t s = { $1, 0 };
+                                                                    //$$=s;
+                                                                }
+    | CONST_SYMBOL   '$'                                        {
+                                                                    INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
+                                                                    symbol_t s = { $1, 0 };
+                                                                    //$$=s;
+                                                                }
+    | symbol DOT symbol   '$'                                   {
+                                                                    INFO("symbol: | symbol DOT symbol");
+                                                                    symbol_t s1 = { $1, 0 };
+                                                                    symbol_t s2 = { $1, s1 };
+                                                                    s1.members.push_back(s2);
+                                                                    //$$=s1;
+                                                                }  
+                                                                ;
+/**
  * @name symbol
  */
 symbol:
     SYMBOL                                                      {
                                                                     INFO("symbol: | SYMBOL=\"" << $1 << "\"");
-                                                                    $$=$1;
+                                                                    //symbol_t s = { $1, 0 };
+                                                                    //$$=s;
                                                                 }
     | CONST_SYMBOL                                              {
                                                                     INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
-                                                                    $$=$1;
+                                                                    //symbol_t s = { $1, 0 };
+                                                                    //$$=s;
                                                                 }
+    | symbol DOT symbol                                         {
+                                                                    INFO("symbol: | symbol DOT symbol");
+                                                                    // symbol_t s1 = { $1, 0 };
+                                                                    // symbol_t s2 = { $1, s1 };
+                                                                    // s1.members.push_back(s2);
+                                                                    const string s1($1 + "." + $3);
+                                                                    //const string s2 = $3;
+                                                                    $$ = s1;
+                                                                }  
                                                                 ;
 /**
  * @name built-in

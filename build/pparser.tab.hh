@@ -436,11 +436,11 @@ namespace yy {
       // block
       // assign_stmt
       // expr
-      // qualafied_id
       // sub_proc
       // array
       // modifier
       // colon_sep_param
+      // qualafied_id
       // symbol
       // attrib_name
       char dummy4[sizeof (std::string)];
@@ -607,7 +607,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 105, ///< Number of tokens.
+        YYNTOKENS = 106, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // END
         S_YYerror = 1,                           // error
@@ -713,16 +713,16 @@ namespace yy {
         S_SLASH = 101,                           // SLASH
         S_PERCENT_SIGN = 102,                    // PERCENT_SIGN
         S_UMINUS = 103,                          // UMINUS
-        S_104_ = 104,                            // '#'
-        S_YYACCEPT = 105,                        // $accept
-        S_complier = 106,                        // complier
-        S_files = 107,                           // files
-        S_file = 108,                            // file
-        S_blocks = 109,                          // blocks
-        S_block = 110,                           // block
-        S_assign_stmt = 111,                     // assign_stmt
-        S_expr = 112,                            // expr
-        S_qualafied_id = 113,                    // qualafied_id
+        S_104_ = 104,                            // '$'
+        S_105_ = 105,                            // '#'
+        S_YYACCEPT = 106,                        // $accept
+        S_complier = 107,                        // complier
+        S_files = 108,                           // files
+        S_file = 109,                            // file
+        S_blocks = 110,                          // blocks
+        S_block = 111,                           // block
+        S_assign_stmt = 112,                     // assign_stmt
+        S_expr = 113,                            // expr
         S_sub_proc = 114,                        // sub_proc
         S_array = 115,                           // array
         S_params = 116,                          // params
@@ -731,10 +731,11 @@ namespace yy {
         S_modifier = 119,                        // modifier
         S_colon_sep_params = 120,                // colon_sep_params
         S_colon_sep_param = 121,                 // colon_sep_param
-        S_symbol = 122,                          // symbol
-        S_attributes = 123,                      // attributes
-        S_attrib = 124,                          // attrib
-        S_attrib_name = 125                      // attrib_name
+        S_qualafied_id = 122,                    // qualafied_id
+        S_symbol = 123,                          // symbol
+        S_attributes = 124,                      // attributes
+        S_attrib = 125,                          // attrib
+        S_attrib_name = 126                      // attrib_name
       };
     };
 
@@ -834,11 +835,11 @@ namespace yy {
       case symbol_kind::S_block: // block
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_expr: // expr
-      case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
       case symbol_kind::S_colon_sep_param: // colon_sep_param
+      case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
         value.move< std::string > (std::move (that.value));
@@ -1018,11 +1019,11 @@ switch (yykind)
       case symbol_kind::S_block: // block
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_expr: // expr
-      case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
       case symbol_kind::S_colon_sep_param: // colon_sep_param
+      case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
         value.template destroy< std::string > ();
@@ -2806,7 +2807,7 @@ switch (yykind)
     static const signed char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
-    static const short yypgoto_[];
+    static const signed char yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
     static const signed char yydefgoto_[];
@@ -3058,7 +3059,7 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 148,     ///< Last index in yytable_.
+      yylast_ = 166,     ///< Last index in yytable_.
       yynnts_ = 21,  ///< Number of nonterminal symbols.
       yyfinal_ = 19 ///< Termination state number.
     };
@@ -3080,7 +3081,7 @@ switch (yykind)
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,   104,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,   105,   104,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -3198,11 +3199,11 @@ switch (yykind)
       case symbol_kind::S_block: // block
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_expr: // expr
-      case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
       case symbol_kind::S_colon_sep_param: // colon_sep_param
+      case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
         value.copy< std::string > (YY_MOVE (that.value));
@@ -3308,11 +3309,11 @@ switch (yykind)
       case symbol_kind::S_block: // block
       case symbol_kind::S_assign_stmt: // assign_stmt
       case symbol_kind::S_expr: // expr
-      case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
       case symbol_kind::S_colon_sep_param: // colon_sep_param
+      case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
         value.move< std::string > (YY_MOVE (s.value));
@@ -3387,7 +3388,7 @@ switch (yykind)
 
 
 } // yy
-#line 3391 "build/pparser.tab.hh"
+#line 3392 "build/pparser.tab.hh"
 
 
 
