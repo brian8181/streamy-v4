@@ -1,3 +1,0 @@
-/home/brian/src/streamy-v4/build2/CMakeFiles/ast_utest.dir
-/home/brian/src/streamy-v4/build2/CMakeFiles/edit_cache.dir
-/home/brian/src/streamy-v4/build2/CMakeFiles/rebuild_cache.dir

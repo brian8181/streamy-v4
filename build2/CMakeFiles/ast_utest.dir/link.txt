@@ -1,1 +1,0 @@
-/usr/bin/c++.exe -Wl,--enable-auto-import CMakeFiles/ast_utest.dir/Test_assign.cpp.o CMakeFiles/ast_utest.dir/main.cpp.o CMakeFiles/ast_utest.dir/log.cpp.o -o ast_utest.exe -Wl,--out-implib,libast_utest.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lProject_lib -lcppunit
