@@ -8,8 +8,13 @@
 #define LOG_HPP_
 
 #include <iostream>
+#include <sstream>
+#include <vector>
+#include <boost/regex.hpp>
 #include "bash_color.hpp"
 
+using std::vector;
+using std::stringstream;
 using std::cout;
 
 #define ITALIC(str) FMT_ITALIC << str << FMT_RESET
@@ -47,17 +52,42 @@ using std::cout;
 
 // debugging 
 #ifdef DEBUG
-#define INFO(str) LOG("INFO: ", INFO_COLOR, str)
-#define WARN(str) LOG("WARN: ", FMT_FG_YELLOW, str)
+#define INFO(str)  LOG("INFO:  ", INFO_COLOR, str)
+#define WARN(str)  LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #elif WARNINGS
 #define INFO(str) // str
-#define WARN(str) LOG("WARN: ", FMT_FG_YELLOW, str)
+#define WARN(str)  LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #else
 #define INFO(str) // str
 #define WARN(str) // str
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #endif
+
+
+namespace xx
+{
+  template<typename T, typename... Args>
+  string& print(string& fmt, Args... args) 
+  {
+      vector<T>& v;
+      (v.push_back(args), ...);
+      
+      int len = v.size();
+      boost::regex rexp = boost::regex( R"({.*})", boost::regex::extended );
+      auto beg = boost::sregex_iterator( fmt.begin( ), fmt.end( ), rexp );
+      auto end = boost::sregex_iterator();
+      auto iter = beg; 
+      
+      stringstream ss;
+      for(int i = 0; iter != end; ++iter, ++i)
+         ss << iter->prefix() << v[i];
+         
+      ss << iter->suffix();
+      fmt = ss.str();
+      return fmt;
+  }
+}
 
 #endif

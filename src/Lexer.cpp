@@ -208,9 +208,6 @@ state_t *lexer::get_state() const
 void lexer::set_state(state_t* pstate)
 {
     TRACE();
-    //m_tokens.clear();
-    //m_idx_tab.clear();
-    //m_name_tab.clear();
     gp_state = pstate;
 
     stringstream ss;
@@ -237,8 +234,8 @@ void lexer::set_state(state_t* pstate)
     set_context(m_suffix);
 
 #ifdef DEBUG
-    INFO("EXPR=\"" << m_expr << "\"")
     INFO("STATE=" << pstate->id << " : " << pstate->name);
+    INFO("EXPR=\"" << m_expr << "\"");
 #endif
 }
 
@@ -284,9 +281,6 @@ parser::symbol_type lexer::get_token()
                 unsigned long id = (*g_tokens_by_state_id[gp_state->id])[i-1];
                 ptok_def = &g_tokens[id];
                 
-                INFO("match.sz:" << m_match.size() << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
-                INFO("match[ " << "i=" << i << " ] = " << ptok_def->name << "[ \"" << m[i].str() << "\" ]");
-
                 // find match & lookup by sub_match index
                 token_match tok = {id, ptok_def, g_input_file, m_line, i, &m};
                 string match_str = m[i].str();
@@ -296,9 +290,12 @@ parser::symbol_type lexer::get_token()
                 yy::parser::symbol_type rtoken = on_token( &tok );
                 if (rtoken.kind() == yy::parser::symbol_type( parser::token::SKIP_TOKEN).kind())
                 {
-                    INFO("skipping... ");
+                    INFO("Skipping - token:" << tok.token->name << " = " << tok.pmatch->str());
                     goto SKIP;
                 }
+
+                INFO("match.sz:" << m_match.size() << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
+                INFO("match[ " << "i=" << i << " ] = " << ptok_def->name << "[ \"" << m[i].str() << "\" ]");
                 return rtoken;
             }
         }
@@ -395,7 +392,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
     {
         case UL_INITIAL_STATE:
         {
-            INFO("INITIAL_STATE");
+            INFO("switch case: INITIAL_STATE");
             switch (ptoken->id)
             {
             case UL_OPEN_BRACE:
@@ -403,22 +400,19 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 set_state(&sESCAPED);
                 return parser::make_OPEN_BRACE();
             case UL_COMMENT:
-                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_NEWLINE:
                 TRACE();
                 m_line++;
-                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_SKIP_TOKEN:
-                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_OPEN_BRACE();
             }
             break;
         }
         case UL_ESCAPED_STATE:
         {
-            INFO("ESCAPED_STATE");
+            INFO("switch case: ESCAPED_STATE");
             switch (ptoken->id)
             {
             case UL_CLOSE_BRACE:
@@ -467,7 +461,6 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 set_state(&sDOUBLE_QUOTED);
             case UL_WHITESPACE:
             case UL_SKIP_TOKEN:
-                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             }
             break;
@@ -475,11 +468,11 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
         break;
         case UL_IF_BLOCK_STATE:
         {
-            INFO("IF_BLOCK_STATE");
+            INFO("switch case: IF_BLOCK_STATE");
             switch (ptoken->id)
             {
             case UL_SKIP_TOKEN:
-                INFO("SKIP_TOKEN" << ptoken->token->name);
+                
                 return parser::make_OPEN_BRACE();
             }
             break;
@@ -487,24 +480,20 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
         break;
         case UL_DOUBLE_QUOTED_STATE:
         {
-            INFO("DOUBLE_QUOTED_STATE");
+            INFO("switch case: DOUBLE_QUOTED_STATE");
             switch (ptoken->id)
             {
             case UL_ESC_TAB:
                 g_stringstream << "\t";
-                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_ESC_BACKSLASH:
                 g_stringstream << "\\";
-                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_ESC_DOUBLE_QUOTE:
                 g_stringstream << "\"";
-                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_ESC_SINGLE_QUOTE:
                 g_stringstream << "'";
-                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_VALID_CHAR:
                 g_stringstream << ptoken->pmatch->str();
@@ -520,7 +509,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 return parser::make_STRING_LITERAL(qstr);
             }
             case UL_SKIP_TOKEN:
-                INFO("SKIP_TOKEN" << ptoken->token->name);
+                
                 return parser::make_SKIP_TOKEN();
             }
             break;
@@ -528,7 +517,7 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
         break;
         case UL_INCLUDING_STATE:
         {   
-            INFO("INCLUDING_STATE");
+            INFO("switch case: INCLUDING_STATE");
         //     switch (ptoken->id)
         //     {
         //         case UL_FILE_ATTRIB:
