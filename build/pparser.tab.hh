@@ -378,7 +378,6 @@ namespace yy {
       char dummy1[sizeof ( std::pair<std::string, std::string> )];
 
       // modifiers
-      // colon_sep_params
       char dummy2[sizeof ( std::vector< std::string > )];
 
       // PLUS_SIGN
@@ -439,7 +438,6 @@ namespace yy {
       // sub_proc
       // array
       // modifier
-      // colon_sep_param
       // qualafied_id
       // symbol
       // attrib_name
@@ -729,13 +727,11 @@ namespace yy {
         S_param = 117,                           // param
         S_modifiers = 118,                       // modifiers
         S_modifier = 119,                        // modifier
-        S_colon_sep_params = 120,                // colon_sep_params
-        S_colon_sep_param = 121,                 // colon_sep_param
-        S_qualafied_id = 122,                    // qualafied_id
-        S_symbol = 123,                          // symbol
-        S_attributes = 124,                      // attributes
-        S_attrib = 125,                          // attrib
-        S_attrib_name = 126                      // attrib_name
+        S_qualafied_id = 120,                    // qualafied_id
+        S_symbol = 121,                          // symbol
+        S_attributes = 122,                      // attributes
+        S_attrib = 123,                          // attrib
+        S_attrib_name = 124                      // attrib_name
       };
     };
 
@@ -775,7 +771,6 @@ namespace yy {
         break;
 
       case symbol_kind::S_modifiers: // modifiers
-      case symbol_kind::S_colon_sep_params: // colon_sep_params
         value.move<  std::vector< std::string >  > (std::move (that.value));
         break;
 
@@ -838,7 +833,6 @@ namespace yy {
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
-      case symbol_kind::S_colon_sep_param: // colon_sep_param
       case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
@@ -959,7 +953,6 @@ switch (yykind)
         break;
 
       case symbol_kind::S_modifiers: // modifiers
-      case symbol_kind::S_colon_sep_params: // colon_sep_params
         value.template destroy<  std::vector< std::string >  > ();
         break;
 
@@ -1022,7 +1015,6 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
-      case symbol_kind::S_colon_sep_param: // colon_sep_param
       case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
@@ -3059,8 +3051,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 166,     ///< Last index in yytable_.
-      yynnts_ = 21,  ///< Number of nonterminal symbols.
+      yylast_ = 151,     ///< Last index in yytable_.
+      yynnts_ = 19,  ///< Number of nonterminal symbols.
       yyfinal_ = 19 ///< Termination state number.
     };
 
@@ -3139,7 +3131,6 @@ switch (yykind)
         break;
 
       case symbol_kind::S_modifiers: // modifiers
-      case symbol_kind::S_colon_sep_params: // colon_sep_params
         value.copy<  std::vector< std::string >  > (YY_MOVE (that.value));
         break;
 
@@ -3202,7 +3193,6 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
-      case symbol_kind::S_colon_sep_param: // colon_sep_param
       case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
@@ -3249,7 +3239,6 @@ switch (yykind)
         break;
 
       case symbol_kind::S_modifiers: // modifiers
-      case symbol_kind::S_colon_sep_params: // colon_sep_params
         value.move<  std::vector< std::string >  > (YY_MOVE (s.value));
         break;
 
@@ -3312,7 +3301,6 @@ switch (yykind)
       case symbol_kind::S_sub_proc: // sub_proc
       case symbol_kind::S_array: // array
       case symbol_kind::S_modifier: // modifier
-      case symbol_kind::S_colon_sep_param: // colon_sep_param
       case symbol_kind::S_qualafied_id: // qualafied_id
       case symbol_kind::S_symbol: // symbol
       case symbol_kind::S_attrib_name: // attrib_name
@@ -3388,7 +3376,7 @@ switch (yykind)
 
 
 } // yy
-#line 3392 "build/pparser.tab.hh"
+#line 3380 "build/pparser.tab.hh"
 
 
 

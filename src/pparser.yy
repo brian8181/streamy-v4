@@ -30,6 +30,9 @@
     using std::pair;
     using std::map;
 
+    #undef INFO_COLOR
+    #define INFO_COLOR FMT_FG_BLUE
+
     //typedef std::pair< std::string, std::string > > attrib_t;
     //typedef std::vector< attrib_t > attributes_t;
 
@@ -95,7 +98,7 @@
     // declare
     typedef map<string, string> symbol_table_t;
     // test
-    symbol_table_t symbol_table =  { {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"}, {"$x", "x"}, {"$y", "y"}, {"$z", "z"}};
+    symbol_table_t symbol_table =  { {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"}, {"$x", "x"}, {"$y", "y"}, {"$z", "z"}, {"$xxx", "testxxx"}, {"$yyy", "testyyyy"}, {"$zzz", "testzzzz"}};
     bool is_name(const std::pair<string, string>& p, const string& str);
 
     //%type<std::vector< modifier_t > > modifiers
@@ -128,7 +131,7 @@
 %type< std::vector< std::string > > modifiers
 %type<std::string> modifier
 %type<std::string> attrib_name
-%type<std::string> const_indentifier
+%type<symbol_t> SYM
 
 %nonassoc IFX
 %nonassoc ELSE ELSEIF IF WHILE BREAK
@@ -190,6 +193,7 @@ block:
                                                                     string sym_value;
                                                                     get_value($2, sym_value);
                                                                     lexer::instance() << sym_value;
+                                                                    $$=sym_value;
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
@@ -374,11 +378,11 @@ modifier:
  * @brief ( $x:$y:$x ) | 1:2:"three"
  */
 colon_sep_params:
-        /*empty*/
-        | colon_sep_params colon_sep_param                      { 
+        colon_sep_params colon_sep_param                      { 
                                                                    INFO("colon_sep_params: | colon_sep_params colon_sep_param"); 
-                                                                    //std::swap($$, $1);
-                                                                    //$$.push_back($2);
+                                                                    std::swap($$, $1);
+                                                                    $$.push_back($2);
+                                                                    
                                                                 }
                                                                 ;
 /**
@@ -388,22 +392,22 @@ colon_sep_params:
 colon_sep_param:
         COLON NUMERIC_LITERAL                                   { 
                                                                     INFO("colon_sep_param: | COLON NUMERIC_LITERAL"); 
-                                                                    //$$=$2; 
+                                                                    $$=$2; 
                                                                 }
         | COLON STRING_LITERAL                                  { 
                                                                     INFO("colon_sep_param: | COLON STRING_LITERAL"); 
-                                                                    //$$=$2;
+                                                                    $$=$2;
                                                                 }
         | COLON symbol                                          { 
                                                                     INFO("colon_sep_param: | COLON symbol");
-                                                                    //$$=$2;
+                                                                    get_value($2, $$);
                                                                 } 
                                                                 ;
 /**
  * @name qualafied_id
  */
 qualafied_id:
-    symbol DOT symbol                                       { 
+    symbol DOT symbol    '$'                                   { 
                                                                 INFO("qualafied_id: | qualafied_id DOT symbol"); 
                                                                 $$ = $3;    
                                                             }
@@ -413,23 +417,24 @@ qualafied_id:
 /**
  * @name symbol
  */
-_SYM_:
+SYM:
     SYMBOL   '$'                                                {
                                                                     INFO("symbol: | SYMBOL=\"" << $1 << "\"");
                                                                     symbol_t s = { $1, 0 };
-                                                                    //$$=s;
+                                                                    $$=s;
                                                                 }
     | CONST_SYMBOL   '$'                                        {
                                                                     INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
                                                                     symbol_t s = { $1, 0 };
-                                                                    //$$=s;
+                                                                    $$=s;
                                                                 }
-    | symbol DOT symbol   '$'                                   {
+    | SYM DOT SYM   '$'                                   {
                                                                     INFO("symbol: | symbol DOT symbol");
                                                                     symbol_t s1 = { $1, 0 };
                                                                     symbol_t s2 = { $1, s1 };
                                                                     s1.members.push_back(s2);
-                                                                    //$$=s1;
+                                                                    // $1.swap($3, $1); 
+                                                                    $$=s1;
                                                                 }  
                                                                 ;
 /**
@@ -440,6 +445,7 @@ symbol:
                                                                     INFO("symbol: | SYMBOL=\"" << $1 << "\"");
                                                                     //symbol_t s = { $1, 0 };
                                                                     //$$=s;
+                                                                    $$=$1;
                                                                 }
     | CONST_SYMBOL                                              {
                                                                     INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
@@ -452,7 +458,6 @@ symbol:
                                                                     // symbol_t s2 = { $1, s1 };
                                                                     // s1.members.push_back(s2);
                                                                     const string s1($1 + "." + $3);
-                                                                    //const string s2 = $3;
                                                                     $$ = s1;
                                                                 }  
                                                                 ;

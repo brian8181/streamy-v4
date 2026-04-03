@@ -55,7 +55,7 @@ inline state_t* gp_state = &sINITIAL;
  */
 void lexer::init(const string &config_file, string& input_file, const string& output_file)
 {
-    TRACE
+    TRACE();
     read_str( input_file, m_text );
     m_suffix = m_text;
     // set state
@@ -207,7 +207,7 @@ state_t *lexer::get_state() const
  */
 void lexer::set_state(state_t* pstate)
 {
-    TRACE
+    TRACE();
     //m_tokens.clear();
     //m_idx_tab.clear();
     //m_name_tab.clear();
@@ -249,7 +249,7 @@ void lexer::set_state(state_t* pstate)
  */
 parser::symbol_type lexer::get_token()
 {
-    TRACE
+    TRACE();
     SKIP:
     if((*m_piter) != m_end)
     {
@@ -288,7 +288,7 @@ parser::symbol_type lexer::get_token()
                 INFO("match[ " << "i=" << i << " ] = " << ptok_def->name << "[ \"" << m[i].str() << "\" ]");
 
                 // find match & lookup by sub_match index
-                token_match tok = {id, "", 0, 0, 0, m.str(), ptok_def};
+                token_match tok = {id, ptok_def, g_input_file, m_line, i, &m};
                 string match_str = m[i].str();
                 ++(*m_piter);
 
@@ -338,7 +338,7 @@ void lexer::print_token(token_match* m)
                 << "\n    name : "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->name << FMT_RESET
                 << "\n    stype: "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->stype << FMT_RESET
                 << "\n    rexp : "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->rexp << FMT_RESET
-                << "\n    value: "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << m->value << "\"" << FMT_RESET
+                << "\n    value: "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << m->pmatch->str() << "\"" << FMT_RESET
                 << "\n    line#: "  << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->_line_ << FMT_RESET
              << "\n}" << " #" << __LINE__ << endl;
 }
@@ -364,7 +364,7 @@ bool lexer::is_id( const token_def& token, const unsigned long& id )
  */
 void lexer::set_context(string& current_input)
 {
-    TRACE
+    TRACE();
     // reinit get_token iterators
     m_rexp = boost::regex( m_expr, boost::regex::extended );
     m_text = current_input;
@@ -390,122 +390,84 @@ inline unsigned long lexer::on_state(state_t *pstate)
  */
 inline parser::symbol_type lexer::on_token( token_match* ptoken )
 {
-    TRACE
+    TRACE();
     switch (gp_state->id)
     {
         case UL_INITIAL_STATE:
         {
+            INFO("INITIAL_STATE");
             switch (ptoken->id)
             {
             case UL_OPEN_BRACE:
+                TRACE();
                 set_state(&sESCAPED);
-                print_token(ptoken);
-                //m_stream << " ~"<< ptoken->value << "~ ";
                 return parser::make_OPEN_BRACE();
             case UL_COMMENT:
-                print_token(ptoken);
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_NEWLINE:
-                TRACE
-                INFO("NEWLINE line:" << m_line);
-                print_token(ptoken);
+                TRACE();
                 m_line++;
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_SKIP_TOKEN:
-                print_token(ptoken);
-                cout << "default: SKIP_TOKEN" << endl;
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_OPEN_BRACE();
             }
             break;
         }
         case UL_ESCAPED_STATE:
         {
+            INFO("ESCAPED_STATE");
             switch (ptoken->id)
             {
             case UL_CLOSE_BRACE:
                 set_state(&sINITIAL);
-                print_token(ptoken);
-                //m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_CLOSE_BRACE();
             case UL_IF:
                 set_state(&sIF_BLOCK);
-                print_token(ptoken);
                 return parser::make_IF();
             case UL_SYMBOL:
-                print_token(ptoken);
-                //m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_SYMBOL(ptoken->value);
+                return parser::make_SYMBOL(ptoken->pmatch->str());
             case UL_CONST_SYMBOL:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_CONST_SYMBOL(ptoken->value);
+                return parser::make_CONST_SYMBOL(ptoken->pmatch->str());
             case UL_PERCENT_SIGN:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_PERCENT_SIGN();
             case UL_PLUS_SIGN:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_PLUS_SIGN('+');
             case UL_DOT:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_DOT();
             case UL_HASH_MARK:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_HASH_MARK();
             case UL_COLON:
-                print_token(ptoken);
-                //m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_COLON();
             case UL_COMMA:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_COMMA();
             case UL_VBAR:
-                print_token(ptoken);
-                //m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_VBAR();
             case UL_CAPITALIZE:
-                print_token(ptoken);
-                //m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_CAPITALIZE(ptoken->value);
+                return parser::make_CAPITALIZE(ptoken->pmatch->str());
              case UL_TRUNCATE:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_TRUNCATE(ptoken->value);
+                return parser::make_TRUNCATE(ptoken->pmatch->str());
              case UL_STRIP:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_STRIP(ptoken->value);
+                return parser::make_STRIP(ptoken->pmatch->str());
             case UL_EQUAL_SIGN:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
                 return parser::make_EQUAL_SIGN();
             case UL_NUMERIC_LITERAL:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_NUMERIC_LITERAL(ptoken->value);
+                return parser::make_NUMERIC_LITERAL(ptoken->pmatch->str());
             case UL_FILE_ATTRIB:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_FILE_ATTRIB(ptoken->value);
+                return parser::make_FILE_ATTRIB(ptoken->pmatch->str());
             case UL_INCLUDE:
                 //set_state(&sINCLUDING);
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
                 //goto SKIP;
-                return parser::make_INCLUDE(ptoken->value);
+                return parser::make_INCLUDE(ptoken->pmatch->str());
             case UL_ASSIGN:
-                print_token(ptoken);
-                m_stream << " ~" << ptoken->value << "~ ";
-                return parser::make_ASSIGN(ptoken->value);
+                return parser::make_ASSIGN(ptoken->pmatch->str());
             case UL_DOUBLE_QUOTE:
                 set_state(&sDOUBLE_QUOTED);
-                m_stream << " ~" << ptoken->value << "~ ";
             case UL_WHITESPACE:
             case UL_SKIP_TOKEN:
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             }
             break;
@@ -513,11 +475,11 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
         break;
         case UL_IF_BLOCK_STATE:
         {
+            INFO("IF_BLOCK_STATE");
             switch (ptoken->id)
             {
             case UL_SKIP_TOKEN:
-                print_token(ptoken);
-                cout << "default: SKIP_TOKEN" << endl;
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_OPEN_BRACE();
             }
             break;
@@ -525,22 +487,27 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
         break;
         case UL_DOUBLE_QUOTED_STATE:
         {
+            INFO("DOUBLE_QUOTED_STATE");
             switch (ptoken->id)
             {
             case UL_ESC_TAB:
                 g_stringstream << "\t";
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_ESC_BACKSLASH:
                 g_stringstream << "\\";
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_ESC_DOUBLE_QUOTE:
                 g_stringstream << "\"";
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_ESC_SINGLE_QUOTE:
                 g_stringstream << "'";
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             case UL_VALID_CHAR:
-                g_stringstream << ptoken->value;
+                g_stringstream << ptoken->pmatch->str();
                 cout << "char " << g_stringstream.str() << endl;
                 return parser::make_SKIP_TOKEN();
             case UL_DOUBLE_QUOTE:
@@ -553,21 +520,22 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
                 return parser::make_STRING_LITERAL(qstr);
             }
             case UL_SKIP_TOKEN:
-                cout << "SKIP_TOKEN" << endl;
+                INFO("SKIP_TOKEN" << ptoken->token->name);
                 return parser::make_SKIP_TOKEN();
             }
             break;
         }
         break;
-        // case UL_INCLUDING_STATE:
-        // {
+        case UL_INCLUDING_STATE:
+        {   
+            INFO("INCLUDING_STATE");
         //     switch (ptoken->id)
         //     {
         //         case UL_FILE_ATTRIB:
         //         {
         //             const boost::regex re("file=\"([^\"]*)\"");
         //             boost::smatch sm;
-        //             boost::regex_search(ptoken->value, sm, re);
+        //             boost::regex_search(ptoken->pmatch->str(), sm, re);
         //             // const int len = m_matches.size();
         //             g_tokens[ ptoken->id ];
         //             //m_include_path.clear();
@@ -599,11 +567,11 @@ inline parser::symbol_type lexer::on_token( token_match* ptoken )
         //             return parser::make_SKIP_TOKEN();
         //     }
         //     break;
-        // }
-        // break;
+        }
+        break;
         default:
         {
-            cout << "ERROR:" << ptoken->id << endl;
+            ERROR("ERROR:" << ptoken->id);
             break;
         }
     }

@@ -50,7 +50,7 @@ static yy::parser yyparser;
  */
 yy::parser::symbol_type lex()
 {
-    TRACE
+    TRACE();
     return lexer::instance().get_token();
 }
 
@@ -62,7 +62,7 @@ yy::parser::symbol_type lex()
  */
 int parse_options(const int argc, char* argv[])
 {
-    TRACE
+    TRACE();
     
     int option;
     const auto options_string = "hVdc:o:v";
@@ -109,7 +109,7 @@ int parse_options(const int argc, char* argv[])
     int offset = optind + SRC_IDX_OFFSET;
     for(int i = offset; i < argc; ++i)
     {
-        TRACE
+        TRACE();
         g_input_file = argv[i];
         LOG("ATTENSION: ", FMT_FG_RED, "scannning file:\"" << g_input_file << "\"");
 
@@ -133,7 +133,7 @@ int parse_options(const int argc, char* argv[])
         LOG("ATTENSION: ", FMT_FG_RED, "finished file:\"" << g_input_file << "\"");
         LOG("ATTENSION: ", FMT_FG_RED, "write output to file:\"" << g_output_file << "\"");
     }
-    TRACE
+    TRACE();
     INFO("EOFS");
     return 0;
 }
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
 	try
 	{
         #ifndef _WIN32
-		TRACE
+		TRACE();
          char* argv_cpy[ sizeof(char*) * argc + 1 ];
 		if(stdin_ready(STDIN_FILENO))
 		{

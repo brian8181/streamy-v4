@@ -2,6 +2,8 @@
 # @date: Mon Sep  8 00:03:12 CDT 2025
 # @version: 0.0.1
 
+CYGWIN=TRUE
+
 APP = driver
 CXX = g++
 #CXX = x86_64-pc-cygwin-g++
@@ -45,7 +47,6 @@ ifndef RELEASE
 	CXXFLAGS+=-ggdb -DDEBUG -DWARNINGS -DTRACING -DYYDEBUG -DLEX_TEST
 endif
 
-#CYGWIN=TRUE
 ifdef CYGWIN
 	CXXFLAGS += -DCYGWIN -I"/home/brian/src/boost_1_89_0"
 #LDFLAGS += -lfmt -lcppunit.dll

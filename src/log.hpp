@@ -32,15 +32,22 @@ using std::cout;
 
 // tracing
 #ifdef TRACING
-#define TRACE cout << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << \
+#define TRACE() cout << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << \
 "\" ~ " <<  "line:" << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl;
 #else
 #define TRACE //
 #endif
 
+#define INFO_COLOR FMT_FG_GREEN
+// #ifdef SET_COLOR
+// #undef INFO_COLOR
+// #define SET_COLOR(c) c
+// #define INFO_COLOR SET_COLOR(c)
+// #endif
+
 // debugging 
 #ifdef DEBUG
-#define INFO(str) LOG("INFO: ", FMT_FG_GREEN, str)
+#define INFO(str) LOG("INFO: ", INFO_COLOR, str)
 #define WARN(str) LOG("WARN: ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #elif WARNINGS
