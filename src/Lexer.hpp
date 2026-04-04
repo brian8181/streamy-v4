@@ -93,7 +93,7 @@ public:
         mbeg = pos;
         mlen = 0;
         end = &buffer[size - 1];
-        buf = beg;
+        buffer = beg;
     }
 
     void set_pos(int offset)
@@ -101,19 +101,17 @@ public:
         mbeg = pos; // move pos
         mlen = offset;
         pos += offset; // move pos
-        file_ptr pf = new file_ptr(*this);
-        pf.set_pos(offset);
     }
 
     void replace_match(const string &replacement)
     {
         if (mbeg && mlen > 0)
         {
-            buf = string(beg, mbeg) + replacement + string(mbeg + mlen, end);
-            // update end pointer
-            end = &buf[buf.size() - 1];
-            // update pos pointer
-            pos = &buf[(mbeg - beg) + replacement.size()];
+            // pbuffer = &string(beg, mbeg) + replacement + string(mbeg + mlen, end);
+            // // update end pointer
+            // end = &buffer->size() - 1];
+            // // update pos pointer
+            // pos = &pbuffer[(mbeg - beg) + replacement.size()];
         }
     }
 
@@ -123,7 +121,7 @@ public:
     char *end;
     char *mbeg;
     long mlen;
-    char *buf;
+    char *pbuffer;
     long size;
     stringstream output;
     stringstream debug;
@@ -134,7 +132,7 @@ public:
     {
 
         cout << std::hex << "0x" << (unsigned long)beg << " " << " : 0x" << (unsigned long)pos << " : 0x" << (unsigned long)end << " : 0x"
-             << (unsigned long)mbeg << " : " << std::dec << mlen << " : 0x" << std::hex << (long)buf << " : " << std::dec << size << " BUF:SZ:" << strlen(buf) << endl;
+             << (unsigned long)mbeg << " : " << std::dec << mlen << " : 0x" << std::hex /*pbuffer */<< " : " << std::dec << endl;
         stringstream ss;
         ss << "pos:" << (long)(pos - beg) << " ~ mbeg:" << (long)(mbeg - beg) << " ~ mlen:" << mlen << " ~ size:" << size;
         INFO(ss.str());
@@ -639,6 +637,7 @@ protected:
     ofstream m_debug2_stream;
 
     string m_include_path;
+    string m_buffer;
     stringstream m_include_buffer;
     // context_t                                 m_context;
     std::stack<string> filestack;

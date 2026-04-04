@@ -229,7 +229,7 @@ block:
                                                                     INFO("file=\"" << FMT_ITALIC << file << "\"");
                                                                     //INFO(include_buffer->str());
                                                                     lexer::instance().push(file);
-                                                                    lxer::instance().set_state(&sINITIAL);                                                                    
+                                                                    lexer::instance().set_state(&sINITIAL);
                                                                     // read include path
                                                                     // string sout;
                                                                     // read_str(path, sout);

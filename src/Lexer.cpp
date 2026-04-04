@@ -608,14 +608,14 @@ inline parser::symbol_type lexer::on_token(token_match *ptoken)
     }
 
     // pop stack
-    IF(file_ptrs.empty(), "file_ptrs is empty, cannot pop input file path");
-    return parser::make_END_OF_FILES();
+    if(file_ptrs.empty(), "file_ptrs is empty, cannot pop input file path");
+        return parser::make_END_OF_FILES();
 
     g_input = file_ptrs.top();
     file_ptrs.pop();
 
-    IF(filestack.empty(), "filestack is empty, cannot pop input file path");
-    return parser::make_END_OF_FILES();
+    if(filestack.empty(), "filestack is empty, cannot pop input file path");
+        return parser::make_END_OF_FILES();
 
     g_input_file = filestack.top();
     filestack.pop();

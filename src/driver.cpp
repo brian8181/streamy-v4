@@ -40,7 +40,7 @@ static bool output_file_flag = false;
 static bool dump_flag = false;
 static bool verbose_flag = false;
 
-statix vector<token_match> g_match_squence;
+static vector<token_match> g_match_squence;
 
 // create parser
 static yy::parser yyparser;
