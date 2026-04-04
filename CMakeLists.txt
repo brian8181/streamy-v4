@@ -46,11 +46,11 @@ find_package(BISON REQUIRED)
 if(BISON_FOUND)
     # Your BISON_TARGET call goes here
     # Now you can use BISON_TARGET
-    bison_target(build/parser.tab.c parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
+    bison_target(cbuild/parser.tab.c parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
     # ... other configurations
 endif()
 
-bison_target(build/parser.cpp src/parser.yy )
+bison_target(cbuild/parser.cpp src/parser.yy )
 add_executable(driver driver.cpp ${BISON_parser_OUTPUTS})
 # add_executable(MyCompiler ${GRAMMAR_SOURCES} ${LEXER_SOURCES}) # Add the generated sources here
 # add_dependencies(MyCompiler MyParser MyScanner) # Link the targets
@@ -75,7 +75,7 @@ endif()
 #endif()
 
 # Include directories
-include_directories(${CMAKE_SOURCE_DIR}/src, ${CMAKE_SOURCE_DIR}/build, )
+include_directories(${CMAKE_SOURCE_DIR}/src, ${CMAKE_SOURCE_DIR}/cbuild, )
 
 # Add source files
 set(SOURCES

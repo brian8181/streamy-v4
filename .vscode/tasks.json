@@ -4,7 +4,7 @@
 		{
 			"label": "MAKE",
 			"type": "shell",
-			"command": "make -f ${workspaceFolder}\\makefile",
+			"command": "make -f makefile",
 			"problemMatcher": [
 				"$gcc"
 			],
@@ -12,6 +12,26 @@
 				"kind": "build",
 				"isDefault": true
 			}
+		},
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe build active file",
+			"command": "C:/cygwin64/bin/g++.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe"
+			],
+			"options": {
+				"cwd": "C:/cygwin64/bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: C:/cygwin64/bin/g++.exe"
 		}
 	]
 }
