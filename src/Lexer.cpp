@@ -49,19 +49,18 @@ inline state_t *gp_state = &sINITIAL;
 
 /**
  * @name   init
- * @def    void lexer::init(const string &config_file, const string& input_file, const string& output_file)
+ * @def    void lexer::init(const string &config_file, const string& input_file, string& output_file)
  * @brief  initialize state
  * @return bool
  */
-void lexer::init(const string &config_file, string &input_file, const string &output_file)
+void lexer::init(const string &config_file, string &input, string& output)
 {
     TRACE();
-    read_str(input_file, m_text);
-    g_input = new file_ptr(input_file);
-    m_suffix = m_text;
+    read_str(input, output);
+    g_input = new file_ptr(input);
     // set state
     set_state(gp_state);
-    m_stream.open(output_file, std::ios_base::out | std::ios::trunc);
+    m_stream.open(output, std::ios_base::out | std::ios::trunc);
     m_debug1_stream.open("debug1.txt", std::ios_base::out | std::ios::trunc);
     m_debug2_stream.open("debug2.txt", std::ios_base::out | std::ios::trunc);
 }
@@ -70,18 +69,20 @@ void lexer::init(const string &config_file, string &input_file, const string &ou
  * @name reset
  * @def  void lexer::reset()
  */
-void lexer::push(string &input_file)
+void lexer::push(const string &input)
 {
     file_ptrs.push(g_input);
-    g_input = new file_ptr(input_file);
+    g_input = new file_ptr(input);
 
     filestack.push(g_input_file);
-    g_input_file = input_file;
+    g_input_file = input;
 
     fs::path p = g_input_file;
     g_output_file = "build/" + p.filename().string() + ".obj";
-    read_str(input_file, m_text);
-    m_suffix = m_text;
+
+    string str;;
+    read_str(input, str);
+    m_suffix = str;
     // set state
     set_state(gp_state);
 }
@@ -104,8 +105,10 @@ void lexer::pop()
 
     fs::path p = g_input_file;
     g_output_file = "build/" + p.filename().string() + ".obj";
-    read_str(g_input->path, m_text);
-    m_suffix = m_text;
+
+    string str;
+    read_str(g_input->path, str);
+    m_suffix = str;
     // set state
     set_state(gp_state);
 }
@@ -608,13 +611,13 @@ inline parser::symbol_type lexer::on_token(token_match *ptoken)
     }
 
     // pop stack
-    if(file_ptrs.empty(), "file_ptrs is empty, cannot pop input file path");
+    if(file_ptrs.empty());
         return parser::make_END_OF_FILES();
 
     g_input = file_ptrs.top();
     file_ptrs.pop();
 
-    if(filestack.empty(), "filestack is empty, cannot pop input file path");
+    if(filestack.empty());
         return parser::make_END_OF_FILES();
 
     g_input_file = filestack.top();

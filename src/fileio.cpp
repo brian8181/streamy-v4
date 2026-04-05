@@ -70,6 +70,16 @@ void get_ifstream(const string& file, /*out */ ifstream*& strm)
 }
 
 /**
+ *
+ * @param sbuf *
+ * @return char
+ */
+char getc(std::streambuf& sbuf)
+{
+    return static_cast<char>(sbuf.sgetc());
+}
+
+/**
  * @brief  read a character from a file stream
  * @param  ifstream& strm : The file stream to read from
  * @param  char& c : the character to read

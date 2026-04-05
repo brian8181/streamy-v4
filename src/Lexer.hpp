@@ -153,6 +153,7 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 /**
  * @brief token definitions : unsigned long integers
  */
+#define UL_BLOCKUl
 #define UL_TILDE 4ul
 #define UL_TIC_MARK 5ul
 #define UL_EXCLAMATION 6ul
@@ -275,6 +276,22 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 #define UL_NULL 0x0ul
 #define EMPTY_STRING string("")
 #define S_TYPE "string"
+#define UL_MODIFIER __LINE__
+#define UL_BLOCK __LINE__
+#define UL_BLOCKS __LINE__
+#define UL_BUILT_IN __LINE__
+#define UL_FILES __LINE__
+#define UL_FILE __LINE__
+#define UL_ASSIGN_STMT __LINE__
+#define UL_EXPR __LINE__
+#define UL_SUB_PROC __LINE__
+#define UL_PARAM __LINE__
+#define UL_PARAMS __LINE__
+#define UL_COLON_SEP_PARAMS __LINE__
+#define UL_COLON_SEP_PARAM __LINE__
+#define UL_ATTRIB
+#define UL_ATTRIBUTES __LINE__
+
 /**
  * @name g_tokens_all
  * @brief global token vector - all tokens
@@ -453,13 +470,13 @@ public:
      * @brief  initialize state
      * @return bool
      */
-    void init(const string &config_file, string &input_file, const string &output_file);
+    void init(const string &config_file, string &input_file, string &output_file);
 
     /**
      * @name push
      * @brief  push dir on stack
      */
-    void push(string &input_file);
+    void push(const string &input_file);
 
     /**
      * @name pop

@@ -52,6 +52,13 @@ void get_ofstream(const string& file, /*out */ofstream*& strm);
 void get_ifstream(const string& file, /*out */ifstream*& strm);
 
 /**
+ *
+ * @param sbuf *
+ * @return char
+ */
+char getc(std::streambuf& sbuf);
+
+/**
  * @brief  read a character from a file stream
  * @param  strm The file stream to read from
  * @param  c : the character to read

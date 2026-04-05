@@ -216,7 +216,6 @@ block:
                                                                     $$ = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
-                                                                    //ERROR("block: OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
                                                                     INFO("block: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
                                                                     size_t len = $3.size();
                                                                     int i = 0;
@@ -227,9 +226,9 @@ block:
                                                                     }
                                                                     string file = $3[i].second;
                                                                     INFO("file=\"" << FMT_ITALIC << file << "\"");
-                                                                    //INFO(include_buffer->str());
                                                                     lexer::instance().push(file);
                                                                     lexer::instance().set_state(&sINITIAL);
+
                                                                     // read include path
                                                                     // string sout;
                                                                     // read_str(path, sout);
