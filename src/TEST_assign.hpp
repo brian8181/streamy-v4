@@ -28,7 +28,9 @@ public:
 	* @brief : destructor
 	*/
 	virtual ~TEST_assign();
-	
+
+
+	TEST_assign
 	/**
 	  * @brief 
 	  * @brief c++ comment ...

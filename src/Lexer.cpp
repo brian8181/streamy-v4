@@ -53,14 +53,14 @@ inline state_t *gp_state = &sINITIAL;
  * @brief  initialize state
  * @return bool
  */
-void lexer::init(const string &config_file, string &input, string& output)
+void lexer::init(const string &config_file, const string &input_file, string& output_file)
 {
     TRACE();
-    read_str(input, output);
-    g_input = new file_ptr(input);
+    read_str(input_file, output_file);
+    g_input = new file_ptr(input_file);
     // set state
     set_state(gp_state);
-    m_stream.open(output, std::ios_base::out | std::ios::trunc);
+    m_stream.open(output_file, std::ios_base::out | std::ios::trunc);
     m_debug1_stream.open("debug1.txt", std::ios_base::out | std::ios::trunc);
     m_debug2_stream.open("debug2.txt", std::ios_base::out | std::ios::trunc);
 }
@@ -69,19 +69,19 @@ void lexer::init(const string &config_file, string &input, string& output)
  * @name reset
  * @def  void lexer::reset()
  */
-void lexer::push(const string &input)
+void lexer::push(const string &input_file)
 {
     file_ptrs.push(g_input);
-    g_input = new file_ptr(input);
+    g_input = new file_ptr(input_file);
 
     filestack.push(g_input_file);
-    g_input_file = input;
+    g_input_file = input_file;
 
     fs::path p = g_input_file;
     g_output_file = "build/" + p.filename().string() + ".obj";
 
     string str;;
-    read_str(input, str);
+    read_str(input_file, str);
     m_suffix = str;
     // set state
     set_state(gp_state);
@@ -117,6 +117,7 @@ void lexer::pop()
  * @name   load_config
  * @def    void lexer::load_config( const string &file )
  * @brief  load_config: load configuration from file
+ * @param file
  * @param  const string& file
  * @return void
  */
@@ -223,7 +224,7 @@ void lexer::dump_config(const string &file) const
  */
 void lexer::dump_config() const
 {
-    // bkp todo, not what I would call a good dump ...
+    // bkp todo
     INFO("config_file: " << g_config_file);
     INFO("input file: " << g_input_file);
     INFO("input text: " << m_text);
@@ -236,7 +237,7 @@ void lexer::dump_config() const
  * @brief  state_t *lexer::get_state() const
  * @return state_t
  */
-state_t *lexer::get_state() const
+state_t *lexer::get_state()
 {
     return gp_state;
 }
@@ -244,6 +245,7 @@ state_t *lexer::get_state() const
 /**
  * @name   set_state
  * @brief  void lexer::set_state(state_t* pstate)
+ * @param pstate
  * @param  state_t* pstate
  * @return void
  */
@@ -274,10 +276,8 @@ void lexer::set_state(state_t *pstate)
     // set context
     set_context(m_suffix);
 
-#ifdef DEBUG
     INFO("STATE=" << pstate->id << " : " << pstate->name);
     INFO("EXPR=\"" << m_expr << "\"");
-#endif
 }
 
 /**
@@ -370,9 +370,10 @@ const string &lexer::get_expr() const
  * @name  print_token
  * @def   void lexer::print_token(token_match m)
  * @brief print token to stdout
+ * @param m
  * @param token_match m
  */
-void lexer::print_token(token_match *m)
+void lexer::print_token(const token_match *m)
 {
     const token *ptoken = &g_tokens[m->id];
     cout << "token"
@@ -402,10 +403,11 @@ bool lexer::is_id(const token_def &token, const unsigned long &id)
 /**
  * @name   set_context
  * @def    set_context(string& current_input)
+ * @param current_input
  * @param  string& current_input
  * @return void
  */
-void lexer::set_context(string &current_input)
+void lexer::set_context(const string &current_input)
 {
     TRACE();
     // reinit get_token iterators
@@ -418,6 +420,7 @@ void lexer::set_context(string &current_input)
 
 /**
  * @name   lexer::on_state
+ * @param pstate
  * @param  state_t* pstate
  * @return unsigned long
  */
@@ -429,9 +432,10 @@ inline unsigned long lexer::on_state(state_t *pstate)
 /**
  * @name  lexer::on_token
  * @brief override virtual, on_token, for each token ...
+ * @param ptoken
  * @param token_def* token
  */
-inline parser::symbol_type lexer::on_token(token_match *ptoken)
+inline parser::symbol_type lexer::on_token(const token_match *ptoken)
 {
     TRACE();
     switch (gp_state->id)
@@ -454,6 +458,7 @@ inline parser::symbol_type lexer::on_token(token_match *ptoken)
             return parser::make_SKIP_TOKEN();
         case UL_SKIP_TOKEN:
             return parser::make_OPEN_BRACE();
+        default: ;
         }
         break;
     }
@@ -507,6 +512,7 @@ inline parser::symbol_type lexer::on_token(token_match *ptoken)
         case UL_WHITESPACE:
         case UL_SKIP_TOKEN:
             return parser::make_SKIP_TOKEN();
+        default: ;
         }
         break;
     }
@@ -519,6 +525,7 @@ inline parser::symbol_type lexer::on_token(token_match *ptoken)
         case UL_SKIP_TOKEN:
 
             return parser::make_OPEN_BRACE();
+        default: ;
         }
         break;
     }
@@ -556,6 +563,7 @@ inline parser::symbol_type lexer::on_token(token_match *ptoken)
         case UL_SKIP_TOKEN:
 
             return parser::make_SKIP_TOKEN();
+        default: ;
         }
         break;
     }

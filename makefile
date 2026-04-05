@@ -75,7 +75,7 @@ $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.hpp
 
 $(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.hpp
 	@echo -e "$(FMT_INFO)building -> \"$@\" . . .$(FMT_RESET)\n"
-	$(CXX) -DYYDEBUG $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(BLD)/libauto_ptr.so: $(BLD)/auto_ptr.o

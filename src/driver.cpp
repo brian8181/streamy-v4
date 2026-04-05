@@ -106,13 +106,13 @@ int parse_options(const int argc, char *argv[])
         }
     }
 
-    int offset = optind + SRC_IDX_OFFSET;
+    const int offset = optind + SRC_IDX_OFFSET;
     for (int i = offset; i < argc; ++i)
     {
         TRACE();
         g_input = new file_ptr(argv[i]);
         g_input_file = argv[i];
-        LOG("ATTENSION: ", FMT_FG_RED, "scannning file:\"" << g_input_file << "\"");
+        LOG("ATTENTION: ", FMT_FG_RED, "scanning file:\"" << g_input_file << "\"");
 
         fs::path p = g_input_file;
         g_output_file = "build/" + p.filename().string() + ".obj";
@@ -120,7 +120,7 @@ int parse_options(const int argc, char *argv[])
         log << "in:\"" << g_input_file
             << "\" - out:\"" << g_output_file
             << "\" - conf:\"" << g_config_file << "\"" << endl;
-        LOG("ATTENSION: ", FMT_FG_RED, log.str());
+        LOG("ATTENTION: ", FMT_FG_RED, log.str());
 
         lexer::instance().init(g_config_file, g_input_file, g_output_file);
         if (dump_flag)
@@ -131,8 +131,8 @@ int parse_options(const int argc, char *argv[])
             cout << "configuration dumped." << endl;
         }
         yyparser.parse();
-        LOG("ATTENSION: ", FMT_FG_RED, "finished file:\"" << g_input_file << "\"");
-        LOG("ATTENSION: ", FMT_FG_RED, "write output to file:\"" << g_output_file << "\"");
+        LOG("ATTENTION: ", FMT_FG_RED, "finished file:\"" << g_input_file << "\"");
+        LOG("ATTENTION: ", FMT_FG_RED, "write output to file:\"" << g_output_file << "\"");
     }
     TRACE();
     INFO("EOFS");

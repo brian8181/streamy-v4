@@ -8,7 +8,7 @@ using std::cout;
 using std::string;
 using std::endl;
 
-void log( string msg, int line_number )
+void log(const string &msg, const int line_number )
 {
 	cout << FMT_FG_RED << "LOG INFO: " << FMT_RESET << msg << FMT_ITALIC << FMT_FG_BLUE
 		<< " [line: " << line_number << "] - "

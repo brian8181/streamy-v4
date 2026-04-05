@@ -153,7 +153,7 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 /**
  * @brief token definitions : unsigned long integers
  */
-#define UL_BLOCKUl
+#define UL_BLOCK 2ul
 #define UL_TILDE 4ul
 #define UL_TIC_MARK 5ul
 #define UL_EXCLAMATION 6ul
@@ -291,7 +291,10 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 #define UL_COLON_SEP_PARAM __LINE__
 #define UL_ATTRIB
 #define UL_ATTRIBUTES __LINE__
-
+#define UL_ATTRIB_NAME __LINE__
+#define UL_COMPILER __LINE__
+#define UL_END_OF_FILE __LINE__
+#define UL_END_OF_FILES __LINE__
 /**
  * @name g_tokens_all
  * @brief global token vector - all tokens
@@ -470,7 +473,7 @@ public:
      * @brief  initialize state
      * @return bool
      */
-    void init(const string &config_file, string &input_file, string &output_file);
+    void init(const string &config_file, const string &input_file, string &output_file);
 
     /**
      * @name push
@@ -491,7 +494,7 @@ public:
      * @param  const string& file
      * @return void
      */
-    void load_config(const string &file);
+    static void load_config(const string &file);
 
     /**
      * @name   dump_config
@@ -514,7 +517,7 @@ public:
      * @brief  state_t *get_state() const
      * @return state_t
      */
-    state_t *get_state() const;
+    static state_t *get_state();
 
     /**
      * @name   set_state
@@ -585,7 +588,7 @@ public:
      * @brief print token to stdout
      * @param token_match m
      */
-    void print_token(token_match *ptoken);
+    static void print_token(const token_match *ptoken);
 
     /**
      * @name   is_id
@@ -594,7 +597,7 @@ public:
      * @param  const unsigned long& id
      * @return bool
      */
-    bool is_id(const token_def &token, const unsigned long &id);
+    static bool is_id(const token_def &token, const unsigned long &id);
 
     /**
      * @name  set_context
@@ -602,21 +605,21 @@ public:
      * @param string& current_input
      * @return void
      */
-    void set_context(string &current_input);
+    void set_context(const string &current_input);
 
     /**
      * @name   on_state
      * @param  state_t* pstate
      * @return bool
      */
-    inline unsigned long on_state(state_t *pstate);
+    static inline unsigned long on_state(state_t *pstate);
 
     /**
      * @name  on_token
      * @brief override virtual, on_token, for each token ...
      * @param token_def* token
      */
-    inline parser::symbol_type on_token(token_match *ptoken);
+    inline parser::symbol_type on_token(const token_match *ptoken);
 
     /**
      * @name   write_stream

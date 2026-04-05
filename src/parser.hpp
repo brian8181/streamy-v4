@@ -29,15 +29,8 @@ public:
 	 */
 	~parser() = default;
 
-TEST
-	/**
-	 * @brief
-	 * @brief c++ comment ...
-	 * @brief place future addtions here ...
-	 *
-	 */
+private:
 
-	private:
 };
 
 #endif

@@ -10,24 +10,177 @@
 #include "tokens.hpp"
 
 typedef vector<unsigned long> RULE;
-typedef vector<string RULES;
+typedef vector<RULE> RULES;
 
-RULES rules{{UL_OPEN_BRACE, UL_SYMBOL, UL_EQUALS, UL_IDENTIFIER, UL_PLUS_SIGN, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE}
-    {UL_OPEN_BRACE, UL_SYMBOL, UL_EQUALS, UL_IDENTIFIER, UL_CLOSE_BRACE}
-    {UL_OPEN_BRACE, UL_SYMBOL, UL_EQUALS, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE}
-    {UL_OPEN_BRACE, UL_SYMBOL, UL_EQUALS, UL_SYMBOL, UL_CLOSE_BRACE},{UL_SYMBOL}
-    { UL_SYMBOL, UL_VBAR, UL_UNESCAPED_TEXT },
-    { UL_VAR_ATTRIB, UL_LOGICAL_EQUAL, UL_STRING_FORMAT   },
-    {/*UL_BLOCK*/},
-    /*{/*UL_BLOCKS*/},
-    {UL_OPEN_BRACKET, UL_SYMBOL, UL_CLOSE_BRACE}, /*block*/
-    {UL_OPEN_BRACKET, UL_SYMBOL, UL_CLOSE_BRACE}, /*block*/
-    {UL_SYMBOL, UL_EQUAL_SIGN, UL_NUMERIC_LITERAL}, /*assign
-    {UL_SYMBOL, UL_EQUAL_SIGN, UL_STRING_LITERAL}, /*assign
-    //{UL_OPEN_BRACKET, UL_SYMBOL, UL_CLOSE_BRACE}, /*block*/
-    //{   UL_PARAMS
+unsigned int** RULEZ;
 
-    //{UL_MODIFIER, UL_VBAR, UL_MODIFIER}
-    {UL_OPEN_BRACE UL_BUILT_IN UL_CLOSE_BRACE},
+RULEZ rules =
+{
+    /**
+    * @name compiler
+    */
+    {
+            {UL_FILES, UL_END_OF_FILES}
+    },
 
-    };
+    /**
+    * @name files
+    */
+    {
+        {UL_FILE},
+        {UL_FILES}, {UL_FILE}
+    },
+
+    /**
+    * @name file
+    */
+    {
+        {UL_BLOCKS, UL_END_OF_FILE}
+    },
+
+    /**
+     * @name blocks
+     */
+    {
+        {UL_BLOCK},
+        {UL_BLOCKS, UL_BLOCK}
+    },
+
+    /**
+     * @name block
+     */
+    {
+        {UL_OPEN_BRACKET, UL_SYMBOL, UL_CLOSE_BRACE},
+        {UL_OPEN_BRACKET, UL_EXPR, UL_CLOSE_BRACE},
+        {UL_OPEN_BRACKET, UL_SUB_PROC, UL_CLOSE_BRACE},
+        {UL_OPEN_BRACKET, UL_ARRAY, UL_CLOSE_BRACE},
+        {UL_OPEN_BRACE, UL_BUILT_IN, UL_CLOSE_BRACE}
+    },
+
+    /**
+    * @name assign_stmt
+    */
+    {
+        {UL_SYMBOL, UL_EQUAL_SIGN, UL_NUMERIC_LITERAL},
+        {UL_SYMBOL, UL_EQUAL_SIGN, UL_STRING_LITERAL}
+    },
+
+    /**
+    * @name sub_pro
+    */
+    {
+        {UL_SYMBOL, UL_OPEN_PAREN, UL_PARAMS, UL_CLOSE_PAREN}
+    },
+
+    /**
+    * @name array
+    */
+    {
+          {UL_SYMBOL, UL_OPEN_BRACKET, UL_NUMERIC_LITERAL, UL_CLOSE_BRACKET}
+    },
+
+    /**
+    * @name params
+    * @brief params (i.e. $x, $y, $x)
+    */
+    {
+        {UL_PARAM},
+        {UL_PARAMS, UL_PARAM}
+    },
+
+    /**
+    * @name param
+    * @brief param (i.e. $x, )
+    */
+    {
+        {UL_COMMA, UL_PARAM}
+    },
+
+    /**
+    * @name modifier
+    */
+    {
+        {UL_CAPITALIZE},
+        {UL_CAT},
+        {UL_COUNT_CHARACTERS},
+        {UL_COUNT_PARAGRAPHS},
+        {UL_COUNT_SENTENCES },
+        {UL_COUNT_WORDS     },
+        {UL_DATE_FORMAT     },
+        {UL_ESCAPE          },
+        {UL_INDENT          },
+        {UL_LOWER           },
+        {UL_UPPER           },
+        {UL_STRIP           },
+        {UL_NL2BR        },
+        {UL_REGX_REPLACE },
+        {UL_REPLACE      },
+        {UL_SPACIFY      },
+        {UL_STRING_FORMAT},
+        {UL_STRIP_TAGS   },
+        {UL_TRUNCATE     },
+        {UL_WORDWRAP     }
+    },
+
+    /**
+    * @name colon_sep_params
+    * @brief ( $x:$y:$x ) | 1:2:"three"
+    */
+    {
+        {UL_COLON_SEP_PARAMS, UL_COLON_SEP_PARAM}
+    },
+
+    /**
+    * @name colon_sep_param
+    * @brief colon seperated param {$x|trim:3:' '}
+    */
+    {
+        {UL_COLON, UL_NUMERIC_LITERAL},
+        {UL_COLON, UL_STRING_LITERAL},
+        {UL_COLON, UL_SYMBOL},
+    },
+
+    /**
+    * @name symbol
+    */
+    {
+        {UL_SYMBOL},
+        {UL_CONST_SYMBOL},
+        {UL_SYMBOL, UL_DOT, UL_SYMBOL}
+    },
+
+    /**
+    * @name built_in
+    */
+    {
+    },
+
+    /**
+    * @name attributes
+    */
+    {
+        {UL_ATTRIB},
+        {UL_ATTRIBUTES, UL_ATTRIB}
+    },
+
+    /**
+    * @name attrib
+    */
+    {
+        { UL_VALUE_ATTRIB, UL_LOGICAL_EQUAL, UL_STRING_FORMAT   },
+        { UL_VAR_ATTRIB, UL_LOGICAL_EQUAL, UL_STRING_FORMAT   },
+        { UL_FILE_ATTRIB, UL_LOGICAL_EQUAL, UL_STRING_FORMAT   },
+        { UL_FILE_ATTRIB, UL_LOGICAL_EQUAL, UL_SYMBOL   },
+        { UL_ATTRIB_NAME, UL_LOGICAL_EQUAL, UL_STRING_FORMAT   }
+    },
+
+    /**
+    * @name attrib_name
+    */
+    {
+        {UL_FROM_ATTRIB},
+        {UL_ITEM_ATTRIB},
+        {UL_KEY_ATTRIB},
+        {UL_NAME_ATTRIB}
+    }
+};

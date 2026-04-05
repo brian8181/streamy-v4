@@ -18,7 +18,11 @@ using std::stringstream;
 using std::cout;
 using std::endl;
 
-void log( std::string msg, int line_number );
+//namespace bkp {
+
+void log(const std::string &msg, int line_number );
+
+
 
 #define ITALIC(str) FMT_ITALIC << str << FMT_RESET
 #define UNDERLINE(str) FMT_UNDERLINE << str << FMT_RESET
@@ -68,29 +72,30 @@ void log( std::string msg, int line_number );
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #endif
 
-
-namespace xx
+namespace bkp
 {
-  template<typename T, typename... Args>
-  string& print(string& fmt, Args... args) 
-  {
-      vector<T>& v;
-      (v.push_back(args), ...);
-      
-      int len = v.size();
-      boost::regex rexp = boost::regex( R"({.*})", boost::regex::extended );
-      auto beg = boost::sregex_iterator( fmt.begin( ), fmt.end( ), rexp );
-      auto end = boost::sregex_iterator();
-      auto iter = beg; 
-      
-      stringstream ss;
-      for(int i = 0; iter != end; ++iter, ++i)
-         ss << iter->prefix() << v[i];
-         
-      ss << iter->suffix();
-      fmt = ss.str();
-      return fmt;
-  }
+    template<typename T, typename... Args>
+    string& print(string& fmt, Args... args)
+    {
+        vector<T> v;
+        (v.push_back(args), ...);
+
+        int len = v.size();
+        const auto rexp = boost::regex( R"({.*})", boost::regex::extended );
+        const auto beg = boost::sregex_iterator( fmt.begin( ), fmt.end( ), rexp );
+        const auto end = boost::sregex_iterator();
+        auto iter = beg;
+
+        stringstream ss;
+        for(int i = 0; iter != end; ++iter, ++i)
+            ss << iter->prefix() << v[i];
+
+        ss << iter->suffix();
+        fmt = ss.str();
+        return fmt;
+    }
 }
+
+//}
 
 #endif
