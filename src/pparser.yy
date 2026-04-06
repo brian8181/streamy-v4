@@ -181,7 +181,6 @@ blocks:
     block                                                       { INFO("PARSER blocks: | block"); }
     | blocks block                                              {
                                                                     INFO("blocks: | blocks block");
-                                                                    //lexer::instance().dump_config();
                                                                 }
                                                                 ;
 /**
@@ -226,22 +225,7 @@ block:
                                                                     }
                                                                     string file = $3[i].second;
                                                                     INFO("file=\"" << FMT_ITALIC << file << "\"");
-                                                                    lexer::instance().push(file);
-                                                                    lexer::instance().set_state(sINITIAL);
-
-                                                                    // read include path
-                                                                    // string sout;
-                                                                    // read_str(path, sout);
-                                                                    // // append include path output to buffer
-                                                                    // string* p_rstr = lexer::instance().get_remaining();
-                                                                    // stringstream* include_buffer = lexer::instance().get_include_buffer();
-                                                                    // *include_buffer << sout << *p_rstr;
-
-                                                                    
-                                                                    // set the suffix a.k.a "current search buffer"
-                                                                    // lexer::instance().set_remaining( (*include_buffer).str() );
-                                                                    // lexer::instance().set_state(&sINITIAL);
-                                                                   
+                                                                    lexer::instance().include_file(file);
                                                                 }
     | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
                                                                 ;
@@ -477,7 +461,7 @@ built_in:
                                                                     $$ = $2;
                                                                 }
     | REQUIRE attributes                                        { INFO("built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | REQUIRE_ONCE attributes                                   { INFO("buitl_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | REQUIRE_ONCE attributes                                   { INFO("built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
     | INSERT attributes                                         { INFO("built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
     | '#' ASSIGN attributes                                     {
                                                                     INFO("built_in: | ASSIGN attributes");

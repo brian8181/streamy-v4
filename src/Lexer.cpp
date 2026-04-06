@@ -53,46 +53,14 @@ inline state_t *g_pstate = &sINITIAL;
  * @brief  initialize state
  * @return bool
  */
-void lexer::init(const string &config_file, const string &input_file, const string& output_file)
+void lexer::init()
 {
     TRACE();
-    g_output_file = output_file;
-    g_input_file = input_file;
-    g_config_file = config_file;
-    //g_input = new file_ptr(input_file);
+    read_str(g_input_file, m_search);
     // set state
     set_state(sINITIAL);
-    m_stream.open(output_file, std::ios_base::out | std::ios::trunc);
-    m_debug1_stream.open(g_output_dir + "/debug1.txt", std::ios_base::out | std::ios::trunc);
-    m_debug2_stream.open(g_output_dir + "/debug2.txt", std::ios_base::out | std::ios::trunc);
-}
-
-/**
- * @name   set_context
- * @def    set_context(string& current_input)
- * @param current_input
- * @param  string& current_input
- * @return void
- */
-void lexer::set_context(const string &current_input)
-{
-    TRACE();
-    // reinit get_token iterators
-    m_rexp = boost::regex(m_expr, boost::regex::extended);
-    m_text = current_input;
-    m_begin = boost::sregex_iterator(m_text.begin(), m_text.end(), m_rexp);
-    m_piter = &m_begin;
-    m_end = boost::sregex_iterator();
-}
-
-/**
- * @name   get_state
- * @brief  state_t *lexer::get_state() const
- * @return state_t
- */
-state_t *lexer::get_state()
-{
-    return g_pstate;
+    m_stream.open(g_output_file, std::ios_base::out | std::ios::trunc);
+    m_line = 0;
 }
 
 /**
@@ -100,7 +68,7 @@ state_t *lexer::get_state()
  * @brief  void lexer::set_state(state_t* pstate)
  * @return void
  */
-void lexer::set_state(const state_t& state)
+void lexer::set_state(const state_t &state)
 {
     TRACE();
     *g_pstate = state;
@@ -109,70 +77,32 @@ void lexer::set_state(const state_t& state)
     const unsigned long sid = g_pstate->id;
     const vector<unsigned long> *STATE_TOKENS = g_tokens_by_state_id[sid];
     const unsigned long len = STATE_TOKENS->size();
-    // iter state tokens
+
     for (unsigned long i = 0; i < len; i++)
     {
         unsigned long id = (*STATE_TOKENS)[i];
         token_def *ptoken = &g_tokens[id];
-        //ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
+        // ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
         ss << "(" << ptoken->rexp << ")|";
     }
 
-    m_expr = ss.str();
-    m_expr.pop_back(); // remove extra '|' i.e. "V-BAR"
-
+    string rexp_str = ss.str();
+    rexp_str.pop_back(); // remove extra '|' i.e. "V-BAR"
     // set context
-    //fptr = file_ptrs.top;
-    set_context(m_suffix);
+    m_rexp = boost::regex(rexp_str, boost::regex::extended);
+    m_iter = boost::sregex_iterator(m_search.begin(), m_search.end(), m_rexp);
 
     INFO("STATE=" << g_pstate->id << " : " << g_pstate->name);
-    INFO("EXPR=\"" << m_expr << "\"");
+    INFO("EXPR=\"" << rexp_str << "\"");
 }
 
-/**
- * @name reset
- * @def  void lexer::push()
- */
-void lexer::push(const string &input_file)
+void lexer::include_file(const string &input_file)
 {
-    // file_ptrs.push(g_input);
-    // g_input = new file_ptr(input_file);
-
-    filestack.push(g_input_file);
-    g_input_file = input_file;
-
-    fs::path p = g_input_file;
-    g_output_file = "build/" + p.filename().string() + ".obj";
-
-    read_str(input_file, m_suffix);
-    // set state
-    //if (gp_state != &sINITIAL)
-
-    //set_state(&sINITIAL);
-}
-
-/**
- * @name pop
- * @def  void lexer::reset()
- */
-void lexer::pop()
-{
-    // if (file_ptrs.empty())
-    //     parser::make_END_OF_FILES();
-    // g_input = file_ptrs.top();
-    // file_ptrs.pop();
-
-    if (filestack.empty())
-        parser::make_END_OF_FILES();
-    g_input_file = filestack.top();
-    filestack.pop();
-
-    fs::path p = g_input_file;
-    g_output_file = "build/" + p.filename().string() + ".obj";
-
-    read_str(g_input_file, m_suffix);
-    // set state
-    //set_state(&sINITIAL);
+    // just read new, (include), file and prepend to remaining text
+    string s;
+    read_str(input_file, s);
+    m_search = s + m_search; // prepend new text to remaining text
+    set_state(sINITIAL);
 }
 
 /**
@@ -185,6 +115,15 @@ void lexer::pop()
  */
 void lexer::load_config(const string &file)
 {
+    const string VALID_SYMBOL_CHARS = R"([A-Za-z0-9_])";  /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
+    const string VALID_CHARS = R"([[:punct:][:alnum:]])"; // [:punct:] = !"#$%&'()*+,-./:;<=>?@[\]^_{|}~`);
+    const string CONFIG_STATES = R"((?<states>^\s*(?<state>[A-Za-z][A-Za-z0-9_]*)\s*=\s*\s*\{(?<tokens>[A-Za-z][A-Za-z0-9_]*(, [A-Za-z][A-Za-z0-9_]*)*)\}\s*\s*$))";
+    const string CONFIG_SECTIONS = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>groups)|(?<states>states)\s*\]\s*$)";
+    const string CONFIG_PAIR = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
+    const string CONFIG_COMMENT = R"(^\s*#.*$)";
+    const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
+    const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./'";
+
     g_config_file = file;
     string section = "none";
     string s;
@@ -268,33 +207,6 @@ void lexer::load_config(const string &file)
 }
 
 /**
- * @name   dump_config
- * @brief  void lexer::dump_config( const string& file ) const
- * @param  const string& file
- * @return void
- */
-void lexer::dump_config(const string &file) const
-{
-    dump_config();
-}
-
-/**
- * @name   dump_config
- * @def    void lexer::dump_config( ) const
- * @brief  dump current config
- * @return void
- */
-void lexer::dump_config() const
-{
-    // bkp todo
-    INFO("config_file: " << g_config_file);
-    INFO("input file: " << g_input_file);
-    INFO("input text: " << m_text);
-    INFO("regexp: " << m_expr);
-    INFO("state: " << g_pstate->name);
-}
-
-/**
  * @name   get_token
  * @def    parser::symbol_type lexer::get_token()
  * @return int
@@ -303,23 +215,12 @@ parser::symbol_type lexer::get_token()
 {
     TRACE();
 SKIP:
-    if ((*m_piter) != m_end)
+    if (m_iter != boost::sregex_iterator())
     {
         token_def *ptok_def = nullptr;
-        boost::smatch m = *(*m_piter);
+        boost::smatch m = *m_iter;
         const size_t len = m.size();
-
-        m_match = m.str();
-        m_prefix = m.prefix().matched ? m.prefix() : string("");
-        m_suffix = m.suffix().matched ? m.suffix() : string("");
-        m_debug1_stream << m_prefix << m_match;
-        m_debug2_stream << "match.sz:" << m_match.size() << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size() << endl;
-        m_debug2_stream << FMT_FG_BLUE << m_prefix << FMT_FG_GREEN << m_match << FMT_FG_DARK_GREY << m_suffix << FMT_RESET << endl
-                        << endl;
-
-        // int pos = g_input->size() - m_suffix.size();
-        // g_input->set_pos(pos);
-        // g_input->log();
+        m_search = m.suffix();
 
         // find matched
         for (int i = 1; i < len; ++i)
@@ -330,7 +231,7 @@ SKIP:
                 {
                     if (g_pstate->id != UL_INITIAL_STATE)
                     {
-                        INFO("error: unexpected token ... \"" << m_prefix << "\"");
+                        INFO("error: unexpected token ... \"" << m.prefix() << "\"");
                         return parser::make_YYerror();
                     }
                     // stream prefix (unescaped text)
@@ -344,7 +245,7 @@ SKIP:
                 // find match & lookup by sub_match index
                 token_match tok = {id, ptok_def, g_input_file, m_line, i, &m};
                 string match_str = m[i].str();
-                ++(*m_piter);
+                ++m_iter;
 
                 // get return val, goto skip, otherwise return
                 yy::parser::symbol_type rtoken = on_token(&tok);
@@ -354,7 +255,7 @@ SKIP:
                     goto SKIP;
                 }
 
-                INFO("match.sz:" << m_match.size() << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
+                INFO("match.sz:" << m.str().size() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size());
                 INFO("match[ " << "i=" << i << " ] = " << ptok_def->name << "[ \"" << m[i].str() << "\" ]");
                 return rtoken;
             }
@@ -362,32 +263,11 @@ SKIP:
     }
     else
     {
-        m_stream << m_suffix;
+        m_stream << m_search;
         m_stream.close();
         return parser::make_END(); // error or eof
     }
     return parser::make_END_OF_FILES(); // error or eof
-}
-
-/**
- *
- * @return
- */
-token_match* lexer::get_match()
-{
-    TRACE();
-    return new token_match;
-}
-
-/**
- * @name   get_expr
- * @def    const string& lexer::get_expr() const
- * @brief  get regex expression
- * @return const string&
- */
-const string &lexer::get_expr() const
-{
-    return m_expr;
 }
 
 /**
@@ -409,30 +289,6 @@ void lexer::print_token(const token_match *m)
          << "\n    value: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << m->pmatch->str() << "\"" << FMT_RESET
          << "\n    line#: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->_line_ << FMT_RESET
          << "\n}" << " #" << __LINE__ << endl;
-}
-
-/**
- * @name   is_id
- * @def    bool lexer::is_id( const token_def& token, const int& id )
- * @param  token
- * @param  id
- * @return bool
- */
-bool lexer::is_id(const token_def &token, const unsigned long &id)
-{
-    // return (token.id == id);
-    return true;
-}
-
-/**
- * @name   lexer::on_state
- * @param pstate
- * @param  state_t* pstate
- * @return unsigned long
- */
-inline unsigned long lexer::on_state(state_t *pstate)
-{
-    return -1;
 }
 
 /**
@@ -460,11 +316,11 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
         case UL_NEWLINE:
             TRACE();
             m_line++;
-            m_stream << ptoken->pmatch->str();
+            write_stream(ptoken->pmatch->str());
             return parser::make_SKIP_TOKEN();
         case UL_SKIP_TOKEN:
             return parser::make_OPEN_BRACE();
-        default: ;
+        default:;
         }
         break;
     }
@@ -515,10 +371,10 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
             return parser::make_ASSIGN(ptoken->pmatch->str());
         case UL_DOUBLE_QUOTE:
             set_state(sDOUBLE_QUOTED); // fallthrough
-        case UL_WHITESPACE:             // fallthrough
+        case UL_WHITESPACE:            // fallthrough
         case UL_SKIP_TOKEN:
             return parser::make_SKIP_TOKEN();
-        default: ;
+        default:;
         }
         break;
     }
@@ -530,7 +386,7 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
         {
         case UL_SKIP_TOKEN:
             return parser::make_OPEN_BRACE();
-        default: ;
+        default:;
         }
         break;
     }
@@ -567,7 +423,7 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
         }
         case UL_SKIP_TOKEN:
             return parser::make_SKIP_TOKEN();
-        default: ;
+        default:;
         }
         break;
     }
@@ -622,6 +478,7 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
     }
     }
 
+    // todo
     // pop stack
     // if(file_ptrs.empty());
     //     return parser::make_END_OF_FILES();
@@ -629,11 +486,12 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
     // g_input = file_ptrs.top();
     // file_ptrs.pop();
 
-    if(filestack.empty());
-        return parser::make_END_OF_FILES();
+    //if (filestack.empty())
+        ;
+    //return parser::make_END_OF_FILES();
 
-    g_input_file = filestack.top();
-    filestack.pop();
+   // g_input_file = filestack.top();
+    //filestack.pop();
 
     return parser::make_END();
 }

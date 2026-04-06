@@ -68,8 +68,6 @@ int main(int argc, char* argv[]);
  * @brief
  * @param
  */
-//void yyerror (char const *);
-//#define lex yylex
 
 yy::parser::symbol_type lex();
 

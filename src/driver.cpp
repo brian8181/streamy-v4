@@ -112,9 +112,7 @@ int parse_options(const int argc, char *argv[])
     {
         TRACE();
 
-        //g_input = new file_ptr(argv[i]);
         g_input_file = argv[i];
-        //bkp::parser g_parser(g_input);
         LOG("ATTENTION: ", FMT_FG_RED, "scanning file:\"" << g_input_file << "\"");
 
         fs::path p = g_input_file;
@@ -125,16 +123,11 @@ int parse_options(const int argc, char *argv[])
             << "\" - conf:\"" << g_config_file << "\"" << endl;
         LOG("ATTENTION: ", FMT_FG_RED, log.str());
 
-        lexer::instance().init(g_config_file, g_input_file, g_output_file);
-        if (dump_flag)
-        {
-            cout << "dumping configuration ... " << endl;
-            lexer::instance().dump_config();
-            cout << lexer::instance().get_expr() << endl;
-            cout << "configuration dumped." << endl;
-        }
+        lexer::instance().init();
         yyparser.parse();
-        //g_parser.parse();
+
+        // bkp todo
+        // g_parser.parse();
         LOG("ATTENTION: ", FMT_FG_RED, "finished file:\"" << g_input_file << "\"");
         LOG("ATTENTION: ", FMT_FG_RED, "write output to file:\"" << g_output_file << "\"");
     }

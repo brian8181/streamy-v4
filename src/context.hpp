@@ -14,15 +14,18 @@
 #include "lexer.hpp"
 #include "log.hpp"
 
-
-class context {
+class context
+{
 public:
-    context(const string& p) : path(p), beg(nullptr), end(nullptr), pos(nullptr), match_beg(nullptr), match_len(0), len(0)
+    context(const string &p)
+        : state(sINITIAL), path(p), beg(nullptr), end(nullptr), pos(nullptr),
+          match_beg(nullptr), match_len(0), len(0), buffer(nullptr)
     {
-
     }
 
-    context(const context& cp)
+    context(const context &cp)
+        : state(cp.state), path(cp.path), beg(cp.beg), end(cp.end), pos(cp.pos),
+          match_beg(cp.match_beg), match_len(cp.match_len), len(cp.len), buffer(cp.buffer)
     {
         path = cp.path;
         beg = cp.beg;
@@ -38,9 +41,9 @@ public:
     bool init()
     {
         len = file_size(path);
-        buffer = new unsigned char[len+1];
+        buffer = new unsigned char[len + 1];
         int read = read_buf(path, buffer, len);
-        if(read != len)
+        if (read != len)
         {
             delete[] buffer;
             buffer = nullptr;
@@ -57,7 +60,7 @@ public:
 
     void set_match_pos(int offset)
     {
-        match_beg = pos;    // move pos
+        match_beg = pos; // move pos
         match_len = offset;
         pos += offset; // move pos
     }
@@ -73,7 +76,7 @@ public:
     {
 
         cout << std::hex << "0x" << beg << " " << " : 0x" << pos << " : 0x" << end << " : 0x"
-             << match_beg << " : " << std::dec << match_len << " : 0x" << std::hex /*pbuffer */<< " : " << std::dec << endl;
+             << match_beg << " : " << std::dec << match_len << " : 0x" << std::hex /*pbuffer */ << " : " << std::dec << endl;
         stringstream ss;
         ss << "pos:" << (long)(pos - beg) << " ~ match_beg:" << (long)(match_beg - beg) << " ~ match_len:" << match_len << " ~ size:" << len;
         INFO(ss.str());
@@ -81,20 +84,17 @@ public:
 
     state_t state;            // current lex state
     string path;              // input file path
-    unsigned char* beg;       // beg of search text
-    unsigned char* end;       // end of search text / beg +
-    unsigned char* pos;       // search position / match_beg + match_len
+    unsigned char *beg;       // beg of search text
+    unsigned char *end;       // end of search text / beg +
+    unsigned char *pos;       // search position / match_beg + match_len
     long len;                 // length of search text
-    unsigned char* match_beg; // beg of match
+    unsigned char *match_beg; // beg of match
     long match_len;           // length of match
-    unsigned char* buffer;    // search text / same value as beg
-    
+    unsigned char *buffer;    // search text / same value as beg
+
     std::ostringstream output;
     std::ostringstream debug;
-    //list<token_match> matches;
+    // list<token_match> matches;
 };
 
-
-
-
-#endif //CONTEXT_HPP
+#endif // CONTEXT_HPP

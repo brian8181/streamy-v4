@@ -76,20 +76,10 @@ class file_context
 {
     string name;
     string *parent;
-    char* text;
+    char *text;
 };
 
-//static context* g_context;
-
-// bkp todo cleanup!
-const string VALID_SYMBOL_CHARS = R"([A-Za-z0-9_])";  /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
-const string VALID_CHARS = R"([[:punct:][:alnum:]])"; // [:punct:] = !"#$%&'()*+,-./:;<=>?@[\]^_{|}~`);
-const string CONFIG_STATES = R"((?<states>^\s*(?<state>[A-Za-z][A-Za-z0-9_]*)\s*=\s*\s*\{(?<tokens>[A-Za-z][A-Za-z0-9_]*(, [A-Za-z][A-Za-z0-9_]*)*)\}\s*\s*$))";
-const string CONFIG_SECTIONS = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>groups)|(?<states>states)\s*\]\s*$)";
-const string CONFIG_PAIR = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
-const string CONFIG_COMMENT = R"(^\s*#.*$)";
-const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
-const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./'";
+// static context *g_context;
 /**
  * @brief token definitions : unsigned long integers
  */
@@ -316,7 +306,6 @@ inline map<unsigned long, token_def> g_tokens = {
     {UL_STRIP_TAGS, token{"STRIP_TAGS", S_TYPE, R"(strip_tags)", __LINE__}},
     {UL_WORDWRAP, token{"WORDWRAP", S_TYPE, R"(wordwrap)", __LINE__}},
     {UL_TRUNCATE, token{"TRUNCATE", S_TYPE, R"(truncate)", __LINE__}},
-
 };
 /**
  * @brief unsigned long states
@@ -413,21 +402,11 @@ public:
      * @brief  initialize state
      * @return bool
      */
-    void init(const string &config_file, const string &input_file, const string &output_file);
+    void init();
 
-    /**
-     * @name push
-     * @brief  push dir on stack
-     */
-    void push(const string &input_file);
+    void include_file(const string &input_file);
 
-    /**
-     * @name pop
-     * @brief pop dir off stack
-     */
-    void pop();
-
-    /**
+     /**
      * @name   load_config
      * @def    void load_config( const string &file )
      * @brief  load_config: load configuration from file
@@ -437,68 +416,12 @@ public:
     static void load_config(const string &file);
 
     /**
-     * @name   dump_config
-     * @brief  void dump_config( const string& file ) const
-     * @param  const string& file
-     * @return void
-     */
-    void dump_config(const string &file) const;
-
-    /**
-     * @name   dump_config
-     * @def    void dump_config( ) const
-     * @brief  dump current config
-     * @return void
-     */
-    void dump_config() const;
-
-    /**
-     * @name   get_state
-     * @brief  state_t *get_state() const
-     * @return state_t
-     */
-    static state_t *get_state();
-
-    /**
      * @name   set_state
      * @brief  void set_state(state_t* pstate)
      * @return void
      */
     void set_state(const state_t &state);
 
-    /**
-     * @name   get_remaining
-     * @brief  get remaining input
-     * @param  string& s
-     * @return void
-     */
-    inline string *get_remaining()
-    {
-        return &m_suffix;
-    }
-
-    /**
-     * @name   set_remaining
-     * @brief  set remaining input
-     * @param  const string& s
-     * @return void
-     */
-    inline void set_remaining(const string &s)
-    {
-        m_suffix.clear();
-        m_suffix = s;
-    }
-
-    /**
-     * @name   get_include_buffer
-     * @brief  get remaining input
-     * @return stringstream*
-     */
-    inline stringstream *get_include_buffer()
-    {
-        m_include_buffer.clear();
-        return &m_include_buffer;
-    }
 
     /**
      * @name   get_token
@@ -508,24 +431,11 @@ public:
     parser::symbol_type get_token();
 
     /**
-     *
-     * @return
+     * @name  on_token
+     * @brief override virtual, on_token, for each token ...
+     * @param token_def* token
      */
-    static token_match* get_match();
-
-    /**
-     * @name   get_expr
-     * @def    const string& get_expr() const
-     * @brief  get regex expression
-     * @return const string&
-     */
-    const string &get_expr() const;
-
-    /**
-     * @name build_expr
-     * @def  void build_expr()
-     */
-    void build_expr();
+    inline parser::symbol_type on_token(const token_match *ptoken);
 
     /**
      * @name  print_token
@@ -534,37 +444,6 @@ public:
      * @param token_match m
      */
     static void print_token(const token_match *ptoken);
-
-    /**
-     * @name   is_id
-     * @def    bool is_id( const token_def& token, const int& id )
-     * @param  const token_def& token
-     * @param  const unsigned long& id
-     * @return bool
-     */
-    static bool is_id(const token_def &token, const unsigned long &id);
-
-    /**
-     * @name  set_context
-     * @def   set_context(string& current_input)
-     * @param string& current_input
-     * @return void
-     */
-    void set_context(const string &current_input);
-
-    /**
-     * @name   on_state
-     * @param  state_t* pstate
-     * @return bool
-     */
-    static inline unsigned long on_state(state_t *pstate);
-
-    /**
-     * @name  on_token
-     * @brief override virtual, on_token, for each token ...
-     * @param token_def* token
-     */
-    inline parser::symbol_type on_token(const token_match *ptoken);
 
     /**
      * @name   write_stream
@@ -583,33 +462,12 @@ public:
     }
 
 protected:
-    // current context
-    string m_text;
+    string m_search;
     boost::regex m_rexp;
-    boost::sregex_iterator m_begin;
-    boost::sregex_iterator m_end;
-    boost::sregex_iterator *m_piter;
-    // int                                         m_pos;
-    // int                                         m_len;
-    string m_expr;
-    string m_match;
-    string m_prefix;
-    string m_suffix;
-
+    boost::sregex_iterator m_iter;
     stringstream m_sout;
     ofstream m_stream;
-    ofstream m_debug1_stream;
-    ofstream m_debug2_stream;
-
-    string m_include_path;
-    string m_buffer;
-    stringstream m_include_buffer;
-    // context_t                                 m_context;
-    std::stack<string> filestack;
-    //std::stack<file_ptr *> file_ptrs;
     int m_line;
-
-    vector<token_match> g_matches;
 };
 
 #endif

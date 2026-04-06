@@ -1,4 +1,4 @@
-{include file="test/scan.txt"}
+{include file="test/test1.txt"}
 Hello {$x|capitalize} World!
 Test0 {$y|truncate:20:19:18:17} Test1
 {$z}
