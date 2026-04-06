@@ -191,7 +191,7 @@ block:
                                                                     INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                     string sym_value;
                                                                     get_value($2, sym_value);
-                                                                    lexer::instance() << sym_value;
+                                                                    lexer::instance().write_stream( sym_value );
                                                                     $$=sym_value;
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {

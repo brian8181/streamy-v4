@@ -89,8 +89,8 @@ void lexer::set_state(const state_t &state)
     string rexp_str = ss.str();
     rexp_str.pop_back(); // remove extra '|' i.e. "V-BAR"
     // set context
-    m_rexp = boost::regex(rexp_str, boost::regex::extended);
-    m_iter = boost::sregex_iterator(m_search.begin(), m_search.end(), m_rexp);
+    auto rexp = boost::regex(rexp_str, boost::regex::extended);
+    m_iter = boost::sregex_iterator(m_search.begin(), m_search.end(), rexp);
 
     INFO("STATE=" << g_pstate->id << " : " << g_pstate->name);
     INFO("EXPR=\"" << rexp_str << "\"");

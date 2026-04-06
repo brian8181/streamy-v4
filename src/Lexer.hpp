@@ -386,7 +386,7 @@ public:
     {
         static lexer s;
         return s;
-    } // instance
+    }
 
     lexer(const lexer &) = delete;
     lexer &operator=(const lexer &) = delete;
@@ -404,12 +404,13 @@ public:
      */
     void init();
 
+    /**
+     * @name include_file
+    */
     void include_file(const string &input_file);
 
      /**
      * @name   load_config
-     * @def    void load_config( const string &file )
-     * @brief  load_config: load configuration from file
      * @param  const string& file
      * @return void
      */
@@ -425,7 +426,6 @@ public:
 
     /**
      * @name   get_token
-     * @def    parser::symbol_type get_token()
      * @return int
      */
     parser::symbol_type get_token();
@@ -439,7 +439,6 @@ public:
 
     /**
      * @name  print_token
-     * @def   void lexer::print_token(token_match m)
      * @brief print token to stdout
      * @param token_match m
      */
@@ -447,7 +446,6 @@ public:
 
     /**
      * @name   write_stream
-     * @def    parser::symbol_type get_token()
      * @return int
      */
     inline void write_stream(const string &s)
@@ -455,17 +453,9 @@ public:
         m_stream << s;
     }
 
-    inline ofstream &operator<<(string &s)
-    {
-        m_stream << s;
-        return m_stream;
-    }
-
-protected:
+private:
     string m_search;
-    boost::regex m_rexp;
     boost::sregex_iterator m_iter;
-    stringstream m_sout;
     ofstream m_stream;
     int m_line;
 };
