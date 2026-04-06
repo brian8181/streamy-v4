@@ -25,6 +25,7 @@
 #include "driver.h"
 #include "lexer.hpp"
 #include "pparser.tab.hh"
+#include "parser.hpp"
 
 using std::cerr;
 using std::cout;
@@ -40,7 +41,7 @@ static bool output_file_flag = false;
 static bool dump_flag = false;
 static bool verbose_flag = false;
 
-static vector<token_match> g_match_squence;
+[[maybe_unused]] static vector<token_match> g_match_squence;
 
 // create parser
 static yy::parser yyparser;
@@ -110,8 +111,10 @@ int parse_options(const int argc, char *argv[])
     for (int i = offset; i < argc; ++i)
     {
         TRACE();
-        g_input = new file_ptr(argv[i]);
+
+        //g_input = new file_ptr(argv[i]);
         g_input_file = argv[i];
+        //bkp::parser g_parser(g_input);
         LOG("ATTENTION: ", FMT_FG_RED, "scanning file:\"" << g_input_file << "\"");
 
         fs::path p = g_input_file;
@@ -131,6 +134,7 @@ int parse_options(const int argc, char *argv[])
             cout << "configuration dumped." << endl;
         }
         yyparser.parse();
+        //g_parser.parse();
         LOG("ATTENTION: ", FMT_FG_RED, "finished file:\"" << g_input_file << "\"");
         LOG("ATTENTION: ", FMT_FG_RED, "write output to file:\"" << g_output_file << "\"");
     }
@@ -143,7 +147,7 @@ int parse_options(const int argc, char *argv[])
 /**
  * @brief  stdin_ready function
  * @param filedes
- * @param  int filedes : the file handle
+ * @param int filedes : the file handle
  * @return ready or error code
  */
 int stdin_ready(int filedes)

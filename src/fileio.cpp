@@ -169,7 +169,7 @@ int read_str(const string& file, /* out */ string& out)
             ss << c;
         }
         out = ss.str();
-        return (int)ss.str().size();
+        return static_cast<int>(ss.str().size());
     }
     return -1;
 }
@@ -190,7 +190,7 @@ int write_str(const string& file, /* in */ const string& in)
         ss << in;
         stream << ss.str();
         stream.close();
-        return (int)ss.str().size();
+        return static_cast<int>(ss.str().size());
     }
     return -1;
 }

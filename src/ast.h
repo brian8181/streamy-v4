@@ -13,10 +13,16 @@ using std::endl;
 
 namespace ast
 {
+	template <typename T>
+	class expr_base
+	{
+
+	};
+
 	/**
 	 * @class expr
 	 */
-	class expr
+	class expr : public expr_base<expr>
 	{
 	public:
 		struct expr_node

@@ -5,16 +5,13 @@
  * @info    ...
  */
 #include "parser.hpp"
-
 #include "lexer.hpp"
-#include "tokens.hpp"
 
 typedef vector<unsigned long> RULE;
 typedef vector<RULE> RULES;
+typedef unsigned int RULEZ[][];
 
-unsigned int** RULEZ;
-
-RULEZ rules =
+unsigned int rules[][] =
 {
     /**
     * @name compiler
@@ -54,7 +51,7 @@ RULEZ rules =
         {UL_OPEN_BRACKET, UL_EXPR, UL_CLOSE_BRACE},
         {UL_OPEN_BRACKET, UL_SUB_PROC, UL_CLOSE_BRACE},
         {UL_OPEN_BRACKET, UL_ARRAY, UL_CLOSE_BRACE},
-        {UL_OPEN_BRACE, UL_BUILT_IN, UL_CLOSE_BRACE}
+        {UL_OPEN_BRACE, UL_BUILT_IN, UL_ATTRIBUTES, UL_CLOSE_BRACE}
     },
 
     /**
@@ -109,8 +106,6 @@ RULEZ rules =
         {UL_DATE_FORMAT     },
         {UL_ESCAPE          },
         {UL_INDENT          },
-        {UL_LOWER           },
-        {UL_UPPER           },
         {UL_STRIP           },
         {UL_NL2BR        },
         {UL_REGX_REPLACE },
@@ -119,6 +114,8 @@ RULEZ rules =
         {UL_STRING_FORMAT},
         {UL_STRIP_TAGS   },
         {UL_TRUNCATE     },
+        {UL_LOWER           },
+        {UL_UPPER           },
         {UL_WORDWRAP     }
     },
 
@@ -141,18 +138,27 @@ RULEZ rules =
     },
 
     /**
-    * @name symbol
+    * @name qualafied_identifier
     */
     {
         {UL_SYMBOL},
+        //{UL_DOLLAR_SIGN, UL_IDENTIFIER},
         {UL_CONST_SYMBOL},
-        {UL_SYMBOL, UL_DOT, UL_SYMBOL}
+        //{UL_HASH_MARK, UL_IDENTIFIER, UL_HASH_MARK},
+        {UL_SYMBOL, UL_DOT, UL_SYMBOL},
+        {UL_SYMBOL, UL_INDIRECT_MEMBER, UL_SYMBOL}
     },
 
     /**
     * @name built_in
     */
     {
+        {UL_REQUIRE},
+        {UL_CONFIG_LOAD},
+        {UL_INSERT},
+        {UL_INCLUDE},
+        {UL_FILE_ATTRIB},
+        {UL_ASSIGN}
     },
 
     /**
@@ -184,3 +190,16 @@ RULEZ rules =
         {UL_NAME_ATTRIB}
     }
 };
+
+bkp::parser::parser(context* ct) : m_context(ct)
+{
+}
+
+token_match* bkp::parser::parse()
+{
+    token_match* t = lexer::get_match();
+    return t;
+}
+
+
+

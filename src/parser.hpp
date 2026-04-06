@@ -4,33 +4,40 @@
  * @date    Sat, 04 Apr 2026 12:59:28 +0000
  * @info    ...
  */
-#ifndef _parser_HPP_
-#define _parser_HPP_
+#ifndef parser_HPP_
+#define parser_HPP_
 #include <iostream>
+#include "lexer.hpp"
+#include "context.hpp"
 
-/**
- * @brief class parser
- */
-class parser
+namespace bkp
 {
-public:
 	/**
-	 * @brief : default ctor
+	 * @brief class parser
 	 */
-	parser() = default;
+	class parser
+	{
+	public:
+		/**
+		 * @brief : default ctor
+		 */
+		parser(context* ct);
 
-	/**
-	 * @brief : copy ctor
-	 */
-	parser(const parser &src) = default;
+		/**
+		 * @brief : copy ctor
+		 */
+		parser(const parser &src) = default;
 
-	/**
-	 * @brief : destructor
-	 */
-	~parser() = default;
+		/**
+		 * @brief : destructor
+		 */
+		~parser() = default;
 
-private:
+		static token_match* parse();
 
-};
-
+	private:
+		string m_input;
+		context* m_context;
+	};
+}
 #endif

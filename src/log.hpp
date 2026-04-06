@@ -2,7 +2,7 @@
  * @file    log.hpp
  * @version version 0.0.1
  * @date    Tue Mar 31 13:39:39 CDT 2026
-  */
+ */
 
 #ifndef LOG_HPP_
 #define LOG_HPP_
@@ -13,16 +13,14 @@
 #include <boost/regex.hpp>
 #include "bash_color.hpp"
 
-using std::vector;
-using std::stringstream;
 using std::cout;
 using std::endl;
+using std::stringstream;
+using std::vector;
 
-//namespace bkp {
+// namespace bkp {
 
-void log(const std::string &msg, int line_number );
-
-
+void log(const std::string &msg, int line_number);
 
 #define ITALIC(str) FMT_ITALIC << str << FMT_RESET
 #define UNDERLINE(str) FMT_UNDERLINE << str << FMT_RESET
@@ -38,14 +36,13 @@ void log(const std::string &msg, int line_number );
 #define MAGENTA(str) FMT_FG_MAGENTA << str << FMT_RESET
 #define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
 
-#define LOG(type, color, str) cout << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> " \
-<< FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " <<  "line:" << __LINE__ << " ~ " \
-<< "STD-C++:" << __cplusplus << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
+#define LOG(type, color, str) cout << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> "                                                       \
+                                   << FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " << "line:" << __LINE__ << " ~ " \
+                                   << "STD-C++:" << __cplusplus << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
 
 // tracing
 #ifdef TRACING
-#define TRACE() cout << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << \
-"\" ~ " <<  "line:" << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
+#define TRACE() cout << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " << "line:" << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
 #else
 #define TRACE //
 #endif
@@ -57,14 +54,14 @@ void log(const std::string &msg, int line_number );
 // #define INFO_COLOR SET_COLOR(c)
 // #endif
 
-// debugging 
+// debugging
 #ifdef DEBUG
-#define INFO(str)  LOG("INFO:  ", INFO_COLOR, str)
-#define WARN(str)  LOG("WARN:  ", FMT_FG_YELLOW, str)
+#define INFO(str) LOG("INFO:  ", INFO_COLOR, str)
+#define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #elif WARNINGS
 #define INFO(str) // str
-#define WARN(str)  LOG("WARN:  ", FMT_FG_YELLOW, str)
+#define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #else
 #define INFO(str) // str
@@ -74,25 +71,31 @@ void log(const std::string &msg, int line_number );
 
 namespace bkp
 {
-    template<typename T, typename... Args>
-    string& print(string& fmt, Args... args)
+    template <typename T, typename... Args>
+    string &print(string &fmt, Args... args)
     {
         vector<T> v;
         (v.push_back(args), ...);
 
         int len = v.size();
-        const auto rexp = boost::regex( R"({.*})", boost::regex::extended );
-        const auto beg = boost::sregex_iterator( fmt.begin( ), fmt.end( ), rexp );
+        const auto rexp = boost::regex(R"({.*})", boost::regex::extended);
+        const auto beg = boost::sregex_iterator(fmt.begin(), fmt.end(), rexp);
         const auto end = boost::sregex_iterator();
         auto iter = beg;
 
         stringstream ss;
-        for(int i = 0; iter != end; ++iter, ++i)
+        for (int i = 0; iter != end; ++iter, ++i)
             ss << iter->prefix() << v[i];
 
         ss << iter->suffix();
         fmt = ss.str();
         return fmt;
+    }
+
+    template<typename... Ts>
+    void myFunction(Ts const&... xs) // Ts can be of any number of any type
+    {
+        // ...
     }
 }
 

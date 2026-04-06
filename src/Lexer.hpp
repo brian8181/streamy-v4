@@ -76,70 +76,10 @@ class file_context
 {
     string name;
     string *parent;
-    char text[];
+    char* text;
 };
 
-class file_ptr
-{
-public:
-    file_ptr(string path)
-    {
-        // size = file_size(path);
-        // unsigned char* buffer = new unsigned char[size];
-        string buffer;
-        size = read_str(path, buffer);
-        beg = &buffer[0];
-        pos = beg;
-        mbeg = pos;
-        mlen = 0;
-        end = &buffer[size - 1];
-        buffer = beg;
-    }
-
-    void set_pos(int offset)
-    {
-        mbeg = pos; // move pos
-        mlen = offset;
-        pos += offset; // move pos
-    }
-
-    void replace_match(const string &replacement)
-    {
-        if (mbeg && mlen > 0)
-        {
-            // pbuffer = &string(beg, mbeg) + replacement + string(mbeg + mlen, end);
-            // // update end pointer
-            // end = &buffer->size() - 1];
-            // // update pos pointer
-            // pos = &pbuffer[(mbeg - beg) + replacement.size()];
-        }
-    }
-
-    string path;
-    char *beg;
-    char *pos;
-    char *end;
-    char *mbeg;
-    long mlen;
-    char *pbuffer;
-    long size;
-    stringstream output;
-    stringstream debug;
-
-    list<token_match> matches;
-
-    void log()
-    {
-
-        cout << std::hex << "0x" << (unsigned long)beg << " " << " : 0x" << (unsigned long)pos << " : 0x" << (unsigned long)end << " : 0x"
-             << (unsigned long)mbeg << " : " << std::dec << mlen << " : 0x" << std::hex /*pbuffer */<< " : " << std::dec << endl;
-        stringstream ss;
-        ss << "pos:" << (long)(pos - beg) << " ~ mbeg:" << (long)(mbeg - beg) << " ~ mlen:" << mlen << " ~ size:" << size;
-        INFO(ss.str());
-    }
-};
-
-static file_ptr *g_input;
+//static context* g_context;
 
 // bkp todo cleanup!
 const string VALID_SYMBOL_CHARS = R"([A-Za-z0-9_])";  /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
@@ -153,7 +93,6 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 /**
  * @brief token definitions : unsigned long integers
  */
-#define UL_BLOCK 2ul
 #define UL_TILDE 4ul
 #define UL_TIC_MARK 5ul
 #define UL_EXCLAMATION 6ul
@@ -268,14 +207,15 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 #define UL_NEWLINE 124ul
 #define UL_SKIP_TOKEN 0xFF0000ul
 #define UL_UNESCAPED_TEXT 0x00FF00ul
-#define UL_ERROR 0x0000FFul
-#define UL_SCAN_EOF 0x0ul
-#define UL_ANYTHING 0xFFFFFFul
-#define UL_MATCH 128ul
-#define UL_UNDEFINED 0xDEADBEEFul
-#define UL_NULL 0x0ul
-#define EMPTY_STRING string("")
+#define UL_ERROR __LINE
+#define UL_SCAN_EOF __LINE__
+#define UL_ANYTHING __LINE__
+#define UL_MATCH __LINE__
+#define UL_UNDEFINED __LINE__
+#define UL_NULL __LINE__
+#define EMPTY_STRING __LINE__
 #define S_TYPE "string"
+#define UL_INDIRECT_MEMBER __LINE__
 #define UL_MODIFIER __LINE__
 #define UL_BLOCK __LINE__
 #define UL_BLOCKS __LINE__
@@ -473,7 +413,7 @@ public:
      * @brief  initialize state
      * @return bool
      */
-    void init(const string &config_file, const string &input_file, string &output_file);
+    void init(const string &config_file, const string &input_file, const string &output_file);
 
     /**
      * @name push
@@ -522,10 +462,9 @@ public:
     /**
      * @name   set_state
      * @brief  void set_state(state_t* pstate)
-     * @param  state_t* pstate
      * @return void
      */
-    void set_state(state_t *pstate);
+    void set_state(const state_t &state);
 
     /**
      * @name   get_remaining
@@ -567,6 +506,12 @@ public:
      * @return int
      */
     parser::symbol_type get_token();
+
+    /**
+     *
+     * @return
+     */
+    static token_match* get_match();
 
     /**
      * @name   get_expr
@@ -661,7 +606,7 @@ protected:
     stringstream m_include_buffer;
     // context_t                                 m_context;
     std::stack<string> filestack;
-    std::stack<file_ptr *> file_ptrs;
+    //std::stack<file_ptr *> file_ptrs;
     int m_line;
 
     vector<token_match> g_matches;

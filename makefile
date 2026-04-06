@@ -60,13 +60,19 @@ endif
 # CXXFLAGS += -DTRACING
 # endif
 
+SOURCES=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.h $(OBJ)/ast.o \
+$(BLD)/pparser.tab.o $(SRC)/driver.h $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
+
+HEADERS=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(SRC)/auto_ptr.hpp $(SRC)/ast.h $(SRC)/driver.h $(SRC)/lexer.hpp $(SRC)/parser.hpp
+OBJS=$(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/auto_ptr.o $(OBJ)/ast.o $(OBJ)/driver.o $(OBJ)/lexer.o$(OBJ)/utility.o #$(OBJ)/parser.o
+
 all: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
 
-$(BLD)/driver: $(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(SRC)/driver.h $(OBJ)/lexer.o $(SRC)/lexer.hpp $(OBJ)/utility.o $(OBJ)/ast.o $(SRC)/bash_color.hpp $(SRC)/log.hpp
+$(BLD)/driver: $(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.h $(OBJ)/ast.o \
+               $(BLD)/pparser.tab.o $(SRC)/driver.h $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
 	@echo -e "$(FMT_INFO)building -> \"$(BLD)/driver\" ... $(FMT_RESET)\n"
 	$(CXX) $(CXXFLAGS) $(OBJ)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
-	@ls
 
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
 	@echo -e "$(FMT_INFO)Generate -> \"parser.tab.c\" . . .$(FMT_RESET)\n"
@@ -105,6 +111,7 @@ $(BLD)/%.hpp: $(SRC)/%.hpp
 	cp $^ $@
 	@echo -e "$(FMT_INFO)copy -> \"$@\" . . .$(FMT_RESET)\n"
 
+# build object files
 $(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CCFLAGS) -c $< -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
@@ -132,7 +139,7 @@ clean:
 
 help:
 	@echo  '  all              - build all'
-	@echo  '  driver          - build driver executable'
+	@echo  '  driver           - build driver executable'
 	@echo  '  clean            - remove all files from build dir'
 	@echo  '  install          - copy files to usr/local'
 	@echo  '  rebuild          - clean and build all'
