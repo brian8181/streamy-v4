@@ -20,7 +20,7 @@
     #include "fileio.hpp"
     #include "log.hpp"
     #include "symtab.h"
-    #include "driver.h"
+    #include "driver.hpp"
     #include "lexer.hpp"
 
     using std::vector;
@@ -181,6 +181,7 @@ blocks:
     block                                                       { INFO("PARSER blocks: | block"); }
     | blocks block                                              {
                                                                     INFO("blocks: | blocks block");
+                                                                    //lexer::instance().dump_config();
                                                                 }
                                                                 ;
 /**
@@ -191,7 +192,7 @@ block:
                                                                     INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                     string sym_value;
                                                                     get_value($2, sym_value);
-                                                                    lexer::instance().write_stream( sym_value );
+                                                                    lexer::instance().write_stream(sym_value);
                                                                     $$=sym_value;
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
@@ -225,9 +226,25 @@ block:
                                                                     }
                                                                     string file = $3[i].second;
                                                                     INFO("file=\"" << FMT_ITALIC << file << "\"");
-                                                                    lexer::instance().include_file(file);
+                                                                    //lexer::instance().push(file);
+                                                                    //const state_t s = { INITIAL_STATE, "INITIAL_STATE" };
+                                                                    lexer::instance().set_state(INITIAL);
+
+                                                                    // read include path
+                                                                    // string sout;
+                                                                    // read_str(path, sout);
+                                                                    // // append include path output to buffer
+                                                                    // string* p_rstr = lexer::instance().get_remaining();
+                                                                    // stringstream* include_buffer = lexer::instance().get_include_buffer();
+                                                                    // *include_buffer << sout << *p_rstr;
+
+                                                                    
+                                                                    // set the suffix a.k.a "current search buffer"
+                                                                    // lexer::instance().set_remaining( (*include_buffer).str() );
+                                                                    // lexer::instance().set_state(&sINITIAL);
+                                                                   
                                                                 }
-    | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
+| OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
                                                                 ;
 /**
  * @name assign_stmt
@@ -461,7 +478,7 @@ built_in:
                                                                     $$ = $2;
                                                                 }
     | REQUIRE attributes                                        { INFO("built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | REQUIRE_ONCE attributes                                   { INFO("built_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | REQUIRE_ONCE attributes                                   { INFO("buitl_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
     | INSERT attributes                                         { INFO("built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
     | '#' ASSIGN attributes                                     {
                                                                     INFO("built_in: | ASSIGN attributes");

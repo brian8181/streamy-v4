@@ -22,9 +22,9 @@
 #include <set>
 #include <filesystem>
 #include "config.hpp"
-#include "driver.h"
+#include "driver.hpp"
 #include "lexer.hpp"
-#include "pparser.tab.hh"
+#include "pparser.tab.hpp"
 #include "parser.hpp"
 
 using std::cerr;
@@ -118,9 +118,9 @@ int parse_options(const int argc, char *argv[])
         fs::path p = g_input_file;
         g_output_file = "build/" + p.filename().string() + ".obj";
         stringstream log;
-        log << "in:\"" << g_input_file
-            << "\" - out:\"" << g_output_file
+        log << "in:\"" << g_input_file << "\" - out:\"" << g_output_file
             << "\" - conf:\"" << g_config_file << "\"" << endl;
+
         LOG("ATTENTION: ", FMT_FG_RED, log.str());
 
         lexer::instance().init();

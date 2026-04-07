@@ -14,12 +14,19 @@ symbol_tab* get_stable()
     if(tab != 0)
         return tab;
 
-    symbol* streamy_init_object = (symbol*)malloc(sizeof(symbol));
-    // bkp todo! allocate strings ...
-    streamy_init_object->id = "$streamy";
-    streamy_init_object->type = "object";
-    streamy_init_object->type_modifiers = "static";
-    streamy_init_object->pval = 0;
+    //symbol* streamy_init_object = (symbol*)malloc(sizeof(symbol));
+    //// bkp todo! allocate strings ...
+    //streamy_init_object->id = "$streamy";
+    //streamy_init_object->type = "object";
+    //streamy_init_object->type_modifiers = "static";
+    //streamy_init_object->pval = 0;
+
+    //symbol* streamy_init_object;
+    //init_symbol(streamy_init_object, "$streamy", "static", "object" );
+
+    symbol* streamy_init_object =
+        new_symbol("$streamy", "static", "object", 0);
+
     tab = (symbol_tab*)malloc(sizeof(symbol_tab));
     tab->head = (node*)malloc(sizeof(node));
     tab->head->sym = streamy_init_object;
@@ -36,7 +43,20 @@ void free_node(symbol_tab* stab, node* n)
     n = 0;
 }
 
-void init_symbol(symbol** s, const char* id, const char* type_modifiers, const char* type)
+symbol* new_symbol()
+{
+    symbol *s =  (symbol*)malloc( sizeof(symbol) );
+    return s;
+}
+
+symbol* new_symbol(const char* id, const char* type_modifiers, const char* type, const char* val)
+{
+    symbol *s =  new_symbol();
+    init_symbol(&s, id, type_modifiers, type, val);
+    return s;
+}
+
+void init_symbol(symbol** s, const char* id, const char* type_modifiers, const char* type, const char* val)
 {
     *s =  (symbol*)malloc( sizeof(symbol) );
     (*s)->id = (char*)malloc( strlen(id)+1 );
@@ -44,6 +64,8 @@ void init_symbol(symbol** s, const char* id, const char* type_modifiers, const c
     (*s)->type = (char*)malloc (strlen(type)+1 );
     strcpy((*s)->type_modifiers, type_modifiers);
     (*s)->type_modifiers = (char*)malloc( strlen(type_modifiers)+1 );
+    strcpy((*s)->type, type);
+    (*s)->pval = (char*)malloc( strlen(val)+1 );
     strcpy((*s)->type, type);
 }
 
@@ -68,6 +90,8 @@ void add_symbol(symbol_tab* stab, const char* id, const char* val)
     new_node->next = 0;
     tail->next = new_node;
 }
+
+//void add_symbol(symbol_tab* stab, const char* id, const char* type_modifiers, const char* type, const char* val)
 
 void insert_symbol(symbol_tab* stab, const char* dst_id, const char* src_id, const char* src_val)
 {

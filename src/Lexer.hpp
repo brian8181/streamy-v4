@@ -22,7 +22,6 @@
 
 #include <iostream>
 #include <iterator>
-#include <list>
 #include <map>
 #include <stack>
 #include <fstream>
@@ -32,7 +31,7 @@
 #include <vector>
 #include <iomanip>
 #include <boost/regex.hpp>
-#include "pparser.tab.hh"
+#include "pparser.tab.hpp"
 
 using std::list;
 using std::map;
@@ -43,8 +42,14 @@ using std::stringstream;
 using std::vector;
 using yy::parser;
 
-#define INT 1
-#define FLOAT 2
+const string VALID_SYMBOL_CHARS = R"([A-Za-z0-9_])";  /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
+const string VALID_CHARS = R"([[:punct:][:alnum:]])"; // [:punct:] = !"#$%&'()*+,-./:;<=>?@[\]^_{|}~`);
+const string CONFIG_STATES = R"((?<states>^\s*(?<state>[A-Za-z][A-Za-z0-9_]*)\s*=\s*\s*\{(?<tokens>[A-Za-z][A-Za-z0-9_]*(, [A-Za-z][A-Za-z0-9_]*)*)\}\s*\s*$))";
+const string CONFIG_SECTIONS = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>groups)|(?<states>states)\s*\]\s*$)";
+const string CONFIG_PAIR = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
+const string CONFIG_COMMENT = R"(^\s*#.*$)";
+const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
+const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./'";
 
 typedef struct token_def
 {
@@ -53,18 +58,17 @@ typedef struct token_def
     string rexp;
     int _line_;
 } token_def;
-
 typedef token_def token;
 
-struct token_match // : public token_def
+typedef struct token_match // : public token_def
 {
     unsigned long id;
     token_def *token;
     string file;
     int line;
     int sub_index;
-    boost::smatch *pmatch;
-};
+    boost::smatch *ptr_match;
+} token_match;
 
 typedef struct state_t
 {
@@ -83,297 +87,295 @@ class file_context
 /**
  * @brief token definitions : unsigned long integers
  */
-#define UL_TILDE 4ul
-#define UL_TIC_MARK 5ul
-#define UL_EXCLAMATION 6ul
-#define UL_AT_SYMBOL 7ul
-#define UL_HASH_MARK 8ul
-#define UL_DOLLAR_SIGN 9ul
-#define UL_PERCENT_SIGN 10ul
-#define UL_CARROT 11ul
-#define UL_AMPERSAND 12ul
-#define UL_ASTERISK 13ul
-#define UL_OPEN_PAREN 14ul
-#define UL_CLOSE_PAREN 15ul
-#define UL_DASH 16ul
-#define UL_UNDERSCORE 17ul
-#define UL_PLUS_SIGN 18ul
-#define UL_EQUAL_SIGN 19ul
-#define UL_OPEN_BRACE 20ul
-#define UL_OPEN_BRACKET 21ul
-#define UL_CLOSE_BRACE 22ul
-#define UL_CLOSE_BRACKET 23ul
-#define UL_VBAR 24ul
-#define UL_BACKSLASH 25ul
-#define UL_COLON 26ul
-#define UL_SEMI_COLON 27ul
-#define UL_DOUBLE_QUOTE 28ul
-#define UL_SINGLE_QUOTE 29ul
-#define UL_ESC_BACKSLASH 301ul
-#define UL_ESC_NEWLINE 302ul
-#define UL_ESC_DOUBLE_QUOTE 303ul
-#define UL_ESC_SINGLE_QUOTE 304ul
-#define UL_ESC_TAB 305ul
-#define UL_EQUALS 306ul
-#define UL_LESS_THAN 30ul
-#define UL_COMMA 31ul
-#define UL_GREATER_THAN 32ul
-#define UL_DOT 33ul
-#define UL_QUESTION_MARK 34ul
-#define UL_SLASH 35ul
-#define UL_NOT 39ul
-#define UL_AND 40ul
-#define UL_OR 41ul
-#define UL_XOR 42ul
-#define UL_LEFT_SHIFT 43ul
-#define UL_RIGHT_SHIFT 44ul
-#define UL_LOGICAL_AND 45ul
-#define UL_LOGICAL_OR 46ul
-#define UL_LOGICAL_NOT 47ul
-#define UL_LOGICAL_EQUAL 48ul
-#define UL_GREATER_THAN_EQUAL 49ul
-#define UL_LESS_THAN_EQUAL 50ul
-#define UL_NUMERIC_LITERAL 51ul
-#define UL_STRING_LITERAL 52ul
-#define UL_DECIMAL_LITERAL 53ul
-#define UL_HEXADECIMAL_LITERAL 54ul
-#define UL_OCTAL_DECIMAL_LITERAL 55ul
-#define UL_IF 60ul
-#define UL_ELSE 61ul
-#define UL_ELSEIF 62ul
-#define UL_FOREACH 63ul
-#define UL_DO 64ul
-#define UL_WHILE 65ul
-#define UL_SWITCH 66ul
-#define UL_CASE 67ul
-#define UL_DEFAULT 68ul
-#define UL_BREAK 69ul
-#define UL_CONTINUE 70ul
-#define UL_TRY 71ul
-#define UL_CATCH 72ul
-#define UL_REQUIRE 77ul
-#define UL_CONFIG_LOAD 78ul
-#define UL_INSERT 79ul
-#define UL_INCLUDE 80ul
-#define UL_FILE_ATTRIB 81ul
-#define UL_ASSIGN 82ul
-#define UL_VAR_ATTRIB 83ul
-#define UL_VALUE_ATTRIB 84ul
-#define UL_FROM_ATTRIB 85ul
-#define UL_ITEM_ATTRIB 86ul
-#define UL_KEY_ATTRIB 87ul
-#define UL_NAME_ATTRIB 88ul
-#define UL_CAPITALIZE 89ul
-#define UL_CAT 90ul
-#define UL_COUNT_CHARACTERS 91ul
-#define UL_COUNT_PARAGRAPHS 92ul
-#define UL_COUNT_SENTENCES 93ul
-#define UL_COUNT_WORDS 94ul
-#define UL_DATE_FORMAT 95ul
-#define UL_ESCAPE 96ul
-#define UL_INDENT 97ul
-#define UL_LOWER 98ul
-#define UL_UPPER 99ul
-#define UL_STRIP 100ul
-#define UL_NL2BR 101ul
-#define UL_REGX_REPLACE 102ul
-#define UL_REPLACE 103ul
-#define UL_SPACIFY 104ul
-#define UL_STRING_FORMAT 105ul
-#define UL_STRIP_TAGS 106ul
-#define UL_TRUNCATE 107ul
-#define UL_WORDWRAP 108ul
-#define UL_VALID_CHAR 113ul
-#define UL_FIRST_CHAR 114ul
-#define UL_ID 115ul
-#define UL_IDENTIFIER 116ul
-#define UL_SYMBOL 117ul
-#define UL_CONST_SYMBOL 118ul
-#define UL_ARRAY 119ul
-#define UL_COMMENT 120ul
-#define UL_WHITESPACE 121ul
-#define UL_FILE_NAME 122ul
-#define UL_HAS_SIGN 123ul
-#define UL_NEWLINE 124ul
-#define UL_SKIP_TOKEN 0xFF0000ul
-#define UL_UNESCAPED_TEXT 0x00FF00ul
-#define UL_ERROR __LINE
-#define UL_SCAN_EOF __LINE__
-#define UL_ANYTHING __LINE__
-#define UL_MATCH __LINE__
-#define UL_UNDEFINED __LINE__
-#define UL_NULL __LINE__
+#define TILDE 4ul
+#define TIC_MARK 5ul
+#define EXCLAMATION 6ul
+#define AT_SYMBOL 7ul
+#define HASH_MARK 8ul
+#define DOLLAR_SIGN 9ul
+#define PERCENT_SIGN 10ul
+#define CARROT 11ul
+#define AMPERSAND 12ul
+#define ASTERISK 13ul
+#define OPEN_PAREN 14ul
+#define CLOSE_PAREN 15ul
+#define DASH 16ul
+#define UNDERSCORE 17ul
+#define PLUS_SIGN 18ul
+#define EQUAL_SIGN 19ul
+#define OPEN_BRACE 20ul
+#define OPEN_BRACKET 21ul
+#define CLOSE_BRACE 22ul
+#define CLOSE_BRACKET 23ul
+#define VBAR 24ul
+#define BACKSLASH 25ul
+#define COLON 26ul
+#define SEMI_COLON 27ul
+#define DOUBLE_QUOTE 28ul
+#define SINGLE_QUOTE 29ul
+#define ESC_BACKSLASH 301ul
+#define ESC_NEWLINE 302ul
+#define ESC_DOUBLE_QUOTE 303ul
+#define ESC_SINGLE_QUOTE 304ul
+#define ESC_TAB 305ul
+#define EQUALS 306ul
+#define LESS_THAN 30ul
+#define COMMA 31ul
+#define GREATER_THAN 32ul
+#define DOT 33ul
+#define QUESTION_MARK 34ul
+#define SLASH 35ul
+#define NOT 39ul
+#define AND 40ul
+#define OR 41ul
+#define XOR 42ul
+#define LEFT_SHIFT 43ul
+#define RIGHT_SHIFT 44ul
+#define LOGICAL_AND 45ul
+#define LOGICAL_OR 46ul
+#define LOGICAL_NOT 47ul
+#define LOGICAL_EQUAL 48ul
+#define GREATER_THAN_EQUAL 49ul
+#define LESS_THAN_EQUAL 50ul
+#define NUMERIC_LITERAL 51ul
+#define STRING_LITERAL 52ul
+#define DECIMAL_LITERAL 53ul
+#define HEXADECIMAL_LITERAL 54ul
+#define OCTAL_DECIMAL_LITERAL 55ul
+#define IF 60ul
+#define ELSE 61ul
+#define ELSEIF 62ul
+#define FOREACH 63ul
+#define DO 64ul
+#define WHILE 65ul
+#define SWITCH 66ul
+#define CASE 67ul
+#define DEFAULT 68ul
+#define BREAK 69ul
+#define CONTINUE 70ul
+#define TRY 71ul
+#define CATCH 72ul
+#define REQUIRE 77ul
+#define CONFIG_LOAD 78ul
+#define INSERT 79ul
+#define INCLUDE 80ul
+#define FILE_ATTRIB 81ul
+#define ASSIGN 82ul
+#define VAR_ATTRIB 83ul
+#define VALUE_ATTRIB 84ul
+#define FROM_ATTRIB 85ul
+#define ITEM_ATTRIB 86ul
+#define KEY_ATTRIB 87ul
+#define NAME_ATTRIB 88ul
+#define CAPITALIZE 89ul
+#define CAT 90ul
+#define COUNT_CHARACTERS 91ul
+#define COUNT_PARAGRAPHS 92ul
+#define COUNT_SENTENCES 93ul
+#define COUNT_WORDS 94ul
+#define DATE_FORMAT 95ul
+#define ESCAPE 96ul
+#define INDENT 97ul
+#define LOWER 98ul
+#define UPPER 99ul
+#define STRIP 100ul
+#define NL2BR 101ul
+#define REGX_REPLACE 102ul
+#define REPLACE 103ul
+#define SPACIFY 104ul
+#define STRING_FORMAT 105ul
+#define STRIP_TAGS 106ul
+#define TRUNCATE 107ul
+#define WORDWRAP 108ul
+#define VALID_CHAR 113ul
+#define FIRST_CHAR 114ul
+#define ID 115ul
+#define IDENTIFIER 116ul
+#define SYMBOL 117ul
+#define CONST_SYMBOL 118ul
+#define ARRAY 119ul
+#define COMMENT 120ul
+#define WHITESPACE 121ul
+#define FILE_NAME 122ul
+#define HAS_SIGN 123ul
+#define NEWLINE 124ul
+#define SKIP_TOK __LINE__
+#define UNESCAPED_TEXT __LINE__
+#define SCAN_EOF __LINE__
+#define ANYTHING __LINE__
+#define MATCH __LINE__
+#define UNDEFINED __LINE__
 #define EMPTY_STRING __LINE__
+#define INDIRECT_MEMBER __LINE__
+#define MODIFIER __LINE__
+#define BLOCK __LINE__
+#define BLOCKS __LINE__
+#define BUILT_IN __LINE__
+#define FILES __LINE__
+#define FILE __LINE__
+#define ASSIGN_STMT __LINE__
+#define EXPR __LINE__
+#define SUB_PROC __LINE__
+#define PARAM __LINE__
+#define PARAMS __LINE__
+#define COLON_SEP_PARAMS __LINE__
+#define COLON_SEP_PARAM __LINE__
+#define ATTRIB
+#define ATTRIBUTES __LINE__
+#define ATTRIB_NAME __LINE__
+#define COMPILER __LINE__
+#define END_OF_FILE __LINE__
+#define END_OF_FILES __LINE__
 #define S_TYPE "string"
-#define UL_INDIRECT_MEMBER __LINE__
-#define UL_MODIFIER __LINE__
-#define UL_BLOCK __LINE__
-#define UL_BLOCKS __LINE__
-#define UL_BUILT_IN __LINE__
-#define UL_FILES __LINE__
-#define UL_FILE __LINE__
-#define UL_ASSIGN_STMT __LINE__
-#define UL_EXPR __LINE__
-#define UL_SUB_PROC __LINE__
-#define UL_PARAM __LINE__
-#define UL_PARAMS __LINE__
-#define UL_COLON_SEP_PARAMS __LINE__
-#define UL_COLON_SEP_PARAM __LINE__
-#define UL_ATTRIB
-#define UL_ATTRIBUTES __LINE__
-#define UL_ATTRIB_NAME __LINE__
-#define UL_COMPILER __LINE__
-#define UL_END_OF_FILE __LINE__
-#define UL_END_OF_FILES __LINE__
+
 /**
  * @name g_tokens_all
  * @brief global token vector - all tokens
  */
 inline map<unsigned long, token_def> g_tokens = {
-    {UL_MATCH, token{"MATCH", S_TYPE, R"(match)", __LINE__}},
-    {UL_UNESCAPED_TEXT, token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
-    {UL_WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t]*)", __LINE__}},
-    {UL_NEWLINE, token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
-    {UL_FILE_ATTRIB, token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
-    {UL_VALID_CHAR, token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_~+-./ ])", __LINE__}},
-    {UL_NUMERIC_LITERAL, token{"NUMERIC_LITERAL", S_TYPE, R"([0-9]+)", __LINE__}},
-    {UL_CAPITALIZE, token{"UL_CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
-    {UL_STRING_LITERAL, token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
-    {UL_ARRAY, token{"ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", __LINE__}},
-    {UL_SYMBOL, token{"SYMBOL", S_TYPE, R"(\$[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*)", __LINE__}},
-    {UL_CONST_SYMBOL, token{"CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)", __LINE__}},
-    {UL_IDENTIFIER, token{"IDENTIFIER", S_TYPE, R"(1234567890)", __LINE__}},
-    {UL_COMMENT, token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
-    {UL_VAR_ATTRIB, token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
-    {UL_VALUE_ATTRIB, token{"VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", __LINE__}},
-    {UL_FROM_ATTRIB, token{"FROM_ATTRIB", S_TYPE, R"(from='[^']*')", __LINE__}},
-    {UL_ITEM_ATTRIB, token{"ITEM_ATTRIB", S_TYPE, R"(item='[^']*')", __LINE__}},
-    {UL_KEY_ATTRIB, token{"KEY_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
-    {UL_NAME_ATTRIB, token{"NAME_ATTRIB", S_TYPE, R"(name='[^']*")", __LINE__}},
-    {UL_DOUBLE_QUOTE, token{"DOUBLE_QUOTE", S_TYPE, R"(")", __LINE__}},
-    {UL_TILDE, token{"TILDE", S_TYPE, R"(~)", __LINE__}},
-    {UL_EXCLAMATION, token{"EXCLAMATION", S_TYPE, R"(!)", __LINE__}},
-    {UL_AT_SYMBOL, token{"AT_SYMBOL", S_TYPE, R"(@)", __LINE__}},
-    {UL_TIC_MARK, token{"TIC_MARK", S_TYPE, R"(`)", __LINE__}},
-    {UL_CARROT, token{"CARROT", S_TYPE, R"(\^)", __LINE__}},
-    {UL_AMPERSAND, token{"AMPERSAND", S_TYPE, R"(&)", __LINE__}},
-    {UL_ASTERISK, token{"ASTERISK", S_TYPE, R"(\*)", __LINE__}},
-    {UL_OPEN_PAREN, token{"LPAREN", S_TYPE, R"(\()", __LINE__}},
-    {UL_CLOSE_PAREN, token{"RPAREN", S_TYPE, R"(\))", __LINE__}},
-    {UL_DASH, token{"MINUS", S_TYPE, R"(-)", __LINE__}},
-    {UL_PLUS_SIGN, token{"PLUS", S_TYPE, R"(\+)", __LINE__}},
-    {UL_EQUAL_SIGN, token{"EQUAL_SIGN", S_TYPE, R"(=)", __LINE__}},
-    {UL_CLOSE_BRACKET, token{"RBRACKET", S_TYPE, R"(\])", __LINE__}},
-    {UL_OPEN_BRACE, token{"OPEN_BRACE", S_TYPE, R"(\{)", __LINE__}},
-    {UL_CLOSE_BRACE, token{"CLOSE_BRACE", S_TYPE, R"(\})", __LINE__}},
-    {UL_OPEN_BRACKET, token{"LBRACKET", S_TYPE, R"(\[)", __LINE__}},
-    {UL_VBAR, token{"VBAR", S_TYPE, R"(\|)", __LINE__}},
-    {UL_BACKSLASH, token{"BACKSLASH", S_TYPE, R"(\\)", __LINE__}},
-    {UL_COLON, token{"COLON", S_TYPE, R"(:)", __LINE__}},
-    {UL_SEMI_COLON, token{"SEMI_COLON", S_TYPE, R"(;)", __LINE__}},
-    {UL_SINGLE_QUOTE, token{"SINGLE_QUOTE", S_TYPE, R"(')", __LINE__}},
-    {UL_GREATER_THAN, token{"GREATER_THAN", S_TYPE, R"(>)", __LINE__}},
-    {UL_QUESTION_MARK, token{"QUESTION_MARK", S_TYPE, R"(\?)", __LINE__}},
-    {UL_COMMA, token{"COMMA", S_TYPE, R"(\,)", __LINE__}},
-    {UL_DOT, token{"DOT", S_TYPE, R"(\.)", __LINE__}},
-    {UL_SLASH, token{"SLASH", S_TYPE, R"(/)", __LINE__}},
-    {UL_GREATER_THAN_EQUAL, token{"GREATER_THAN_EQUAL", S_TYPE, R"(>=)", __LINE__}},
-    {UL_LESS_THAN_EQUAL, token{"LESS_THAN_EQUAL", S_TYPE, R"(<=)", __LINE__}},
-    {UL_IF, token{"IF", S_TYPE, R"(if)", __LINE__}},
-    {UL_ELSEIF, token{"ELSEIF", S_TYPE, R"(elseif)", __LINE__}},
-    {UL_WHILE, token{"WHILE", S_TYPE, R"(while)", __LINE__}},
-    {UL_ASSIGN, token{"ASSIGN", S_TYPE, R"(assign)", __LINE__}},
-    {UL_BREAK, token{"BREAK", S_TYPE, R"(break)", __LINE__}},
-    {UL_REQUIRE, token{"REQUIRE", S_TYPE, R"(require)", __LINE__}},
-    {UL_INCLUDE, token{"INCLUDE", S_TYPE, R"(include)", __LINE__}},
-    {UL_CONFIG_LOAD, token{"CONFIG_LOAD", S_TYPE, R"(config_load)", __LINE__}},
-    {UL_INSERT, token{"INSERT", S_TYPE, R"(insert)", __LINE__}},
-    {UL_COUNT_PARAGRAPHS, token{"COUNT_PARAGRAPHS", S_TYPE, R"(count_paragraphs)", __LINE__}},
-    {UL_COUNT_SENTENCES, token{"COUNT_SENTENCES", S_TYPE, R"(count_sentences)", __LINE__}},
-    {UL_COUNT_WORDS, token{"COUNT_WORDS", S_TYPE, R"(count_words)", __LINE__}},
-    {UL_DATE_FORMAT, token{"DATE_FORMAT", S_TYPE, R"(date_format)", __LINE__}},
-    {UL_NULL, token{"DEFAULT", S_TYPE, R"(default)", __LINE__}},
-    {UL_ESCAPE, token{"ESCAPE", S_TYPE, R"(escape)", __LINE__}},
-    {UL_INDENT, token{"INDENT", S_TYPE, R"(indent)", __LINE__}},
-    {UL_LOWER, token{"LOWER", S_TYPE, R"(lower)", __LINE__}},
-    {UL_UPPER, token{"UPPER", S_TYPE, R"(upper)", __LINE__}},
-    {UL_STRIP, token{"STRIP", S_TYPE, R"(strip)", __LINE__}},
-    {UL_NL2BR, token{"NL2BR", S_TYPE, R"(nl2br)", __LINE__}},
-    {UL_REGX_REPLACE, token{"REGX_REPLACE", S_TYPE, R"(regx_replace)", __LINE__}},
-    {UL_REPLACE, token{"REPLACE", S_TYPE, R"(replace)", __LINE__}},
-    {UL_SPACIFY, token{"SPACIFY", S_TYPE, R"(spacify)", __LINE__}},
-    {UL_STRING_FORMAT, token{"STRING_FORMAT", S_TYPE, R"(string_format)", __LINE__}},
-    {UL_STRIP_TAGS, token{"STRIP_TAGS", S_TYPE, R"(strip_tags)", __LINE__}},
-    {UL_WORDWRAP, token{"WORDWRAP", S_TYPE, R"(wordwrap)", __LINE__}},
-    {UL_TRUNCATE, token{"TRUNCATE", S_TYPE, R"(truncate)", __LINE__}},
+    {MATCH, token{"MATCH", S_TYPE, R"(match)", __LINE__}},
+    {UNESCAPED_TEXT, token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
+    {WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t]*)", __LINE__}},
+    {NEWLINE, token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
+    {FILE_ATTRIB, token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
+    {VALID_CHAR, token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_~+-./ ])", __LINE__}},
+    {NUMERIC_LITERAL, token{"NUMERIC_LITERAL", S_TYPE, R"([0-9]+)", __LINE__}},
+    {CAPITALIZE, token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
+    {STRING_LITERAL, token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
+    {ARRAY, token{"ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", __LINE__}},
+    {SYMBOL, token{"SYMBOL", S_TYPE, R"(\$[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*)", __LINE__}},
+    {CONST_SYMBOL, token{"CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)", __LINE__}},
+    {IDENTIFIER, token{"IDENTIFIER", S_TYPE, R"(1234567890)", __LINE__}},
+    {COMMENT, token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
+    {VAR_ATTRIB, token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
+    {VALUE_ATTRIB, token{"VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", __LINE__}},
+    {FROM_ATTRIB, token{"FROM_ATTRIB", S_TYPE, R"(from='[^']*')", __LINE__}},
+    {ITEM_ATTRIB, token{"ITEM_ATTRIB", S_TYPE, R"(item='[^']*')", __LINE__}},
+    {KEY_ATTRIB, token{"KEY_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {NAME_ATTRIB, token{"NAME_ATTRIB", S_TYPE, R"(name='[^']*")", __LINE__}},
+    {DOUBLE_QUOTE, token{"DOUBLE_QUOTE", S_TYPE, R"(")", __LINE__}},
+    {TILDE, token{"TILDE", S_TYPE, R"(~)", __LINE__}},
+    {EXCLAMATION, token{"EXCLAMATION", S_TYPE, R"(!)", __LINE__}},
+    {AT_SYMBOL, token{"AT_SYMBOL", S_TYPE, R"(@)", __LINE__}},
+    {TIC_MARK, token{"TIC_MARK", S_TYPE, R"(`)", __LINE__}},
+    {CARROT, token{"CARROT", S_TYPE, R"(\^)", __LINE__}},
+    {AMPERSAND, token{"AMPERSAND", S_TYPE, R"(&)", __LINE__}},
+    {ASTERISK, token{"ASTERISK", S_TYPE, R"(\*)", __LINE__}},
+    {OPEN_PAREN, token{"LPAREN", S_TYPE, R"(\()", __LINE__}},
+    {CLOSE_PAREN, token{"RPAREN", S_TYPE, R"(\))", __LINE__}},
+    {DASH, token{"MINUS", S_TYPE, R"(-)", __LINE__}},
+    {PLUS_SIGN, token{"PLUS", S_TYPE, R"(\+)", __LINE__}},
+    {EQUAL_SIGN, token{"EQUAL_SIGN", S_TYPE, R"(=)", __LINE__}},
+    {CLOSE_BRACKET, token{"RBRACKET", S_TYPE, R"(\])", __LINE__}},
+    {OPEN_BRACE, token{"OPEN_BRACE", S_TYPE, R"(\{)", __LINE__}},
+    {CLOSE_BRACE, token{"CLOSE_BRACE", S_TYPE, R"(\})", __LINE__}},
+    {OPEN_BRACKET, token{"LBRACKET", S_TYPE, R"(\[)", __LINE__}},
+    {VBAR, token{"VBAR", S_TYPE, R"(\|)", __LINE__}},
+    {BACKSLASH, token{"BACKSLASH", S_TYPE, R"(\\)", __LINE__}},
+    {COLON, token{"COLON", S_TYPE, R"(:)", __LINE__}},
+    {SEMI_COLON, token{"SEMI_COLON", S_TYPE, R"(;)", __LINE__}},
+    {SINGLE_QUOTE, token{"SINGLE_QUOTE", S_TYPE, R"(')", __LINE__}},
+    {GREATER_THAN, token{"GREATER_THAN", S_TYPE, R"(>)", __LINE__}},
+    {QUESTION_MARK, token{"QUESTION_MARK", S_TYPE, R"(\?)", __LINE__}},
+    {COMMA, token{"COMMA", S_TYPE, R"(\,)", __LINE__}},
+    {DOT, token{"DOT", S_TYPE, R"(\.)", __LINE__}},
+    {SLASH, token{"SLASH", S_TYPE, R"(/)", __LINE__}},
+    {GREATER_THAN_EQUAL, token{"GREATER_THAN_EQUAL", S_TYPE, R"(>=)", __LINE__}},
+    {LESS_THAN_EQUAL, token{"LESS_THAN_EQUAL", S_TYPE, R"(<=)", __LINE__}},
+    {IF, token{"IF", S_TYPE, R"(if)", __LINE__}},
+    {ELSEIF, token{"ELSEIF", S_TYPE, R"(elseif)", __LINE__}},
+    {WHILE, token{"WHILE", S_TYPE, R"(while)", __LINE__}},
+    {ASSIGN, token{"ASSIGN", S_TYPE, R"(assign)", __LINE__}},
+    {BREAK, token{"BREAK", S_TYPE, R"(break)", __LINE__}},
+    {REQUIRE, token{"REQUIRE", S_TYPE, R"(require)", __LINE__}},
+    {INCLUDE, token{"INCLUDE", S_TYPE, R"(include)", __LINE__}},
+    {CONFIG_LOAD, token{"CONFIG_LOAD", S_TYPE, R"(config_load)", __LINE__}},
+    {INSERT, token{"INSERT", S_TYPE, R"(insert)", __LINE__}},
+    {COUNT_PARAGRAPHS, token{"COUNT_PARAGRAPHS", S_TYPE, R"(count_paragraphs)", __LINE__}},
+    {COUNT_SENTENCES, token{"COUNT_SENTENCES", S_TYPE, R"(count_sentences)", __LINE__}},
+    {COUNT_WORDS, token{"COUNT_WORDS", S_TYPE, R"(count_words)", __LINE__}},
+    {DATE_FORMAT, token{"DATE_FORMAT", S_TYPE, R"(date_format)", __LINE__}},
+    {NULL, token{"DEFAULT", S_TYPE, R"(default)", __LINE__}},
+    {ESCAPE, token{"ESCAPE", S_TYPE, R"(escape)", __LINE__}},
+    {INDENT, token{"INDENT", S_TYPE, R"(indent)", __LINE__}},
+    {LOWER, token{"LOWER", S_TYPE, R"(lower)", __LINE__}},
+    {UPPER, token{"UPPER", S_TYPE, R"(upper)", __LINE__}},
+    {STRIP, token{"STRIP", S_TYPE, R"(strip)", __LINE__}},
+    {NL2BR, token{"NL2BR", S_TYPE, R"(nl2br)", __LINE__}},
+    {REGX_REPLACE, token{"REGX_REPLACE", S_TYPE, R"(regx_replace)", __LINE__}},
+    {REPLACE, token{"REPLACE", S_TYPE, R"(replace)", __LINE__}},
+    {SPACIFY, token{"SPACIFY", S_TYPE, R"(spacify)", __LINE__}},
+    {STRING_FORMAT, token{"STRING_FORMAT", S_TYPE, R"(string_format)", __LINE__}},
+    {STRIP_TAGS, token{"STRIP_TAGS", S_TYPE, R"(strip_tags)", __LINE__}},
+    {WORDWRAP, token{"WORDWRAP", S_TYPE, R"(wordwrap)", __LINE__}},
+    {TRUNCATE, token{"TRUNCATE", S_TYPE, R"(truncate)", __LINE__}},
 };
 /**
  * @brief unsigned long states
  */
-constexpr unsigned long UL_INITIAL_STATE = 0x10;
-constexpr unsigned long UL_COMMENT_STATE = 0x20;
-constexpr unsigned long UL_ESCAPED_STATE = 0x40;
-constexpr unsigned long UL_DOUBLE_QUOTED_STATE = 0x80;
-constexpr unsigned long UL_SINGLE_QUOTED_STATE = 0x100;
-constexpr unsigned long UL_INCLUDING_STATE = 0x200;
-constexpr unsigned long UL_IF_BLOCK_STATE = 0x400;
-constexpr unsigned long UL_IF_CONDITION_STATE = 0x800;
-constexpr unsigned long UL_IF_CONDITION_STATE_AND_ESC = UL_IF_CONDITION_STATE | UL_ESCAPED_STATE;
+constexpr unsigned long INITIAL_STATE = 0x10;
+constexpr unsigned long COMMENT_STATE = 0x20;
+constexpr unsigned long ESCAPED_STATE = 0x40;
+constexpr unsigned long DOUBLE_QUOTED_STATE = 0x80;
+constexpr unsigned long SINGLE_QUOTED_STATE = 0x100;
+constexpr unsigned long INCLUDING_STATE = 0x200;
+constexpr unsigned long IF_BLOCK_STATE = 0x400;
+constexpr unsigned long IF_CONDITION_STATE = 0x800;
 /**
  * @brief state_t states
  */
-inline state_t sINITIAL = {UL_INITIAL_STATE, "INITIAL"};
-inline state_t sCOMMENT = {UL_COMMENT_STATE, "COMMENT"};
-inline state_t sESCAPED = {UL_ESCAPED_STATE, "ESCAPED"};
-inline state_t sDOUBLE_QUOTED = {UL_DOUBLE_QUOTED_STATE, "DOUBLE_QUOTED"};
-inline state_t sSINGLE_QUOTED = {UL_SINGLE_QUOTED_STATE, "SINGLE_QUOTED"};
-inline state_t sINCLUDING = {UL_INCLUDING_STATE, "INCLUDING"};
-inline state_t sIF_BLOCK = {UL_IF_BLOCK_STATE, "IF_BLOCK"};
-inline state_t sIF_CONDITION = {UL_IF_CONDITION_STATE, "IF_CONDITION"};
+inline state_t INITIAL = {INITIAL_STATE, "INITIAL"};
+inline state_t sCOMMENT = {COMMENT_STATE, "sCOMMENT"};
+inline state_t ESCAPED = {ESCAPED_STATE, "ESCAPED"};
+inline state_t DOUBLE_QUOTED = {DOUBLE_QUOTED_STATE, "DOUBLE_QUOTED"};
+inline state_t SINGLE_QUOTED = {SINGLE_QUOTED_STATE, "SINGLE_QUOTED"};
+inline state_t INCLUDING = {INCLUDING_STATE, "INCLUDING"};
+inline state_t IF_BLOCK = {IF_BLOCK_STATE, "IF_BLOCK"};
+inline state_t IF_CONDITION = {IF_CONDITION_STATE, "IF_CONDITION"};
 /**
  * @brief token list -> by state
  */
-inline vector<unsigned long> INITIAL_STATE_TOKENS = {UL_NEWLINE, UL_OPEN_BRACE, UL_COMMENT};
+inline vector<unsigned long> INITIAL_STATE_TOKENS = {NEWLINE, OPEN_BRACE, COMMENT};
 
-inline vector<unsigned long> ESCAPED_STATE_TOKENS = {UL_NEWLINE, UL_CLOSE_BRACE, UL_DOUBLE_QUOTE, UL_FILE_ATTRIB, UL_INCLUDE, UL_ASSIGN, UL_NUMERIC_LITERAL, UL_EQUAL_SIGN,
-                                                     UL_CAPITALIZE, UL_TRUNCATE, UL_VBAR, UL_COLON, UL_STRIP, UL_SYMBOL, UL_CONST_SYMBOL, UL_WHITESPACE, UL_VALID_CHAR};
+inline vector<unsigned long> ESCAPED_STATE_TOKENS = {NEWLINE, CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
+                                                     CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR};
 
-inline vector<unsigned long> COMMENT_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_ANYTHING};
-inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {UL_DOUBLE_QUOTE, UL_VALID_CHAR};
-inline vector<unsigned long> SINGLE_QUOTED_STATE_TOKENS = {UL_OPEN_BRACE, UL_COMMENT, UL_VALID_CHAR, UL_SINGLE_QUOTE, UL_DOUBLE_QUOTE};
-inline vector<unsigned long> INCLUDING_STATE_TOKENS = {UL_FILE_ATTRIB};
-inline vector<unsigned long> IF_BLOCK_STATE_TOKENS = {UL_CLOSE_BRACE};
-inline vector<unsigned long> IF_CONDITION_STATE_TOKENS = {UL_CLOSE_BRACE};
+inline vector<unsigned long> COMMENT_STATE_TOKENS = {OPEN_BRACE, COMMENT, ANYTHING};
+inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {DOUBLE_QUOTE, VALID_CHAR};
+inline vector<unsigned long> SINGLE_QUOTED_STATE_TOKENS = {OPEN_BRACE, COMMENT, VALID_CHAR, SINGLE_QUOTE, DOUBLE_QUOTE};
+inline vector<unsigned long> INCLUDING_STATE_TOKENS = {FILE_ATTRIB};
+inline vector<unsigned long> IF_BLOCK_STATE_TOKENS = {CLOSE_BRACE};
+inline vector<unsigned long> IF_CONDITION_STATE_TOKENS = {CLOSE_BRACE};
 /**
  * @brief state_t states vector
  * @name g_states
  */
-inline vector<state_t *> g_states{&sINITIAL, &sCOMMENT, &sESCAPED, &sDOUBLE_QUOTED,
-                                  &sSINGLE_QUOTED, &sINCLUDING, &sIF_BLOCK, &sIF_CONDITION};
+inline vector<state_t *> g_states{&INITIAL, &sCOMMENT, &ESCAPED, &DOUBLE_QUOTED,
+                                  &SINGLE_QUOTED, &INCLUDING, &IF_BLOCK, &IF_CONDITION};
 /**
  * @brief state table : unsigned long -> state_t
  * @name g_state_tab
  */
-inline map<unsigned long, state_t *> g_state_by_id = {{UL_INITIAL_STATE, &sINITIAL},
-                                                      {UL_ESCAPED_STATE, &sESCAPED},
-                                                      {UL_COMMENT_STATE, &sCOMMENT},
-                                                      {UL_SINGLE_QUOTED_STATE, &sSINGLE_QUOTED},
-                                                      {UL_DOUBLE_QUOTED_STATE, &sDOUBLE_QUOTED},
-                                                      {UL_INCLUDING_STATE, &sINCLUDING},
-                                                      {UL_IF_BLOCK_STATE, &sIF_BLOCK},
-                                                      {UL_IF_CONDITION_STATE, &sIF_CONDITION}};
+inline map<unsigned long, state_t *> g_state_by_id = {{INITIAL_STATE, &INITIAL},
+                                                      {ESCAPED_STATE, &ESCAPED},
+                                                      {COMMENT_STATE, &sCOMMENT},
+                                                      {SINGLE_QUOTED_STATE, &SINGLE_QUOTED},
+                                                      {DOUBLE_QUOTED_STATE, &DOUBLE_QUOTED},
+                                                      {INCLUDING_STATE, &INCLUDING},
+                                                      {IF_BLOCK_STATE, &IF_BLOCK},
+                                                      {IF_CONDITION_STATE, &IF_CONDITION}};
 /**
  * @brief global state: state_id -> states
  * @name g_state_tokens_tab
  */
-inline map<unsigned long, vector<unsigned long> *> g_tokens_by_state_id{{UL_INITIAL_STATE, &INITIAL_STATE_TOKENS},
-                                                                        {UL_ESCAPED_STATE, &ESCAPED_STATE_TOKENS},
-                                                                        {UL_COMMENT_STATE, &COMMENT_STATE_TOKENS},
-                                                                        {UL_SINGLE_QUOTED_STATE, &SINGLE_QUOTED_STATE_TOKENS},
-                                                                        {UL_DOUBLE_QUOTED_STATE, &DOUBLE_QUOTED_STATE_TOKENS},
-                                                                        {UL_INCLUDING_STATE, &INCLUDING_STATE_TOKENS},
-                                                                        {UL_IF_BLOCK_STATE, &IF_BLOCK_STATE_TOKENS},
-                                                                        {UL_IF_CONDITION_STATE, &IF_CONDITION_STATE_TOKENS}};
+inline map<unsigned long, vector<unsigned long> *> g_tokens_by_state_id{{INITIAL_STATE, &INITIAL_STATE_TOKENS},
+                                                                        {ESCAPED_STATE, &ESCAPED_STATE_TOKENS},
+                                                                        {COMMENT_STATE, &COMMENT_STATE_TOKENS},
+                                                                        {SINGLE_QUOTED_STATE, &SINGLE_QUOTED_STATE_TOKENS},
+                                                                        {DOUBLE_QUOTED_STATE, &DOUBLE_QUOTED_STATE_TOKENS},
+                                                                        {INCLUDING_STATE, &INCLUDING_STATE_TOKENS},
+                                                                        {IF_BLOCK_STATE, &IF_BLOCK_STATE_TOKENS},
+                                                                        {IF_CONDITION_STATE, &IF_CONDITION_STATE_TOKENS}};
 
 /**
  * @brief class lexer (singleton)
@@ -406,10 +408,10 @@ public:
 
     /**
      * @name include_file
-    */
+     */
     void include_file(const string &input_file);
 
-     /**
+    /**
      * @name   load_config
      * @param  const string& file
      * @return void
@@ -422,7 +424,6 @@ public:
      * @return void
      */
     void set_state(const state_t &state);
-
 
     /**
      * @name   get_token
@@ -455,9 +456,17 @@ public:
 
 private:
     string m_search;
+    boost::regex m_rexp;
     boost::sregex_iterator m_iter;
+    boost::sregex_iterator m_end;
     ofstream m_stream;
     int m_line;
+
+    /**
+     *@ brief stream for quoted strings
+     * @name g_stringstream
+    */
+    stringstream g_stringstream;
 };
 
 #endif

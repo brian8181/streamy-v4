@@ -26,7 +26,7 @@
 #include "Lexer.hpp"
 //#include "constants.hpp"
 #include "tokens.hpp"
-#include "driver.h"
+#include "driver.hpp"
 
 using std::cerr;
 using std::cout;

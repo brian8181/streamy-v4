@@ -15,7 +15,7 @@ YACC = bison
 YFLAGS = -YYDEBUG
 CXXFLAGS = -std=gnu++17 -fPIC -I./$(BLD) -I./$(SRC)
 CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
-#LDFLAGS += /usr/lib/libcppunit.dll.a
+LDFLAGS =
 FLEXFLAGS = --flex
 BISONFLAGS = -y -d --html --graph
 BLD = build
@@ -49,7 +49,6 @@ endif
 
 ifdef CYGWIN
 	CXXFLAGS += -DCYGWIN -I"/home/brian/src/boost_1_89_0"
-#LDFLAGS += -lfmt -lcppunit.dll
 	LDFLAGS = /usr/local/lib/libfmt.a -lcppunit.dll
 else
 	CXXFLAGS += -I/ucrt64/include/boost
@@ -60,7 +59,7 @@ endif
 # CXXFLAGS += -DTRACING
 # endif
 
-SOURCES=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.h $(OBJ)/ast.o \
+SOURCES=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.hpp $(OBJ)/ast.o \
 $(BLD)/pparser.tab.o $(SRC)/driver.h $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
 
 HEADERS=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(SRC)/auto_ptr.hpp $(SRC)/ast.h $(SRC)/driver.h $(SRC)/lexer.hpp $(SRC)/parser.hpp
@@ -68,15 +67,15 @@ OBJS=$(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/auto_ptr.o $(OBJ)/ast.o $(OBJ)/
 
 all: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
 
-$(BLD)/driver: $(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.h $(OBJ)/ast.o \
-               $(BLD)/pparser.tab.o $(SRC)/driver.h $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
+$(BLD)/driver: $(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.hpp $(OBJ)/ast.o \
+               $(BLD)/pparser.tab.o $(SRC)/driver.hpp $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
 	@echo -e "$(FMT_INFO)building -> \"$(BLD)/driver\" ... $(FMT_RESET)\n"
 	$(CXX) $(CXXFLAGS) $(OBJ)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
 	@echo -e "$(FMT_INFO)Generate -> \"parser.tab.c\" . . .$(FMT_RESET)\n"
-	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hh -o $(BLD)/pparser.tab.cpp
+	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.hpp
@@ -112,12 +111,12 @@ $(BLD)/%.hpp: $(SRC)/%.hpp
 	@echo -e "$(FMT_INFO)copy -> \"$@\" . . .$(FMT_RESET)\n"
 
 # build object files
-$(OBJ)/%.o: $(SRC)/%.c
+$(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CCFLAGS) -c $< -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
-$(OBJ)/%.o: $(SRC)/%.cpp
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c $< -o $@
+$(OBJ)/%.o: $(SRC)/%.cpp $(SRC)/%.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 .PHONY: all rebuild dist install uninstall clean help
@@ -134,8 +133,8 @@ uninstall:
 
 clean:
 	@echo -e "$(FMT)cleaning ...$(FMT_RESET)"
-	-rm -f ./$(OBJ)/*
-	-rm -f ./$(BLD)/*
+	-rm -rf ./$(OBJ)/*
+	-rm -rf ./$(BLD)/*
 
 help:
 	@echo  '  all              - build all'

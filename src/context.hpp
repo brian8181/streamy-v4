@@ -18,7 +18,7 @@ class context
 {
 public:
     context(const string &p)
-        : state(sINITIAL), path(p), beg(nullptr), end(nullptr), pos(nullptr),
+        : state(INITIAL), path(p), beg(nullptr), end(nullptr), pos(nullptr),
           match_beg(nullptr), match_len(0), len(0), buffer(nullptr)
     {
     }
