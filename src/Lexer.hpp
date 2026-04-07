@@ -158,7 +158,7 @@ class file_context
 #define REQUIRE 77ul
 #define CONFIG_LOAD 78ul
 #define INSERT 79ul
-#define INCLUDE 80ul
+#define INCLUDE __LINE__
 #define FILE_ATTRIB 81ul
 #define ASSIGN 82ul
 #define VAR_ATTRIB 83ul
@@ -337,7 +337,7 @@ inline state_t IF_CONDITION = {IF_CONDITION_STATE, "IF_CONDITION"};
  */
 inline vector<unsigned long> INITIAL_STATE_TOKENS = {NEWLINE, OPEN_BRACE, COMMENT};
 
-inline vector<unsigned long> ESCAPED_STATE_TOKENS = {NEWLINE, CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
+inline vector<unsigned long> ESCAPED_STATE_TOKENS = {CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
                                                      CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR};
 
 inline vector<unsigned long> COMMENT_STATE_TOKENS = {OPEN_BRACE, COMMENT, ANYTHING};
@@ -404,7 +404,7 @@ public:
      * @brief  initialize state
      * @return bool
      */
-    void init();
+    void init(string in, string out);
 
     /**
      * @name include_file

@@ -123,7 +123,7 @@ int parse_options(const int argc, char *argv[])
 
         LOG("ATTENTION: ", FMT_FG_RED, log.str());
 
-        lexer::instance().init();
+        lexer::instance().init(g_input_file, g_output_file );
         yyparser.parse();
 
         // bkp todo

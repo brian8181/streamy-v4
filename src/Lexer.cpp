@@ -48,13 +48,13 @@ inline state_t *g_pstate = &INITIAL;
  * @brief  initialize state
  * @return bool
  */
-void lexer::init()
+void lexer::init(string in, string out)
 {
     TRACE();
-    read_str(g_input_file, m_search);
+    read_str(in, m_search);
     // set state
     set_state(INITIAL);
-    m_stream.open(g_output_file, std::ios_base::out | std::ios::trunc);
+    m_stream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
 }
 
@@ -231,6 +231,8 @@ SKIP:
                 // find match & lookup by sub_match index
                 token_match tok_match = {id, tok_def, g_input_file, m_line, i, &m};
                 string match_str = m[i].str();
+                INFO("match.sz:" << m.str().size() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size());
+                INFO("match[ " << "i=" << i << " ] = " << tok_def->name << "[ \"" << m[i].str() << "\" ]");
                 ++m_iter;
 
                 // get return val, go to skip, otherwise return
@@ -241,8 +243,6 @@ SKIP:
                     goto SKIP;
                 }
 
-                INFO("match.sz:" << m.str().size() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size());
-                INFO("match[ " << "i=" << i << " ] = " << tok_def->name << "[ \"" << m[i].str() << "\" ]");
                 return tok;
             }
         }
@@ -289,6 +289,10 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
     TRACE();
     switch (g_pstate->id)
     {
+        // case INITIAL_STATE|OPEN_BRACE:
+        // {
+        //     INFO("INITIAL_STATE|OPEN_BRACE");
+        // }
         case INITIAL_STATE:
         {
             INFO("switch case: INITIAL_STATE");
@@ -307,7 +311,7 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
                     m_stream << ptoken->ptr_match->str();
                     return parser::make_SKIP_TOKEN();
                 case SKIP_TOK:
-                    return parser::make_OPEN_BRACE();
+                    return parser::make_SKIP_TOKEN();
                 default:;
             }
             break;
