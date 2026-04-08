@@ -1,0 +1,5 @@
+[{
+		"file":	"C:\\cygwin64\\home\\brian\\src\\streamy-v5\\streamy-v5\\main.cpp",
+		"directory":	"C:\\cygwin64\\home\\brian\\src\\streamy-v5\\streamy-v5",
+		"command":	"C:/cygwin64/bin/g++.exe -c C:\\cygwin64\\home\\brian\\src\\streamy-v5\\streamy-v5\\main.cpp -o C:\\cygwin64\\home\\brian\\src\\streamy-v5\\streamy-v5\\main.cpp.o -target x86_64-pc-cygwin -IC:\\msys64\\mingw64\\bin\\usr\\lib\\gcc\\x86_64-pc-cygwin\\13\\include\\c++ -IC:\\msys64\\mingw64\\bin\\usr\\lib\\gcc\\x86_64-pc-cygwin\\13\\include\\c++\\x86_64-pc-cygwin -IC:\\msys64\\mingw64\\bin\\usr\\lib\\gcc\\x86_64-pc-cygwin\\13\\include\\c++\\backward -IC:\\msys64\\mingw64\\bin\\usr\\lib\\gcc\\x86_64-pc-cygwin\\13\\include -IC:\\msys64\\mingw64\\bin\\usr\\local\\include -IC:\\msys64\\mingw64\\bin\\usr\\include -IC:\\msys64\\mingw64\\bin\\usr\\include\\w32api -I. -I.  -gdwarf-2  -O0  -Wall"
+	}]

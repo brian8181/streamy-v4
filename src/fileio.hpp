@@ -98,7 +98,7 @@ int write_buf(const string& file, /* in */ const char* buf, const int& len);
  * @param  out : string to store the file contents
  * @return number of characters read, or -1 on error
  */
-int read_str(const string& file, /* out */ string& out);
+int read_str(const string& file, /* out */ string& out, std::ios::openmode mode = std::ios_base::in);
 
 /**
  * @brief  write a string to a file

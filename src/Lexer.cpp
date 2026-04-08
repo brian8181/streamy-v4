@@ -40,7 +40,7 @@ using yy::parser;
  * @brief global state_t state
  * @name  gp_state
  */
-inline state_t *g_pstate = &INITIAL;
+//inline state_t *g_pstate = &INITIAL;
 
 /**
  * @name   init
@@ -51,7 +51,11 @@ inline state_t *g_pstate = &INITIAL;
 void lexer::init(string in, string out)
 {
     TRACE();
-    read_str(in, m_search);
+    //m_search.clear();
+    //m_search = "\n";
+    read_str(in, m_search, std::ios::in);
+
+    m_suffix = m_search;
     // set state
     set_state(INITIAL);
     m_stream.open(out, std::ios_base::out | std::ios::trunc);
@@ -66,11 +70,13 @@ void lexer::init(string in, string out)
 void lexer::set_state(const state_t &state)
 {
     TRACE();
-    *g_pstate = state;
+    //*g_pstate = state;
+    _state.id = state.id;
+    _state.name = state.name;
 
     stringstream ss;
-    const unsigned long sid = g_pstate->id;
-    const vector<unsigned long> *STATE_TOKENS = g_tokens_by_state_id[sid];
+    //const unsigned long sid = g_pstate->id;
+    const vector<unsigned long> *STATE_TOKENS = g_tokens_by_state_id[state.id];
     const unsigned long len = STATE_TOKENS->size();
 
     for (unsigned long i = 0; i < len; i++)
@@ -85,19 +91,23 @@ void lexer::set_state(const state_t &state)
     rexp_str.pop_back(); // remove extra '|' i.e. "V-BAR"
     // set context
     m_rexp = boost::regex(rexp_str, boost::regex::extended);
-    m_iter = boost::sregex_iterator(m_search.begin(), m_search.end(), m_rexp);
+    m_iter = boost::sregex_iterator(m_suffix.begin(), m_suffix.end(), m_rexp);
     m_end = boost::sregex_iterator();
+    //++m_iter; // move past initial newline
 
-    INFO("STATE=" << g_pstate->id << " : " << g_pstate->name);
+    INFO("STATE1=" << state.id << " : " << state.name);
+    //INFO("STATE2=" << g_pstate->id << " : " << g_pstate->name);
     INFO("EXPR=\"" << rexp_str << "\"");
 }
 
 void lexer::include_file(const string &input_file)
 {
     // just read new, (include), file and prepend to remaining text
+    //string s = "\\n";
     string s;
     read_str(input_file, s);
-    m_search = s + m_search; // prepend new text to remaining text
+    m_suffix = s + m_suffix; // prepend new text to remaining text
+
     set_state(INITIAL);
 }
 
@@ -175,7 +185,7 @@ void lexer::load_config(const string &file)
             unsigned long state_id = 0xFFul | (++i * 6ul);   // generate id for new state
             auto *pstate = new state_t{state_id, str_state}; // create new state
             // m_pstates->push_back(pstate);
-            // (*m_pstate_tab)[pstate->id] = pstate; // insert new state into table
+            //(*m_pstate_tab)[pstate->id] = pstate; // insert new state into table
 
             // copy to term to vector
             vector<token_def> tokens;         // token vector for this state
@@ -200,16 +210,18 @@ void lexer::load_config(const string &file)
  */
 parser::symbol_type lexer::get_token()
 {
-    TRACE();
 SKIP:
-
     TRACE();
-    if (m_iter != m_end)
+    if (/*++*/m_iter != m_end)
+    //do
     {
         TRACE();
         boost::smatch m = *m_iter;
         const size_t len = m.size();
-        m_search= m.suffix();
+        m_match = m.str();
+        m_prefix = m.prefix().str();
+        m_suffix = m.suffix().str();
+
         // find matched
         for (int i = 1; i < len; ++i)
         {
@@ -217,36 +229,50 @@ SKIP:
             {
                 if (m.prefix().matched)
                 {
-                    if (g_pstate->id != INITIAL_STATE)
+                    INFO("prefix matched");
+                    if (_state.id != UL_INITIAL)
                     {
                         INFO("error: unexpected token ... \"" << m.prefix() << "\"");
                         return parser::make_YYerror();
                     }
-                    m_stream << m.prefix(); // stream prefix (unescaped text)
+                    m_stream << m.prefix().str(); // stream prefix (unescaped text)
                 }
                 // get id by index value "i-1" zero based vector
-                unsigned long id = (*g_tokens_by_state_id[g_pstate->id])[i - 1];
+                unsigned long id = (*g_tokens_by_state_id[_state.id])[i-1];
                 token_def *tok_def = &g_tokens[id];
-
                 // find match & lookup by sub_match index
                 token_match tok_match = {id, tok_def, g_input_file, m_line, i, &m};
-                string match_str = m[i].str();
-                INFO("match.sz:" << m.str().size() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size());
-                INFO("match[ " << "i=" << i << " ] = " << tok_def->name << "[ \"" << m[i].str() << "\" ]");
-                ++m_iter;
 
-                // get return val, go to skip, otherwise return
-                yy::parser::symbol_type tok = on_token(&tok_match);
-                if (tok.kind() == yy::parser::symbol_type(parser::token::SKIP_TOKEN).kind())
+                INFO("match.sz:" << m.str().size() << " - match.pos:"  << m.position() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size());
+                INFO("match[ " << "i=" << i  << " ] = " << tok_def->name << "[ \"" << m.str() << "\" ]");
+                INFO("Remaining: " << m_suffix);
+                // move iter forward, before on_token event will invalidate it
+                ++m_iter; // iter & the smatch are invalid @ this point
+                // assume iter is invalid @ this point
+
+                // apply actions and get bison return value
+                auto tok = on_token(&tok_match);
+
+                // INFO("tok.name()=" << tok.name() << ", SKIP.name()=" << SKIP.name());
+                // INFO("tok.kind()=" << tok.kind() << ", SKIP.kind()=" << SKIP.kind());
+                // INFO("tok.type_get()=" << tok.type_get() << ", SKIP_TOKEN.type_get()=" << SKIP_TOKEN.type_get());
+
+                // continue getting tokens until not skipped or EOF,
+                if (tok.kind() != SKIP_TOKEN)
                 {
-                    INFO("Skipping - token:" << tok_match.token->name << " = " << tok_match.ptr_match->str());
-                    goto SKIP;
+                    TRACE();
+                    return tok;
                 }
 
-                return tok;
+                INFO("Source Line:" << m_line);
+                INFO("Skipping - token : " << tok_match.token->name << " = " << tok_match.ptr_match->str());
+                //break;
+                goto SKIP;
             }
         }
+        //continue;
     }
+    //while ( ++m_iter != m_end);
     else
     {
         TRACE();
@@ -278,6 +304,29 @@ void lexer::print_token(const token_match *m)
          << "\n}" << " #" << __LINE__ << endl;
 }
 
+//
+// /// "External" symbols: returned by the scanner.
+// struct symbol_type : basic_symbol<by_kind>
+// {
+//     /// Superclass.
+//     typedef basic_symbol<by_kind> super_type;
+//
+//     /// Empty symbol.
+//     symbol_type () YY_NOEXCEPT { }
+//
+//     /// Constructor for valueless symbols, and symbols from each type.
+//     symbol_type (int tok) : super_type (token_kind_type (tok)) { }
+//
+//     symbol_type (int tok, char v) : super_type (token_kind_type (tok), std::move (v)) { }
+//
+//     symbol_type (int tok, std::string v) : super_type (token_kind_type (tok), std::move (v)) { }
+//
+//     int operator int()
+//     {
+//
+//     }
+// };
+
 /**
  * @name  lexer::on_token
  * @brief override virtual, on_token, for each token ...
@@ -286,14 +335,16 @@ void lexer::print_token(const token_match *m)
  */
 inline parser::symbol_type lexer::on_token(const token_match *ptoken)
 {
-    TRACE();
-    switch (g_pstate->id)
+    //INFO("ptoken->token->name=" << ptoken->token->name << ", g_pstate->name=" << _state->name);
+    INFO("_state.id=" << _state.id);
+    INFO("_state.name=" << _state.name);
+    switch (_state.id)
     {
         // case INITIAL_STATE|OPEN_BRACE:
         // {
         //     INFO("INITIAL_STATE|OPEN_BRACE");
         // }
-        case INITIAL_STATE:
+        case UL_INITIAL:
         {
             INFO("switch case: INITIAL_STATE");
             switch (ptoken->id)
@@ -316,12 +367,15 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
             }
             break;
         }
-        case ESCAPED_STATE:
+        case UL_ESCAPED:
         {
             INFO("switch case: ESCAPED_STATE");
             switch (ptoken->id)
             {
                 case CLOSE_BRACE:
+                    TRACE();
+                    INFO("INITIAL.id=" << INITIAL.id);
+                    INFO("INITIAL.name=" << INITIAL.name);
                     set_state(INITIAL);
                     return parser::make_CLOSE_BRACE();
                 case IF:
@@ -370,7 +424,7 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
             }
             break;
         }
-        case IF_BLOCK_STATE:
+        case UL_IF_BLOCK:
         {
             INFO("switch case: IF_BLOCK_STATE");
             switch (ptoken->id)
@@ -381,7 +435,7 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
             }
             break;
         }
-        case DOUBLE_QUOTED_STATE:
+        case UL_DOUBLE_QUOTED:
         {
             INFO("switch case: DOUBLE_QUOTED_STATE");
             switch (ptoken->id)
@@ -417,7 +471,7 @@ inline parser::symbol_type lexer::on_token(const token_match *ptoken)
             }
             break;
         }
-        case INCLUDING_STATE:
+        case UL_INCLUDING:
             INFO("switch case: INCLUDING_STATE");
             break;
         default: ;

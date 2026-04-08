@@ -51,6 +51,10 @@ const string CONFIG_COMMENT = R"(^\s*#.*$)";
 const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
 const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./'";
 
+typedef parser::token_type yytoken;
+typedef parser::symbol_type yysymbol;
+inline auto SKIP_TOKEN = yysymbol(yytoken::SKIP_TOKEN ).kind();
+
 typedef struct token_def
 {
     string name;
@@ -220,7 +224,7 @@ class file_context
 #define PARAMS __LINE__
 #define COLON_SEP_PARAMS __LINE__
 #define COLON_SEP_PARAM __LINE__
-#define ATTRIB
+#define ATTRIB      __LINE__
 #define ATTRIBUTES __LINE__
 #define ATTRIB_NAME __LINE__
 #define COMPILER __LINE__
@@ -313,25 +317,26 @@ inline map<unsigned long, token_def> g_tokens = {
 /**
  * @brief unsigned long states
  */
-constexpr unsigned long INITIAL_STATE = 0x10;
-constexpr unsigned long COMMENT_STATE = 0x20;
-constexpr unsigned long ESCAPED_STATE = 0x40;
-constexpr unsigned long DOUBLE_QUOTED_STATE = 0x80;
-constexpr unsigned long SINGLE_QUOTED_STATE = 0x100;
-constexpr unsigned long INCLUDING_STATE = 0x200;
-constexpr unsigned long IF_BLOCK_STATE = 0x400;
-constexpr unsigned long IF_CONDITION_STATE = 0x800;
+constexpr unsigned long UL_INITIAL = 0x10;
+constexpr unsigned long UL_COMMENTING = 0x20;
+constexpr unsigned long UL_ESCAPED = 0x40;
+constexpr unsigned long UL_DOUBLE_QUOTED = 0x80;
+constexpr unsigned long UL_SINGLE_QUOTED = 0x100;
+constexpr unsigned long UL_INCLUDING = 0x200;
+constexpr unsigned long UL_IF_BLOCK = 0x400;
+constexpr unsigned long UL_IF_CONDITION = 0x800;
 /**
  * @brief state_t states
  */
-inline state_t INITIAL = {INITIAL_STATE, "INITIAL"};
-inline state_t sCOMMENT = {COMMENT_STATE, "sCOMMENT"};
-inline state_t ESCAPED = {ESCAPED_STATE, "ESCAPED"};
-inline state_t DOUBLE_QUOTED = {DOUBLE_QUOTED_STATE, "DOUBLE_QUOTED"};
-inline state_t SINGLE_QUOTED = {SINGLE_QUOTED_STATE, "SINGLE_QUOTED"};
-inline state_t INCLUDING = {INCLUDING_STATE, "INCLUDING"};
-inline state_t IF_BLOCK = {IF_BLOCK_STATE, "IF_BLOCK"};
-inline state_t IF_CONDITION = {IF_CONDITION_STATE, "IF_CONDITION"};
+inline state_t INITIAL = {UL_INITIAL, "INITIAL"};
+inline state_t COMMENTING = {UL_COMMENTING, "COMMENT"};
+inline state_t ESCAPED = {UL_ESCAPED, "ESCAPED"};
+inline state_t DOUBLE_QUOTED = {UL_DOUBLE_QUOTED, "DOUBLE_QUOTED"};
+inline state_t SINGLE_QUOTED = {UL_SINGLE_QUOTED, "SINGLE_QUOTED"};
+inline state_t INCLUDING = {UL_INCLUDING, "INCLUDING"};
+inline state_t IF_BLOCK = {UL_IF_BLOCK, "IF_BLOCK"};
+inline state_t IF_CONDITION = {UL_IF_CONDITION, "IF_CONDITION"};
+
 /**
  * @brief token list -> by state
  */
@@ -340,42 +345,25 @@ inline vector<unsigned long> INITIAL_STATE_TOKENS = {NEWLINE, OPEN_BRACE, COMMEN
 inline vector<unsigned long> ESCAPED_STATE_TOKENS = {CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
                                                      CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR};
 
-inline vector<unsigned long> COMMENT_STATE_TOKENS = {OPEN_BRACE, COMMENT, ANYTHING};
+inline vector<unsigned long> COMMENTING_STATE_TOKENS = {OPEN_BRACE, COMMENT, ANYTHING};
 inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {DOUBLE_QUOTE, VALID_CHAR};
 inline vector<unsigned long> SINGLE_QUOTED_STATE_TOKENS = {OPEN_BRACE, COMMENT, VALID_CHAR, SINGLE_QUOTE, DOUBLE_QUOTE};
 inline vector<unsigned long> INCLUDING_STATE_TOKENS = {FILE_ATTRIB};
 inline vector<unsigned long> IF_BLOCK_STATE_TOKENS = {CLOSE_BRACE};
 inline vector<unsigned long> IF_CONDITION_STATE_TOKENS = {CLOSE_BRACE};
-/**
- * @brief state_t states vector
- * @name g_states
- */
-inline vector<state_t *> g_states{&INITIAL, &sCOMMENT, &ESCAPED, &DOUBLE_QUOTED,
-                                  &SINGLE_QUOTED, &INCLUDING, &IF_BLOCK, &IF_CONDITION};
-/**
- * @brief state table : unsigned long -> state_t
- * @name g_state_tab
- */
-inline map<unsigned long, state_t *> g_state_by_id = {{INITIAL_STATE, &INITIAL},
-                                                      {ESCAPED_STATE, &ESCAPED},
-                                                      {COMMENT_STATE, &sCOMMENT},
-                                                      {SINGLE_QUOTED_STATE, &SINGLE_QUOTED},
-                                                      {DOUBLE_QUOTED_STATE, &DOUBLE_QUOTED},
-                                                      {INCLUDING_STATE, &INCLUDING},
-                                                      {IF_BLOCK_STATE, &IF_BLOCK},
-                                                      {IF_CONDITION_STATE, &IF_CONDITION}};
+
 /**
  * @brief global state: state_id -> states
- * @name g_state_tokens_tab
+ * @name g_tokens_by_state_id
  */
-inline map<unsigned long, vector<unsigned long> *> g_tokens_by_state_id{{INITIAL_STATE, &INITIAL_STATE_TOKENS},
-                                                                        {ESCAPED_STATE, &ESCAPED_STATE_TOKENS},
-                                                                        {COMMENT_STATE, &COMMENT_STATE_TOKENS},
-                                                                        {SINGLE_QUOTED_STATE, &SINGLE_QUOTED_STATE_TOKENS},
-                                                                        {DOUBLE_QUOTED_STATE, &DOUBLE_QUOTED_STATE_TOKENS},
-                                                                        {INCLUDING_STATE, &INCLUDING_STATE_TOKENS},
-                                                                        {IF_BLOCK_STATE, &IF_BLOCK_STATE_TOKENS},
-                                                                        {IF_CONDITION_STATE, &IF_CONDITION_STATE_TOKENS}};
+inline map<unsigned long, vector<unsigned long> *> g_tokens_by_state_id{{UL_INITIAL, &INITIAL_STATE_TOKENS},
+                                                                        {UL_ESCAPED, &ESCAPED_STATE_TOKENS},
+                                                                        {UL_COMMENTING, &COMMENTING_STATE_TOKENS},
+                                                                        {UL_SINGLE_QUOTED, &SINGLE_QUOTED_STATE_TOKENS},
+                                                                        {UL_DOUBLE_QUOTED, &DOUBLE_QUOTED_STATE_TOKENS},
+                                                                        {UL_INCLUDING, &INCLUDING_STATE_TOKENS},
+                                                                        {UL_IF_BLOCK, &IF_BLOCK_STATE_TOKENS},
+                                                                        {UL_IF_CONDITION, &IF_CONDITION_STATE_TOKENS}};
 
 /**
  * @brief class lexer (singleton)
@@ -456,11 +444,16 @@ public:
 
 private:
     string m_search;
+    string m_match;
+    string m_prefix;
+    string m_suffix;
+
     boost::regex m_rexp;
     boost::sregex_iterator m_iter;
     boost::sregex_iterator m_end;
     ofstream m_stream;
     int m_line;
+    state_t _state = INITIAL;
 
     /**
      *@ brief stream for quoted strings
