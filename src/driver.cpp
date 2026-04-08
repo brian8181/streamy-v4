@@ -41,7 +41,7 @@ static bool output_file_flag = false;
 static bool dump_flag = false;
 static bool verbose_flag = false;
 
-[[maybe_unused]] static vector<token_match> g_match_squence;
+[[maybe_unused]] static vector<match> g_match_squence;
 
 // create parser
 static yy::parser yyparser;
@@ -123,7 +123,7 @@ int parse_options(const int argc, char *argv[])
 
         LOG("ATTENTION: ", FMT_FG_RED, log.str());
 
-        lexer::instance().init(g_input_file, g_output_file );
+        lexer::instance().init(g_input_file, g_output_file);
         yyparser.parse();
 
         // bkp todo

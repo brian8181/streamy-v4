@@ -244,7 +244,7 @@ block:
                                                                     // lexer::instance().set_state(&sINITIAL);
                                                                    
                                                                 }
-| OPEN_BRACE ASSIGN attributes CLOSE_BRACE                  { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
+| OPEN_BRACE ASSIGN attributes CLOSE_BRACE                      { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
                                                                 ;
 /**
  * @name assign_stmt

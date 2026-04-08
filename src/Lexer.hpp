@@ -51,28 +51,28 @@ const string CONFIG_COMMENT = R"(^\s*#.*$)";
 const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
 const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./'";
 
-typedef parser::token_type yytoken;
-typedef parser::symbol_type yysymbol;
-inline auto SKIP_TOKEN = yysymbol(yytoken::SKIP_TOKEN ).kind();
-
-typedef struct token_def
+typedef struct token_t
 {
-    string name;
-    string stype;
-    string rexp;
-    int _line_;
-} token_def;
-typedef token_def token;
+    struct token_def
+    {
+        string name;
+        string stype;
+        string rexp;
+        int _line_;
+    };
 
-typedef struct token_match // : public token_def
-{
-    unsigned long id;
-    token_def *token;
-    string file;
-    int line;
-    int sub_index;
-    boost::smatch *ptr_match;
-} token_match;
+    struct token_match // : public token_def
+    {
+        unsigned long id;
+        string file;
+        int line;
+        int sub_index;
+        boost::smatch *ptr_match;
+    };
+
+    token_def *def;
+    token_match match;
+} token_t;
 
 typedef struct state_t
 {
@@ -86,6 +86,12 @@ class file_context
     string *parent;
     char *text;
 };
+
+typedef token_t::token_def token;
+typedef token_t::token_match match;
+typedef parser::token_type yytoken;
+typedef parser::symbol_type yysymbol;
+inline auto SKIP_TOKEN = yysymbol(yytoken::SKIP_TOKEN).kind();
 
 // static context *g_context;
 /**
@@ -224,7 +230,7 @@ class file_context
 #define PARAMS __LINE__
 #define COLON_SEP_PARAMS __LINE__
 #define COLON_SEP_PARAM __LINE__
-#define ATTRIB      __LINE__
+#define ATTRIB __LINE__
 #define ATTRIBUTES __LINE__
 #define ATTRIB_NAME __LINE__
 #define COMPILER __LINE__
@@ -236,7 +242,7 @@ class file_context
  * @name g_tokens_all
  * @brief global token vector - all tokens
  */
-inline map<unsigned long, token_def> g_tokens = {
+inline map<unsigned long, token> g_tokens = {
     {MATCH, token{"MATCH", S_TYPE, R"(match)", __LINE__}},
     {UNESCAPED_TEXT, token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
     {WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t]*)", __LINE__}},
@@ -424,14 +430,14 @@ public:
      * @brief override virtual, on_token, for each token ...
      * @param token_def* token
      */
-    inline parser::symbol_type on_token(const token_match *ptoken);
+    inline parser::symbol_type on_token(const match *ptoken);
 
     /**
      * @name  print_token
      * @brief print token to stdout
      * @param token_match m
      */
-    static void print_token(const token_match *ptoken);
+    void print_token(const match *m);
 
     /**
      * @name   write_stream
@@ -458,7 +464,7 @@ private:
     /**
      *@ brief stream for quoted strings
      * @name g_stringstream
-    */
+     */
     stringstream g_stringstream;
 };
 

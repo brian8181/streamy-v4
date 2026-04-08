@@ -21,7 +21,7 @@ namespace bkp
 		/**
 		 * @brief : default ctor
 		 */
-		parser(context* ct);
+		parser(context *ct);
 
 		/**
 		 * @brief : copy ctor
@@ -33,11 +33,11 @@ namespace bkp
 		 */
 		~parser() = default;
 
-		static token_match* parse();
+		static match *parse();
 
 	private:
 		string m_input;
-		context* m_context;
+		context *m_context;
 	};
 }
 #endif
