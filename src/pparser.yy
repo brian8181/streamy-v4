@@ -228,7 +228,7 @@ block:
                                                                     INFO("file=\"" << FMT_ITALIC << file << "\"");
                                                                     //lexer::instance().push(file);
                                                                     //const state_t s = { INITIAL_STATE, "INITIAL_STATE" };
-                                                                    lexer::instance().set_state(INITIAL);
+                                                                    lexer::instance().set_state(&INITIAL);
 
                                                                     // read include path
                                                                     // string sout;

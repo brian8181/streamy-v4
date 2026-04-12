@@ -2,4 +2,5 @@ build/**
 build2/**
 cbuild/**
 debug*.txt
+out.txt
 

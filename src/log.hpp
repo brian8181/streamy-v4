@@ -19,9 +19,9 @@ using std::endl;
 using std::stringstream;
 using std::vector;
 
-//inline std::ofstream ostrm("log.txt", std::ios::out | std::ios::trunc);
-//inline std::ostream* DEFAULT_OUT_STREAM = &ostrm;
-inline std::ostream* DEFAULT_OUT_STREAM = &std::cout;
+// inline std::ofstream ostrm("log.txt", std::ios::out | std::ios::trunc);
+// inline std::ostream* DEFAULT_OUT_STREAM = &ostrm;
+inline std::ostream *DEFAULT_OUT_STREAM = &std::cout;
 
 // namespace bkp {
 
@@ -42,13 +42,13 @@ void log(const std::string &msg, int line_number);
 #define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
 
 #define LOG(type, color, str) *DEFAULT_OUT_STREAM << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> "                                                       \
-                                   << FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " << "line:" << __LINE__ << " ~ " \
-                                   << "STD-C++:" << __cplusplus << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
+                                                  << FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " << "line:" << __LINE__ << " ~ " \
+                                                  << "STD-C++:" << __cplusplus << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
 
 // tracing
 #ifdef TRACING
-#define TRACE() *DEFAULT_OUT_STREAM << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << FMT_FG_WHITE << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " \
-    << "line:" << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
+#define TRACE *DEFAULT_OUT_STREAM << "TRACE: " << FMT_ITALIC << FMT_BG_DARK_GREY << FMT_FG_WHITE << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " \
+                                  << "line:" << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
 #else
 #define TRACE //
 #endif
@@ -98,8 +98,8 @@ namespace bkp
         return fmt;
     }
 
-    template<typename... Ts>
-    void myFunction(Ts const&... xs) // Ts can be of any number of any type
+    template <typename... Ts>
+    void myFunction(Ts const &...xs) // Ts can be of any number of any type
     {
         // ...
     }

@@ -1,0 +1,53 @@
+{
+    "terminal.integrated.defaultProfile.linux": "",
+    "workbench.colorTheme": "Winter is Coming (Dark Black - No Italics)",
+    "editor.mouseWheelZoom": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.minimap.autohide": "mouseover",
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.inlineSuggest.edits.allowCodeShifting": "horizontal",
+    "editor.inlineSuggest.edits.showCollapsed": true,
+    "editor.suggest.preview": true,
+    "editor.wordBasedSuggestions": "matchingDocuments",
+    "files.autoSave": "never",
+    "diffEditor.codeLens": true,
+    "diffEditor.experimental.showMoves": true,
+    "editor.fontVariations": false,
+    "terminal.external.linuxExec": "C:\\cygwin64\\bin\\mintty.exe -i /Cygwin-Terminal.ico -",
+    "terminal.integrated.accessibleViewFocusOnCommandExecution": true,
+    "terminal.external.windowsExec": "C:\\cygwin64\\bin\\mintty.exe -i /Cygwin-Terminal.ico -",
+    "terminal.integrated.automationProfile.windows": {
+        "args": []
+    },
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash",
+            "icon": "terminal-git-bash"
+        },
+        "Cygwin": {
+            "path": "C:\\cygwin64\\bin\\mintty.exe",
+            "args": [
+                "-i",
+                "/Cygwin-Terminal.ico",
+                "-"
+            ]
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "Cygwin",
+    "terminal.integrated.env.windows": {
+        acceptSuggestionOnEnter
+    }
+}

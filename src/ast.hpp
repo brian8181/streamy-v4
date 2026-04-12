@@ -160,7 +160,7 @@ namespace ast
 		/**
 		 * @brief dtor
 		 */
-		~binary_expr() override { /* let consumer free/release/delete*/ }
+		~binary_expr() override { /* let consumer free/release/delete */ }
 
 	public:
 		 T* _val;

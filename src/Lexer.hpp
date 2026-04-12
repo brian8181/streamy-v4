@@ -53,26 +53,23 @@ const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz123456
 
 typedef struct token_t
 {
-    struct token_def
-    {
-        string name;
-        string stype;
-        string rexp;
-        int _line_;
-    };
-
-    struct token_match // : public token_def
-    {
-        unsigned long id;
-        string file;
-        int line;
-        int sub_index;
-        boost::smatch *ptr_match;
-    };
-
-    token_def *def;
-    token_match match;
+    string name;
+    string stype;
+    string rexp;
+    unsigned long index;
 } token_t;
+
+typedef struct token_value_t
+{
+    unsigned long id;
+    string match;
+    string prefix;
+    string suffix;
+    string file;
+    int line;
+    long pos;
+    token_t *def;
+} token_value_t;
 
 typedef struct state_t
 {
@@ -87,8 +84,8 @@ class file_context
     char *text;
 };
 
-typedef token_t::token_def token;
-typedef token_t::token_match match;
+typedef token_t token;
+// typedef token_t::token_match match;
 typedef parser::token_type yytoken;
 typedef parser::symbol_type yysymbol;
 inline auto SKIP_TOKEN = yysymbol(yytoken::SKIP_TOKEN).kind();
@@ -168,7 +165,7 @@ inline auto SKIP_TOKEN = yysymbol(yytoken::SKIP_TOKEN).kind();
 #define REQUIRE 77ul
 #define CONFIG_LOAD 78ul
 #define INSERT 79ul
-#define INCLUDE __LINE__
+#define INCLUDE 579ul
 #define FILE_ATTRIB 81ul
 #define ASSIGN 82ul
 #define VAR_ATTRIB 83ul
@@ -209,33 +206,33 @@ inline auto SKIP_TOKEN = yysymbol(yytoken::SKIP_TOKEN).kind();
 #define FILE_NAME 122ul
 #define HAS_SIGN 123ul
 #define NEWLINE 124ul
-#define SKIP_TOK __LINE__
-#define UNESCAPED_TEXT __LINE__
-#define SCAN_EOF __LINE__
-#define ANYTHING __LINE__
-#define MATCH __LINE__
-#define UNDEFINED __LINE__
-#define EMPTY_STRING __LINE__
-#define INDIRECT_MEMBER __LINE__
-#define MODIFIER __LINE__
-#define BLOCK __LINE__
-#define BLOCKS __LINE__
-#define BUILT_IN __LINE__
-#define FILES __LINE__
-#define FILE __LINE__
-#define ASSIGN_STMT __LINE__
-#define EXPR __LINE__
-#define SUB_PROC __LINE__
-#define PARAM __LINE__
-#define PARAMS __LINE__
-#define COLON_SEP_PARAMS __LINE__
-#define COLON_SEP_PARAM __LINE__
-#define ATTRIB __LINE__
-#define ATTRIBUTES __LINE__
-#define ATTRIB_NAME __LINE__
-#define COMPILER __LINE__
-#define END_OF_FILE __LINE__
-#define END_OF_FILES __LINE__
+#define SKIP_TOK 125
+#define UNESCAPED_TEXT 126
+#define SCAN_EOF 128
+#define ANYTHING 130
+#define MATCH 140
+#define UNDEFINED 150
+#define EMPTY_STRING 160ul
+#define INDIRECT_MEMBER 170ul
+#define MODIFIER 180ul
+#define BLOCK 190ul
+#define BLOCKS 200ul
+#define BUILT_IN 210ul
+#define FILES 220ul
+#define FILE 230ul
+#define ASSIGN_STMT 240ul
+#define EXPR 250ul
+#define SUB_PROC 260ul
+#define PARAM 270ul
+#define PARAMS 280ul
+#define COLON_SEP_PARAMS 290ul
+#define COLON_SEP_PARAM 300ul
+#define ATTRIB 310ul
+#define ATTRIBUTES 320ul
+#define ATTRIB_NAME 330ul
+#define COMPILER 440ul
+#define END_OF_FILE 442ul
+#define END_OF_FILES 445ul
 #define S_TYPE "string"
 
 /**
@@ -245,7 +242,7 @@ inline auto SKIP_TOKEN = yysymbol(yytoken::SKIP_TOKEN).kind();
 inline map<unsigned long, token> g_tokens = {
     {MATCH, token{"MATCH", S_TYPE, R"(match)", __LINE__}},
     {UNESCAPED_TEXT, token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
-    {WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t]*)", __LINE__}},
+    {WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
     {NEWLINE, token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
     {FILE_ATTRIB, token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
     {VALID_CHAR, token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_~+-./ ])", __LINE__}},
@@ -320,6 +317,7 @@ inline map<unsigned long, token> g_tokens = {
     {WORDWRAP, token{"WORDWRAP", S_TYPE, R"(wordwrap)", __LINE__}},
     {TRUNCATE, token{"TRUNCATE", S_TYPE, R"(truncate)", __LINE__}},
 };
+
 /**
  * @brief unsigned long states
  */
@@ -331,6 +329,12 @@ constexpr unsigned long UL_SINGLE_QUOTED = 0x100;
 constexpr unsigned long UL_INCLUDING = 0x200;
 constexpr unsigned long UL_IF_BLOCK = 0x400;
 constexpr unsigned long UL_IF_CONDITION = 0x800;
+
+/**
+ * @brief global state IDs
+ */
+// vector<unsigned long> state_ids = {UL_INITIAL, UL_COMMENTING, UL_ESCAPED, UL_DOUBLE_QUOTED, UL_SINGLE_QUOTED, UL_INCLUDING, UL_IF_BLOCK, UL_IF_CONDITION};
+
 /**
  * @brief state_t states
  */
@@ -342,6 +346,11 @@ inline state_t SINGLE_QUOTED = {UL_SINGLE_QUOTED, "SINGLE_QUOTED"};
 inline state_t INCLUDING = {UL_INCLUDING, "INCLUDING"};
 inline state_t IF_BLOCK = {UL_IF_BLOCK, "IF_BLOCK"};
 inline state_t IF_CONDITION = {UL_IF_CONDITION, "IF_CONDITION"};
+
+/**
+ * @brief global state vector
+ */
+// vector<state_t> states__ = {INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED, SINGLE_QUOTED, INCLUDING, IF_BLOCK, IF_CONDITION};
 
 /**
  * @brief token list -> by state
@@ -417,7 +426,9 @@ public:
      * @brief  void set_state(state_t* pstate)
      * @return void
      */
-    void set_state(const state_t &state);
+    void set_state(state_t *pstate);
+
+    void update_regex_for_current_state();
 
     /**
      * @name   get_token
@@ -430,14 +441,14 @@ public:
      * @brief override virtual, on_token, for each token ...
      * @param token_def* token
      */
-    inline parser::symbol_type on_token(const match *ptoken);
+    inline parser::symbol_type on_token(unsigned long id);
 
     /**
      * @name  print_token
      * @brief print token to stdout
      * @param token_match m
      */
-    void print_token(const match *m);
+    void print_token(const token_value_t *tval);
 
     /**
      * @name   write_stream
@@ -448,24 +459,32 @@ public:
         m_stream << s;
     }
 
+    void replace_newlines_with_line_directives(string &s);
+
 private:
+    static vector<token_t *> m_tokens;
+    map<unsigned long, token> m_tok_map;
+    vector<state_t> m_states;
+
     string m_search;
     string m_match;
     string m_prefix;
     string m_suffix;
 
+    string m_remaining;
     boost::regex m_rexp;
     boost::sregex_iterator m_iter;
     boost::sregex_iterator m_end;
+
     ofstream m_stream;
     int m_line;
-    state_t _state = INITIAL;
+    state_t *_pstate = &INITIAL;
 
     /**
      *@ brief stream for quoted strings
-     * @name g_stringstream
+     * @name m_sstring
      */
-    stringstream g_stringstream;
+    stringstream m_sstring;
 };
 
 #endif

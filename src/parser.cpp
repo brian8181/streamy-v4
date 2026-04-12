@@ -5,6 +5,10 @@
  * @info    ...
  */
 #include "parser.hpp"
+// #include "tokens.hpp"
+//  using namespace bkp;
 
-typedef vector<unsigned long> RULE;
-RULES rules{{UL_OPEN_BRACE, UL_SYMBOL, UL_EQUALS, UL_IDENTIFIER, UL_PLUS_SIGN, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE} {UL_OPEN_BRACE, UL_SYMBOL, UL_EQUALS, UL_IDENTIFIER, UL_CLOSE_BRACE} {UL_OPEN_BRACE, UL_SYMBOL, UL_EQUALS, UL_NUMERIC_LITERAL, UL_CLOSE_BRACE} {UL_OPEN_BRACE, UL_SYMBOL, UL_EQUALS, UL_SYMBOL, UL_CLOSE_BRACE} {UL_SYMBOL}};
+bkp::parser::parser(context *ct, const string &file) : m_context(ct), m_file(file)
+{
+    read_str(m_file, m_input, std::ios::in);
+}
