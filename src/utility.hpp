@@ -5,12 +5,15 @@
 #include <vector>
 #include <map>
 #include <regex>
+#include "auto_ptr.hpp"
 
-using std::string;
-using std::vector;
 using std::map;
 using std::regex;
 using std::smatch;
+using std::string;
+using std::vector;
+
+auto_ptr<string> escape_newlines(const string &s);
 
 /**
  * @name   get_config
@@ -18,7 +21,7 @@ using std::smatch;
  * @param  config, out parmas
  * @return map<string, string>&
  */
-std::map<string, string>& get_config(const string& path, /* out */ map<string, string>& config);
+std::map<string, string> &get_config(const string &path, /* out */ map<string, string> &config);
 
 /**
  * @brief  single match
@@ -27,7 +30,7 @@ std::map<string, string>& get_config(const string& path, /* out */ map<string, s
  * @param  match
  * @return true if only one match & match string size equals text size
  */
-bool match_single(const string& pattern, const string& text, /* out */ smatch& match);
+bool match_single(const string &pattern, const string &text, /* out */ smatch &match);
 
 /**
  * @brief  single match
@@ -35,7 +38,7 @@ bool match_single(const string& pattern, const string& text, /* out */ smatch& m
  * @param  text
  * @return true if only one match & match string size equals text size
  */
-bool match_single(const string& pattern, const string& text);
+bool match_single(const string &pattern, const string &text);
 
 /**
  * @brief  split string
@@ -43,18 +46,18 @@ bool match_single(const string& pattern, const string& text);
  * @param  c : delimter
  * @return std::vector<std::string> // ???
  */
-std::vector<std::string>* split(const std::string& s, char c);
+std::vector<std::string> *split(const std::string &s, char c);
 
 /**
  *
  */
-std::vector<std::string>* split(const std::string &str, const std::string &regex);
+std::vector<std::string> *split(const std::string &str, const std::string &regex);
 
 /**
  * @brief print color
  * @param s
  */
-void color_print(const string& s, fmt::text_style ts);
+// void color_print(const string &s, fmt::text_style ts);
 
 /**
  * @brief  to_lower: transform string chars to lower case
@@ -62,14 +65,14 @@ void color_print(const string& s, fmt::text_style ts);
  * @param  r: out param same as return value
  * @return string&: same as out param
  */
-string& to_lower(const string& s, /* out */ string& r);
+string &to_lower(const string &s, /* out */ string &r);
 
 /**
  * @brief  to_lower: transform string chars to lower case
  * @param  s: string parameter to transform
  * @return string&
  */
-string& to_lower(string& s);
+string &to_lower(string &s);
 
 /**
  * @brief  to_upper: transform string chars to upper case
@@ -77,35 +80,35 @@ string& to_lower(string& s);
  * @param  r: out param same as return value
  * @return string&: same as out param
  */
-string& to_upper(const string& s, /* out */ string& r);
+string &to_upper(const string &s, /* out */ string &r);
 
 /**
  * @brief  to_upper: transform string chars to upper case
  * @param  s: string parameter to transform
  * @return string&
  */
-string& to_upper(string& s);
+string &to_upper(string &s);
 
 /**
  * @brief  left trim
  * @param  s : input string
  * @return string&
  */
-string& ltrim(std::string &s);
+string &ltrim(std::string &s);
 
 /**
  * @brief  right trim
  * @param  s : input string
  * @return string&
  */
-string& rtrim(std::string &s);
+string &rtrim(std::string &s);
 
 /**
  * @brief  trim left & right
  * @param  s : input string
  * @return string&
  */
-string& trim(std::string &s);
+string &trim(std::string &s);
 
 /**
  * @brief  trim left & right
@@ -113,7 +116,7 @@ string& trim(std::string &s);
  * @param  c : char to trim
  * @return string&
  */
-string& trim(string &s, char c);
+string &trim(string &s, char c);
 
 /**
  * @name   digits10
@@ -129,9 +132,8 @@ int digits10(int n);
  * @param  number to eval
  * @param  s, out parma
  * @return void
-*/
-void itoa(const int& n, char* s);
-
+ */
+void itoa(const int &n, char *s);
 
 /**
  * @name   itos
@@ -147,7 +149,7 @@ string itos(int i);
  * @param  ptr, string to convert
  * @return int : result
  */
-int atoi(const char* ptr);
+int atoi(const char *ptr);
 
 typedef string line_t;
 typedef vector<line_t> lines_t;

@@ -471,7 +471,7 @@ private:
 
     void print_line_number_comment();
 
-    void escape_newlines(const string &s, string &sout);
+    // void escape_newlines(const string &s, string &sout);
 
 private:
     static vector<token_t *> m_tokens;

@@ -17,7 +17,7 @@
 template <class T>
 class auto_ptr
 {
-  public:
+public:
     /**
      * @brief default constructor
      */
@@ -31,7 +31,7 @@ class auto_ptr
      */
     auto_ptr(const T &val) : ref_count_ptr(new long(1)), data_ptr(new T(val))
     {
-#if TRACE
+#if TRACE_
         std::cout << " @-> " << std::hex << data_ptr << " ctor: allocated ..." << std::endl;
 #endif
     }
@@ -53,7 +53,7 @@ class auto_ptr
             data_ptr = new T();
             ref_count_ptr = new long(1);
         }
-#if TRACE
+#if TRACE_
         std::cout << " @-> " << std::hex << data_ptr << " ctor: allocated ..." << std::endl;
 #endif
     }
@@ -67,7 +67,7 @@ class auto_ptr
         ref_count_ptr = ptr.ref_count_ptr;
         data_ptr = ptr.data_ptr;
         ++(*ref_count_ptr);
-#if TRACE
+#if TRACE_
         std::cout << " @-> " << std::hex << data_ptr << " copy ctor: refed ..." << std::endl;
 #endif
     }
@@ -78,10 +78,10 @@ class auto_ptr
      */
     auto_ptr(auto_ptr<T> &&ptr) noexcept : ref_count_ptr(std::move(ptr.ref_count_ptr)), data_ptr(std::move(ptr.data_ptr))
     {
-#if TRACE
+#if TRACE_
         std::cout << " @-> " << std::hex << data_ptr << " copy ctor: refed ..." << std::endl;
 #endif
-	}
+    }
 
     /**
      * @brief destructor
@@ -186,14 +186,14 @@ class auto_ptr
      */
     auto_ptr<T> &alloc(auto_ptr<T> &ptr)
     {
-#if TRACE
+#if TRACE_
         std::cout << " @-> " << std::hex << data_ptr << " ptr.dalloc ..." << std::endl;
 #endif
         ptr.dalloc();
         ptr.data_ptr = data_ptr;
         ptr.ref_count_ptr = ref_count_ptr;
         ++(*ref_count_ptr);
-#if TRACE
+#if TRACE_
         std::cout << " @-> " << std::hex << data_ptr << " allocated / ref incremented ..." << std::endl;
 #endif
         return ptr;
@@ -204,27 +204,27 @@ class auto_ptr
      */
     void dalloc()
     {
-#if TRACE
+#if TRACE_
         std::cout << " @-> " << std::hex << data_ptr << " deallocate: ... " << std::endl;
 #endif
         if (data_ptr != 0)
         {
             --(*ref_count_ptr);
-#if TRACE
+#if TRACE_
             std::cout << " @-> " << std::hex << data_ptr << " deallocate ref decremented ... " << std::endl;
 #endif
             if (*ref_count_ptr == 0)
             {
                 delete ref_count_ptr;
                 delete data_ptr;
-#if TRACE
+#if TRACE_
                 std::cout << " @-> " << std::hex << data_ptr << " deallocate: deleted ..." << std::endl;
 #endif
             }
         }
     }
 
-  private:
+private:
     /**
      * @brief reference count pointer
      */

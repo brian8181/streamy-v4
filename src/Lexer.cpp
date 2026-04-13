@@ -23,6 +23,7 @@
 #include "fileio.hpp"
 #include "lexer.hpp"
 #include "driver.hpp"
+#include "utility.hpp"
 
 using std::cerr;
 using std::cout;
@@ -151,9 +152,7 @@ void lexer::init(string in, string out)
     m_stream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
 
-    string info;
-    escape_newlines(m_buffer, info);
-    WARN("remaining[ \"" << info << "\" ]");
+    WARN("remaining[ \"" << *escape_newlines(m_buffer) << "\" ]");
 }
 
 /**
@@ -248,13 +247,9 @@ parser::symbol_type lexer::get_token()
                 // token_value_t *tval = new token_value_t{id, m_match, m_prefix, m_suffix, "", m_line, pos, &token};
 
                 INFO("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
-                string tmp;
-                escape_newlines(m_match, tmp);
-                ERROR("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << tmp << "\" ]");
 
-                string info;
-                escape_newlines(m_buffer, info);
-                WARN("remaining[ \"" << info << "\" ]");
+                ERROR("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << *escape_newlines(m_match) << "\" ]");
+                WARN("remaining[ \"" << *escape_newlines(m_buffer) << "\" ]");
 
                 auto yytok = on_token(id);
                 // begin state change
@@ -287,21 +282,21 @@ void lexer::replace_newlines_with_line_directives(string &s)
     s = boost::regex_replace(s, newline_rgx, R"(\\n)");
 }
 
-void lexer::escape_newlines(const string &s, string &sout)
-{
-    stringstream ss;
-    size_t index = string::npos;
-    string suffix = s;
-    // replace newlines with escapes
-    while ((index = suffix.find('\n')) != string::npos)
-    {
-        string prefix = suffix.substr(0, index - 1);
-        suffix = suffix.substr(index + 1);
-        ss << prefix << "\\\\n";
-    }
-    ss << suffix;
-    sout = ss.str();
-}
+// void lexer::escape_newlines(const string &s, string &sout)
+// {
+//     stringstream ss;
+//     size_t index = string::npos;
+//     string suffix = s;
+//     // replace newlines with escapes
+//     while ((index = suffix.find('\n')) != string::npos)
+//     {
+//         string prefix = suffix.substr(0, index - 1);
+//         suffix = suffix.substr(index + 1);
+//         ss << prefix << "\\\\n";
+//     }
+//     ss << suffix;
+//     sout = ss.str();
+// }
 
 void lexer::print_line_count(const string &s)
 {
