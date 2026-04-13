@@ -144,12 +144,16 @@ void lexer::init(string in, string out)
 {
     TRACE;
     read_str(in, m_search, std::ios::in);
-    m_remaining = m_search;
+    m_buffer = m_search;
     // set state
     set_state_flag(&INITIAL);
     update_state();
     m_stream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
+
+    string info;
+    escape_newlines(m_buffer, info);
+    WARN("remaining[ \"" << info << "\" ]");
 }
 
 /**
@@ -188,7 +192,7 @@ void lexer::update_state()
     rexp_str.pop_back(); // remove extra '|' i.e. "V-BAR"
     // set context
     m_rexp = boost::regex(rexp_str, boost::regex::extended);
-    m_iter = boost::sregex_iterator(m_remaining.begin(), m_remaining.end(), m_rexp);
+    m_iter = boost::sregex_iterator(m_buffer.begin(), m_buffer.end(), m_rexp);
     m_end = boost::sregex_iterator();
 
     ERROR("Exit set_state ~ _pstate->id:" << _pstate->id << " ~ _pstate->name:" << _pstate->name);
@@ -200,7 +204,7 @@ void lexer::include_file(const string &input_file)
     // just read new, (include), file and prepend to remaining text
     string s;
     read_str(input_file, s);
-    m_remaining = s + m_remaining; // prepend new text to remaining text
+    m_buffer = s + m_buffer; // prepend new text to remaining text
     set_state_flag(&INITIAL);
 }
 
@@ -211,30 +215,23 @@ void lexer::include_file(const string &input_file)
  */
 parser::symbol_type lexer::get_token()
 {
-SKIP:
-    TRACE;
-    if (/*++*/ m_iter != m_end)
-    // while (m_iter != m_end)
+    if (m_iter != m_end)
     {
         TRACE;
-        // update_regex_for_current_state();
+        p_smatch = new boost::smatch(*m_iter);
+        boost::smatch m = *p_smatch;
+        const size_t len = p_smatch->size();
+        m_match = p_smatch->str();
+        m_prefix = p_smatch->prefix().str();
+        m_suffix = p_smatch->suffix().str();
+        m_buffer = m_suffix;
+        long m_pos = p_smatch->position();
 
-        boost::smatch m = *m_iter;
-        const size_t len = m.size();
-        m_match = m.str();
-        m_prefix = m.prefix().str();
-        m_suffix = m.suffix().str();
-        // m_remaining = m.suffix().str(); // remaining text after match
-        // m_remaining_line_count = std::count(m_remaining.begin(), m_remaining.end(), '\n');
-        m_remaining = m_remaining.substr(m.position() + m.length()); // remaining text after match
-        long pos = m.position();
-
-        // find matched
         for (int i = 1; i < len; ++i)
         {
             if (m[i].matched)
             {
-                if (m.prefix().matched)
+                if (p_smatch->prefix().matched)
                 {
                     if (_pstate->id != UL_INITIAL)
                     {
@@ -250,39 +247,32 @@ SKIP:
                 token_t token = g_tokens[id];
                 // token_value_t *tval = new token_value_t{id, m_match, m_prefix, m_suffix, "", m_line, pos, &token};
 
-                INFO("match.sz:" << m_match.size() << " - match.pos:" << pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
-                string tmp = m_match;
-                replace_newlines_with_line_directives(tmp);
+                INFO("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
+                string tmp;
+                escape_newlines(m_match, tmp);
                 ERROR("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << tmp << "\" ]");
 
                 string info;
-                escape_newlines(m_remaining, info);
+                escape_newlines(m_buffer, info);
                 WARN("remaining[ \"" << info << "\" ]");
 
                 auto yytok = on_token(id);
                 // begin state change
-
-                // move iter forward, before on_token event will invalidate it
-                //++m_iter; // iter & the smatch are invalid @ this point
-
-                // JUST LET m_iter UPDATE in update_state!
-                update_state();
-
-                // if token is not skip, return it, otherwise continue to next match
                 if (yytok.kind() != SKIP_TOKEN)
                 {
-                    TRACE;
+                    update_state();
                     return yytok;
                 }
-                WARN("skipping - token : " << token.name);
-                goto SKIP;
+                // skipping
+                ++m_iter;
+                return get_token();
             }
         }
     }
     else
     {
         TRACE;
-        m_stream << m_remaining;
+        m_stream << m_buffer;
         m_stream.flush();
         m_stream.close();
         return parser::make_END(); // error or eof
@@ -307,7 +297,7 @@ void lexer::escape_newlines(const string &s, string &sout)
     {
         string prefix = suffix.substr(0, index - 1);
         suffix = suffix.substr(index + 1);
-        ss << prefix << "\\n";
+        ss << prefix << "\\\\n";
     }
     ss << suffix;
     sout = ss.str();
@@ -327,21 +317,21 @@ void lexer::print_line_number_comment()
 
 /**
  * @name  print_token
- * @def   void lexer::print_token(token_match m)
+ * @def   void lexer::print_token(token_match p_smatch)
  * @brief print token to stdout
- * @param m
- * @param token_match m
+ * @param p_smatch
+ * @param token_match p_smatch
  */
 void lexer::print_token(const token_value_t *tval)
 {
-    // const token *ptoken = &g_tokens[m->id];
+    // const token *ptoken = &g_tokens[p_smatch->id];
     //  cout << "token"
     //       << "\n{"
-    //       << "\n    id   : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << m->id << FMT_RESET
+    //       << "\n    id   : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << p_smatch->id << FMT_RESET
     //       << "\n    name : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->name << FMT_RESET
     //       << "\n    stype: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->stype << FMT_RESET
     //       << "\n    rexp : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->rexp << FMT_RESET
-    //       << "\n    value: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << m->match << "\"" << FMT_RESET
+    //       << "\n    value: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << p_smatch->match << "\"" << FMT_RESET
     //       << "\n    line#: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->_line_ << FMT_RESET
     //      << "\n}" << " #" << __LINE__ << endl;
 }

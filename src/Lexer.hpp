@@ -464,6 +464,7 @@ public:
         m_stream << s;
     }
 
+private:
     void replace_newlines_with_line_directives(string &s);
 
     void print_line_count(const string &s);
@@ -481,14 +482,20 @@ private:
     string m_match;
     string m_prefix;
     string m_suffix;
+    long m_pos;
 
-    string m_remaining;
+    string m_buffer;
     boost::regex m_rexp;
     boost::sregex_iterator m_iter;
     boost::sregex_iterator m_end;
+    boost::smatch *p_smatch;
 
+    /**
+     * @biref output stream
+     */
     ofstream m_stream;
     int m_line;
+
     state_t *_pstate = &INITIAL;
 
     /**

@@ -409,13 +409,13 @@ colon_sep_param:
  * @name qualafied_id
  */
 qualafied_id:
-    symbol DOT symbol    '$'                                   { 
-                                                                INFO("qualafied_id: | qualafied_id DOT symbol"); 
-                                                                $$ = $3;    
-                                                            }
+    symbol DOT symbol    '$'                                    { 
+                                                                    INFO("qualafied_id: | qualafied_id DOT symbol"); 
+                                                                    $$ = $3;    
+                                                                }
     | qualafied_id DOT symbol
-    | qualafied_id INDIRECT_MEMBER symbol                   { INFO("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol"); }
-                                                            ;
+    | qualafied_id INDIRECT_MEMBER symbol                       { INFO("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol"); }
+                                                                ;
 /**
  * @name symbol
  */
@@ -430,7 +430,7 @@ SYM:
                                                                     symbol_t s = { $1, 0 };
                                                                     $$=s;
                                                                 }
-    | SYM DOT SYM  '$'                                         {
+    | SYM DOT SYM  '$'                                          {
                                                                     INFO("symbol: | symbol DOT symbol");
                                                                     symbol_t s1 = { $1, 0 };
                                                                     symbol_t s2 = { $1, s1 };
