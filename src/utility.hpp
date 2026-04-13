@@ -13,7 +13,10 @@ using std::smatch;
 using std::string;
 using std::vector;
 
-auto_ptr<string> escape_newlines(const string &s);
+/**
+ * @brief replace newlines with escape ("\n")
+ */
+auto_ptr<string> esc_nl(const string &s);
 
 /**
  * @name   get_config

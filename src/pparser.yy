@@ -149,6 +149,7 @@
  */
 complier:
     files                                                       {
+
                                                                     cout << FMT_FG_DARK_GREY << "PARSER complier: | files" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
@@ -167,6 +168,7 @@ files:
  */
 file:
     blocks END                                                  {
+                                                                    //dump_symbols(&symbol_tab);
                                                                     cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
@@ -204,6 +206,7 @@ block:
                                                                 }
     | OPEN_BRACE assign_stmt CLOSE_BRACE                        {
                                                                     INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
+                                                                    lexer::instance().write_stream($2);
                                                                 }
     | OPEN_BRACE qualafied_id CLOSE_BRACE                       {
                                                                     INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
@@ -297,6 +300,10 @@ sub_proc:
 array:
     symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET           {
                                                                     INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
+                                                                    string sym_value;
+                                                                    get_value($1, sym_value);
+                                                                    lexer::instance().write_stream(sym_value);
+                                                                    $$=sym_value;
                                                                     //$$=$1;
                                                                 }
                                                                 ;
@@ -409,7 +416,7 @@ colon_sep_param:
  * @name qualafied_id
  */
 qualafied_id:
-    symbol DOT symbol    '$'                                    { 
+    symbol DOT symbol    '$'                                   { 
                                                                     INFO("qualafied_id: | qualafied_id DOT symbol"); 
                                                                     $$ = $3;    
                                                                 }
@@ -430,7 +437,7 @@ SYM:
                                                                     symbol_t s = { $1, 0 };
                                                                     $$=s;
                                                                 }
-    | SYM DOT SYM  '$'                                          {
+    | SYM DOT SYM  '$'                                              {
                                                                     INFO("symbol: | symbol DOT symbol");
                                                                     symbol_t s1 = { $1, 0 };
                                                                     symbol_t s2 = { $1, s1 };

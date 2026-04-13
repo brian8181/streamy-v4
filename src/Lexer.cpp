@@ -84,9 +84,8 @@ void lexer::load_config(const string &file)
                 string(expr),
             };
             // copy to term to vector
-            // m_tokens.push_back(ptoken);
-            // m_id_tab[m_id] = ptoken;
-            // m_name_tab[m_name] = ptoken;
+            m_tokens.push_back(*ptoken);
+            m_tok_map[ptoken->index] = *ptoken;
         }
     }
     // ends group section, begin states section
@@ -108,10 +107,9 @@ void lexer::load_config(const string &file)
             string str_state = states_match["state"].str();   // new state to create
             string str_tokens = states_match["tokens"].str(); // csv tokens for that state
             unsigned long i = 0ul;
-            unsigned long state_id = 0xFFul | (++i * 6ul);   // generate id for new state
-            auto *pstate = new state_t{state_id, str_state}; // create new state
-            // m_pstates->push_back(pstate);
-            //(*m_pstate_tab)[pstate->id] = pstate; // insert new state into table
+            unsigned long state_id = 0xFFul | (++i * 6ul); // generate id for new state
+            state_t stat{state_id, str_state};             // create new state
+            m_states.push_back(stat);
 
             // copy to term to vector
             vector<token_t> tokens;           // token vector for this state
@@ -121,9 +119,8 @@ void lexer::load_config(const string &file)
             // use get line to split on commas
             while (std::getline(ss, str_token, ','))
             {
-                token_t *ptoken;
-                // m_def.tokens::push_back(*ptoken);
-                //_state_tokens_tab[pstate->id] = tokens;
+                token_t ptoken;
+                m_tokens.push_back(ptoken);
             }
         }
     }
@@ -152,7 +149,7 @@ void lexer::init(string in, string out)
     m_stream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
 
-    WARN("remaining[ \"" << *escape_newlines(m_buffer) << "\" ]");
+    WARN("remaining[ \"" << esc_nl(m_buffer).get_val() << "\" ]");
 }
 
 /**
@@ -167,9 +164,6 @@ void lexer::set_state_flag(state_t *pstate)
     TRACE;
     _pstate = pstate;
 
-    // bkp todo: deferred update of regex until after on_token event, since it will invalidate iterators,
-    // and on_token may want to call get_token recursively, which will need the
-    // current regex to be valid until after on_token returns
     // update_state();
 }
 
@@ -183,6 +177,9 @@ void lexer::update_state()
     {
         unsigned long id = (*STATE_TOKENS)[i];
         token_t *ptoken = &g_tokens[id];
+
+        INFO("idx: " << std::setw(5) << ptoken->index << "\t~\tname: " << std::setw(18) << std::left << ptoken->name << "\t~\ttype: " << std::setw(10) << ptoken->stype << "\t~\tregex: '" << std::setw(40) << std::left << ptoken->rexp << "'");
+
         // ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
         ss << "(" << ptoken->rexp << ")|";
     }
@@ -195,7 +192,6 @@ void lexer::update_state()
     m_end = boost::sregex_iterator();
 
     ERROR("Exit set_state ~ _pstate->id:" << _pstate->id << " ~ _pstate->name:" << _pstate->name);
-    INFO("EXPR=\"" << rexp_str << "\"");
 }
 
 void lexer::include_file(const string &input_file)
@@ -242,14 +238,11 @@ parser::symbol_type lexer::get_token()
 
                 // get id by index value "i-1" zero based vector
                 unsigned long id = (*g_tokens_by_state_id[_pstate->id])[i - 1];
-                // create token_t, find match & lookup by sub_match index
-                token_t token = g_tokens[id];
-                // token_value_t *tval = new token_value_t{id, m_match, m_prefix, m_suffix, "", m_line, pos, &token};
+                token_t token = g_tokens[id]; // create token_t, find match & lookup by sub_match index
 
                 INFO("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
-
-                ERROR("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << *escape_newlines(m_match) << "\" ]");
-                WARN("remaining[ \"" << *escape_newlines(m_buffer) << "\" ]");
+                INFO("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl(m_match).get_val() << "\" ]");
+                WARN("remaining[ \"" << esc_nl(m_buffer).get_val() << "\" ]");
 
                 auto yytok = on_token(id);
                 // begin state change
@@ -275,29 +268,23 @@ parser::symbol_type lexer::get_token()
     return parser::make_END_OF_FILES(); // error or eofs
 }
 
-void lexer::replace_newlines_with_line_directives(string &s)
-{
-    // replace newlines with line directives
-    boost::regex newline_rgx(R"(\n)");
-    s = boost::regex_replace(s, newline_rgx, R"(\\n)");
-}
-
-// void lexer::escape_newlines(const string &s, string &sout)
+// // Overload << for output
+// ostream &operator<<(const string &s)
 // {
-//     stringstream ss;
-//     size_t index = string::npos;
-//     string suffix = s;
-//     // replace newlines with escapes
-//     while ((index = suffix.find('\n')) != string::npos)
-//     {
-//         string prefix = suffix.substr(0, index - 1);
-//         suffix = suffix.substr(index + 1);
-//         ss << prefix << "\\\\n";
-//     }
-//     ss << suffix;
-//     sout = ss.str();
+//     out << s;
+//     return out;
 // }
 
+// // Overload >> for input
+// istream &operator>>(sstring &c)
+// {
+//     // in >> c.real >> c.imag;
+//     return in;
+// }
+
+/**
+ * @name print_line_count
+ */
 void lexer::print_line_count(const string &s)
 {
     size_t line_count = 0;
@@ -305,31 +292,34 @@ void lexer::print_line_count(const string &s)
     INFO("line count: " << line_count);
 }
 
+/**
+ * @name print_line_number_comment
+ */
 void lexer::print_line_number_comment()
 {
     m_stream << "/* line " << m_line << " */\n";
 }
 
-/**
- * @name  print_token
- * @def   void lexer::print_token(token_match p_smatch)
- * @brief print token to stdout
- * @param p_smatch
- * @param token_match p_smatch
- */
-void lexer::print_token(const token_value_t *tval)
-{
-    // const token *ptoken = &g_tokens[p_smatch->id];
-    //  cout << "token"
-    //       << "\n{"
-    //       << "\n    id   : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << p_smatch->id << FMT_RESET
-    //       << "\n    name : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->name << FMT_RESET
-    //       << "\n    stype: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->stype << FMT_RESET
-    //       << "\n    rexp : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->rexp << FMT_RESET
-    //       << "\n    value: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << p_smatch->match << "\"" << FMT_RESET
-    //       << "\n    line#: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->_line_ << FMT_RESET
-    //      << "\n}" << " #" << __LINE__ << endl;
-}
+// /**
+//  * @name  print_token
+//  * @def   void lexer::print_token(token_match p_smatch)
+//  * @brief print token to stdout
+//  * @param p_smatch
+//  * @param token_match p_smatch
+//  */
+// void lexer::print_token(const token_value_t *tval)
+// {
+//     // const token *ptoken = &g_tokens[p_smatch->id];
+//     //  cout << "token"
+//     //       << "\n{"
+//     //       << "\n    id   : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << p_smatch->id << FMT_RESET
+//     //       << "\n    name : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->name << FMT_RESET
+//     //       << "\n    stype: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->stype << FMT_RESET
+//     //       << "\n    rexp : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->rexp << FMT_RESET
+//     //       << "\n    value: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << p_smatch->match << "\"" << FMT_RESET
+//     //       << "\n    line#: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->_line_ << FMT_RESET
+//     //      << "\n}" << " #" << __LINE__ << endl;
+// }
 
 //
 // /// "External" symbols: returned by the scanner.

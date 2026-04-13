@@ -55,7 +55,7 @@ namespace bkp
 		 */
 		~parser() = default;
 
-		static token_value_t *parse();
+		// static token_value_t *parse();
 
 	private:
 		string m_file;

@@ -41,7 +41,7 @@ static bool output_file_flag = false;
 static bool dump_flag = false;
 static bool verbose_flag = false;
 
-[[maybe_unused]] static vector<token_value_t> g_match_squence;
+//[[maybe_unused]] static vector<token_value_t> g_match_squence;
 
 // create parser
 static yy::parser yyparser;

@@ -65,7 +65,7 @@ $(BLD)/pparser.tab.o $(SRC)/driver.h $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lex
 HEADERS=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(SRC)/auto_ptr.hpp $(SRC)/ast.h $(SRC)/driver.h $(SRC)/lexer.hpp $(SRC)/parser.hpp
 OBJS=$(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/auto_ptr.o $(OBJ)/ast.o $(OBJ)/driver.o $(OBJ)/lexer.o$(OBJ)/utility.o #$(OBJ)/parser.o
 
-all: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
+all: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so $(BLD)/pparser2.tab.o
 
 $(BLD)/driver: $(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.hpp $(OBJ)/ast.o \
                $(BLD)/pparser.tab.o $(SRC)/driver.hpp $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
@@ -79,6 +79,16 @@ $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.hpp
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.hpp
+	@echo -e "$(FMT_INFO)building -> \"$@\" . . .$(FMT_RESET)\n"
+	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
+	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
+
+$(BLD)/pparser2.tab.cpp $(BLD)/pparser2.tab.hh: $(SRC)/pparser2.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
+	@echo -e "$(FMT_INFO)Generate -> \"parser.tab.c\" . . .$(FMT_RESET)\n"
+	$(YACC) --debug -Wcounterexamples $(SRC)/pparser2.yy --header=$(BLD)/pparser2.tab.hpp -o $(BLD)/pparser2.tab.cpp
+	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
+
+$(OBJ)/pparser2.tab.o: $(OBJ)/pparser2.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.hpp
 	@echo -e "$(FMT_INFO)building -> \"$@\" . . .$(FMT_RESET)\n"
 	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"

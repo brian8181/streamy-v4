@@ -30,11 +30,13 @@ using std::vector;
 
 constexpr int ASCII_OFFSET = 48;
 
-auto_ptr<string> escape_newlines(const string &s)
+/**
+ * @name esc_nl
+ * @brief replace newlines with escape ("\n")
+ */
+auto_ptr<string> esc_nl(const string &s)
 {
     stringstream ss;
-    auto_ptr<string> ptr(new string);
-
     size_t index = string::npos;
     string suffix = s;
     // replace newlines with escapes
@@ -42,11 +44,10 @@ auto_ptr<string> escape_newlines(const string &s)
     {
         string prefix = suffix.substr(0, index - 1);
         suffix = suffix.substr(index + 1);
-        ss << prefix << "\\\\n";
+        ss << prefix << R"(\n)";
     }
     ss << suffix;
-    *ptr = ss.str();
-    return ptr;
+    return auto_ptr<string>(ss.str());
 }
 
 // /**
