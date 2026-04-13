@@ -171,7 +171,6 @@ file:
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
-                                                                    ERROR("testing error log ...");
                                                                 }
                                                                 ;
 /**
@@ -181,7 +180,6 @@ blocks:
     block                                                       { INFO("PARSER blocks: | block"); }
     | blocks block                                              {
                                                                     INFO("blocks: | blocks block");
-                                                                    //lexer::instance().dump_config();
                                                                 }
                                                                 ;
 /**
@@ -228,7 +226,7 @@ block:
                                                                     INFO("file=\"" << FMT_ITALIC << file << "\"");
                                                                     //lexer::instance().push(file);
                                                                     //const state_t s = { INITIAL_STATE, "INITIAL_STATE" };
-                                                                    lexer::instance().set_state(&INITIAL);
+                                                                    lexer::instance().set_state_flag(&INITIAL);
 
                                                                     // read include path
                                                                     // string sout;

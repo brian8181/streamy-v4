@@ -252,7 +252,7 @@ inline map<unsigned long, token> g_tokens = {
     {ARRAY, token{"ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", __LINE__}},
     {SYMBOL, token{"SYMBOL", S_TYPE, R"(\$[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*)", __LINE__}},
     {CONST_SYMBOL, token{"CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)", __LINE__}},
-    {IDENTIFIER, token{"IDENTIFIER", S_TYPE, R"(1234567890)", __LINE__}},
+    {IDENTIFIER, token{"IDENTIFIER", S_TYPE, R"([A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*)", __LINE__}},
     {COMMENT, token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
     {VAR_ATTRIB, token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
     {VALUE_ATTRIB, token{"VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", __LINE__}},
@@ -426,9 +426,14 @@ public:
      * @brief  void set_state(state_t* pstate)
      * @return void
      */
-    void set_state(state_t *pstate);
+    void set_state_flag(state_t *pstate);
 
-    void update_regex_for_current_state();
+    /**
+     * @name   update_state
+     * @brief  void update_state()
+     * @return void
+     */
+    void update_state();
 
     /**
      * @name   get_token
@@ -460,6 +465,12 @@ public:
     }
 
     void replace_newlines_with_line_directives(string &s);
+
+    void print_line_count(const string &s);
+
+    void print_line_number_comment();
+
+    void escape_newlines(const string &s, string &sout);
 
 private:
     static vector<token_t *> m_tokens;

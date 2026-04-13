@@ -65,7 +65,6 @@ yy::parser::symbol_type lex()
 int parse_options(const int argc, char *argv[])
 {
     TRACE;
-
     int option;
     const auto options_string = "hVdc:o:v";
     const struct option long_options[] = {
