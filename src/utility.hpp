@@ -8,15 +8,22 @@
 #include "auto_ptr.hpp"
 
 using std::map;
+using std::pow;
 using std::regex;
 using std::smatch;
 using std::string;
 using std::vector;
 
+typedef auto_ptr<string> string_ptr;
+
 /**
+ * @name esc_nl
  * @brief replace newlines with escape ("\n")
+ * @param const string& s
+ * @param const string r = "\\n"
+ * @return string_ptr, typedef auto_ptr<string> string_ptr
  */
-auto_ptr<string> esc_nl(const string &s);
+string_ptr esc_nl(const string &s, const string &r = "\\n");
 
 /**
  * @name   get_config
@@ -120,6 +127,15 @@ string &trim(std::string &s);
  * @return string&
  */
 string &trim(string &s, char c);
+
+/**
+ * @name ndigit
+ * @brief value of nth digit
+ * @param x, input value
+ * @param n, the nth digit
+ * @return int, value of x @ nth digit, (one based)
+ */
+int ndigit(int x, int n);
 
 /**
  * @name   digits10

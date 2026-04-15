@@ -1,6 +1,6 @@
 /**
  * @file    log.hpp
- * @version version 0.0.1
+ * @version version 0.0.2
  * @date    Tue Mar 31 13:39:39 CDT 2026
  */
 
@@ -22,7 +22,7 @@ using std::vector;
 // inline std::ofstream ostrm("log.txt", std::ios::out | std::ios::trunc);
 // inline std::ostream* DEFAULT_OUT_STREAM = &ostrm;
 inline std::ostream *DEFAULT_OUT_STREAM = &std::cout;
-
+inline std::stringstream STROUT;
 // namespace bkp {
 
 void log(const std::string &msg, int line_number);
@@ -60,12 +60,19 @@ void log(const std::string &msg, int line_number);
 // #define INFO_COLOR SET_COLOR(c)
 // #endif
 
+#ifdef TEST_ONLY
+#define ATTN(str) LOG("ATTENSION: ", FMT_FG_LIGHT_MAGENTA, str)
+#else
+#define ATTN(str) // str
+#endif
+
 // debugging
 #ifdef DEBUG
 #define INFO(str) LOG("INFO:  ", INFO_COLOR, str)
 #define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #elif WARNINGS
+#define ATTN(str) // str
 #define INFO(str) // str
 #define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)

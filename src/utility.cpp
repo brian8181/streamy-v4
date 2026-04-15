@@ -32,9 +32,12 @@ constexpr int ASCII_OFFSET = 48;
 
 /**
  * @name esc_nl
- * @brief replace newlines with escape ("\n")
+ * @brief replace newlines with c (".")
+ * @param const string& s
+ * @param const string r = "\\n"
+ * @return string_ptr, typedef auto_ptr<string> string_ptr
  */
-auto_ptr<string> esc_nl(const string &s)
+string_ptr esc_nl(const string &s, const string &r)
 {
     stringstream ss;
     size_t index = string::npos;
@@ -42,9 +45,14 @@ auto_ptr<string> esc_nl(const string &s)
     // replace newlines with escapes
     while ((index = suffix.find('\n')) != string::npos)
     {
+        // if (index > 0)
+        //     break;
         string prefix = suffix.substr(0, index - 1);
+        ss << prefix << r;
+        // move suffix
+        // if (suffix.size() < index + 1)
+        //     break;
         suffix = suffix.substr(index + 1);
-        ss << prefix << R"(\n)";
     }
     ss << suffix;
     return auto_ptr<string>(ss.str());
@@ -195,6 +203,20 @@ std::vector<std::string> *split(const std::string &str, const std::string &regex
 
     std::vector<std::string> *pv = new std::vector<std::string>(start, end);
     return pv;
+}
+
+/**
+ * @name ndigit
+ * @brief value of nth digit
+ * @param x, input value
+ * @param n, the nth digit
+ * @return int, value of x @ nth digit, (one based)
+ */
+int ndigit(int x, int n)
+{
+    int p = pow(10, n);
+    int r = (x % p) / std::pow(10, n - 1);
+    return r;
 }
 
 /**

@@ -1,8 +1,8 @@
 # @file: makefile
 # @date: Mon Sep  8 00:03:12 CDT 2025
-# @version: 0.0.1
+# @version: 0.0.2
 
-CYGWIN=TRUE
+CYGWIN=0
 
 APP = driver
 CXX = g++
@@ -50,7 +50,8 @@ endif
 ifdef CYGWIN
 	CXXFLAGS += -DCYGWIN -I"/home/brian/src/boost_1_89_0"
 	LDFLAGS = /usr/local/lib/libfmt.a -lcppunit.dll
-else
+endif
+ifdef MSYS_UCRT
 	CXXFLAGS += -I/ucrt64/include/boost
 	LDFLAGS += /usr/lib/libfmt.dll.a
 endif
@@ -59,21 +60,26 @@ endif
 # CXXFLAGS += -DTRACING
 # endif
 
+
+CXXFLAGS+=-DTEST_ONLY
+
 SOURCES=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.hpp $(OBJ)/ast.o \
 $(BLD)/pparser.tab.o $(SRC)/driver.h $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
 
 HEADERS=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(SRC)/auto_ptr.hpp $(SRC)/ast.h $(SRC)/driver.h $(SRC)/lexer.hpp $(SRC)/parser.hpp
 OBJS=$(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/auto_ptr.o $(OBJ)/ast.o $(OBJ)/driver.o $(OBJ)/lexer.o$(OBJ)/utility.o #$(OBJ)/parser.o
 
-all: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so $(BLD)/pparser2.tab.o
+all: $(BLD)/driver $(BLD)/ast
 
-$(BLD)/driver: $(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.hpp $(OBJ)/ast.o \
+world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so $(BLD)/pparser2.tab.o
+
+$(BLD)/driver: $(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o  $(OBJ)/process_strm.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.hpp $(OBJ)/ast.o \
                $(BLD)/pparser.tab.o $(SRC)/driver.hpp $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
 	@echo -e "$(FMT_INFO)building -> \"$(BLD)/driver\" ... $(FMT_RESET)\n"
-	$(CXX) $(CXXFLAGS) $(OBJ)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(OBJ)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/process_strm.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
-$(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
+$(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.cpp
 	@echo -e "$(FMT_INFO)Generate -> \"parser.tab.c\" . . .$(FMT_RESET)\n"
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
@@ -92,6 +98,9 @@ $(OBJ)/pparser2.tab.o: $(OBJ)/pparser2.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.
 	@echo -e "$(FMT_INFO)building -> \"$@\" . . .$(FMT_RESET)\n"
 	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
+
+$(BLD)/ast: $(OBJ)/ast.o
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
 $(BLD)/libauto_ptr.so: $(BLD)/auto_ptr.o
 	@echo -e "$(FMT_INFO)building -> \"$@\" . . .$(FMT_RESET)\n"
@@ -125,7 +134,7 @@ $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CCFLAGS) -c $< -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
-$(OBJ)/%.o: $(SRC)/%.cpp $(SRC)/%.hpp
+$(OBJ)/%.o: $(SRC)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 

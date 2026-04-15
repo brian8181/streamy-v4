@@ -1,7 +1,7 @@
 /**
  * @file    lexer.hpp
  * @version 0.0.1
- * @date    Fri, 26 Sep 2025 17:05:10 +0000
+ * @date    Fri, 26 Sep 2025 17:05:10
  */
 #ifndef LEXER_HPP_
 #define LEXER_HPP_
@@ -50,6 +50,12 @@ const string CONFIG_PAIR = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z
 const string CONFIG_COMMENT = R"(^\s*#.*$)";
 const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
 const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./'";
+
+// groups
+const string BUILTIN_FUNCTION = "(insert)|(include)|(config_load)|(assign)|(fetch)|(capture)";
+const string MATH = "(abs)|(ceil)|(cos)|(exp)|(floor)|(log)|(log10)|(max)|(min)|(pi)|(pow)|(rand)|(round)|(sin)|(sqrt)|(srans)|(tan)";
+const string KEY_WORDS = "(if)|(else)|(elseif)|(foreach)|(foreachelse)|(literal)|(section)|(strip)|(assign)|(counter)|(cycle)|(debug)|(eval)|(fetch)|(html_checkboxes)";
+const string VAR_MODIFIER = "(capitalize)|(indent)|(lower)|(upper)|(spacify)|(string_format)|(truncate)|(date_format)|(escape)";
 
 #ifdef BOOST_CLASSESnamespace
 {
@@ -314,6 +320,9 @@ namespace boost
     typedef parser::symbol_type yysymbol;
     inline auto SKIP_TOKEN = yysymbol(yytoken::SKIP_TOKEN).kind();
 
+#define R_TILDE R"(~)"
+#define R_EXCLAMATION R"(!)"
+
 // static context *g_context;
 /**
  * @brief token definitions : unsigned long integers
@@ -557,7 +566,7 @@ namespace boost
     /**
      * @brief global state IDs
      */
-    // vector<unsigned long> state_ids = {UL_INITIAL, UL_COMMENTING, UL_ESCAPED, UL_DOUBLE_QUOTED, UL_SINGLE_QUOTED, UL_INCLUDING, UL_IF_BLOCK, UL_IF_CONDITION};
+    inline vector<unsigned long> state_ids = {UL_INITIAL, UL_COMMENTING, UL_ESCAPED, UL_DOUBLE_QUOTED, UL_SINGLE_QUOTED, UL_INCLUDING, UL_IF_BLOCK, UL_IF_CONDITION};
 
     /**
      * @brief state_t states
@@ -574,35 +583,35 @@ namespace boost
     /**
      * @brief global state vector
      */
-    // vector<state_t> states__ = {INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED, SINGLE_QUOTED, INCLUDING, IF_BLOCK, IF_CONDITION};
+    inline vector<state_t> states__ = {INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED, SINGLE_QUOTED, INCLUDING, IF_BLOCK, IF_CONDITION};
 
     /**
      * @brief token list -> by state
      */
-    inline vector<unsigned long> INITIAL_STATE_TOKENS = {NEWLINE, OPEN_BRACE, COMMENT};
+    inline vector<unsigned long> INITIAL_TOKENS = {NEWLINE, OPEN_BRACE, COMMENT};
 
-    inline vector<unsigned long> ESCAPED_STATE_TOKENS = {CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
-                                                         CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR};
+    inline vector<unsigned long> ESCAPED_TOKENS = {CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
+                                                   CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR};
 
-    inline vector<unsigned long> COMMENTING_STATE_TOKENS = {OPEN_BRACE, COMMENT, ANYTHING};
-    inline vector<unsigned long> DOUBLE_QUOTED_STATE_TOKENS = {DOUBLE_QUOTE, VALID_CHAR};
-    inline vector<unsigned long> SINGLE_QUOTED_STATE_TOKENS = {OPEN_BRACE, COMMENT, VALID_CHAR, SINGLE_QUOTE, DOUBLE_QUOTE};
-    inline vector<unsigned long> INCLUDING_STATE_TOKENS = {FILE_ATTRIB};
-    inline vector<unsigned long> IF_BLOCK_STATE_TOKENS = {CLOSE_BRACE};
-    inline vector<unsigned long> IF_CONDITION_STATE_TOKENS = {CLOSE_BRACE};
+    inline vector<unsigned long> COMMENTING_TOKENS = {OPEN_BRACE, COMMENT, ANYTHING};
+    inline vector<unsigned long> DOUBLE_QUOTED_TOKENS = {DOUBLE_QUOTE, VALID_CHAR};
+    inline vector<unsigned long> SINGLE_QUOTED_TOKENS = {OPEN_BRACE, COMMENT, VALID_CHAR, SINGLE_QUOTE, DOUBLE_QUOTE};
+    inline vector<unsigned long> INCLUDING_TOKENS = {FILE_ATTRIB};
+    inline vector<unsigned long> IF_BLOCK_TOKENS = {CLOSE_BRACE};
+    inline vector<unsigned long> IF_CONDITION_TOKENS = {CLOSE_BRACE};
 
     /**
      * @brief global state: state_id -> states
      * @name g_tokens_by_state_id
      */
-    inline map<unsigned long, vector<unsigned long> *> g_tokens_by_state_id{{UL_INITIAL, &INITIAL_STATE_TOKENS},
-                                                                            {UL_ESCAPED, &ESCAPED_STATE_TOKENS},
-                                                                            {UL_COMMENTING, &COMMENTING_STATE_TOKENS},
-                                                                            {UL_SINGLE_QUOTED, &SINGLE_QUOTED_STATE_TOKENS},
-                                                                            {UL_DOUBLE_QUOTED, &DOUBLE_QUOTED_STATE_TOKENS},
-                                                                            {UL_INCLUDING, &INCLUDING_STATE_TOKENS},
-                                                                            {UL_IF_BLOCK, &IF_BLOCK_STATE_TOKENS},
-                                                                            {UL_IF_CONDITION, &IF_CONDITION_STATE_TOKENS}};
+    inline map<unsigned long, vector<unsigned long> *> g_state_tokens{{UL_INITIAL, &INITIAL_TOKENS},
+                                                                      {UL_ESCAPED, &ESCAPED_TOKENS},
+                                                                      {UL_COMMENTING, &COMMENTING_TOKENS},
+                                                                      {UL_SINGLE_QUOTED, &SINGLE_QUOTED_TOKENS},
+                                                                      {UL_DOUBLE_QUOTED, &DOUBLE_QUOTED_TOKENS},
+                                                                      {UL_INCLUDING, &INCLUDING_TOKENS},
+                                                                      {UL_IF_BLOCK, &IF_BLOCK_TOKENS},
+                                                                      {UL_IF_CONDITION, &IF_CONDITION_TOKENS}};
 
     /**
      * @brief class lexer (singleton)
@@ -726,7 +735,7 @@ namespace boost
         ofstream m_stream;
         int m_line;
 
-        state_t *_pstate = &INITIAL;
+        state_t *p_state = &INITIAL;
 
         /**
          *@ brief stream for quoted strings

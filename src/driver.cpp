@@ -26,6 +26,7 @@
 #include "lexer.hpp"
 #include "pparser.tab.hpp"
 #include "parser.hpp"
+#include "process_strm.hpp"
 
 using std::cerr;
 using std::cout;
@@ -107,12 +108,13 @@ int parse_options(const int argc, char *argv[])
     }
 
     const int offset = optind + SRC_IDX_OFFSET;
+    // process_files(argc, argv + offset - 1);
     for (int i = offset; i < argc; ++i)
     {
         TRACE;
 
         g_input_file = argv[i];
-        LOG("ATTENTION: ", FMT_FG_RED, "scanning file:\"" << g_input_file << "\"");
+        ATTN("scanning file:\"" << g_input_file << "\"");
 
         fs::path p = g_input_file;
         g_output_file = "build/" + p.filename().string() + ".obj";

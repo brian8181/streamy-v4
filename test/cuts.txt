@@ -59,8 +59,7 @@ void start(string file);
                                                                         cout << FMT_FG_RED << $2 << " = " << val << FMT_RESET << endl;
                                                                     }
                                                                 } */
-
-                                                                /**
+/**
  * @name stmt
  */
 stmt:

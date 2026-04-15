@@ -12,20 +12,20 @@
 #include <string>
 #include "fileio.hpp"
 
-using std::stringstream;
 using std::ifstream;
+using std::ios;
 using std::ofstream;
 using std::pair;
-using std::ios;
+using std::stringstream;
 
-long file_size(const string& path)
+long file_size(const string &path)
 {
-    try 
+    try
     {
         std::uintmax_t size = fs::file_size(path);
         return size;
-    } 
-    catch (const fs::filesystem_error& e) 
+    }
+    catch (const fs::filesystem_error &e)
     {
         std::cerr << "Error: " << e.what() << '\n';
         return -1;
@@ -37,7 +37,7 @@ long file_size(const string& path)
  * @param  const string& : path to file
  * @return bool: ture file exsit otherwise false
  */
-bool file_exist(const string& path)
+bool file_exist(const string &path)
 {
     std::fstream strm(path);
     strm.open(path, std::ios::in);
@@ -52,11 +52,10 @@ bool file_exist(const string& path)
  * @param strm
  * @return ofstream&
  */
-void get_ofstream(const string& file, /*out */ ofstream*& strm)
+void get_ofstream(const string &file, /*out */ ofstream *&strm)
 {
     strm = new ofstream(file, std::ofstream::out);
 }
-
 
 /**
  * @brief get an ifstream by path
@@ -64,7 +63,7 @@ void get_ofstream(const string& file, /*out */ ofstream*& strm)
  * @param srtm
  * @return ifstream&
  */
-void get_ifstream(const string& file, /*out */ ifstream*& strm)
+void get_ifstream(const string &file, /*out */ ifstream *&strm)
 {
     strm = new ifstream(file, std::ifstream::in);
 }
@@ -74,7 +73,7 @@ void get_ifstream(const string& file, /*out */ ifstream*& strm)
  * @param sbuf *
  * @return char
  */
-char getc(std::streambuf& sbuf)
+char getc(std::streambuf &sbuf)
 {
     return static_cast<char>(sbuf.sgetc());
 }
@@ -85,7 +84,7 @@ char getc(std::streambuf& sbuf)
  * @param  char& c : the character to read
  * @return ifstream&
  */
-ifstream& read_char(ifstream& strm, /* out */ char& c)
+ifstream &read_char(ifstream &strm, /* out */ char &c)
 {
     if (strm.is_open())
     {
@@ -93,7 +92,7 @@ ifstream& read_char(ifstream& strm, /* out */ char& c)
         if (strm.good())
             return strm;
     }
-   exit(-1);
+    exit(-1);
 }
 
 /**
@@ -102,53 +101,53 @@ ifstream& read_char(ifstream& strm, /* out */ char& c)
  * @param  const char& c : character to write
  * @return ofstream&
  */
-ofstream& write_char(ofstream& strm, /* in */ const char& c)
+ofstream &write_char(ofstream &strm, /* in */ const char &c)
 {
     if (strm.is_open())
     {
         strm.put(c);
         if (strm.good())
             return strm;
-        }
-        exit(-1);
     }
+    exit(-1);
+}
 
-    /**
-     * @brief  read a file into a buffer
-     * @param  const string& file : file to read from
-     * @param  unsigned char* buf : buffer to store the file contents
-     * @param  const int& len : length of the buffer
-     * @return int : number bytes read, or -1 on error
-     */
-    int read_buf(const string& file, /* out */ unsigned char* buf, const int& len)
+/**
+ * @brief  read a file into a buffer
+ * @param  const string& file : file to read from
+ * @param  unsigned char* buf : buffer to store the file contents
+ * @param  const int& len : length of the buffer
+ * @return int : number bytes read, or -1 on error
+ */
+int read_buf(const string &file, /* out */ unsigned char *buf, const int &len)
+{
+    ifstream stream(file, std::ifstream::in);
+    if (stream.is_open())
     {
-        ifstream stream(file, std::ifstream::in );
-        if (stream.is_open())
-        {
-            stream.read((char*)buf, len);
-            stream.close();
-            return stream.good() ? stream.gcount() : -1;
-        }
-        return -1;
+        stream.read((char *)buf, len);
+        stream.close();
+        return stream.good() ? stream.gcount() : -1;
     }
+    return -1;
+}
 
-    /**
-     * @brief  write a buffer to a file
-     * @param  const string& file : file to write to
+/**
+ * @brief  write a buffer to a file
+ * @param  const string& file : file to write to
  * @param  const unsigned char* buf : buffer to write
  * @param  const int& len : length of the buffer
  * @return int : number of bytes written, or -1 on error
  */
-int write_buf(const string& file, /* in */ const char* buf, const int& len)
+int write_buf(const string &file, /* in */ const char *buf, const int &len)
 {
-	std::ofstream stream(file, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
-	if (stream.is_open())
-	{
-		stream.write((char*)buf, len);
+    std::ofstream stream(file, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+    if (stream.is_open())
+    {
+        stream.write((char *)buf, len);
         stream.close();
-		return stream.good() ? len : -1;
-	}
-	return -1;
+        return stream.good() ? len : -1;
+    }
+    return -1;
 }
 
 /**
@@ -157,7 +156,7 @@ int write_buf(const string& file, /* in */ const char* buf, const int& len)
  * @param  string& out : string to store the file contents
  * @return int : number of characters read, or -1 on error
  */
-int read_str(const string& file, /* out */ string& out, std::ios_base::openmode mode)
+int read_str(const string &file, /* out */ string &out, std::ios_base::openmode mode)
 {
     ifstream stream(file, mode);
     if (stream.is_open())
@@ -180,7 +179,7 @@ int read_str(const string& file, /* out */ string& out, std::ios_base::openmode 
  * @param  const string& in : string to write
  * @return int : number of characters written, or -1 on error
  */
-int write_str(const string& file, /* in */ const string& in)
+int write_str(const string &file, /* in */ const string &in)
 {
     ofstream stream;
     stream.open(file, std::ios_base::out | std::ios::out);
@@ -201,7 +200,7 @@ int write_str(const string& file, /* in */ const string& in)
  * @param  stringstream& ostrm : stringstream to store the file contents
  * @return int : number of characters read, or -1 on error
  */
-int read_sstream(const string& file, /* out */ stringstream& ostrm)
+int read_sstream(const string &file, /* out */ stringstream &ostrm)
 {
     ifstream stream(file, ios::in);
     if (stream.is_open())
@@ -223,7 +222,7 @@ int read_sstream(const string& file, /* out */ stringstream& ostrm)
  * @param  const stringstream& istrm : stringstream to write
  * @return int : number of characters written, or -1 on error
  */
-int write_sstream(const string& file, /* in */ const stringstream& istrm)
+int write_sstream(const string &file, /* in */ const stringstream &istrm)
 {
     ofstream stream(file, ios::out | std::ofstream::trunc);
     if (stream.is_open())
@@ -241,11 +240,11 @@ int write_sstream(const string& file, /* in */ const stringstream& istrm)
  * @param  lines : vector to store the lines
  * @return number of lines written, or -1 on errors
  */
-int read_line(ifstream* istrm, /* out */ string& line)
+ifstream *read_line(ifstream *istrm, /* out */ string &line)
 {
-   if (!istrm->is_open())
-        return -1;
-    //getline(istrm, line);
+    // if (!istrm->is_open())
+    //     return -1;
+    // return istrm->getline(line, 1024);
     return 0;
 }
 
@@ -255,12 +254,12 @@ int read_line(ifstream* istrm, /* out */ string& line)
  * @param  const vector<string>& lines : lines to write
  * @return int : number of lines written, or -1 on error
  */
-int write_line(ofstream* ostrm, /* in */ string& line)
+int write_line(ofstream *ostrm, /* in */ string &line)
 {
     if (!ostrm->is_open())
         return -1;
     *ostrm << line;
-	return line.size();
+    return line.size();
 }
 
 /**
@@ -269,9 +268,9 @@ int write_line(ofstream* ostrm, /* in */ string& line)
  * @param  vector<string>& lines : vector to store the lines
  * @return int : number of lines written, or -1 on error
  */
-int read_lines(const string& file, /* out */ vector<string>& lines)
+int read_lines(const string &file, /* out */ vector<string> &lines)
 {
-    ifstream stream(file, ios::in );
+    ifstream stream(file, ios::in);
     if (!stream.is_open())
         return -1;
     string line;
@@ -289,21 +288,21 @@ int read_lines(const string& file, /* out */ vector<string>& lines)
  * @param  const vector<string>& lines : lines to write
  * @return int : number of lines written, or -1 on error
  */
-int write_lines(const string& file, /* in */ const vector<string>& lines)
+int write_lines(const string &file, /* in */ const vector<string> &lines)
 {
     std::ofstream os(file, std::ofstream::out | std::ofstream::trunc);
-	if (os.is_open())
-	{
+    if (os.is_open())
+    {
         string line;
         int len = lines.size();
-        for(int i = 0; i < len; ++i)
+        for (int i = 0; i < len; ++i)
         {
             line = lines[i];
-            line.append("\n");  // append new line
-		    os.write(line.c_str(), line.size());
+            line.append("\n"); // append new line
+            os.write(line.c_str(), line.size());
         }
         return len;
-	}
+    }
     os.close();
     return -1;
 }

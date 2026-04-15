@@ -21,7 +21,7 @@ public:
     /**
      * @brief default constructor
      */
-    auto_ptr() : ref_count_ptr(0), data_ptr(0)
+    auto_ptr() : ref_count_ptr(new long(1)), data_ptr(new T())
     {
     }
 
