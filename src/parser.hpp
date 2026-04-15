@@ -7,22 +7,27 @@
 #ifndef parser_HPP_
 #define parser_HPP_
 #include <iostream>
+#include <string>
+#include <string_view>
+#include <list>
+#include <vector>
 #include "lexer.hpp"
 #include "context.hpp"
-// #include "tokens.hpp"
+//#include "tokens.hpp"
 
-typedef vector<unsigned long> TYPE;
-typedef vector<unsigned long> TERMINAL;
-typedef vector<unsigned long> RULE;
-typedef vector<TYPE> TYPES;
-typedef vector<TERMINAL> TERMINALS;
-typedef vector<RULE> RULES;
-typedef vector<TYPE> SEQUENCE;
-typedef vector<SEQUENCE> SEQUENCES;
-typedef TYPE START;
+// typedef unsigned long TYPE;
+// typedef unsigned long TERMINAL;
+// typedef vector<unsigned long> RULE;
+// typedef vector<TYPE> TYPES;
+// typedef vector<TERMINAL> TERMINALS;
+// typedef vector<RULE> RULES;
+// typedef vector<TYPE> SEQUENCE;
+// typedef vector<SEQUENCE> SEQUENCES;
+// typedef TYPE START;
 
+// unsigned long ADD_TYPE, MUL_TYPE, NUM;
 // TYPES types{ADD_TYPE, MUL_TYPE, NUM, EXPR};
-// TERMINALS terminals{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, PLUS_SIGN, NUMERIC_LITERAL, CLOSE_BRACE};
+// // TERMINALS terminals{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, PLUS_SIGN, NUMERIC_LITERAL, CLOSE_BRACE};
 
 // RULES rules{
 // 	{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, PLUS_SIGN, NUMERIC_LITERAL, CLOSE_BRACE},
@@ -43,7 +48,7 @@ namespace bkp
 		/**
 		 * @brief : ctor
 		 */
-		parser(context *ct, const string &file);
+		parser(context* ct, const string& file);
 
 		/**
 		 * @brief : copy ctor
@@ -55,12 +60,14 @@ namespace bkp
 		 */
 		~parser() = default;
 
-		// static token_value_t *parse();
+		void parse();
 
 	private:
 		string m_file;
 		string m_input;
 		context *m_context;
+		std::list<std::string_view> rules;
+
 	};
 }
 #endif

@@ -124,6 +124,11 @@ int parse_options(const int argc, char *argv[])
 
         LOG("ATTENTION: ", FMT_FG_RED, log.str());
 
+		context ctx("");
+		string str("test/test5.txt");
+		bkp::parser np(&ctx, str);
+		np.parse();
+
         lexer::instance().init(g_input_file, g_output_file);
         yyparser.parse();
 

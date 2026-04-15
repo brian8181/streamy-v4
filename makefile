@@ -63,23 +63,46 @@ endif
 
 CXXFLAGS+=-DTEST_ONLY
 
-SOURCES=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.hpp $(OBJ)/ast.o \
-$(BLD)/pparser.tab.o $(SRC)/driver.h $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
+SOURCES=$(SRC)/bash_color.hpp \
+$(SRC)/log.hpp \
+$(SRC)/fileio.hpp $(OBJ)/fileio.o \
+$(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o \
+$(SRC)/utility.hpp $(OBJ)/utility.o \
+$(SRC)/ast.hpp \
+$(BLD)/pparser.tab.hpp $(BLD)/pparser.tab.o \
+$(SRC)/parser.hpp $(OBJ)/parser.o \
+$(SRC)/lexer.hpp $(OBJ)/lexer.o \
+$(SRC)/driver.hpp $(OBJ)/driver.o
 
-HEADERS=$(SRC)/bash_color.hpp $(SRC)/log.hpp $(SRC)/auto_ptr.hpp $(SRC)/ast.h $(SRC)/driver.h $(SRC)/lexer.hpp $(SRC)/parser.hpp
-OBJS=$(BLD)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/auto_ptr.o $(OBJ)/ast.o $(OBJ)/driver.o $(OBJ)/lexer.o$(OBJ)/utility.o #$(OBJ)/parser.o
+HEADERS=$(SRC)/bash_color.hpp \
+$(SRC)/log.hpp \
+$(SRC)/fileio.hpp \
+$(SRC)/auto_ptr.hpp \
+$(SRC)/utility.hpp \
+$(SRC)/ast.hpp \
+$(BLD)/pparser.tab.hpp \
+$(SRC)/parser.hpp \
+$(SRC)/lexer.hpp \
+$(SRC)/driver.hpp
 
-all: $(BLD)/driver $(BLD)/ast
+OBJS=$(OBJ)/fileio.o \
+$(OBJ)/auto_ptr.o \
+$(OBJ)/utility.o \
+$(BLD)/pparser.tab.o \
+$(OBJ)/parser.o \
+$(OBJ)/lexer.o \
+$(OBJ)/driver.o
+
+all: $(BLD)/driver
 
 world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so $(BLD)/pparser2.tab.o
 
-$(BLD)/driver: $(SRC)/bash_color.hpp $(SRC)/log.hpp $(OBJ)/fileio.o  $(OBJ)/process_strm.o $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o $(OBJ)/utility.o $(SRC)/ast.hpp $(OBJ)/ast.o \
-               $(BLD)/pparser.tab.o $(SRC)/driver.hpp $(OBJ)/driver.o $(SRC)/lexer.hpp $(OBJ)/lexer.o #$(SRC)/parser.hpp $(OBJ)/parser.o
+$(BLD)/driver: $(SOURCES)
 	@echo -e "$(FMT_INFO)building -> \"$(BLD)/driver\" ... $(FMT_RESET)\n"
-	$(CXX) $(CXXFLAGS) $(OBJ)/pparser.tab.o $(OBJ)/fileio.o $(OBJ)/process_strm.o $(OBJ)/driver.o $(OBJ)/lexer.o $(OBJ)/utility.o $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(OBJS) $(LDFLAGS) -o $@
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
-$(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hh: $(SRC)/pparser.yy $(SRC)/lexer.cpp
+$(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cpp
 	@echo -e "$(FMT_INFO)Generate -> \"parser.tab.c\" . . .$(FMT_RESET)\n"
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp
 	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"

@@ -45,36 +45,36 @@ string_ptr esc_nl(const string &s, const string &r)
     // replace newlines with escapes
     while ((index = suffix.find('\n')) != string::npos)
     {
-        // if (index > 0)
-        //     break;
+		// remove end line
+        if (index > 0) break;
         string prefix = suffix.substr(0, index - 1);
         ss << prefix << r;
+
         // move suffix
-        // if (suffix.size() < index + 1)
-        //     break;
+        if(suffix.size() < index + 1) break;
         suffix = suffix.substr(index + 1);
     }
     ss << suffix;
     return auto_ptr<string>(ss.str());
 }
 
-// /**
-//  * @brief print color
-//  * @param s
-//  */
-// void color_print(const fmt::v11::text_style &ts, fmt::v11::format_string<double> fmt, double &&args)
-// {
-//     /**
-//      * Formats a string and prints it to stdout using ANSI escape sequences to
-//      * specify text formatting.
-//      *
-//      * **Example**:
-//      *
-//      *     fmt::print(fmt::emphasis::bold | fg(fmt::color::red),
-//      *                "Elapsed time: {0:.2f} seconds", 1.23);
-//      */
-//     fmt::print(ts, fmt, args);
-// }
+/**
+ * @brief print color
+ * @param s
+ */
+void color_print(const fmt::v11::text_style &ts, fmt::v11::format_string<double> fmt, double &&args)
+{
+    /**
+     * Formats a string and prints it to stdout using ANSI escape sequences to
+     * specify text formatting.
+     *
+     * **Example**:
+     *
+     *     fmt::print(fmt::emphasis::bold | fg(fmt::color::red),
+     *                "Elapsed time: {0:.2f} seconds", 1.23);
+     */
+    fmt::print(ts, fmt, args);
+}
 
 /**
  * @name color_fmt

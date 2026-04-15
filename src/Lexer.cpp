@@ -2,7 +2,7 @@
 /**
  * @file    lexer.cpp
  * @version 0.0.1
- * @date    Fri, 26 Sep 2025 17:05:10 
+ * @date    Fri, 26 Sep 2025 17:05:10
  */
 
 #define _GNU_SOURCE
@@ -179,12 +179,15 @@ void lexer::update_state()
         unsigned long id = (*STATE_TOKENS)[i];
         token_t *ptoken = &g_tokens[id];
 
+		stringstream rstr;
+		rstr  << "R\"(" << ptoken->rexp << ")\"";
+
         stringstream info;
         info << "idx:   "
              << std::setw(5) << ptoken->index << "\t~\tname: "
              << std::setw(18) << std::left << ptoken->name << "\t~\ttype: "
              << std::setw(10) << ptoken->stype << "\t~\tregex: "
-             << std::left << "R\"(" << ptoken->rexp << ")\"" << std::right << setw(20) << ".";
+             << std::left << std::setw(44) << rstr.str() << std::right << "~";
         INFO(info.str());
         // ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
         ss << "(" << ptoken->rexp << ")|";
