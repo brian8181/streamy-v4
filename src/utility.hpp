@@ -23,7 +23,7 @@ typedef auto_ptr<string> string_ptr;
  * @param const string r = "\\n"
  * @return string_ptr, typedef auto_ptr<string> string_ptr
  */
-string_ptr esc_nl(const string &s, const string &r = "\\n");
+string_ptr esc_nl(const string &s, const string &r = ".");
 
 /**
  * @name   get_config

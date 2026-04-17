@@ -18,10 +18,11 @@
     #include <stdlib.h>
     #include <string.h>
     #include "fileio.hpp"
-    #include "log.hpp"
+    //#include "log.hpp"
     #include "symtab.h"
     #include "driver.hpp"
     #include "lexer.hpp"
+	#include "bash_color.hpp"
 
     using std::vector;
     using std::string;
@@ -30,8 +31,8 @@
     using std::pair;
     using std::map;
 
-    #undef INFO_COLOR
-    #define INFO_COLOR FMT_FG_BLUE
+    /* #undef INFO_COLOR
+    #define INFO_COLOR FMT_FG_BLUE */
 
     //typedef std::pair< std::string, std::string > > attrib_t;
     //typedef std::vector< attrib_t > attributes_t;
@@ -121,7 +122,7 @@
 
 %type files file blocks
 %type< std::pair<std::string, std::string> > attrib
-%type<std::vector< std::pair<std::string, std::string> > > attributes 
+%type<std::vector< std::pair<std::string, std::string> > > attributes
 %type<std::vector< std::pair<std::string, std::string> > > built_in
 %type<std::string> block
 %type<std::string> expr
@@ -160,8 +161,8 @@ complier:
  * @name files
  */
 files:
-    file                                                        { INFO("files: file"); }
-    | files file                                                { INFO("files: | files file"); }
+    file                                                        { /** INFO("files: file");*/ }
+    | files file                                                { /** INFO("files: | files file");*/ }
                                                                 ;
 /**
  * @name file
@@ -169,19 +170,19 @@ files:
 file:
     blocks END                                                  {
                                                                     //dump_symbols(&symbol_tab);
-                                                                    cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
-                                                                    cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
-                                                                    cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
-                                                                    cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
+                                                                    // cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
+                                                                    // cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
+                                                                    // cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
+                                                                    // cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                 }
                                                                 ;
 /**
  * @name blocks
  */
 blocks:
-    block                                                       { INFO("PARSER blocks: | block"); }
+    block                                                       {  }
     | blocks block                                              {
-                                                                    INFO("blocks: | blocks block");
+
                                                                 }
                                                                 ;
 /**
@@ -189,27 +190,27 @@ blocks:
  */
 block:
     OPEN_BRACE symbol CLOSE_BRACE                               {
-                                                                    INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
+                                                                    // INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                     string sym_value;
                                                                     get_value($2, sym_value);
                                                                     lexer::instance().write_stream(sym_value);
                                                                     $$=sym_value;
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
-                                                                    INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
+                                                                    // INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
-                                                                    INFO("block: | OPEN_BRACE sub_porc CLOSE_BRACE");
+                                                                    // INFO("block: | OPEN_BRACE sub_porc CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE array CLOSE_BRACE                              {
-                                                                    INFO("block: | OPEN_BRACE array CLOSE_BRACE");
+                                                                    // INFO("block: | OPEN_BRACE array CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE assign_stmt CLOSE_BRACE                        {
-                                                                    INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
+                                                                    // INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
                                                                     lexer::instance().write_stream($2);
                                                                 }
     | OPEN_BRACE qualafied_id CLOSE_BRACE                       {
-                                                                    INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
+                                                                    // INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
                                                                     // bkp todo, look up in symbol table & do replace
                                                                     // bkp todo qualified lookup
                                                                     std::string s;
@@ -217,7 +218,7 @@ block:
                                                                     $$ = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
-                                                                    INFO("block: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
+                                                                    // INFO("block: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
                                                                     size_t len = $3.size();
                                                                     int i = 0;
                                                                     for(; i < len; ++i)
@@ -226,7 +227,7 @@ block:
                                                                              break;
                                                                     }
                                                                     string file = $3[i].second;
-                                                                    INFO("file=\"" << FMT_ITALIC << file << "\"");
+                                                                    // INFO("file=\"" << FMT_ITALIC << file << "\"");
                                                                     //lexer::instance().push(file);
                                                                     //const state_t s = { INITIAL_STATE, "INITIAL_STATE" };
                                                                     lexer::instance().set_state_flag(&INITIAL);
@@ -239,25 +240,27 @@ block:
                                                                     // stringstream* include_buffer = lexer::instance().get_include_buffer();
                                                                     // *include_buffer << sout << *p_rstr;
 
-                                                                    
+
                                                                     // set the suffix a.k.a "current search buffer"
                                                                     // lexer::instance().set_remaining( (*include_buffer).str() );
                                                                     // lexer::instance().set_state(&sINITIAL);
-                                                                   
+
                                                                 }
-| OPEN_BRACE ASSIGN attributes CLOSE_BRACE                      { INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE"); }
+| OPEN_BRACE ASSIGN attributes CLOSE_BRACE                      {
+																	// INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE");
+																	}
                                                                 ;
 /**
  * @name assign_stmt
  */
 assign_stmt:
     symbol EQUAL_SIGN NUMERIC_LITERAL                           {
-                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL");
+                                                                    // INFO("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL");
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
     | symbol EQUAL_SIGN STRING_LITERAL                          {
-                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL");
+                                                                    // INFO("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL");
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
@@ -268,29 +271,51 @@ assign_stmt:
  */
 expr:
     symbol VBAR modifiers                                       {
-                                                                    INFO("expr: | symbol VBAR modifiers ");
+                                                                    // INFO("expr: | symbol VBAR modifiers ");
                                                                     std::string s;
                                                                     get_value($1, s);
                                                                     $$ = s;
                                                                 }
-    | MINUS expr %prec UMINUS                                   { INFO("PARSER expr: | expr <<"); }
-    | expr PLUS_SIGN expr                                       { INFO("PARSER expr: | expr PLUS_SIGN expr <<"); }
-    | expr MINUS expr                                           { INFO("PARSER expr: | expr MINUS expr <<"); }
-    | expr ASTERISK expr                                        { INFO("PARSER expr: | expr ASTERISK expr <<"); }
-    | expr SLASH expr                                           { INFO("PARSER expr: | expr SLASH expr <<"); }
-    | expr LESS_THAN expr                                       { INFO("PARSER expr: | expr LESS_THAN expr <<"); }
-    | expr GREATER_THAN expr                                    { INFO("PARSER expr: | | expr GREATER_THAN expr <<"); }
-    | expr GREATER_THAN_EQUAL expr                              { INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << "); }
-    | expr LESS_THAN_EQUAL expr                                 { INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<"); }
-    | expr NOT_EQUAL expr                                       { INFO("PARSER expr: | expr NOT_EQUAL expr <<"); }
-    | LPAREN expr RPAREN                                        { INFO("PARSER expr: | LPAREN expr RPAREN <<"); }
+    | MINUS expr %prec UMINUS                                   {
+																	// INFO("PARSER expr: | expr <<");
+	}
+    | expr PLUS_SIGN expr                                       {
+		// INFO("PARSER expr: | expr PLUS_SIGN expr <<");
+		}
+    | expr MINUS expr                                           {
+		// INFO("PARSER expr: | expr MINUS expr <<");
+	}
+    | expr ASTERISK expr                                        {
+		// INFO("PARSER expr: | expr ASTERISK expr <<");
+		}
+    | expr SLASH expr                                           {
+		// INFO("PARSER expr: | expr SLASH expr <<");
+		}
+    | expr LESS_THAN expr                                       {
+		// INFO("PARSER expr: | expr LESS_THAN expr <<");
+	}
+    | expr GREATER_THAN expr                                    {
+		// INFO("PARSER expr: | | expr GREATER_THAN expr <<");
+		}
+    | expr GREATER_THAN_EQUAL expr                              {
+		// INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << ");
+		}
+    | expr LESS_THAN_EQUAL expr                                 {
+		// INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<");
+		}
+    | expr NOT_EQUAL expr                                       {
+		// INFO("PARSER expr: | expr NOT_EQUAL expr <<");
+		}
+    | LPAREN expr RPAREN                                        {
+		// INFO("PARSER expr: | LPAREN expr RPAREN <<");
+		}
                                                                 ;
 /**
  * @name sub_proc
  */
 sub_proc:
     symbol LPAREN params RPAREN                                 {
-                                                                    INFO("sub_proc: | symbol LPAREN params RPAREN" << "");
+                                                                    // INFO("sub_proc: | symbol LPAREN params RPAREN" << "");
                                                                     //$$=$1;
                                                                 }
                                                                 ;
@@ -299,7 +324,7 @@ sub_proc:
  */
 array:
     symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET           {
-                                                                    INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
+                                                                    // INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
                                                                     string sym_value;
                                                                     get_value($1, sym_value);
                                                                     lexer::instance().write_stream(sym_value);
@@ -312,15 +337,21 @@ array:
  * @brief params (i.e. $x, $y, $x)
  */
 params:
-    param                                                       { INFO("PARSER params: | param"); }
-    | params symbol                                             { INFO("qualafied_id: | params COMMA symbol"); }
+    param                                                       {
+		// INFO("PARSER params: | param");
+		}
+    | params symbol                                             {
+		// INFO("qualafied_id: | params COMMA symbol");
+		}
                                                                 ;
 /**
  * @name param
  * @brief param (i.e. $x, )
  */
 param:
-        symbol COMMA                                            { INFO("param: | symbol"); }
+        symbol COMMA                                            {
+			// INFO("param: | symbol");
+			}
                                                                 ;
 /**
  * @name modifiers
@@ -328,11 +359,11 @@ param:
  */
 modifiers:
     modifier                                                    {
-                                                                    WARN("modifiers: modifier");
+                                                                    //WARN("modifiers: modifier");
                                                                     //std::swap($$, $1);
                                                                 }
    | modifiers VBAR modifier                                    {
-                                                                    WARN("modifiers: modifier");
+                                                                    //WARN("modifiers: modifier");
                                                                     // std::swap($$, $1);
                                                                     // $$.push_back($3);
                                                                 }
@@ -342,56 +373,62 @@ modifiers:
  */
 modifier:
     modifier colon_sep_params                                   {
-                                                                    INFO(" modifier: modifier colon_sep_params");
+                                                                    // INFO(" modifier: modifier colon_sep_params");
                                                                     // $1.params.append("|");
                                                                     // $1.params.append($2);
                                                                 }
     | CAPITALIZE                                                {
-                                                                    INFO("modifier | CAPITALIZE");
+                                                                    // INFO("modifier | CAPITALIZE");
                                                                     // modifier_t m;
                                                                     // m.name = "capitalize";
                                                                     // m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "capitalize";
                                                                 }
-    | CAT                                                       { INFO("modifier | CAT"); $$="cat"; }
-    | COUNT_CHARACTERS                                          { INFO("modifier | COUNT_CHARACTERS"); $$="count_characters"; }
-    | COUNT_SENTENCES                                           { INFO("modifier | COUNT_SENTENCES"); $$="count_sentences"; }
-    | COUNT_PARAGRAPHS                                          { INFO("modifier | COUNT_PARAGRAPHS"); $$="count_paragraphs"; }
-    | COUNT_WORDS                                               { INFO("modifier | COUNT_WORDS"); $$="count_words"; }
-    | DATE_FORMAT                                               { INFO("modifier | DATE_FORMAT"); $$="date_format"; }
-    | DEFAULT                                                   { INFO("modifier | DEFAULT"); $$="default"; }
-    | ESCAPE                                                    { INFO("modifier | ESCAPE"); $$="esacpe"; }
-    | INDENT                                                    { INFO("modifier | INDENT"); $$="indent"; }
-    | STRIP                                                     { INFO("modifier | STRIPS"); $$="strip"; }
-    | NL2BR                                                     { INFO("modifier | NL2BR"); $$="nl2br"; }
-    | REPLACE                                                   { INFO("modifier | REPLACE"); $$="replace"; }
-    | REGEX_REPLACE                                             { INFO("modifier | REGEX_REPLACE"); $$="regex_replsce"; }
-    | SPACIFY                                                   { INFO("modifier | SPACIFY"); $$="spacify"; }
-    | STRING_FORMAT                                             { INFO("modifier | STRING_FORMAT"); $$="string_format"; }
-    | STRIP_TAGS                                                { INFO("modifier | STIP_TAGS"); $$="strip_tags"; }
+    | CAT                                                     {  /** INFO("modifier | CAT"); $$="cat"; */ }
+    | COUNT_CHARACTERS                                        {  /** INFO("modifier | COUNT_CHARACTERS"); $$="count_characters"; */ }
+    | COUNT_SENTENCES                                         {  /** INFO("modifier | COUNT_SENTENCES"); $$="count_sentences"; */ }
+    | COUNT_PARAGRAPHS                                        {  /** INFO("modifier | COUNT_PARAGRAPHS"); $$="count_paragraphs"; */ }
+    | COUNT_WORDS                                             {  /** INFO("modifier | COUNT_WORDS"); $$="count_words"; */ }
+    | DATE_FORMAT                                             {  /** INFO("modifier | DATE_FORMAT"); $$="date_format"; */ }
+    | DEFAULT                                                 {  /** INFO("modifier | DEFAULT"); $$="default"; */ }
+    | ESCAPE                                                  {  /** INFO("modifier | ESCAPE"); $$="esacpe"; */ }
+    | INDENT                                                  {  /** INFO("modifier | INDENT"); $$="indent"; */ }
+    | STRIP                                                   {  /** INFO("modifier | STRIPS"); $$="strip"; */ }
+    | NL2BR                                                   {  /** INFO("modifier | NL2BR"); $$="nl2br"; */ }
+    | REPLACE                                                 {  /** INFO("modifier | REPLACE"); $$="replace"; */ }
+    | REGEX_REPLACE                                           {  /** INFO("modifier | REGEX_REPLACE"); $$="regex_replsce"; */ }
+    | SPACIFY                                                 {  /** INFO("modifier | SPACIFY"); $$="spacify"; */ }
+    | STRING_FORMAT                                           {  /** INFO("modifier | STRING_FORMAT"); $$="string_format"; */ }
+    | STRIP_TAGS                                              {  /** INFO("modifier | STIP_TAGS"); $$="strip_tags"; }                 */ }
     | TRUNCATE                                                  {
-                                                                    INFO("modifier | TRUNCATE"); $$="truncate";
+                                                                    // INFO("modifier | TRUNCATE"); $$="truncate";
                                                                     // modifier_t m;
                                                                     // m.name = "truncate";
                                                                     // m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "truncate";
                                                                 }
-    | UPPER                                                     { INFO("modifier | UPPER"); $$="upper"; }
-    | LOWER                                                     { INFO("modifier | LOWER"); $$="lower"; }
-    | WORDWRAP                                                  { INFO("modifier | WORDWRAP"); $$="word_wrap"; }
+    | UPPER                                                     {
+		// INFO("modifier | UPPER"); $$="upper";
+		}
+    | LOWER                                                     {
+		// INFO("modifier | LOWER"); $$="lower";
+		}
+    | WORDWRAP                                                  {
+		// INFO("modifier | WORDWRAP"); $$="word_wrap";
+		}
                                                                 ;
 /**
  * @name colon_sep_params
  * @brief ( $x:$y:$x ) | 1:2:"three"
  */
 colon_sep_params:
-        colon_sep_params colon_sep_param                      { 
-                                                                   INFO("colon_sep_params: | colon_sep_params colon_sep_param"); 
+        colon_sep_params colon_sep_param                      {
+                                                                   // INFO("colon_sep_params: | colon_sep_params colon_sep_param");
                                                                     std::swap($$, $1);
                                                                     $$.push_back($2);
-                                                                    
+
                                                                 }
                                                                 ;
 /**
@@ -399,120 +436,122 @@ colon_sep_params:
  * @brief colon seperated param {$x|trim:3:' '}
  */
 colon_sep_param:
-        COLON NUMERIC_LITERAL                                   { 
-                                                                    INFO("colon_sep_param: | COLON NUMERIC_LITERAL"); 
-                                                                    $$=$2; 
-                                                                }
-        | COLON STRING_LITERAL                                  { 
-                                                                    INFO("colon_sep_param: | COLON STRING_LITERAL"); 
+        COLON NUMERIC_LITERAL                                   {
+                                                                    // INFO("colon_sep_param: | COLON NUMERIC_LITERAL");
                                                                     $$=$2;
                                                                 }
-        | COLON symbol                                          { 
-                                                                    INFO("colon_sep_param: | COLON symbol");
+        | COLON STRING_LITERAL                                  {
+                                                                    // INFO("colon_sep_param: | COLON STRING_LITERAL");
+                                                                    $$=$2;
+                                                                }
+        | COLON symbol                                          {
+                                                                    // INFO("colon_sep_param: | COLON symbol");
                                                                     get_value($2, $$);
-                                                                } 
+                                                                }
                                                                 ;
 /**
  * @name qualafied_id
  */
 qualafied_id:
-    symbol DOT symbol    '$'                                   { 
-                                                                    INFO("qualafied_id: | qualafied_id DOT symbol"); 
-                                                                    $$ = $3;    
+    symbol DOT symbol    '$'                                   {
+                                                                    // INFO("qualafied_id: | qualafied_id DOT symbol");
+                                                                    $$ = $3;
                                                                 }
     | qualafied_id DOT symbol
-    | qualafied_id INDIRECT_MEMBER symbol                       { INFO("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol"); }
+    | qualafied_id INDIRECT_MEMBER symbol                       {
+		// INFO("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol");
+		}
                                                                 ;
 /**
  * @name symbol
  */
 SYM:
     SYMBOL  '$'                                                {
-                                                                    INFO("symbol: | SYMBOL=\"" << $1 << "\"");
+                                                                    // INFO("symbol: | SYMBOL=\"" << $1 << "\"");
                                                                     symbol_t s = { $1, 0 };
                                                                     $$=s;
                                                                 }
     | CONST_SYMBOL  '$'                                        {
-                                                                    INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
+                                                                    // INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
                                                                     symbol_t s = { $1, 0 };
                                                                     $$=s;
                                                                 }
     | SYM DOT SYM  '$'                                              {
-                                                                    INFO("symbol: | symbol DOT symbol");
+                                                                    // INFO("symbol: | symbol DOT symbol");
                                                                     symbol_t s1 = { $1, 0 };
                                                                     symbol_t s2 = { $1, s1 };
                                                                     s1.members.push_back(s2);
-                                                                    // $1.swap($3, $1); 
+                                                                    // $1.swap($3, $1);
                                                                     $$=s1;
-                                                                }  
+                                                                }
                                                                 ;
 /**
  * @name symbol
  */
 symbol:
     SYMBOL                                                      {
-                                                                    INFO("symbol: | SYMBOL=\"" << $1 << "\"");
+                                                                    // INFO("symbol: | SYMBOL=\"" << $1 << "\"");
                                                                     //symbol_t s = { $1, 0 };
                                                                     //$$=s;
                                                                     $$=$1;
                                                                 }
     | CONST_SYMBOL                                              {
-                                                                    INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
+                                                                    // INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
                                                                     //symbol_t s = { $1, 0 };
                                                                     //$$=s;
                                                                 }
     | symbol DOT symbol                                         {
-                                                                    INFO("symbol: | symbol DOT symbol");
+                                                                    // INFO("symbol: | symbol DOT symbol");
                                                                     // symbol_t s1 = { $1, 0 };
                                                                     // symbol_t s2 = { $1, s1 };
                                                                     // s1.members.push_back(s2);
                                                                     const string s1($1 + "." + $3);
                                                                     $$ = s1;
-                                                                }  
+                                                                }
                                                                 ;
 /**
  * @name built-in
  */
 built_in:
     CONFIG_LOAD attributes                                      {
-                                                                    INFO("built_in: | CONFIG_LOAD attributes");
+                                                                    // INFO("built_in: | CONFIG_LOAD attributes");
                                                                     $$ = $2;
                                                                 }
     | '#' INCLUDE attributes                                    {
-                                                                    INFO("built_in: | INCLUDE attributes");
+                                                                    // INFO("built_in: | INCLUDE attributes");
                                                                     $$ = $2;
-                                                                }
-    | REQUIRE attributes                                        { INFO("built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | REQUIRE_ONCE attributes                                   { INFO("buitl_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | INSERT attributes                                         { INFO("built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+                                                            }
+    | REQUIRE attributes                                        { /** INFO("built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");*/ }
+    | REQUIRE_ONCE attributes                                   { /** INFO("buitl_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");*/ }
+    | INSERT attributes                                         { /** INFO("built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }      */ }
     | '#' ASSIGN attributes                                     {
-                                                                    INFO("built_in: | ASSIGN attributes");
+                                                                    // INFO("built_in: | ASSIGN attributes");
                                                                     $$ = $2;
                                                                 }
-    | ISSET attributes                                          { INFO("built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | CAPTURE attributes                                        { INFO("built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | SECTION attributes                                        { INFO("built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | COUNTER attributes                                        { INFO("built_in: | COUNTER FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | CYCLE attributes                                          { INFO("built_in: | CYCLE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | LDELIM attributes                                         { INFO("built_in: | LDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | RDELIM attributes                                         { INFO("built_in: | RDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
-    | VERSION attributes                                        { INFO("built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | ISSET attributes                                          { /**  INFO("built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
+    | CAPTURE attributes                                        { /**  INFO("built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
+    | SECTION attributes                                        { /**  INFO("built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
+    | COUNTER attributes                                        { /**  INFO("built_in: | COUNTER FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
+    | CYCLE attributes                                          { /**  INFO("built_in: | CYCLE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
+    | LDELIM attributes                                         { /**  INFO("built_in: | LDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
+    | RDELIM attributes                                         { /**  INFO("built_in: | RDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
+    | VERSION attributes                                        { /**  INFO("built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }  */ }
                                                                 ;
 /**
  * @name attributes
  */
 attributes:
     attrib                                                     {
-                                                                    INFO("attribute: | attib push --> attributes");
-                                                                    //INFO("attribute: | push -> attrib={name=\"" << $1.first << "\" value=\"" << $1.second << "\"");
+                                                                    // INFO("attribute: | attib push --> attributes");
+                                                                    //// INFO("attribute: | push -> attrib={name=\"" << $1.first << "\" value=\"" << $1.second << "\"");
                                                                     std::pair<std::string, std::string>  p($1);
                                                                     std::vector< std::pair<std::string, std::string> > v;
                                                                     v.push_back( p );
                                                                     $$ = v;
                                                                }
     | attributes attrib                                        {
-                                                                    INFO("attribute: | attib push --> attributes");
-                                                                    //INFO("attribute: | attributes : push-> attrib={name=\"" << $2.first << "\" value=\"" << $2.second << "\"");
+                                                                    // INFO("attribute: | attib push --> attributes");
+                                                                    //// INFO("attribute: | attributes : push-> attrib={name=\"" << $2.first << "\" value=\"" << $2.second << "\"");
                                                                     $1.push_back( $2 );
                                                                     $$ = $1;
                                                                }
@@ -522,35 +561,35 @@ attributes:
  */
 attrib:
     VALUE_ATTRIB EQUAL_SIGN STRING_LITERAL                     {
-                                                                    INFO("name_value: | VALUE_ATTRIB=\""
+                                                                    /** INFO("name_value: | VALUE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << buf << "\"");
+                                                                        << buf << "\""); **/
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
     | VAR_ATTRIB EQUAL_SIGN STRING_LITERAL                     {
-                                                                    INFO("name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\"");
+                                                                    // INFO("name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
     | FILE_ATTRIB EQUAL_SIGN STRING_LITERAL                    {
-                                                                    INFO("name_value: | FILE_ATTRIB=\""
+                                                                    /** INFO("name_value: | FILE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\"");
+                                                                        << $3 << "\""); */
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
     | FILE_ATTRIB EQUAL_SIGN symbol                    {
-                                                                    INFO("name_value: | FILE_ATTRIB=\""
-                                                                        << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\"");
+                                                                    //INFO("name_value: | FILE_ATTRIB=\""
+                                                                        // << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
+                                                                        // << $3 << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
     | attrib_name EQUAL_SIGN STRING_LITERAL                    {
-                                                                      INFO("name_value: | " << $1 << "=\""
+                                                                      /** INFO("name_value: | " << $1 << "=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\"");
+                                                                        << $3 << "\""); */
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
@@ -575,7 +614,7 @@ bool get_value(const string& name, /*out*/ string& val)
         val = symbol_table[name];
         return true;
     }
-    //INFO("symbol, (" << name << "), not found!");
+    //// INFO("symbol, (" << name << "), not found!");
     return false;
 }
 
@@ -584,10 +623,10 @@ bool set_value(const string& name, const string& val)
     if(symbol_table.find(name) != symbol_table.end())
     {
         symbol_table[name] = val;
-        INFO("symbol updated: " << name << " = " << val);
+        // INFO("symbol updated: " << name << " = " << val);
         return true;
     }
-    //INFO("symbol, (" << name << "), not found!");
+    //// INFO("symbol, (" << name << "), not found!");
     return false;
 }
 

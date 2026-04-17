@@ -39,23 +39,23 @@ constexpr int ASCII_OFFSET = 48;
  */
 string_ptr esc_nl(const string &s, const string &r)
 {
-    stringstream ss;
     size_t index = string::npos;
     string suffix = s;
+	string ret;
     // replace newlines with escapes
     while ((index = suffix.find('\n')) != string::npos)
     {
-		// remove end line
-        if (index > 0) break;
-        string prefix = suffix.substr(0, index - 1);
-        ss << prefix << r;
+		string prefix = suffix.substr( 0, index-1);   // get prefix
+		ret.append(prefix);                            // append prefix
+        ret.append(r);                                 // replace '\n' with r
 
         // move suffix
-        if(suffix.size() < index + 1) break;
-        suffix = suffix.substr(index + 1);
+        if(suffix.size() < index) break; // break if no suffix
+        suffix = suffix.substr(index+1);   // get suffix
+		std::cout << "~ " << prefix  << std::endl;
     }
-    ss << suffix;
-    return auto_ptr<string>(ss.str());
+    ret.append(suffix);
+	return auto_ptr<string>(ret);
 }
 
 /**

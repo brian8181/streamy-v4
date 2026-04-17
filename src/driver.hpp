@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include "fileio.hpp"
-#include "log.hpp"
+//#include "log.hpp"
 #include "pparser.tab.hpp"
 
 static string g_config_file = "default.conf";

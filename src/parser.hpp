@@ -11,34 +11,12 @@
 #include <string_view>
 #include <list>
 #include <vector>
-#include "lexer.hpp"
+#include <deque>
 #include "context.hpp"
 //#include "tokens.hpp"
 
-// typedef unsigned long TYPE;
-// typedef unsigned long TERMINAL;
-// typedef vector<unsigned long> RULE;
-// typedef vector<TYPE> TYPES;
-// typedef vector<TERMINAL> TERMINALS;
-// typedef vector<RULE> RULES;
-// typedef vector<TYPE> SEQUENCE;
-// typedef vector<SEQUENCE> SEQUENCES;
-// typedef TYPE START;
-
-// unsigned long ADD_TYPE, MUL_TYPE, NUM;
-// TYPES types{ADD_TYPE, MUL_TYPE, NUM, EXPR};
-// // TERMINALS terminals{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, PLUS_SIGN, NUMERIC_LITERAL, CLOSE_BRACE};
-
-// RULES rules{
-// 	{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, PLUS_SIGN, NUMERIC_LITERAL, CLOSE_BRACE},
-// 	{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, CLOSE_BRACE},
-// 	{OPEN_BRACE, SYMBOL, EQUALS, NUMERIC_LITERAL, CLOSE_BRACE},
-// 	{OPEN_BRACE, SYMBOL, EQUALS, SYMBOL, CLOSE_BRACE},
-// 	{SYMBOL}};
-
 namespace bkp
 {
-
 	/**
 	 * @brief class parser
 	 */
@@ -66,7 +44,9 @@ namespace bkp
 		string m_file;
 		string m_input;
 		context *m_context;
-		std::list<std::string_view> rules;
+		//std::list<std::string_view> rules;
+
+		std::deque<unsigned long> rules;
 
 	};
 }

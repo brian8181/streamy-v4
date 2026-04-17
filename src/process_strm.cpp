@@ -1,16 +1,21 @@
 #include <boost/regex.hpp>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <vector>
 #include "bash_color.hpp"
+#include "lexer.hpp"
+#include "log.hpp"
+
 
 #ifdef BOOST_MSVC
 #pragma warning(disable : 4512 4244)
 #endif
 
 #include <boost/program_options.hpp>
+#include <boost/regex.hpp>
 
 using std::string;
 using std::stringstream;
@@ -18,12 +23,7 @@ using std::vector;
 
 namespace po = boost::program_options;
 
-std::string pattern;
-boost::regex_constants::syntax_option_type flags = boost::regex_constants::basic;
-boost::regex re;
-boost::smatch what;
-std::string file;
-int file_count;
+string rexp_str;
 
 /**
  * @name process_stream
@@ -33,21 +33,62 @@ void process_stream(std::istream &is)
     std::string line;
     int match_found = 0;
     int linenum = 1;
+
+	stringstream ss;
+	const vector<unsigned long>* STATE_TOKENS = g_state_tokens[p_state->id];
+	const unsigned long len = STATE_TOKENS->size();
+
+	for( unsigned long i = 0; i < len; i++ )
+	{
+		unsigned long id = ( *STATE_TOKENS )[i];
+		token_t* ptoken = &g_tokens[id];
+
+		stringstream rstr;
+		rstr << "R\"(" << ptoken->rexp << ")\"";
+
+		stringstream info;
+		info << "idx:   "
+			<< std::setw( 5 ) << ptoken->index << "\t~\tname: "
+			<< std::setw( 18 ) << std::left << ptoken->name << "\t~\ttype: "
+			<< std::setw( 10 ) << ptoken->stype << "\t~\tregex: "
+			<< std::left << std::setw( 44 ) << rstr.str() << std::right << "~";
+		// INFO( info.str() );
+		// ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
+		ss << "(" << ptoken->rexp << ")|";
+	}
+	string rexp_str = ss.str();
+	rexp_str.pop_back(); // remove extra '|' i.e. "V-BAR"
+
     while (std::getline(is, line))
     {
-        bool result = boost::regex_search(line, what, re);
-        if (result)
-        {
-            ++linenum;
-        }
-        std::cout << FMT_FG_MAGENTA << "STREAM @ line -->" << linenum++ << "\t" << line << FMT_RESET << "\n";
+		// boost::match_flag_type flags = boost::match_default;
+		// boost::regex_constants::syntax_option_type flags = boost::regex_constants::basic;
+		boost::smatch what;
+		boost::regex re(rexp_str);
 
-        string rexp_str;
-        rexp_str.pop_back(); // remove extra '|' i.e. "V-BAR"
-        // set context
-        auto rexp = boost::regex(rexp_str, boost::regex::extended);
-        // auto iter = boost::sregex_iterator(m_buffer.begin(), m_buffer.end(), rexp);
-        // auto end = boost::sregex_iterator();
+		std::string::const_iterator start, end;
+		start = line.begin();
+		end = line.end();
+		boost::match_flag_type flags = boost::match_default;
+		boost::match_results<std::string::const_iterator> what;
+		while( regex_search( start, end, what, re, boost::match_default ) )
+		{
+			++linenum;
+			std::cout << FMT_FG_MAGENTA << "STREAM @ line -->" << linenum++ << "\t" << line << FMT_RESET << "\n";
+			ATTN(what.prefix << what.str() << what.suffix());
+
+
+			++linenum;
+			string prefix = what.prefix();
+			string suffix = what.suffix();
+			what.str();
+
+			// update search position:
+			start = what[0].second;
+			// update flags:
+			flags |= boost::match_prev_avail;
+			flags |= boost::match_not_bob;
+		}
 
         // is.eof();
     }
@@ -58,7 +99,6 @@ void process_stream(std::istream &is)
  */
 void process_file(const std::string &name)
 {
-    file = name;
     std::ifstream is(name.c_str());
     if (is.bad())
     {

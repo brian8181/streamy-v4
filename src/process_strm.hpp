@@ -11,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <deque>
 
 #ifdef BOOST_MSVC
 #pragma warning(disable : 4512 4244)
@@ -19,6 +20,12 @@
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
+
+// typedef lexstrm
+// {
+
+// 	deque<string> deq;
+// }
 
 /**
  * @name process_stream

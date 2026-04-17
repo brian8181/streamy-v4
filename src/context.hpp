@@ -6,13 +6,16 @@
 #define CONTEXT_HPP
 
 #include <string>
+#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <list>
 
 #include "fileio.hpp"
 #include "lexer.hpp"
-#include "log.hpp"
+
+using std::cout;
+using std::endl;
 
 class context
 {
@@ -79,7 +82,7 @@ public:
              << match_beg << " : " << std::dec << match_len << " : 0x" << std::hex /*pbuffer */ << " : " << std::dec << endl;
         stringstream ss;
         ss << "pos:" << (long)(pos - beg) << " ~ match_beg:" << (long)(match_beg - beg) << " ~ match_len:" << match_len << " ~ size:" << len;
-        INFO(ss.str());
+        // INFO(ss.str());
     }
 
     state_t state;            // current lex state

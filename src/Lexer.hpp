@@ -473,7 +473,6 @@ namespace boost
      * @brief global token vector - all tokens
      */
     inline map<unsigned long, token> g_tokens = {
-        {MATCH, token{"MATCH", S_TYPE, R"(match)", __LINE__}},
         {UNESCAPED_TEXT, token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
         {WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
         {NEWLINE, token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
@@ -549,12 +548,14 @@ namespace boost
         {STRIP_TAGS, token{"STRIP_TAGS", S_TYPE, R"(strip_tags)", __LINE__}},
         {WORDWRAP, token{"WORDWRAP", S_TYPE, R"(wordwrap)", __LINE__}},
         {TRUNCATE, token{"TRUNCATE", S_TYPE, R"(truncate)", __LINE__}},
+		{UNDEFINED, token{"UNDEFINED", S_TYPE, R"(.)", __LINE__}},
     };
 
     /**
      * @brief unsigned long states
      */
     constexpr unsigned long UL_INITIAL = 0x10;
+	constexpr unsigned long UL_UNESCAPE = 0x10;
     constexpr unsigned long UL_COMMENTING = 0x20;
     constexpr unsigned long UL_ESCAPED = 0x40;
     constexpr unsigned long UL_DOUBLE_QUOTED = 0x80;
@@ -571,6 +572,7 @@ namespace boost
     /**
      * @brief state_t states
      */
+
     inline state_t INITIAL = {UL_INITIAL, "INITIAL"};
     inline state_t COMMENTING = {UL_COMMENTING, "COMMENT"};
     inline state_t ESCAPED = {UL_ESCAPED, "ESCAPED"};
@@ -579,6 +581,7 @@ namespace boost
     inline state_t INCLUDING = {UL_INCLUDING, "INCLUDING"};
     inline state_t IF_BLOCK = {UL_IF_BLOCK, "IF_BLOCK"};
     inline state_t IF_CONDITION = {UL_IF_CONDITION, "IF_CONDITION"};
+	inline state_t& UNESCAPED = INITIAL;
 
     /**
      * @brief global state vector
@@ -612,6 +615,45 @@ namespace boost
                                                                       {UL_INCLUDING, &INCLUDING_TOKENS},
                                                                       {UL_IF_BLOCK, &IF_BLOCK_TOKENS},
                                                                       {UL_IF_CONDITION, &IF_CONDITION_TOKENS}};
+	/**
+	 *
+	 */
+	typedef unsigned long type_t;
+	typedef unsigned long terminal_t;
+	typedef vector<terminal_t> terminals_t;
+	typedef vector<type_t> types_t;
+	typedef vector<unsigned long> rules_t;
+	typedef vector<type_t> rules_t;
+	typedef vector<type_t> squence_t;
+	typedef vector<squence_t> squences_t;
+	typedef map < type_t, squences_t > maps;
+
+	#define PROGRAM 1ul
+	// #define FILES 2ul
+	// #define FILE 3ul
+	// #define BLOCKS 4ul
+	// #define BLOCK 5ul
+
+	//type_t type { PROGRAM, FILES, FILE, BLOCKS, BLOCK }
+	//maps g_map { type_t{PROGRAM}, squences_t{ squence_t{ PROGRAM, FILES } } }
+
+	//inline constexpr unsigned long ADD_TYPE, MUL_TYPE, NUM;
+	// TYPES types{ADD_TYPE, MUL_TYPE, NUM, EXPR};
+	// inline terminal_t terminals {OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, PLUS_SIGN, NUMERIC_LITERAL, CLOSE_BRACE};
+
+	// inline rules_t rules_ {	{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, PLUS_SIGN, NUMERIC_LITERAL, CLOSE_BRACE},
+	// 					{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, CLOSE_BRACE},
+	// 					{OPEN_BRACE, SYMBOL, EQUALS, NUMERIC_LITERAL, CLOSE_BRACE},
+	// 					{OPEN_BRACE, SYMBOL, EQUALS, SYMBOL, CLOSE_BRACE},
+	// 					{SYMBOL}	};
+
+	// std::deque<unsigned long> rlz = { OPEN_BRACE, SYMBOL, CLOSE_BRACE};
+	// inline rules_t rules { { OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, PLUS_SIGN, NUMERIC_LITERAL, CLOSE_BRACE},
+	// 												rule_t{OPEN_BRACE, SYMBOL, EQUALS, IDENTIFIER, CLOSE_BRACE},
+	// 												rule_t{OPEN_BRACE, SYMBOL, EQUALS, NUMERIC_LITERAL, CLOSE_BRACE},
+	// 												rule_t{OPEN_BRACE, SYMBOL, EQUALS, SYMBOL, CLOSE_BRACE},
+	// 										    	rule_t{SYMBOL} };
+
 
     /**
      * @brief class lexer (singleton)

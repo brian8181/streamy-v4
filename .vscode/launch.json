@@ -1,0 +1,22 @@
+{
+  "name": "C++ Launch",
+  "type": "cppdbg",
+  "request": "launch",
+  "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+  "args": ["test/test5.txt"],
+  "environment": [{ "name": "config", "value": "Debug" }],
+  "cwd": "${workspaceFolder}"
+  "stopAtEntry": true,
+  "customLaunchSetupCommands": [
+    { "text": "target-run", "description": "run target", "ignoreFailures": false }
+  ],
+  "launchCompleteCommand": "exec-run",
+  "linux": {
+    "MIMode": "gdb",
+    "miDebuggerPath": "/usr/bin/gdb"
+  },
+  "windows": {
+    "MIMode": "gdb",
+    "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+  }
+}

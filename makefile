@@ -24,6 +24,9 @@ SRC = src
 AST = ast
 TST = test
 
+SRC_EXT=cpp
+HDR_EXT=hpp
+
 FMT_RESET=\e[0m
 FMT_ITALIC=\e[3m
 FMT_RED='\e[31m'
@@ -35,9 +38,9 @@ FMT_INFO=$(FMT_ITALIC)$(FMT_GREEN)
 FMT_WARN=$(FMT_ITALIC)$(FMT_YELLOW)
 
 # lib settings
-# LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64
-# INCLUDES=-I/usr/local/include/cppunit/
-# LDFLAGS=$(INCLUDES) $(LIBS)
+LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64
+INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD)
+LDFLAGS=$(INCLUDES) $(LIBS)
 
 ifdef CLANG
 	CXX=clang++
@@ -49,7 +52,7 @@ endif
 
 ifdef CYGWIN
 	CXXFLAGS += -DCYGWIN -I"/home/brian/src/boost_1_89_0"
-	LDFLAGS = /usr/local/lib/libfmt.a -lcppunit.dll
+	LDFLAGS += /usr/local/lib/libfmt.a -lcppunit.dll
 endif
 ifdef MSYS_UCRT
 	CXXFLAGS += -I/ucrt64/include/boost
@@ -60,19 +63,19 @@ endif
 # CXXFLAGS += -DTRACING
 # endif
 
-
 CXXFLAGS+=-DTEST_ONLY
 
-SOURCES=$(SRC)/bash_color.hpp \
-$(SRC)/log.hpp \
-$(SRC)/fileio.hpp $(OBJ)/fileio.o \
-$(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o \
-$(SRC)/utility.hpp $(OBJ)/utility.o \
-$(SRC)/ast.hpp \
-$(BLD)/pparser.tab.hpp $(BLD)/pparser.tab.o \
-$(SRC)/parser.hpp $(OBJ)/parser.o \
-$(SRC)/lexer.hpp $(OBJ)/lexer.o \
-$(SRC)/driver.hpp $(OBJ)/driver.o
+# FILES=$(SRC)\bash_color.hpp \
+# $(SRC)/log.hpp \
+# $(SRC)/fileio.hpp \
+# $(SRC)/auto_ptr.hpp \
+# $(SRC)/utility.hpp \
+# $(SRC)/ast.hpp \
+# $(BLD)/pparser.tab.hpp \
+# $(BLD)/pparser2.tab.hpp \
+# $(SRC)/parser.hpp \
+# $(SRC)/lexer.hpp \
+# $(SRC)/driver.hpp
 
 HEADERS=$(SRC)/bash_color.hpp \
 $(SRC)/log.hpp \
@@ -93,73 +96,66 @@ $(OBJ)/parser.o \
 $(OBJ)/lexer.o \
 $(OBJ)/driver.o
 
+# SOURCES=$(SRC)/bash_color.hpp \
+# $(SRC)/log.hpp \
+# $(SRC)/fileio.hpp $(OBJ)/fileio.o \
+# $(SRC)/auto_ptr.hpp $(OBJ)/auto_ptr.o \
+# $(SRC)/utility.hpp $(OBJ)/utility.o \
+# $(SRC)/ast.hpp \
+# $(BLD)/pparser.tab.hpp $(BLD)/pparser.tab.o \
+# $(SRC)/parser.hpp $(OBJ)/parser.o \
+# $(SRC)/lexer.hpp $(OBJ)/lexer.o \
+# $(SRC)/driver.hpp $(OBJ)/driver.o
+
+SOURCES=$(HEADERS) $(OBJS)
+
 all: $(BLD)/driver
 
 world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so $(BLD)/pparser2.tab.o
 
 $(BLD)/driver: $(SOURCES)
-	@echo -e "$(FMT_INFO)building -> \"$(BLD)/driver\" ... $(FMT_RESET)\n"
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LDFLAGS) -o $@
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cpp
-	@echo -e "$(FMT_INFO)Generate -> \"parser.tab.c\" . . .$(FMT_RESET)\n"
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
-$(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.hpp
-	@echo -e "$(FMT_INFO)building -> \"$@\" . . .$(FMT_RESET)\n"
+$(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(BLD)/bash_color.hpp $(SRC)/log.hpp
 	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(BLD)/pparser2.tab.cpp $(BLD)/pparser2.tab.hh: $(SRC)/pparser2.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
-	@echo -e "$(FMT_INFO)Generate -> \"parser.tab.c\" . . .$(FMT_RESET)\n"
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser2.yy --header=$(BLD)/pparser2.tab.hpp -o $(BLD)/pparser2.tab.cpp
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(OBJ)/pparser2.tab.o: $(OBJ)/pparser2.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.hpp
-	@echo -e "$(FMT_INFO)building -> \"$@\" . . .$(FMT_RESET)\n"
 	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(BLD)/ast: $(OBJ)/ast.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 $(BLD)/libauto_ptr.so: $(BLD)/auto_ptr.o
-	@echo -e "$(FMT_INFO)building -> \"$@\" . . .$(FMT_RESET)\n"
 	$(CXX) $(CXXFLAGS) --shared $(OBJ)/auto_ptr.o -o $(BLD)/libauto_ptr.so
 	chmod 755 $(BLD)/libauto_ptr.so
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(BLD)/libauto_ptr.a: $(BLD)/auto_ptr.o
-	@echo -e "$(FMT_INFO)building \"$@\" . . .$(FMT_RESET)\n"
 	ar rvs $(BLD)/libauto_ptr.a $(OBJ)/$(APP).o
 	chmod 755 $(BLD)/libauto_ptr.a
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(BLD)/lib$(APP).a: $(BLD)/$(APP).o
-	@echo -e "$(FMT_INFO)building \"$@\" . . .$(FMT_RESET)\n"
 	ar rvs $(BLD)/lib$(APP).a $(OBJ)/$(APP).o
 	chmod 755 $(BLD)/lib$(APP).a
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h
 	cp $^ $@
-	@echo -e "$(FMT_INFO)copy -> \"$@\" . . .$(FMT_RESET)\n"
 
 $(BLD)/%.hpp: $(SRC)/%.hpp
 	cp $^ $@
-	@echo -e "$(FMT_INFO)copy -> \"$@\" . . .$(FMT_RESET)\n"
 
 # build object files
 $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CCFLAGS) -c $< -o $@
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
-$(OBJ)/%.o: $(SRC)/%.cpp
+$(OBJ)/%.o: $(SRC)/%.cpp $(SRC)/%.hpp $(SRC)/bash_color.hpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-	@echo -e "$(FMT_INFO)create -> \"$@\" . . .$(FMT_RESET)\n"
 
 .PHONY: all rebuild dist install uninstall clean help
 rebuild: clean all

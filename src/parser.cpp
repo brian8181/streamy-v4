@@ -5,17 +5,19 @@
  */
 #include <iostream>
 #include "parser.hpp"
-#include "lexer.hpp"
-// #include "tokens.hpp"
-//  using namespace bkp;
 
 using std::string;
 using std::cout;
 using std::endl;
 
+/**
+ *
+ */
 bkp::parser::parser(context *ct, const string &file) : m_context(ct), m_file(file)
 {
     read_str(m_file, m_input, std::ios::in);
+
+	rules.push_back(SYMBOL);
 }
 
 /**

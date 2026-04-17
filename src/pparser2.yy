@@ -141,8 +141,8 @@ program:
  * @name files
  */
 files:
-    file                                                        {   INFO("files: file");                                                                                     }
-    | files file                                                {   INFO("files: | files file");                                                                             }
+    file                                                        {                                                                                    }
+    | files file                                                {  				                                                                      }
                                                                 ;
 /**
  * @name file
@@ -159,27 +159,29 @@ file:
  * @name stmts
  */
 stmts:
-    stmt                                                        {   INFO("stmts: | stmt=\"" << $1 << "\"");                                                                     }
-    | stmts stmt                                                {   INFO("stmts: | stmts stmt=\"" << $1 << "\"");                                                               }
+    stmt
+    | stmts stmt
+	;
 
 /**
  * @name stmt
  */
 stmt:
-    OPEN_BRACE expr CLOSE_BRACE                                 {   INFO("stmt: | OPEN_BRACE expr CLOSE_BRACE=\"" << $2 << "\"");                                               }
-    | IF stmts ENDIF                                            {   INFO("stmt: | IF stmts ENDIF=\"" << "stmts" << "\"");                                                       }
-    | IF stmts ELSE stmts ENDIF                                 {   INFO("stmt: | IF stmts=\"" << " stmts " << "\"ELSE stmts=\"" << " stmts " << "\"ENDIF");                    }
+    OPEN_BRACE expr CLOSE_BRACE
+    | IF stmts ENDIF
+    | IF stmts ELSE stmts ENDIF
+	;
 
 /**
  * @name expr
  */
 expr:
-    STRING_LITERAL                                              {   INFO("symbol: | STRING_LITERAL=\"" << $1 << "\"");                                                          }
-    | NUMERIC_LITERAL                                           {   INFO("symbol: | NUMERIC_LITERAL=\"" << $1 << "\"");                                                         }
-    | VARIABLE_SYMBOL                                           {   INFO("symbol: | VARIABLE_SYMBOL=\"" << $1 << "\"");                                                         }
-    | CONST_SYMBOL                                              {   INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");                                                            }
-    | VARIABLE_SYMBOL DOT VARIABLE_SYMBOL                       {   INFO("symbol: | VARIABLE_SYMBOL dot VARIABLE_SYMBOL=\"" << $1 << "\"");                                     }
-                                                                ;
+    STRING_LITERAL
+    | NUMERIC_LITERAL
+    | VARIABLE_SYMBOL
+    | CONST_SYMBOL
+    | VARIABLE_SYMBOL DOT VARIABLE_SYMBOL
+    ;
 %%
 
 bool get_value(const string& name, /*out*/ string& val)
@@ -197,7 +199,7 @@ bool set_value(const string& name, const string& val)
     if(symbol_table.find(name) != symbol_table.end())
     {
         symbol_table[name] = val;
-        INFO("symbol updated: " << name << " = " << val);
+        // INFO("symbol updated: " << name << " = " << val);
         return true;
     }
     return false;

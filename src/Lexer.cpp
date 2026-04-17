@@ -19,11 +19,11 @@
 #include <boost/regex.hpp>
 #include <fmt/core.h>
 #include <fmt/format.h>
-#include "log.hpp"
 #include "fileio.hpp"
 #include "lexer.hpp"
 #include "driver.hpp"
 #include "utility.hpp"
+#include "bash_color.hpp"
 
 using std::cerr;
 using std::cout;
@@ -133,24 +133,25 @@ void lexer::load_config(const string &file)
  */
 void lexer::init(string in, string out)
 {
-    TRACE;
+    // TRACE();
     read_str(in, m_search, std::ios::in);
     m_buffer = m_search;
     // set state
     set_state_flag(&INITIAL);
-    update_state();
+    //update_state();
     m_stream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
 
-    WARN("remaining[ \"" << esc_nl(m_buffer).get_val() << "\" ]");
+	//// ATTN( "remaining[ \n\"" << m_buffer << "\" ]" );
+    // ATTN("remaining[ \"" << esc_nl(m_buffer).get_val() << "\" ]");
 
-    ifstream strm(in);
-    char buffer[1024];
-    strm.getline(buffer, 1024);
-    int len = strlen(buffer);
+    // ifstream strm(in);
+    // char buffer[1024];
+    // strm.getline(buffer, 1024);
+    // int len = strlen(buffer);
 
-    cout << "TESTING" << endl;
-    cout << "TEST len=" << std::strlen(buffer) << " : \"" << buffer << "\"" << endl;
+    // cout << "TESTING" << endl;
+    // cout << "TEST len=" << std::strlen(buffer) << " : \"" << buffer << "\"" << endl;
 }
 
 /**
@@ -160,12 +161,12 @@ void lexer::init(string in, string out)
  */
 void lexer::set_state_flag(state_t *pstate)
 {
-    ATTN("Enter set_state_flag ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name);
-    ATTN("set_state_flag ~ new state id:" << pstate->id << " ~ name:" << pstate->name);
-    TRACE;
+    // ATTN("Enter set_state_flag ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name);
+    // ATTN("set_state_flag ~ new state id:" << pstate->id << " ~ name:" << pstate->name);
+    // TRACE();
     p_state = pstate;
 
-    // update_state();
+    update_state();
 }
 
 void lexer::update_state()
@@ -188,7 +189,7 @@ void lexer::update_state()
              << std::setw(18) << std::left << ptoken->name << "\t~\ttype: "
              << std::setw(10) << ptoken->stype << "\t~\tregex: "
              << std::left << std::setw(44) << rstr.str() << std::right << "~";
-        INFO(info.str());
+        // INFO(info.str());
         // ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
         ss << "(" << ptoken->rexp << ")|";
     }
@@ -200,7 +201,7 @@ void lexer::update_state()
     m_iter = boost::sregex_iterator(m_buffer.begin(), m_buffer.end(), m_rexp);
     m_end = boost::sregex_iterator();
 
-    ATTN("Exit set_state ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name);
+    // ATTN("Exit set_state ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name);
 }
 
 void lexer::include_file(const string &input_file)
@@ -221,9 +222,8 @@ parser::symbol_type lexer::get_token()
 {
     if (m_iter != m_end)
     {
-        TRACE;
+        // TRACE();
         p_smatch = new boost::smatch(*m_iter);
-        boost::smatch m = *p_smatch;
         const size_t len = p_smatch->size();
         m_match = p_smatch->str();
         m_prefix = p_smatch->prefix().str();
@@ -233,7 +233,7 @@ parser::symbol_type lexer::get_token()
 
         for (int i = 1; i < len; ++i)
         {
-            if (m[i].matched)
+			if( p_smatch->operator[](i).matched )
             {
                 if (p_smatch->prefix().matched)
                 {
@@ -246,35 +246,27 @@ parser::symbol_type lexer::get_token()
                 unsigned long id = (*g_state_tokens[p_state->id])[i - 1];
                 token_t token = g_tokens[id];
 
-                // INFO("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
-                // INFO("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl(m_match).get_val() << "\" ]");
-                INFO("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl(m_match).get_val() << "\" ]");
-                WARN("remaining[ \"" << esc_nl(m_buffer).get_val() << "\" ]");
+                // ATTN("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
+                cout << FMT_FG_GREEN << "match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl(m_match).get_val() << "\" ]" << FMT_RESET << endl;
+				cout << FMT_FG_GREEN << "[ \"" << m_suffix << "\" ]" << endl;
+				cout << FMT_FG_GREEN << "remaining[ \"" << esc_nl(m_suffix).get_val() << "\" ]" << endl;
 
-                auto yytok = on_token(id);
-                // begin state change
-                if (yytok.kind() != SKIP_TOKEN)
-                {
-                    // not skipped so, complete state change
-                    update_state();
-                    return yytok; // pop stack
-                }
-                // skipping, state changes pending till, stack clears
-                ++m_iter;
-                return get_token(); // push stack
+               	++m_iter;
+				return on_token(id);
             }
         }
     }
     else
     {
-        TRACE;
+        // TRACE();
         m_stream << m_buffer;
         m_stream.flush();
         m_stream.close();
-        // return parser::make_END(); // error or eof
-        return parser::make_YYerror();
+        return parser::make_END(); // error or eof
+        //return parser::make_YYerror();
     }
-    return parser::make_YYerror();
+    return parser::make_END_OF_FILES();
+	//return parser::make_YYerror();
     // error or eofs
 }
 
@@ -299,7 +291,7 @@ void lexer::print_line_count(const string &s)
 {
     // size_t line_count = 0;
     // line_count = std::count(s.begin(), s.end(), '\n');
-    // INFO("line count: " << line_count);
+    // // INFO("line count: " << line_count);
 }
 
 /**
@@ -340,42 +332,43 @@ void lexer::print_line_number_comment()
  */
 inline parser::symbol_type lexer::on_token(unsigned long id)
 {
-    ERROR("_state.id=" << p_state->id);
-    ERROR("_state.name=" << p_state->name);
+    // ATTN("_state.id=" << p_state->id);
+    // ATTN("_state.name=" << p_state->name);
     switch (p_state->id)
     {
     case UL_INITIAL:
     {
-        INFO("switch case: INITIAL_STATE");
+        // INFO("switch case: INITIAL_STATE");
         switch (id)
         {
         case OPEN_BRACE:
             set_state_flag(&ESCAPED);
-            // update_state();
+            //update_state();
             return parser::make_OPEN_BRACE();
         case COMMENT:
             return parser::make_SKIP_TOKEN();
         case NEWLINE:
-            // m_line++;
-            // m_stream << '\n';
-            // return parser::make_SKIP_TOKEN();
+            m_line++;
+            m_stream << '\n';
+            return get_token();
         case SKIP_TOK:
-            return parser::make_SKIP_TOKEN();
+            return get_token();
         default:;
-        }
+        } // END switch
         break;
-    }
+    } // END case UL_INITIAL
     case UL_ESCAPED:
     {
-        INFO("switch case: ESCAPED_STATE");
+        // INFO("switch case: ESCAPED_STATE");
         switch (id)
         {
         case CLOSE_BRACE:
             set_state_flag(&INITIAL);
-            // update_state();
+            //update_state();
             return parser::make_CLOSE_BRACE();
         case IF:
             set_state_flag(&IF_BLOCK);
+			//update_state();
             return parser::make_IF();
         case SYMBOL:
             return parser::make_SYMBOL(m_match);
@@ -415,63 +408,14 @@ inline parser::symbol_type lexer::on_token(unsigned long id)
             set_state_flag(&DOUBLE_QUOTED); // fallthrough
         case WHITESPACE:                    // fallthrough
         case SKIP_TOK:
-            return parser::make_SKIP_TOKEN();
+            return get_token();
         default:;
-        }
+        } // END switch
         break;
-    }
-        // case UL_IF_BLOCK:
-        // {
-        //     INFO("switch case: IF_BLOCK_STATE");
-        //     switch (id)
-        //     {
-        //     case SKIP_TOK:
-        //         return parser::make_OPEN_BRACE();
-        //     default:;
-        //     }
-        //     break;
-        // }
-        // case UL_DOUBLE_QUOTED:
-        // {
-        //     INFO("switch case: DOUBLE_QUOTED_STATE");
-        //     switch (id)
-        //     {
-        //     case ESC_TAB:
-        //         m_sstring << "\t";
-        //         return parser::make_SKIP_TOKEN();
-        //     case ESC_BACKSLASH:
-        //         m_sstring << "\\";
-        //         return parser::make_SKIP_TOKEN();
-        //     case ESC_DOUBLE_QUOTE:
-        //         m_sstring << "\"";
-        //         return parser::make_SKIP_TOKEN();
-        //     case ESC_SINGLE_QUOTE:
-        //         m_sstring << "'";
-        //         return parser::make_SKIP_TOKEN();
-        //     case VALID_CHAR:
-        //         m_sstring << m_match;
-        //         cout << "char " << m_sstring.str() << endl;
-        //         return parser::make_SKIP_TOKEN();
-        //     case DOUBLE_QUOTE:
-        //     {
-        //         set_state_flag(&ESCAPED);
-        //         // update_state();
-        //         string qstr = m_sstring.str();
-        //         m_sstring.str("");
-        //         m_sstring.clear();
-        //         return parser::make_STRING_LITERAL(qstr);
-        //     }
-        //     case SKIP_TOK:
-        //         return parser::make_SKIP_TOKEN();
-        //     default:;
-        //     }
-        //     break;
-        // }
-        // case UL_INCLUDING:
-        //     INFO("switch case: INCLUDING_STATE");
-        //     break;
-        // default:;
-        // }
-    }
-    return parser::make_SKIP_TOKEN();
+    } // CASE UL_ESCAPED
+	} // END switch
+
+	// TRACE();
+	cout << "UNDEFINED symbol found..." << endl;
+    return parser::make_UNDEFINED();
 }

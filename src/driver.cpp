@@ -27,6 +27,7 @@
 #include "pparser.tab.hpp"
 #include "parser.hpp"
 #include "process_strm.hpp"
+#include "bash_color.hpp"
 
 using std::cerr;
 using std::cout;
@@ -53,7 +54,7 @@ static yy::parser yyparser;
  */
 yy::parser::symbol_type lex()
 {
-    TRACE;
+    // TRACE();
     return lexer::instance().get_token();
 }
 
@@ -65,7 +66,7 @@ yy::parser::symbol_type lex()
  */
 int parse_options(const int argc, char *argv[])
 {
-    TRACE;
+    // TRACE();
     int option;
     const auto options_string = "hVdc:o:v";
     const struct option long_options[] = {
@@ -111,34 +112,32 @@ int parse_options(const int argc, char *argv[])
     // process_files(argc, argv + offset - 1);
     for (int i = offset; i < argc; ++i)
     {
-        TRACE;
+        // TRACE();
 
         g_input_file = argv[i];
-        ATTN("scanning file:\"" << g_input_file << "\"");
+        cout << "scanning file:\"" << g_input_file << "\"" << endl;
 
         fs::path p = g_input_file;
         g_output_file = "build/" + p.filename().string() + ".obj";
-        stringstream log;
-        log << "in:\"" << g_input_file << "\" - out:\"" << g_output_file
-            << "\" - conf:\"" << g_config_file << "\"" << endl;
+        cout << "in:\"" << g_input_file << "\" - out:\"" << g_output_file << "\" - conf:\"" << g_config_file << "\"" << endl;
 
-        LOG("ATTENTION: ", FMT_FG_RED, log.str());
-
-		context ctx("");
-		string str("test/test5.txt");
-		bkp::parser np(&ctx, str);
-		np.parse();
+		// context ctx("");
+		// string str("test/test5.txt");
+		// bkp::parser np(&ctx, str);
+		//np.parse();
 
         lexer::instance().init(g_input_file, g_output_file);
         yyparser.parse();
 
         // bkp todo
         // g_parser.parse();
-        LOG("ATTENTION: ", FMT_FG_RED, "finished file:\"" << g_input_file << "\"");
-        LOG("ATTENTION: ", FMT_FG_RED, "write output to file:\"" << g_output_file << "\"");
+
+        cout << "finished file:\"" << g_input_file << "\"" << endl;
+        cout << "write output to file:\"" << g_output_file << "\"" << endl;
     }
-    TRACE;
-    INFO("EOFS");
+
+    // TRACE();
+    // INFO("EOFS");
     return 0;
 }
 
@@ -181,7 +180,7 @@ int main(int argc, char *argv[])
     try
     {
 #ifndef _WIN32
-        TRACE;
+        // TRACE();
         char *argv_cpy[sizeof(char *) * argc + 1];
         if (stdin_ready(STDIN_FILENO))
         {

@@ -8,6 +8,7 @@
 #define LOG_HPP_
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <vector>
 #include <fstream>
@@ -41,16 +42,16 @@ void log(const std::string &msg, int line_number);
 #define MAGENTA(str) FMT_FG_MAGENTA << str << FMT_RESET
 #define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
 
-#define LOG(type, color, str) *DEFAULT_OUT_STREAM << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> "                                                       \
-                                                  << FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " << "line:" << __LINE__ << " ~ " \
+#define LOG(type, color, str) *DEFAULT_OUT_STREAM << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> "\
+                                                  << FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " << "line:" << __LINE__ << " ~ "\
                                                   << "STD-C++:" << __cplusplus << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
 
 // tracing
 #ifdef TRACING
-#define TRACE *DEFAULT_OUT_STREAM << "TRACE: " << FMT_ITALIC << FMT_FG_WHITE << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " \
+#define TRACE(str) *DEFAULT_OUT_STREAM << std::setw(10) << "TRACE: " << FMT_ITALIC << FMT_FG_WHITE << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ "\
                                   << "line:" << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
 #else
-#define TRACE //
+#define TRACE(str) // str
 #endif
 
 #define INFO_COLOR FMT_FG_GREEN
@@ -61,23 +62,22 @@ void log(const std::string &msg, int line_number);
 // #endif
 
 #ifdef TEST_ONLY
-#define ATTN(str) LOG("ATTENSION: ", FMT_FG_LIGHT_MAGENTA, str)
+#define ATTN(str) LOG("ATTN: ", FMT_FG_LIGHT_MAGENTA, str)
 #else
 #define ATTN(str) // str
 #endif
 
 // debugging
 #ifdef DEBUG
-#define INFO(str) LOG("INFO:  ", INFO_COLOR, str)
+#define // INFO(str) LOG("INFO:  ", INFO_COLOR, str)
 #define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #elif WARNINGS
-#define ATTN(str) // str
-#define INFO(str) // str
+#define // INFO(str) // str
 #define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #else
-#define INFO(str) // str
+#define // INFO(str) // str
 #define WARN(str) // str
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #endif
