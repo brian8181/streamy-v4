@@ -45,7 +45,7 @@ string_ptr esc_nl(const string &s, const string &r)
     // replace newlines with escapes
     while ((index = suffix.find('\n')) != string::npos)
     {
-		string prefix = suffix.substr( 0, index-1);   // get prefix
+		string prefix = suffix.substr( 0, index);      // get prefix
 		ret.append(prefix);                            // append prefix
         ret.append(r);                                 // replace '\n' with r
 

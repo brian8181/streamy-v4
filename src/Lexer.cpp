@@ -142,8 +142,8 @@ void lexer::init(string in, string out)
     m_stream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
 
-	//// ATTN( "remaining[ \n\"" << m_buffer << "\" ]" );
-    // ATTN("remaining[ \"" << esc_nl(m_buffer).get_val() << "\" ]");
+	//cout << FMT_FG_LIGHT_YELLOW << "remaining[ \n\"" << m_buffer << "\" ]" << FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
+	cout << FMT_FG_LIGHT_YELLOW << "remaining[ \"" << esc_nl( m_buffer, "\\n" ).get_val() << "\" ]" << FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
 
     // ifstream strm(in);
     // char buffer[1024];
@@ -162,7 +162,8 @@ void lexer::init(string in, string out)
 void lexer::set_state_flag(state_t *pstate)
 {
     // ATTN("Enter set_state_flag ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name);
-    // ATTN("set_state_flag ~ new state id:" << pstate->id << " ~ name:" << pstate->name);
+	cout << FMT_FG_RED << "set_state_flag ~ new state id:" << pstate->id << " ~ name:" << pstate->name
+			<< FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
     // TRACE();
     p_state = pstate;
 
@@ -189,7 +190,10 @@ void lexer::update_state()
              << std::setw(18) << std::left << ptoken->name << "\t~\ttype: "
              << std::setw(10) << ptoken->stype << "\t~\tregex: "
              << std::left << std::setw(44) << rstr.str() << std::right << "~";
-        // INFO(info.str());
+
+		cout << ((i % 2) ? FMT_BG_BLACK : FMT_BG_DARK_GREY) << FMT_FG_LIGHT_YELLOW
+				<< info.str() << FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
+
         // ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
         ss << "(" << ptoken->rexp << ")|";
     }
@@ -201,7 +205,8 @@ void lexer::update_state()
     m_iter = boost::sregex_iterator(m_buffer.begin(), m_buffer.end(), m_rexp);
     m_end = boost::sregex_iterator();
 
-    // ATTN("Exit set_state ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name);
+	cout << FMT_FG_RED << "Exit set_state ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name
+			<< FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
 }
 
 void lexer::include_file(const string &input_file)
@@ -247,9 +252,11 @@ parser::symbol_type lexer::get_token()
                 token_t token = g_tokens[id];
 
                 // ATTN("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
-                cout << FMT_FG_GREEN << "match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl(m_match).get_val() << "\" ]" << FMT_RESET << endl;
-				cout << FMT_FG_GREEN << "[ \"" << m_suffix << "\" ]" << endl;
-				cout << FMT_FG_GREEN << "remaining[ \"" << esc_nl(m_suffix).get_val() << "\" ]" << endl;
+				cout << FMT_FG_GREEN << "match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl( m_match, "\\n").get_val() << "\" ]"
+						<< FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
+				//cout << FMT_FG_GREEN << "[ \"" << m_suffix << "\" ]" << FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
+				cout << FMT_FG_GREEN << "remaining[ \"" << esc_nl( m_suffix, "\\n").get_val() << "\" ]"
+						<< FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
 
                	++m_iter;
 				return on_token(id);
