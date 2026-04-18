@@ -759,6 +759,24 @@ namespace boost
         map<unsigned long, token> m_tok_map;
         vector<state_t> m_states;
 
+		typedef struct context_t
+		{
+			string m_search;
+			string m_match;
+			string m_prefix;
+			string m_suffix;
+			long m_pos;
+
+			string m_buffer;
+			boost::regex m_rexp;
+			boost::sregex_iterator m_iter;
+			boost::sregex_iterator m_end;
+			boost::smatch* p_smatch;
+
+		} context_t;
+
+		context_t* p_context;
+
         string m_search;
         string m_match;
         string m_prefix;
