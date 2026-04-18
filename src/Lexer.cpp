@@ -203,7 +203,7 @@ void lexer::update_state()
     // set context
     m_rexp = boost::regex(rexp_str, boost::regex::extended);
     m_iter = boost::sregex_iterator(m_buffer.begin(), m_buffer.end(), m_rexp);
-    m_end = boost::sregex_iterator();
+    m_end =  boost::sregex_iterator();
 
 	cout << FMT_FG_RED << "Exit set_state ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name
 			<< FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
@@ -256,7 +256,7 @@ parser::symbol_type lexer::get_token()
 						<< FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
 				//cout << FMT_FG_GREEN << "[ \"" << m_suffix << "\" ]" << FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
 				cout << FMT_FG_GREEN << "remaining[ \"" << esc_nl( m_suffix, "\\n").get_val() << "\" ]"
-						<< FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
+				 		<< FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
 
                	++m_iter;
 				return on_token(id);
@@ -270,11 +270,8 @@ parser::symbol_type lexer::get_token()
         m_stream.flush();
         m_stream.close();
         return parser::make_END(); // error or eof
-        //return parser::make_YYerror();
     }
     return parser::make_END_OF_FILES();
-	//return parser::make_YYerror();
-    // error or eofs
 }
 
 // // Overload << for output

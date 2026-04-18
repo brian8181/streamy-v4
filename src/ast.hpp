@@ -13,11 +13,11 @@ using std::endl;
 
 namespace ast
 {
+	/**
+	 * @name expr_base
+	 */
 	template <typename T>
-	class expr_base
-	{
-
-	};
+	class expr_base {};
 
 	/**
 	 * @class expr

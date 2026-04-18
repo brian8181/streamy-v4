@@ -18,7 +18,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include "fileio.hpp"
-    //#include "log.hpp"
+    #include "log.hpp"
     #include "symtab.h"
     #include "driver.hpp"
     #include "lexer.hpp"
@@ -161,8 +161,8 @@ complier:
  * @name files
  */
 files:
-    file                                                        { /** INFO("files: file");*/ }
-    | files file                                                { /** INFO("files: | files file");*/ }
+    file                                                        {  INFO("files: file"); }
+    | files file                                                {  INFO("files: | files file"); }
                                                                 ;
 /**
  * @name file
@@ -170,10 +170,10 @@ files:
 file:
     blocks END                                                  {
                                                                     //dump_symbols(&symbol_tab);
-                                                                    // cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
-                                                                    // cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
-                                                                    // cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
-                                                                    // cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                 }
                                                                 ;
 /**
@@ -190,27 +190,27 @@ blocks:
  */
 block:
     OPEN_BRACE symbol CLOSE_BRACE                               {
-                                                                    // INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
+                                                                    INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                     string sym_value;
                                                                     get_value($2, sym_value);
                                                                     lexer::instance().write_stream(sym_value);
                                                                     $$=sym_value;
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
-                                                                    // INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
+                                                                    INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
-                                                                    // INFO("block: | OPEN_BRACE sub_porc CLOSE_BRACE");
+                                                                    INFO("block: | OPEN_BRACE sub_porc CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE array CLOSE_BRACE                              {
-                                                                    // INFO("block: | OPEN_BRACE array CLOSE_BRACE");
+                                                                    INFO("block: | OPEN_BRACE array CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE assign_stmt CLOSE_BRACE                        {
-                                                                    // INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
+                                                                    INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
                                                                     lexer::instance().write_stream($2);
                                                                 }
     | OPEN_BRACE qualafied_id CLOSE_BRACE                       {
-                                                                    // INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
+                                                                    INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
                                                                     // bkp todo, look up in symbol table & do replace
                                                                     // bkp todo qualified lookup
                                                                     std::string s;
@@ -218,7 +218,7 @@ block:
                                                                     $$ = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
-                                                                    // INFO("block: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
+                                                                    INFO("block: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
                                                                     size_t len = $3.size();
                                                                     int i = 0;
                                                                     for(; i < len; ++i)
@@ -247,20 +247,20 @@ block:
 
                                                                 }
 | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                      {
-																	// INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE");
-																	}
+																	INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE");
+																}
                                                                 ;
 /**
  * @name assign_stmt
  */
 assign_stmt:
     symbol EQUAL_SIGN NUMERIC_LITERAL                           {
-                                                                    // INFO("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL");
+                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL");
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
     | symbol EQUAL_SIGN STRING_LITERAL                          {
-                                                                    // INFO("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL");
+                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL");
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
@@ -271,7 +271,7 @@ assign_stmt:
  */
 expr:
     symbol VBAR modifiers                                       {
-                                                                    // INFO("expr: | symbol VBAR modifiers ");
+                                                                    INFO("expr: | symbol VBAR modifiers ");
                                                                     std::string s;
                                                                     get_value($1, s);
                                                                     $$ = s;
@@ -324,7 +324,7 @@ sub_proc:
  */
 array:
     symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET           {
-                                                                    // INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
+                                                                    INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
                                                                     string sym_value;
                                                                     get_value($1, sym_value);
                                                                     lexer::instance().write_stream(sym_value);
@@ -467,17 +467,17 @@ qualafied_id:
  */
 SYM:
     SYMBOL  '$'                                                {
-                                                                    // INFO("symbol: | SYMBOL=\"" << $1 << "\"");
+                                                                    INFO("symbol: | SYMBOL=\"" << $1 << "\"");
                                                                     symbol_t s = { $1, 0 };
                                                                     $$=s;
-                                                                }
+                                                               }
     | CONST_SYMBOL  '$'                                        {
-                                                                    // INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
+                                                                    INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
                                                                     symbol_t s = { $1, 0 };
                                                                     $$=s;
                                                                 }
-    | SYM DOT SYM  '$'                                              {
-                                                                    // INFO("symbol: | symbol DOT symbol");
+    | SYM DOT SYM  '$'                                          {
+                                                                    INFO("symbol: | symbol DOT symbol");
                                                                     symbol_t s1 = { $1, 0 };
                                                                     symbol_t s2 = { $1, s1 };
                                                                     s1.members.push_back(s2);
@@ -490,18 +490,18 @@ SYM:
  */
 symbol:
     SYMBOL                                                      {
-                                                                    // INFO("symbol: | SYMBOL=\"" << $1 << "\"");
+                                                                    INFO("symbol: | SYMBOL=\"" << $1 << "\"");
                                                                     //symbol_t s = { $1, 0 };
                                                                     //$$=s;
                                                                     $$=$1;
                                                                 }
     | CONST_SYMBOL                                              {
-                                                                    // INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
+                                                                    INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
                                                                     //symbol_t s = { $1, 0 };
                                                                     //$$=s;
                                                                 }
     | symbol DOT symbol                                         {
-                                                                    // INFO("symbol: | symbol DOT symbol");
+                                                                    INFO("symbol: | symbol DOT symbol");
                                                                     // symbol_t s1 = { $1, 0 };
                                                                     // symbol_t s2 = { $1, s1 };
                                                                     // s1.members.push_back(s2);

@@ -50,9 +50,8 @@ string_ptr esc_nl(const string &s, const string &r)
         ret.append(r);                                 // replace '\n' with r
 
         // move suffix
-        if(suffix.size() < index) break; // break if no suffix
         suffix = suffix.substr(index+1);   // get suffix
-		std::cout << "~ " << prefix  << std::endl;
+		//std::cout << "~ " << prefix  << std::endl;
     }
     ret.append(suffix);
 	return auto_ptr<string>(ret);

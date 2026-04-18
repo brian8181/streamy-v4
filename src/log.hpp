@@ -69,15 +69,15 @@ void log(const std::string &msg, int line_number);
 
 // debugging
 #ifdef DEBUG
-#define // INFO(str) LOG("INFO:  ", INFO_COLOR, str)
+#define INFO(str) LOG("INFO:  ", INFO_COLOR, str)
 #define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #elif WARNINGS
-#define // INFO(str) // str
+#define INFO(str) // str
 #define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #else
-#define // INFO(str) // str
+#define INFO(str) // str
 #define WARN(str) // str
 #define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
 #endif

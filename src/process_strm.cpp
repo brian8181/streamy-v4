@@ -75,8 +75,7 @@ void process_stream(std::istream &is)
 		{
 			++linenum;
 			std::cout << FMT_FG_MAGENTA << "STREAM @ line -->" << linenum++ << "\t" << line << FMT_RESET << "\n";
-			ATTN(what.prefix << what.str() << what.suffix());
-
+			cout << what.prefix << what.str() << what.suffix() << endl;
 
 			++linenum;
 			string prefix = what.prefix();
