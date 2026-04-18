@@ -5,6 +5,7 @@ using std::cout;
 using std::endl;
 
 #define AST_MAIN
+#define AST_MAIN
 #ifdef AST_MAIN
 int main(int argc, char** argv)
 {

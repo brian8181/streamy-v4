@@ -109,7 +109,7 @@ int parse_options(const int argc, char *argv[])
     }
 
     const int offset = optind + SRC_IDX_OFFSET;
-    // process_files(argc, argv + offset - 1);
+    process_files(argc, argv + offset - 1);
     for (int i = offset; i < argc; ++i)
     {
         // TRACE();

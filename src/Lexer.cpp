@@ -24,6 +24,7 @@
 #include "driver.hpp"
 #include "utility.hpp"
 #include "bash_color.hpp"
+#include "log.hpp"
 
 using std::cerr;
 using std::cout;
@@ -234,6 +235,13 @@ parser::symbol_type lexer::get_token()
         m_prefix = p_smatch->prefix().str();
         m_suffix = p_smatch->suffix().str();
         m_buffer = m_suffix;
+
+		// p_context = new context_t;
+		// p_context->match = p_smatch->str();
+		// p_context->prefix = p_smatch->prefix().str();
+		// p_context->suffix = p_smatch->suffix().str();
+		//p_context->smatch = new boost::smatch(*m_iter);
+
         long m_pos = p_smatch->position();
 
         for (int i = 1; i < len; ++i)
@@ -251,12 +259,9 @@ parser::symbol_type lexer::get_token()
                 unsigned long id = (*g_state_tokens[p_state->id])[i - 1];
                 token_t token = g_tokens[id];
 
-                // ATTN("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
-				cout << FMT_FG_GREEN << "match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl( m_match, "\\n").get_val() << "\" ]"
-						<< FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
-				//cout << FMT_FG_GREEN << "[ \"" << m_suffix << "\" ]" << FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
-				cout << FMT_FG_GREEN << "remaining[ \"" << esc_nl( m_suffix, "\\n").get_val() << "\" ]"
-				 		<< FMT_ITALIC << " ~ line:" << __LINE__ << FMT_RESET << endl;
+				INFO("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
+				INFO("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl( m_match, "\\n").get_val() << "\" ]");
+				INFO("remaining[ \"" << esc_nl( m_suffix, "\\n").get_val() << "\" ]");
 
                	++m_iter;
 				return on_token(id);
@@ -265,7 +270,6 @@ parser::symbol_type lexer::get_token()
     }
     else
     {
-        // TRACE();
         m_stream << m_buffer;
         m_stream.flush();
         m_stream.close();

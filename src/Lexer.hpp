@@ -761,22 +761,24 @@ namespace boost
 
 		typedef struct context_t
 		{
-			string m_search;
-			string m_match;
-			string m_prefix;
-			string m_suffix;
-			long m_pos;
+			string regex_str;
+			string search;
+			string match;
+			string prefix;
+			string suffix;
+			long pos;
 
-			string m_buffer;
-			boost::regex m_rexp;
-			boost::sregex_iterator m_iter;
-			boost::sregex_iterator m_end;
+			string buffer;
+			boost::regex rexp;
+			boost::sregex_iterator iter;
+			boost::sregex_iterator end;
 			boost::smatch* p_smatch;
 
 		} context_t;
 
 		context_t* p_context;
 
+		string m_regex_str;
         string m_search;
         string m_match;
         string m_prefix;

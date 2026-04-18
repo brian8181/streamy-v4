@@ -23,74 +23,54 @@ using std::vector;
 
 namespace po = boost::program_options;
 
-string rexp_str;
+//string rexp_str;
 
 /**
  * @name process_stream
  */
 void process_stream(std::istream &is)
 {
-    std::string line;
-    int match_found = 0;
-    int linenum = 1;
+    // std::string line;
+    // int match_found = 0;
+    // int linenum = 1;
 
-	stringstream ss;
-	const vector<unsigned long>* STATE_TOKENS = g_state_tokens[p_state->id];
-	const unsigned long len = STATE_TOKENS->size();
+	// stringstream ss;
+	// const vector<unsigned long>* STATE_TOKENS = g_state_tokens[p_state->id];
+	// const unsigned long len = STATE_TOKENS->size();
 
-	for( unsigned long i = 0; i < len; i++ )
-	{
-		unsigned long id = ( *STATE_TOKENS )[i];
-		token_t* ptoken = &g_tokens[id];
 
-		stringstream rstr;
-		rstr << "R\"(" << ptoken->rexp << ")\"";
+    // while (std::getline(is, line))
+    // {
+	// 	// boost::match_flag_type flags = boost::match_default;
+	// 	// boost::regex_constants::syntax_option_type flags = boost::regex_constants::basic;
+	// 	boost::smatch what;
+	// 	boost::regex re(rexp_str);
 
-		stringstream info;
-		info << "idx:   "
-			<< std::setw( 5 ) << ptoken->index << "\t~\tname: "
-			<< std::setw( 18 ) << std::left << ptoken->name << "\t~\ttype: "
-			<< std::setw( 10 ) << ptoken->stype << "\t~\tregex: "
-			<< std::left << std::setw( 44 ) << rstr.str() << std::right << "~";
-		// INFO( info.str() );
-		// ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
-		ss << "(" << ptoken->rexp << ")|";
-	}
-	string rexp_str = ss.str();
-	rexp_str.pop_back(); // remove extra '|' i.e. "V-BAR"
+	// 	std::string::const_iterator start, end;
+	// 	start = line.begin();
+	// 	end = line.end();
+	// 	boost::match_flag_type flags = boost::match_default;
+	// 	boost::match_results<std::string::const_iterator> what;
+	// 	while( regex_search( start, end, what, re, boost::match_default ) )
+	// 	{
+	// 		++linenum;
+	// 		std::cout << FMT_FG_MAGENTA << "STREAM @ line -->" << linenum++ << "\t" << line << FMT_RESET << "\n";
+	// 		cout << what.prefix << what.str() << what.suffix() <<
 
-    while (std::getline(is, line))
-    {
-		// boost::match_flag_type flags = boost::match_default;
-		// boost::regex_constants::syntax_option_type flags = boost::regex_constants::basic;
-		boost::smatch what;
-		boost::regex re(rexp_str);
+	// 		++linenum;
+	// 		string prefix = what.prefix();
+	// 		string suffix = what.suffix();
+	// 		what.str();
 
-		std::string::const_iterator start, end;
-		start = line.begin();
-		end = line.end();
-		boost::match_flag_type flags = boost::match_default;
-		boost::match_results<std::string::const_iterator> what;
-		while( regex_search( start, end, what, re, boost::match_default ) )
-		{
-			++linenum;
-			std::cout << FMT_FG_MAGENTA << "STREAM @ line -->" << linenum++ << "\t" << line << FMT_RESET << "\n";
-			cout << what.prefix << what.str() << what.suffix() << endl;
-
-			++linenum;
-			string prefix = what.prefix();
-			string suffix = what.suffix();
-			what.str();
-
-			// update search position:
-			start = what[0].second;
-			// update flags:
-			flags |= boost::match_prev_avail;
-			flags |= boost::match_not_bob;
-		}
+	// 		// update search position:
+	// 		start = what[0].second;
+	// 		// update flags:
+	// 		flags |= boost::match_prev_avail;
+	// 		flags |= boost::match_not_bob;
+	// 	}
 
         // is.eof();
-    }
+    //}
 }
 
 /**
