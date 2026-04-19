@@ -174,7 +174,7 @@ void lexer::set_state_flag(state_t *pstate)
 		cout << ( ( i % 2 ) ? FMT_BG_BLACK : FMT_BG_DARK_GREY ) << FMT_FG_LIGHT_YELLOW
 			<< info.str() << FMT_ITALIC << FMT_RESET << endl;
 
-	// ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
+	//  ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
 		ss << "(" << ptoken->rexp << ")|";
 	}
 	// save expression string ...
@@ -245,61 +245,6 @@ parser::symbol_type lexer::get_token()
     return parser::make_END_OF_FILES();
 }
 
-// // Overload << for output
-// ostream &operator<<(const string &s)
-// {
-//     out << s;
-//     return out;
-// }
-
-// // Overload >> for input
-// istream &operator>>(sstring &c)
-// {
-//     // in >> c.real >> c.imag;
-//     return in;
-// }
-
-/**
- * @name print_line_count
- */
-void lexer::print_line_count(const string &s)
-{
-    // size_t line_count = 0;
-    // line_count = std::count(s.begin(), s.end(), '\n');
-    // // INFO("line count: " << line_count);
-}
-
-/**
- * @name print_line_number_comment
- */
-void lexer::print_line_number_comment()
-{
-    // m_stream << "/* line " << m_line << " */\n";
-}
-
-// /**
-//  * @name  print_token
-//  * @def   void lexer::print_token(token_match p_smatch)
-//  * @brief print token to stdout
-//  * @param p_smatch
-//  * @param token_match p_smatch
-//  */
-// void lexer::print_token(const token_value_t *tval)
-// {
-//     // const token *ptoken = &g_tokens[p_smatch->id];
-//     //  cout << "token"
-//     //       << "\n{"
-//     //       << "\n    id   : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << p_smatch->id << FMT_RESET
-//     //       << "\n    name : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->name << FMT_RESET
-//     //       << "\n    stype: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->stype << FMT_RESET
-//     //       << "\n    rexp : " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->rexp << FMT_RESET
-//     //       << "\n    value: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << "\"" << p_smatch->match << "\"" << FMT_RESET
-//     //       << "\n    line#: " << left << FMT_FG_DARK_GREY << FMT_ITALIC << ptoken->_line_ << FMT_RESET
-//     //      << "\n}" << " #" << __LINE__ << endl;
-// }
-
-//
-
 /**
  * @name  lexer::on_token
  * @brief override virtual, on_token, for each token ...
@@ -307,18 +252,14 @@ void lexer::print_line_number_comment()
  */
 inline parser::symbol_type lexer::on_token(unsigned long id)
 {
-    // ATTN("_state.id=" << p_state->id);
-    // ATTN("_state.name=" << p_state->name);
     switch (p_state->id)
     {
     case UL_INITIAL:
     {
-        // INFO("switch case: INITIAL_STATE");
         switch (id)
         {
         case OPEN_BRACE:
             set_state_flag(&ESCAPED);
-            //update_state();
             return parser::make_OPEN_BRACE();
         case COMMENT:
             return parser::make_SKIP_TOKEN();
@@ -334,7 +275,6 @@ inline parser::symbol_type lexer::on_token(unsigned long id)
     } // END case UL_INITIAL
     case UL_ESCAPED:
     {
-        // INFO("switch case: ESCAPED_STATE");
         switch (id)
         {
         case CLOSE_BRACE:
@@ -389,8 +329,6 @@ inline parser::symbol_type lexer::on_token(unsigned long id)
         break;
     } // CASE UL_ESCAPED
 	} // END switch
-
-	// TRACE();
 	cout << "UNDEFINED symbol found..." << endl;
     return parser::make_UNDEFINED();
 }
