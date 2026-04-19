@@ -592,7 +592,7 @@ namespace boost
 	/**
 	 * @brief token list -> by state
 	 */
-	inline vector<unsigned long> INITIAL_TOKENS = { OPEN_BRACE, NEWLINE };
+	inline vector<unsigned long> INITIAL_TOKENS = { OPEN_BRACE, NEWLINE, COMMENT };
 
 	inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
 												   CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR };

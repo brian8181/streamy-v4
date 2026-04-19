@@ -99,7 +99,9 @@
     // declare
     typedef map<string, string> symbol_table_t;
     // test
-    symbol_table_t symbol_table =  { {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"}, {"$x", "x"}, {"$y", "y"}, {"$z", "z"}, {"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"}};
+    symbol_table_t symbol_table =  { {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"}, {"$x", "x"}, {"$y", "y"}, {"$z", "z"}, {"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"},
+										{"$headers", "the headers"}, {"$page_title", "Brian's Home Page"}, {"#test#", "config_const"} };
+
     bool is_name(const std::pair<string, string>& p, const string& str);
 
     //%type<std::vector< modifier_t > > modifiers
@@ -453,6 +455,10 @@ colon_sep_param:
 symbol:
 		SYMBOL													{
 																	INFO("symbol: | SYMBOL=" << $1);
+																	$$ = $1;
+																}
+		| CONST_SYMBOL											{
+																	INFO("symbol: | CONST_SYMBOL=" << $1);
 																	$$ = $1;
 																}
 		| symbol DOT SYMBOL		                                {
