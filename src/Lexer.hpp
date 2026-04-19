@@ -717,9 +717,19 @@ namespace boost
         /**
          * @name  on_token
          * @brief override virtual, on_token, for each token ...
-         * @param token_def* token
+		 * @param unsigned long id
+		 * @return parser::symbol_type
          */
-        inline parser::symbol_type on_token(unsigned long id);
+        //inline parser::symbol_type on_token(unsigned long id);
+
+		 /**
+		 * @name  on_token
+		 * @brief override virtual, on_token, for each token ...
+		 * @param unsigned long id
+		 * @param string match: current match
+		 * @return parser::symbol_type
+		 */
+		parser::symbol_type on_token( unsigned long id, const string& match = {} );
 
         /**
          * @name   write_stream
@@ -760,10 +770,6 @@ namespace boost
         void print_token(const token *tval);
 
     private:
-        vector<token_t> m_tokens;
-        map<unsigned long, token> m_tok_map;
-        vector<state_t> m_states;
-
 		// typedef struct context_t
 		// {
 		// 	string regex_str;
@@ -772,30 +778,24 @@ namespace boost
 		// 	string prefix;
 		// 	string suffix;
 		// 	long pos;
-
 		// 	string buffer;
 		// 	boost::regex rexp;
 		// 	boost::sregex_iterator iter;
 		// 	boost::sregex_iterator end;
 		// 	boost::smatch* p_smatch;
-
 		// } context_t;
 		// context_t* p_context;
+
+        vector<token_t> m_tokens;
+        map<unsigned long, token> m_tok_map;
+        vector<state_t> m_states;
 
 		string m_regex_str;
         string m_buffer;
 		string m_match;
-         /**
-         * @biref output stream
-         */
         ofstream m_stream;
         int m_line;
         state_t *p_state = &INITIAL;
-
-        /**
-         *@ brief stream for quoted strings
-         * @name m_sstring
-         */
         stringstream m_sstring;
     };
 

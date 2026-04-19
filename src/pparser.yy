@@ -161,8 +161,8 @@ complier:
  * @name files
  */
 files:
-    file                                                        {  INFO("files: file"); }
-    | files file                                                {  INFO("files: | files file"); }
+    file                                                        { INFO("files: file"); }
+    | files file                                                { INFO("files: | files file"); }
                                                                 ;
 /**
  * @name file
@@ -180,8 +180,8 @@ file:
  * @name stmts
  */
 stmts:
-    stmt                                                        {  }
-    | stmts stmt                                                {  }
+    stmt                                                        { INFO("stmts: stmt"); }
+    | stmts stmt                                                { INFO("stmts: stmts stmt"); }
                                                                 ;
 /**
  * @name block
@@ -207,7 +207,7 @@ stmt:
                                                                     INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
                                                                     lexer::instance().write_stream($2);
                                                                 }
-    | OPEN_BRACE '$' '%' CLOSE_BRACE                           {
+	| OPEN_BRACE '$' '%' CLOSE_BRACE                           {
                                                                     INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
                                                                     // bkp todo, look up in symbol table & do replace
                                                                     // bkp todo qualified lookup
@@ -337,7 +337,7 @@ params:
     param                                                       {
 																	INFO("PARSER params: | param");
 																}
-    | params symbol  '@'                                           {
+    | params symbol  '@'                                        {
 																	INFO("qualafied_id: | params COMMA symbol");
 																}
                                                                 ;
@@ -356,11 +356,11 @@ param:
  */
 modifiers:
     modifier                                                    {
-                                                                    //WARN("modifiers: modifier");
+                                                                    WARN("modifiers: modifier");
                                                                     //std::swap($$, $1);
                                                                 }
    | modifiers VBAR modifier                                    {
-                                                                    //WARN("modifiers: modifier");
+                                                                    WARN("modifiers: modifier");
                                                                     // std::swap($$, $1);
                                                                     // $$.push_back($3);
                                                                 }
@@ -382,22 +382,22 @@ modifier:
                                                                     // $$ = m;
                                                                     $$ = "capitalize";
                                                                 }
-    | CAT                                                     {  /** INFO("modifier | CAT"); $$="cat"; */ }
-    | COUNT_CHARACTERS                                        {  /** INFO("modifier | COUNT_CHARACTERS"); $$="count_characters"; */ }
-    | COUNT_SENTENCES                                         {  /** INFO("modifier | COUNT_SENTENCES"); $$="count_sentences"; */ }
-    | COUNT_PARAGRAPHS                                        {  /** INFO("modifier | COUNT_PARAGRAPHS"); $$="count_paragraphs"; */ }
-    | COUNT_WORDS                                             {  /** INFO("modifier | COUNT_WORDS"); $$="count_words"; */ }
-    | DATE_FORMAT                                             {  /** INFO("modifier | DATE_FORMAT"); $$="date_format"; */ }
-    | DEFAULT                                                 {  /** INFO("modifier | DEFAULT"); $$="default"; */ }
-    | ESCAPE                                                  {  /** INFO("modifier | ESCAPE"); $$="esacpe"; */ }
-    | INDENT                                                  {  /** INFO("modifier | INDENT"); $$="indent"; */ }
-    | STRIP                                                   {  /** INFO("modifier | STRIPS"); $$="strip"; */ }
-    | NL2BR                                                   {  /** INFO("modifier | NL2BR"); $$="nl2br"; */ }
-    | REPLACE                                                 {  /** INFO("modifier | REPLACE"); $$="replace"; */ }
-    | REGEX_REPLACE                                           {  /** INFO("modifier | REGEX_REPLACE"); $$="regex_replsce"; */ }
-    | SPACIFY                                                 {  /** INFO("modifier | SPACIFY"); $$="spacify"; */ }
-    | STRING_FORMAT                                           {  /** INFO("modifier | STRING_FORMAT"); $$="string_format"; */ }
-    | STRIP_TAGS                                              {  /** INFO("modifier | STIP_TAGS"); $$="strip_tags"; }                 */ }
+    | CAT                                                       {  INFO("modifier | CAT"); $$="cat"; }
+    | COUNT_CHARACTERS                                          {  INFO("modifier | COUNT_CHARACTERS"); $$="count_characters"; }
+    | COUNT_SENTENCES                                           {  INFO("modifier | COUNT_SENTENCES"); $$="count_sentences"; }
+    | COUNT_PARAGRAPHS                                          {  INFO("modifier | COUNT_PARAGRAPHS"); $$="count_paragraphs"; }
+    | COUNT_WORDS                                               {  INFO("modifier | COUNT_WORDS"); $$="count_words"; }
+    | DATE_FORMAT                                               {  INFO("modifier | DATE_FORMAT"); $$="date_format"; }
+    | DEFAULT                                                   {  INFO("modifier | DEFAULT"); $$="default"; }
+    | ESCAPE                                                    {  INFO("modifier | ESCAPE"); $$="esacpe"; }
+    | INDENT                                                    {  INFO("modifier | INDENT"); $$="indent"; }
+    | STRIP                                                     {  INFO("modifier | STRIPS"); $$="strip"; }
+    | NL2BR                                                     {  INFO("modifier | NL2BR"); $$="nl2br"; }
+    | REPLACE                                                   {  INFO("modifier | REPLACE"); $$="replace"; }
+    | REGEX_REPLACE                                             {  INFO("modifier | REGEX_REPLACE"); $$="regex_replsce"; }
+    | SPACIFY                                                   {  INFO("modifier | SPACIFY"); $$="spacify"; }
+    | STRING_FORMAT                                             {  INFO("modifier | STRING_FORMAT"); $$="string_format"; }
+    | STRIP_TAGS                                                {  INFO("modifier | STIP_TAGS"); $$="strip_tags"; }
     | TRUNCATE                                                  {
                                                                     INFO("modifier | TRUNCATE"); $$="truncate";
                                                                     // modifier_t m;

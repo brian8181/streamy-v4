@@ -206,7 +206,7 @@ parser::symbol_type lexer::get_token()
 	auto iter = boost::sregex_iterator( m_buffer.begin(), m_buffer.end(), rexp );
 	auto end = boost::sregex_iterator();
 	boost::smatch m(*iter);
-	m_match = m.str();
+	string match = m.str();
 	const size_t len = m.size();
 
     if (iter != end)
@@ -232,7 +232,7 @@ parser::symbol_type lexer::get_token()
 													 << " - suffix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl(m.suffix()).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]");
 				// set buffer to suffix
 				m_buffer = m.suffix();
-				return on_token(id);
+				return on_token(id, match);
             }
         }
     }
@@ -246,11 +246,13 @@ parser::symbol_type lexer::get_token()
 }
 
 /**
- * @name  lexer::on_token
+ * @name  on_token
  * @brief override virtual, on_token, for each token ...
- * @param id, token id
+ * @param unsigned long id
+ * @param string match: current match
+ * @return parser::symbol_type
  */
-inline parser::symbol_type lexer::on_token(unsigned long id)
+parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 {
     switch (p_state->id)
     {
@@ -286,9 +288,9 @@ inline parser::symbol_type lexer::on_token(unsigned long id)
 			//update_state();
             return parser::make_IF();
         case SYMBOL:
-            return parser::make_SYMBOL(m_match);
+            return parser::make_SYMBOL(match);
         case CONST_SYMBOL:
-            return parser::make_CONST_SYMBOL(m_match);
+            return parser::make_CONST_SYMBOL(match);
         case PERCENT_SIGN:
             return parser::make_PERCENT_SIGN();
         case PLUS_SIGN:
@@ -304,21 +306,21 @@ inline parser::symbol_type lexer::on_token(unsigned long id)
         case VBAR:
             return parser::make_VBAR();
         case CAPITALIZE:
-            return parser::make_CAPITALIZE(m_match);
+            return parser::make_CAPITALIZE(match);
         case TRUNCATE:
-            return parser::make_TRUNCATE(m_match);
+            return parser::make_TRUNCATE(match);
         case STRIP:
-            return parser::make_STRIP(m_match);
+            return parser::make_STRIP(match);
         case EQUAL_SIGN:
             return parser::make_EQUAL_SIGN();
         case NUMERIC_LITERAL:
-            return parser::make_NUMERIC_LITERAL(m_match);
+            return parser::make_NUMERIC_LITERAL(match);
         case FILE_ATTRIB:
-            return parser::make_FILE_ATTRIB(m_match);
+            return parser::make_FILE_ATTRIB(match);
         case INCLUDE:
-            return parser::make_INCLUDE(m_match);
+            return parser::make_INCLUDE(match);
         case ASSIGN:
-            return parser::make_ASSIGN(m_match);
+            return parser::make_ASSIGN(match);
         case DOUBLE_QUOTE:
             set_state_flag(&DOUBLE_QUOTED); // fallthrough
         case WHITESPACE:                    // fallthrough
