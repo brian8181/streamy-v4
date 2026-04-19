@@ -158,7 +158,7 @@ $(BLD)/%.hpp: $(SRC)/%.hpp
 $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CCFLAGS) -c $< -o $@
 
-$(OBJ)/%.o: $(SRC)/%.cpp $(SRC)/%.hpp $(SRC)/bash_color.hpp
+$(OBJ)/%.o: $(SRC)/%.cpp $(SRC)/%.hpp $(SRC)/log.hpp $(SRC)/bash_color.hpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: all rebuild dist install uninstall clean help

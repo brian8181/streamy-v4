@@ -26,7 +26,7 @@
 #include "lexer.hpp"
 #include "pparser.tab.hpp"
 #include "parser.hpp"
-#include "process_strm.hpp"
+#include "strm_handle.hpp"
 #include "bash_color.hpp"
 
 using std::cerr;
@@ -109,7 +109,9 @@ int parse_options(const int argc, char *argv[])
     }
 
     const int offset = optind + SRC_IDX_OFFSET;
-    process_files(argc, argv + offset - 1);
+    strm_handle strm;
+	//strm.process_files(argc, argv);
+
     for (int i = offset; i < argc; ++i)
     {
         // TRACE();

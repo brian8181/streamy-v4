@@ -134,25 +134,21 @@ void lexer::load_config(const string &file)
  */
 void lexer::init(string in, string out)
 {
-    // TRACE();
     read_str(in, m_search, std::ios::in);
     m_buffer = m_search;
     // set state
-    set_state_flag(&INITIAL);
-    //update_state();
+    //set_state_flag(&INITIAL);
+	p_state = &INITIAL;
+    update_state();
     m_stream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
 
-	//cout << FMT_FG_LIGHT_YELLOW << "remaining[ \n\"" << m_buffer << "\" ]" << FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
 	cout << FMT_FG_LIGHT_YELLOW << "remaining[ \"" << esc_nl( m_buffer, "\\n" ).get_val() << "\" ]" << FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
 
     // ifstream strm(in);
     // char buffer[1024];
     // strm.getline(buffer, 1024);
     // int len = strlen(buffer);
-
-    // cout << "TESTING" << endl;
-    // cout << "TEST len=" << std::strlen(buffer) << " : \"" << buffer << "\"" << endl;
 }
 
 /**
@@ -162,13 +158,21 @@ void lexer::init(string in, string out)
  */
 void lexer::set_state_flag(state_t *pstate)
 {
-    // ATTN("Enter set_state_flag ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name);
-	cout << FMT_FG_RED << "set_state_flag ~ new state id:" << pstate->id << " ~ name:" << pstate->name
-			<< FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
-    // TRACE();
-    p_state = pstate;
+	ATTN("Enter set_state ~ " << p_state->id << ":" << p_state->name << " ~~> " << pstate->id << ":" << pstate->name);
+	p_state = pstate;
+	//ATTN("iter before: " << m_iter->suffix());
+
+	// set context
+	// p_smatch = new boost::smatch( *m_iter );
+	// const size_t len = p_smatch->size();
+	// m_match = p_smatch->str();
+	// m_prefix = p_smatch->prefix().str();
+	// m_suffix = p_smatch->suffix().str();
+	// m_buffer = m_suffix;
+	// m_pos = p_smatch->position();
 
     update_state();
+	//ATTN( "iter after: " << m_iter->suffix() );
 }
 
 void lexer::update_state()
@@ -185,15 +189,16 @@ void lexer::update_state()
 		stringstream rstr;
 		rstr  << "R\"(" << ptoken->rexp << ")\"";
 
-        stringstream info;
-        info << "idx:   "
-             << std::setw(5) << ptoken->index << "\t~\tname: "
-             << std::setw(18) << std::left << ptoken->name << "\t~\ttype: "
-             << std::setw(10) << ptoken->stype << "\t~\tregex: "
-             << std::left << std::setw(44) << rstr.str() << std::right << "~";
+		stringstream info;
+        info << setw(3) << i << " : "
+			 << "id:   " << std::setw(3) << id
+			 << "\t~\tidx: " << std::setw( 3 ) << std::left << ptoken->index
+			 << "\t~\tname: " << std::setw(18) << std::left << ptoken->name
+			 << "\t~\ttype: " << std::setw(10) << ptoken->stype
+			 << "\t~\tregex: " << std::left << std::setw(44) << rstr.str() << std::right;
 
 		cout << ((i % 2) ? FMT_BG_BLACK : FMT_BG_DARK_GREY) << FMT_FG_LIGHT_YELLOW
-				<< info.str() << FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
+				<< info.str() << FMT_ITALIC << FMT_RESET << endl;
 
         // ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
         ss << "(" << ptoken->rexp << ")|";
@@ -201,13 +206,11 @@ void lexer::update_state()
 
     string rexp_str = ss.str();
     rexp_str.pop_back(); // remove extra '|' i.e. "V-BAR"
-    // set context
     m_rexp = boost::regex(rexp_str, boost::regex::extended);
     m_iter = boost::sregex_iterator(m_buffer.begin(), m_buffer.end(), m_rexp);
     m_end =  boost::sregex_iterator();
 
-	cout << FMT_FG_RED << "Exit set_state ~ p_state->id:" << p_state->id << " ~ p_state->name:" << p_state->name
-			<< FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
+	ATTN("Exit set_state ~ p_state:" << p_state->id << ":" << p_state->name);
 }
 
 void lexer::include_file(const string &input_file)
@@ -235,6 +238,7 @@ parser::symbol_type lexer::get_token()
         m_prefix = p_smatch->prefix().str();
         m_suffix = p_smatch->suffix().str();
         m_buffer = m_suffix;
+		m_pos = p_smatch->position();
 
 		// p_context = new context_t;
 		// p_context->match = p_smatch->str();
@@ -242,7 +246,6 @@ parser::symbol_type lexer::get_token()
 		// p_context->suffix = p_smatch->suffix().str();
 		//p_context->smatch = new boost::smatch(*m_iter);
 
-        long m_pos = p_smatch->position();
 
         for (int i = 1; i < len; ++i)
         {
@@ -259,9 +262,10 @@ parser::symbol_type lexer::get_token()
                 unsigned long id = (*g_state_tokens[p_state->id])[i - 1];
                 token_t token = g_tokens[id];
 
-				INFO("match.sz:" << m_match.size() << " - match.pos:" << m_pos << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
-				INFO("match[ " << "i=" << i << " ] = " << token.name << "[ \"" << esc_nl( m_match, "\\n").get_val() << "\" ]");
-				INFO("remaining[ \"" << esc_nl( m_suffix, "\\n").get_val() << "\" ]");
+				INFO("match.pos:" << m_pos << " - match.sz:" << m_match.size() << " - prefix.sz:" << m_prefix.size() << " - suffix.sz:" << m_suffix.size());
+				INFO("match[ " << "i=" << i << " ] = " << token.name << "[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m_match, "\\n" ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << " ]" \
+				<< " - prefix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl(m_prefix, "\\n").get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << " ]" \
+				<< " - suffix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl(m_suffix, "\\n").get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << " ]");
 
                	++m_iter;
 				return on_token(id);

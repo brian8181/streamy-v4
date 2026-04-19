@@ -42,6 +42,7 @@ void log(const std::string &msg, int line_number);
 #define MAGENTA(str) FMT_FG_MAGENTA << str << FMT_RESET
 #define WHITE(str) FMT_FG_WHITE << str << FMT_RESET
 
+#define LOGV(str) cout << "LOGV: " << "\"" << str << "\"" << str <<  endl;
 #define LOG(type, color, str) *DEFAULT_OUT_STREAM << type << FMT_ITALIC << color << str << FMT_RESET << "  ---> "\
                                                   << FMT_FG_DARK_GREY << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ " << "line:" << __LINE__ << " ~ "\
                                                   << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
