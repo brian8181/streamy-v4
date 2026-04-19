@@ -593,8 +593,8 @@ namespace boost
      */
 	inline vector<unsigned long> INITIAL_TOKENS = { OPEN_BRACE, NEWLINE };
 
-    inline vector<unsigned long> ESCAPED_TOKENS = {CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
-                                                   CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR};
+    inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
+                                                   CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR };
 
     inline vector<unsigned long> COMMENTING_TOKENS = {OPEN_BRACE, COMMENT, ANYTHING};
     inline vector<unsigned long> DOUBLE_QUOTED_TOKENS = {DOUBLE_QUOTE, VALID_CHAR};
@@ -703,6 +703,11 @@ namespace boost
          */
         void load_config(const string &file);
 
+		/**
+		 * @name set_buffer
+		 */
+		void set_buffer( const string& buffer );
+
         /**
          * @name   get_token
          * @return int
@@ -779,7 +784,6 @@ namespace boost
 		context_t* p_context;
 
 		string m_regex_str;
-        string m_search;
         string m_match;
         string m_prefix;
         string m_suffix;
@@ -787,8 +791,8 @@ namespace boost
 
         string m_buffer;
         boost::regex m_rexp;
-        boost::sregex_iterator m_iter;
-        boost::sregex_iterator m_end;
+		boost::sregex_iterator m_iter = boost::sregex_iterator();
+		boost::sregex_iterator m_end = boost::sregex_iterator();
         boost::smatch *p_smatch;
 
         /**

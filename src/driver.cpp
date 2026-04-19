@@ -130,6 +130,8 @@ int parse_options(const int argc, char *argv[])
 
         lexer::instance().init(g_input_file, g_output_file);
         yyparser.parse();
+		//yyparser.make_END_OF_FILE();
+
 
         // bkp todo
         // g_parser.parse();
@@ -137,6 +139,7 @@ int parse_options(const int argc, char *argv[])
         cout << "finished file:\"" << g_input_file << "\"" << endl;
         cout << "write output to file:\"" << g_output_file << "\"" << endl;
     }
+	yyparser.make_END_OF_FILES();
 
     // TRACE();
     // INFO("EOFS");

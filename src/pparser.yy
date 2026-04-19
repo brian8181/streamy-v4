@@ -115,16 +115,16 @@
 %token<std::string> INDENT LOWER UPPER STRIP NL2BR REGEX_REPLACE REPLACE SPACIFY STRING_FORMAT STRIP_TAGS TRUNCATE WORDWRAP
 %token CARROT OPEN_PAREN CLOSE_PAREN DASH BACKSLASH QUESTION_MARK SEMI_COLON DOUBLE_QUOTE SINGLE_QUOTE BACK_SLASH AT AMPERSAND AND OR NOT
 %token DOLLAR_SIGN COMMA COLON VBAR HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
-%token END 0
+%token END_OF_FILE 0
 %token END_OF_FILES MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
 %token NEWLINE
 
 
-%type files file blocks
+%type files file stmts
 %type< std::pair<std::string, std::string> > attrib
 %type<std::vector< std::pair<std::string, std::string> > > attributes
 %type<std::vector< std::pair<std::string, std::string> > > built_in
-%type<std::string> block
+%type<std::string> stmt
 %type<std::string> expr
 %type<std::string> assign_stmt
 %type< std::vector< std::string > > colon_sep_params
@@ -132,7 +132,7 @@
 %type< std::vector< std::string > > modifiers
 %type<std::string> modifier
 %type<std::string> attrib_name
-%type<symbol_t> SYM
+%type<std::string> sub_proc array
 
 %nonassoc IFX
 %nonassoc ELSE ELSEIF IF WHILE BREAK
@@ -140,7 +140,7 @@
 %left<char> PLUS_SIGN MINUS
 %left ASTERISK SLASH PERCENT_SIGN
 %nonassoc UMINUS
-%type<std::string> symbol sub_proc array qualafied_id
+%type<std::string> symbol
 %start complier
 
 %%
@@ -149,7 +149,7 @@
  * @name complier
  */
 complier:
-    files                                                       {
+    files  END_OF_FILES                                         {
 
                                                                     cout << FMT_FG_DARK_GREY << "PARSER complier: | files" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
@@ -168,7 +168,7 @@ files:
  * @name file
  */
 file:
-    blocks END                                                  {
+    stmts END_OF_FILE                                                  {
                                                                     //dump_symbols(&symbol_tab);
                                                                     cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
@@ -177,24 +177,22 @@ file:
                                                                 }
                                                                 ;
 /**
- * @name blocks
+ * @name stmts
  */
-blocks:
-    block                                                       {  }
-    | blocks block                                              {
-
-                                                                }
+stmts:
+    stmt                                                        {  }
+    | stmts stmt                                                {  }
                                                                 ;
 /**
  * @name block
  */
-block:
+stmt:
     OPEN_BRACE symbol CLOSE_BRACE                               {
-                                                                    INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
-                                                                    string sym_value;
-                                                                    get_value($2, sym_value);
-                                                                    lexer::instance().write_stream(sym_value);
-                                                                    $$=sym_value;
+                                                                    INFO("stmt: | OPEN_BRACE symbol=" << $2 <<  " CLOSE_BRACE");
+                                                                    // string sym_value;
+                                                                    // get_value($2, sym_value);
+                                                                    // lexer::instance().write_stream(sym_value);
+                                                                    // $$=sym_value;
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
@@ -209,12 +207,12 @@ block:
                                                                     INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
                                                                     lexer::instance().write_stream($2);
                                                                 }
-    | OPEN_BRACE qualafied_id CLOSE_BRACE                       {
+    | OPEN_BRACE '$' '%' CLOSE_BRACE                           {
                                                                     INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
                                                                     // bkp todo, look up in symbol table & do replace
                                                                     // bkp todo qualified lookup
                                                                     std::string s;
-                                                                    get_value($2, s);
+                                                                    //get_value($2, s);
                                                                     $$ = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
@@ -239,7 +237,6 @@ block:
                                                                     // string* p_rstr = lexer::instance().get_remaining();
                                                                     // stringstream* include_buffer = lexer::instance().get_include_buffer();
                                                                     // *include_buffer << sout << *p_rstr;
-
 
                                                                     // set the suffix a.k.a "current search buffer"
                                                                     // lexer::instance().set_remaining( (*include_buffer).str() );
@@ -278,37 +275,37 @@ expr:
                                                                 }
     | MINUS expr %prec UMINUS                                   {
 																	INFO("PARSER expr: | expr <<");
-	}
+																}
     | expr PLUS_SIGN expr                                       {
-		INFO("PARSER expr: | expr PLUS_SIGN expr <<");
-		}
+																	INFO("PARSER expr: | expr PLUS_SIGN expr <<");
+																}
     | expr MINUS expr                                           {
-		INFO("PARSER expr: | expr MINUS expr <<");
-	}
+																	INFO("PARSER expr: | expr MINUS expr <<");
+																}
     | expr ASTERISK expr                                        {
-		INFO("PARSER expr: | expr ASTERISK expr <<");
-		}
+																	INFO("PARSER expr: | expr ASTERISK expr <<");
+																}
     | expr SLASH expr                                           {
-		INFO("PARSER expr: | expr SLASH expr <<");
-		}
+																	INFO("PARSER expr: | expr SLASH expr <<");
+																}
     | expr LESS_THAN expr                                       {
-		INFO("PARSER expr: | expr LESS_THAN expr <<");
-	}
+																	INFO("PARSER expr: | expr LESS_THAN expr <<");
+																}
     | expr GREATER_THAN expr                                    {
-		INFO("PARSER expr: | | expr GREATER_THAN expr <<");
-		}
+																	INFO("PARSER expr: | expr GREATER_THAN expr <<");
+																}
     | expr GREATER_THAN_EQUAL expr                              {
-		INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << ");
-		}
+																	INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << ");
+																}
     | expr LESS_THAN_EQUAL expr                                 {
-		INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<");
-		}
+																	INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<");
+																}
     | expr NOT_EQUAL expr                                       {
-		INFO("PARSER expr: | expr NOT_EQUAL expr <<");
-		}
+																	INFO("PARSER expr: | expr NOT_EQUAL expr <<");
+																}
     | LPAREN expr RPAREN                                        {
-		INFO("PARSER expr: | LPAREN expr RPAREN <<");
-		}
+																	INFO("PARSER expr: | LPAREN expr RPAREN <<");
+																}
                                                                 ;
 /**
  * @name sub_proc
@@ -338,11 +335,11 @@ array:
  */
 params:
     param                                                       {
-		INFO("PARSER params: | param");
-		}
-    | params symbol                                             {
-		INFO("qualafied_id: | params COMMA symbol");
-		}
+																	INFO("PARSER params: | param");
+																}
+    | params symbol  '@'                                           {
+																	INFO("qualafied_id: | params COMMA symbol");
+																}
                                                                 ;
 /**
  * @name param
@@ -350,8 +347,8 @@ params:
  */
 param:
         symbol COMMA                                            {
-			INFO("param: | symbol");
-			}
+																	INFO("param: | symbol");
+																}
                                                                 ;
 /**
  * @name modifiers
@@ -410,21 +407,21 @@ modifier:
                                                                     $$ = "truncate";
                                                                 }
     | UPPER                                                     {
-		INFO("modifier | UPPER"); $$="upper";
-		}
+																	INFO("modifier | UPPER"); $$="upper";
+																}
     | LOWER                                                     {
-		INFO("modifier | LOWER"); $$="lower";
-		}
+																	INFO("modifier | LOWER"); $$="lower";
+																}
     | WORDWRAP                                                  {
-		INFO("modifier | WORDWRAP"); $$="word_wrap";
-		}
+																	INFO("modifier | WORDWRAP"); $$="word_wrap";
+																}
                                                                 ;
 /**
  * @name colon_sep_params
  * @brief ( $x:$y:$x ) | 1:2:"three"
  */
 colon_sep_params:
-        colon_sep_params colon_sep_param                      {
+        colon_sep_params colon_sep_param                        {
                                                                    INFO("colon_sep_params: | colon_sep_params colon_sep_param");
                                                                     std::swap($$, $1);
                                                                     $$.push_back($2);
@@ -444,71 +441,28 @@ colon_sep_param:
                                                                     INFO("colon_sep_param: | COLON STRING_LITERAL");
                                                                     $$=$2;
                                                                 }
-        | COLON symbol                                          {
+        | COLON symbol  '@'                                        {
                                                                     INFO("colon_sep_param: | COLON symbol");
                                                                     get_value($2, $$);
                                                                 }
                                                                 ;
-/**
- * @name qualafied_id
- */
-qualafied_id:
-    symbol DOT symbol    '$'                                   {
-                                                                    INFO("qualafied_id: | qualafied_id DOT symbol");
-                                                                    $$ = $3;
-                                                                }
-    | qualafied_id DOT symbol
-    | qualafied_id INDIRECT_MEMBER symbol                       {
-		INFO("qualafied_id: | qualafied_id INDIRECT_MEMBER symbol");
-		}
-                                                                ;
-/**
- * @name symbol
- */
-SYM:
-    SYMBOL  '$'                                                {
-                                                                    INFO("symbol: | SYMBOL=\"" << $1 << "\"");
-                                                                    symbol_t s = { $1, 0 };
-                                                                    $$=s;
-                                                               }
-    | CONST_SYMBOL  '$'                                        {
-                                                                    INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
-                                                                    symbol_t s = { $1, 0 };
-                                                                    $$=s;
-                                                                }
-    | SYM DOT SYM  '$'                                          {
-                                                                    INFO("symbol: | symbol DOT symbol");
-                                                                    symbol_t s1 = { $1, 0 };
-                                                                    symbol_t s2 = { $1, s1 };
-                                                                    s1.members.push_back(s2);
-                                                                    // $1.swap($3, $1);
-                                                                    $$=s1;
-                                                                }
-                                                                ;
+
 /**
  * @name symbol
  */
 symbol:
-    SYMBOL                                                      {
-                                                                    INFO("symbol: | SYMBOL=\"" << $1 << "\"");
-                                                                    //symbol_t s = { $1, 0 };
-                                                                    //$$=s;
-                                                                    $$=$1;
-                                                                }
-    | CONST_SYMBOL                                              {
-                                                                    INFO("symbol: | CONST_SYMBOL=\"" << $1 << "\"");
-                                                                    //symbol_t s = { $1, 0 };
-                                                                    //$$=s;
-                                                                }
-    | symbol DOT symbol                                         {
-                                                                    INFO("symbol: | symbol DOT symbol");
-                                                                    // symbol_t s1 = { $1, 0 };
-                                                                    // symbol_t s2 = { $1, s1 };
-                                                                    // s1.members.push_back(s2);
-                                                                    const string s1($1 + "." + $3);
-                                                                    $$ = s1;
-                                                                }
-                                                                ;
+		SYMBOL													{
+																	INFO("symbol: | SYMBOL=" << $1);
+																	$$ = $1;
+																}
+		| symbol DOT SYMBOL		                                {
+																	string s = $1 + "." + $3;
+																	INFO("symbol: | symbol DOT SYMBOL=" << s);
+																	$$ = s;
+																}
+																;
+
+
 /**
  * @name built-in
  */
@@ -614,7 +568,7 @@ bool get_value(const string& name, /*out*/ string& val)
         val = symbol_table[name];
         return true;
     }
-    //INFO("symbol, (" << name << "), not found!");
+    INFO("symbol, (" << name << "), not found!");
     return false;
 }
 
@@ -626,7 +580,7 @@ bool set_value(const string& name, const string& val)
         INFO("symbol updated: " << name << " = " << val);
         return true;
     }
-    //INFO("symbol, (" << name << "), not found!");
+    INFO("symbol, (" << name << "), not found!");
     return false;
 }
 
