@@ -191,7 +191,7 @@ stmt:
                                                                     INFO("stmt: | OPEN_BRACE symbol=" << $2 <<  " CLOSE_BRACE");
                                                                     string sym_value; // = "{" + $2 + "=?}";
                                                                     get_value($2, sym_value);
-                                                                    lexer::instance().write_stream(sym_value);
+                                                                    lexer::instance().write_ostream(sym_value);
                                                                     $$=sym_value;
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
@@ -205,7 +205,7 @@ stmt:
                                                                 }
     | OPEN_BRACE assign_stmt CLOSE_BRACE                        {
                                                                     INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
-                                                                    lexer::instance().write_stream($2);
+                                                                    lexer::instance().write_ostream($2);
                                                                 }
 	| OPEN_BRACE '$' '%' CLOSE_BRACE                           {
                                                                     INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
@@ -324,7 +324,7 @@ array:
                                                                     INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
                                                                     string sym_value;
                                                                     get_value($1, sym_value);
-                                                                    lexer::instance().write_stream(sym_value);
+                                                                    lexer::instance().write_ostream(sym_value);
                                                                     $$=sym_value;
                                                                     $$=$1;
                                                                 }

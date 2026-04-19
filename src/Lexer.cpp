@@ -137,7 +137,7 @@ void lexer::init(string in, string out)
     read_str(in, m_buffer, std::ios::in);
     // set state
     set_state_flag(&INITIAL);
-    m_stream.open(out, std::ios_base::out | std::ios::trunc);
+    m_fstream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
 	cout << FMT_FG_LIGHT_YELLOW << "initialized buffer - [ \"" << esc_nl( m_buffer, "\\n" ).get_val() << "\" ]" << FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
 }
@@ -219,7 +219,7 @@ parser::symbol_type lexer::get_token()
                 {
                     if (p_state->id != UL_INITIAL)
                         return parser::make_YYerror();
-                    m_stream << m.prefix(); // stream prefix (unescaped text)
+                    m_fstream << m.prefix(); // stream prefix (unescaped text)
                 }
                 // get match : by sub_match index (i)
                 unsigned long id = (*g_state_tokens[p_state->id])[i - 1];
@@ -238,9 +238,9 @@ parser::symbol_type lexer::get_token()
     }
     else if(!m_buffer.empty())
     {
-        m_stream << m_buffer;
-        m_stream.flush();
-        m_stream.close();
+        m_fstream << m_buffer;
+        m_fstream.flush();
+        m_fstream.close();
     }
     return parser::make_END_OF_FILES();
 }
@@ -267,7 +267,7 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
             return parser::make_SKIP_TOKEN();
         case NEWLINE:
             m_line++;
-            m_stream << '\n';
+            m_fstream << '\n';
             return get_token();
         case SKIP_TOK:
             return get_token();

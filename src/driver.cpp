@@ -138,6 +138,9 @@ int parse_options(const int argc, char *argv[])
 
         cout << "finished file:\"" << g_input_file << "\"" << endl;
         cout << "write output to file:\"" << g_output_file << "\"" << endl;
+
+		cout << "dump output string ..." << endl;
+		lexer::instance().dump_ostream(g_output_file);
     }
 	yyparser.make_END_OF_FILES();
 
