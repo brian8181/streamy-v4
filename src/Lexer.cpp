@@ -206,6 +206,7 @@ parser::symbol_type lexer::get_token()
 	auto iter = boost::sregex_iterator( m_buffer.begin(), m_buffer.end(), rexp );
 	auto end = boost::sregex_iterator();
 	boost::smatch m(*iter);
+	m_match = m.str();
 	const size_t len = m.size();
 
     if (iter != end)
