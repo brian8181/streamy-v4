@@ -189,10 +189,10 @@ stmts:
 stmt:
     OPEN_BRACE symbol CLOSE_BRACE                               {
                                                                     INFO("stmt: | OPEN_BRACE symbol=" << $2 <<  " CLOSE_BRACE");
-                                                                    // string sym_value;
+                                                                    string sym_value = "{" + $2 + "=?}";
                                                                     // get_value($2, sym_value);
-                                                                    // lexer::instance().write_stream(sym_value);
-                                                                    // $$=sym_value;
+                                                                    lexer::instance().write_stream(sym_value);
+                                                                    //$$=sym_value;
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     INFO("block: | OPEN_BRACE expr CLOSE_BRACE");

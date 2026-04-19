@@ -34,6 +34,7 @@ int parse_options(int argc, char* argv[]);
  */
 int stdin_ready (int filedes);
 
+#ifdef _TEST123_
 /**
  * @brief driver entry point for the application
  * @param argc
@@ -41,6 +42,7 @@ int stdin_ready (int filedes);
  * @return
  */
 int main(int argc, char* argv[]);
+#endif
 
 /**
  * @brief

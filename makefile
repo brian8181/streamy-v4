@@ -147,6 +147,9 @@ $(BLD)/lib$(APP).a: $(BLD)/$(APP).o
 	ar rvs $(BLD)/lib$(APP).a $(OBJ)/$(APP).o
 	chmod 755 $(BLD)/lib$(APP).a
 
+$(BLD)/TEST_lex:  $(SOURCES) $(OBJ)/TEST_lex.o
+	$(CXX) $(CXXFLAGS) $(OBJ) -I/usr/local/include/cppunit -L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt -lcppunit -o $@
+
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h
 	cp $^ $@

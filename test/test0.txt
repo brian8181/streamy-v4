@@ -1,2 +1,8 @@
-{$a}
+line1{$a}
 
+
+
+
+{$b}
+
+{$c}line8{$d}line8

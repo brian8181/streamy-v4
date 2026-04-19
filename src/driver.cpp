@@ -146,6 +146,7 @@ int parse_options(const int argc, char *argv[])
     return 0;
 }
 
+#ifndef _TEST123_
 #ifndef _WIN32
 /**
  * @brief  stdin_ready function
@@ -210,3 +211,4 @@ int main(int argc, char *argv[])
         std::exit(-1);
     }
 }
+#endif
