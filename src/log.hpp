@@ -49,8 +49,10 @@ void log(const std::string &msg, int line_number);
 
 // tracing
 #ifdef TRACING
-#define TRACE(str) *DEFAULT_OUT_STREAM << FMT_FG_WHITE << std::left << std::setw(6) << "TRCE: " << FMT_FG_LIGHT_GREY << FMT_ITALIC << "func:\"" << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ "\
-                                  << "line:" << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
+#define TRACE(str) *DEFAULT_OUT_STREAM << FMT_FG_WHITE << std::left << std::setw(6) \
+									   << "TRCE: "     << FMT_FG_LIGHT_GREY << FMT_ITALIC \
+						     		   << "func:\""    << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ "\
+						               << "line:"      << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
 #else
 #define TRACE(str) // str
 #endif

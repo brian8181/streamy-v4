@@ -13,7 +13,7 @@ LEX = flex
 #YACC = bison -y
 YACC = bison
 YFLAGS = -YYDEBUG
-CXXFLAGS = -std=gnu++17 -fPIC -I./$(BLD) -I./$(SRC)
+CXXFLAGS = -std=gnu++17 -fPIC
 CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
 LDFLAGS =
 FLEXFLAGS = --flex
@@ -39,8 +39,10 @@ FMT_WARN=$(FMT_ITALIC)$(FMT_YELLOW)
 
 # lib settings
 LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64
-INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD)
-LDFLAGS=$(INCLUDES) $(LIBS)
+INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD) -I/. 
+LDFLAGS=$(LIBS)
+
+CXXFLAGS+=$(INCLUDES)
 
 ifdef CLANG
 	CXX=clang++
@@ -64,18 +66,6 @@ endif
 # endif
 
 CXXFLAGS+=-DTEST_ONLY
-
-# FILES=$(SRC)\bash_color.hpp \
-# $(SRC)/log.hpp \
-# $(SRC)/fileio.hpp \
-# $(SRC)/auto_ptr.hpp \
-# $(SRC)/utility.hpp \
-# $(SRC)/ast.hpp \
-# $(BLD)/pparser.tab.hpp \
-# $(BLD)/pparser2.tab.hpp \
-# $(SRC)/parser.hpp \
-# $(SRC)/lexer.hpp \
-# $(SRC)/driver.hpp
 
 HEADERS=$(SRC)/bash_color.hpp \
 $(SRC)/log.hpp \
@@ -118,7 +108,7 @@ all: $(BLD)/driver
 world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so $(BLD)/pparser2.tab.o
 
 $(BLD)/driver: $(SOURCES)
-	$(CXX) $(CXXFLAGS) $(OBJS) $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cpp
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp

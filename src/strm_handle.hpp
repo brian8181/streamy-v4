@@ -19,7 +19,7 @@
 #pragma warning(disable : 4512 4244)
 #endif
 
-
+using std::string;
 
 namespace po = boost::program_options;
 

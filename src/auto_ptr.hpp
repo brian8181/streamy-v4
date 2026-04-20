@@ -5,7 +5,9 @@
  * @brief Smart pointer implementation with reference counting.
  */
 
-#pragma once
+#ifndef _AUTO_PTR_HPP__
+#define _AUTO_PTR_HPP__
+
 #include <iostream>
 #include <string>
 #include <utility>
@@ -234,3 +236,5 @@ private:
      */
     T *data_ptr = 0;
 };
+
+#endif

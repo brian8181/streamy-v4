@@ -109,14 +109,9 @@ int parse_options(const int argc, char *argv[])
     }
 
     const int offset = optind + SRC_IDX_OFFSET-1;
-    strm_handle strm;
-	//strm.process_files(argc, argv);
-
-    lexer::instance().init(argc-offset-1, argv+offset);
-    yyparser.parse();
-	//yyparser.make_END_OF_FILE();
-
-    return 0;
+     lexer::instance().init(argc-offset-1, argv+offset);
+     yyparser.parse();
+     return 0;
 }
 
 #ifndef _TEST123_

@@ -8,7 +8,6 @@
 #include "auto_ptr.hpp"
 
 using std::map;
-using std::pow;
 using std::regex;
 using std::smatch;
 using std::string;

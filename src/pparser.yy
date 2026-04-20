@@ -37,19 +37,6 @@
     //typedef std::pair< std::string, std::string > > attrib_t;
     //typedef std::vector< attrib_t > attributes_t;
 
-    // print a list of strings
-    auto operator<<(std::ostream& o, const std::vector<std::string>& ss) -> std::ostream&
-    {
-        o << '{';
-        const char *sep = "";
-        for(const auto& s: ss)
-        {
-            o << sep << s;
-            sep = ", ";
-        }
-        return o << '}';
-    }
-
     std::map<string, string> stab;
 
     typedef struct symbol_t
@@ -64,6 +51,22 @@
         std::string name;
         std::string params;
     } modifier_t;
+}
+
+%code
+{
+	// print a list of strings
+    auto operator<<(std::ostream& o, const std::vector<std::string>& ss) -> std::ostream&
+    {
+        o << '{';
+        const char *sep = "";
+        for(const auto& s: ss)
+        {
+            o << sep << s;
+            sep = ", ";
+        }
+        return o << '}';
+    }
 }
 
 %define api.token.constructor
@@ -107,6 +110,7 @@
 										{"$x", "x"}, {"$y", "y"}, {"$z", "z"},
 										{"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"},
 										{"$headers", "the headers"}, {"$page_title", "Brian's Home2 Page"}, {"#test#", "config_const"} 		};
+	static int m_file_count = 0;
 
 }
 
@@ -120,11 +124,14 @@
 %token CARROT OPEN_PAREN CLOSE_PAREN DASH BACKSLASH QUESTION_MARK SEMI_COLON DOUBLE_QUOTE SINGLE_QUOTE BACK_SLASH AT AMPERSAND AND OR NOT
 %token DOLLAR_SIGN COMMA COLON VBAR HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
 %token END_OF_FILE 0
-%token END_OF_FILES MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
+%token END_OF_FILES
+%token MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
 %token NEWLINE
 
 
-%type files file stmts
+%type< std::vector< std::string > > files
+%type<std::string> file
+%type< std::vector< std::string > > stmts
 %type< std::pair<std::string, std::string> > attrib
 %type<std::vector< std::pair<std::string, std::string> > > attributes
 %type<std::vector< std::pair<std::string, std::string> > > built_in
@@ -153,29 +160,32 @@
  * @name complier
  */
 complier:
-	/*empty*/
-	| files  END_OF_FILES                             {
-
+	files  END_OF_FILES                                         {
+																	INFO("complier: files.size=" << $1.size() << " END_OF_FILES");
                                                                     cout << FMT_FG_DARK_GREY << "PARSER complier: | files" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "************************* Done ************************" << FMT_RESET << endl;
-
                                                                 }
                                                                 ;
 /**
  * @name files
  */
 files:
-    file                                                        { INFO("files: file"); }
-    | files file                                                { INFO("files: | files file"); }
+	%empty                                                      { /* Generates an empty string list */ }
+    | files file                                                {
+																	INFO("files: | files file=\"" << $2 << "\"");
+																	$$ = $1;
+																	$$.push_back ($2);
+																}
                                                                 ;
 /**
  * @name file
  */
 file:
-    stmts END_OF_FILE                                                  {
-                                                                    //dump_symbols(&symbol_tab);
+    stmts END_OF_FILE                                           {
+                                                                    INFO("file: stmts.size=" << $1.size() << " END_OF_FILE");
+																	$$ = "file_name.cpp";
                                                                     cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
@@ -186,22 +196,22 @@ file:
  * @name stmts
  */
 stmts:
-    stmt                                                        { INFO("stmts: stmt"); }
-    | stmts stmt                                                { INFO("stmts: stmts stmt"); }
+    stmt                                                        { INFO("stmts: stmt=\"" << $1 << "\""); $$.push_back($1);  }
+    | stmts stmt                                                { INFO("stmts: | stmts stmt"); $$=$1; $$.push_back($2); }
                                                                 ;
 /**
  * @name block
  */
 stmt:
     OPEN_BRACE symbol CLOSE_BRACE                               {
-                                                                    INFO("stmt: | OPEN_BRACE symbol=" << $2 <<  " CLOSE_BRACE");
+                                                                    INFO("stmt: OPEN_BRACE symbol=\"" << $2 <<  "\" CLOSE_BRACE");
                                                                     string sym_value; // = "{" + $2 + "=?}";
                                                                     get_value($2, sym_value);
                                                                     lexer::instance().write_ostream(sym_value);
                                                                     $$=sym_value;
                                                                 }
 	| OPEN_BRACE STRING_LITERAL CLOSE_BRACE						{
-																	INFO("stmt: | OPEN_BRACE STRING_LITERAL=" << $2 <<  " CLOSE_BRACE");
+																	INFO("stmt: | OPEN_BRACE STRING_LITERAL=\"" << $2 <<  "\" CLOSE_BRACE");
                                                                     lexer::instance().write_ostream($2);
                                                                     $$=$2;
 																}
@@ -268,12 +278,12 @@ stmt:
  */
 assign_stmt:
     symbol EQUAL_SIGN NUMERIC_LITERAL                           {
-                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL");
+                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL=" << $3);
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
     | symbol EQUAL_SIGN STRING_LITERAL                          {
-                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL");
+                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL\"" << $3 << "\"");
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
@@ -374,11 +384,13 @@ modifiers:
     modifier                                                    {
                                                                     WARN("modifiers: modifier");
                                                                     //std::swap($$, $1);
+																	$$.push_back($1);
                                                                 }
    | modifiers VBAR modifier                                    {
                                                                     WARN("modifiers: modifier");
                                                                     // std::swap($$, $1);
-                                                                    // $$.push_back($3);
+                                                                    $$ = $1;
+																	$$.push_back($3);
                                                                 }
                                                                 ;
 /**
@@ -438,9 +450,10 @@ modifier:
  */
 colon_sep_params:
         colon_sep_params colon_sep_param                        {
-                                                                   INFO("colon_sep_params: | colon_sep_params colon_sep_param");
-                                                                    std::swap($$, $1);
-                                                                    $$.push_back($2);
+                                                                   	INFO("colon_sep_params: | colon_sep_params colon_sep_param");
+                                                                	//std::swap($$, $1);
+                                                                    $$ = $1;
+																	$$.push_back($2);
 
                                                                 }
                                                                 ;
@@ -535,8 +548,8 @@ attributes:
  */
 attrib:
     VALUE_ATTRIB EQUAL_SIGN STRING_LITERAL                     {
-                                                                    INFO("name_value: | VALUE_ATTRIB=\""
-                                                                        << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
+                                                                    INFO("name_value: | VALUE_ATTRIB=\"" \
+                                                                        << $1 << "\" EQUAL_SIGN STRING_LITERAL=\"" \
                                                                         << buf << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
