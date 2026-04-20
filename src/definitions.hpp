@@ -32,7 +32,6 @@
 #include <iomanip>
 #include <boost/regex.hpp>
 #include "pparser.tab.hpp"
-#include "definitions.hpp"
 
 using std::list;
 using std::map;

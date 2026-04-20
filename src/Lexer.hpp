@@ -74,6 +74,16 @@ public:
 	void init(string in, string out);
 
 	/**
+	 * @ set_istream
+	 */
+	void set_istream(const string& file);
+
+	/**
+	 * @ set_istream
+	 */
+	void set_ostream( const string& file );
+
+	/**
 	 * @name   set_state
 	 * @brief  void set_state(state_t* pstate)
 	 * @return void
@@ -191,12 +201,16 @@ private:
 	map<unsigned long, token> m_tok_map;
 	vector<state_t> m_states;
 
+	string m_ifile;
+	string m_ofile;
+
 	string m_regex_str;
 	string m_buffer;
 	string m_match;
 	fstream m_fstream;
 	int m_line;
 	state_t *p_state = &INITIAL;
+	stringstream g_stringstream;
 };
 
 #endif

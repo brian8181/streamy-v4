@@ -28,11 +28,11 @@ bool get_value( const string& name, /*out*/ string& val );
 bool set_value( const string& name, const string& val );
 
 // declare
-typedef map<string, string> symbol_table_t;
-// test
-symbol_table_t symbol_table = {     {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"},
-									{"$x", "x"}, {"$y", "y"}, {"$z", "z"},
-									{"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"},
-									{"$headers", "the headers"}, {"$page_title", "Brian's Home2 Page"}, {"#test#", "config_const"} 		};
+// typedef map<string, string> symbol_table_t;
+// // test
+// symbol_table_t symbol_table = {     {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"},
+// 									{"$x", "x"}, {"$y", "y"}, {"$z", "z"},
+// 									{"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"},
+// 									{"$headers", "the headers"}, {"$page_title", "Brian's Home2 Page"}, {"#test#", "config_const"} 		};
 
 #endif

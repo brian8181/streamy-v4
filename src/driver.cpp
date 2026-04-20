@@ -54,7 +54,7 @@ static yy::parser yyparser;
  */
 yy::parser::symbol_type lex()
 {
-    // TRACE();
+    TRACE();
     return lexer::instance().get_token();
 }
 

@@ -95,18 +95,19 @@
 
     bool get_value(const string& name, /*out*/ string& val);
     bool set_value(const string& name, const string& val);
-
-	#include "config.hpp"
-    /* // declare
-    typedef map<string, string> symbol_table_t;
-    // test
-    symbol_table_t symbol_table =  { {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"}, {"$x", "x"}, {"$y", "y"}, {"$z", "z"}, {"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"},
-										{"$headers", "the headers"}, {"$page_title", "Brian's Home Page"}, {"#test#", "config_const"} }; */
-
     bool is_name(const std::pair<string, string>& p, const string& str);
 
     //%type<std::vector< modifier_t > > modifiers
     //%type<modifier_t> modifier
+
+	// declare
+	typedef map<string, string> symbol_table_t;
+	// test
+	symbol_table_t symbol_table = {     {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"},
+										{"$x", "x"}, {"$y", "y"}, {"$z", "z"},
+										{"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"},
+										{"$headers", "the headers"}, {"$page_title", "Brian's Home2 Page"}, {"#test#", "config_const"} 		};
+
 }
 
 %token<std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
@@ -197,6 +198,16 @@ stmt:
                                                                     lexer::instance().write_ostream(sym_value);
                                                                     $$=sym_value;
                                                                 }
+	| OPEN_BRACE STRING_LITERAL CLOSE_BRACE						{
+																	INFO("stmt: | OPEN_BRACE STRING_LITERAL=" << $2 <<  " CLOSE_BRACE");
+                                                                    lexer::instance().write_ostream($2);
+                                                                    $$=$2;
+																}
+	| OPEN_BRACE NUMERIC_LITERAL CLOSE_BRACE					{
+																	INFO("stmt: | OPEN_BRACE NUMERIC_LITERAL=" << $2 <<  " CLOSE_BRACE");
+                                                                    lexer::instance().write_ostream($2);
+                                                                    $$=$2;
+																}
     | OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
                                                                 }
@@ -208,7 +219,7 @@ stmt:
                                                                 }
     | OPEN_BRACE assign_stmt CLOSE_BRACE                        {
                                                                     INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
-                                                                    lexer::instance().write_ostream($2);
+                                                                    //lexer::instance().write_ostream($2);
                                                                 }
 	| OPEN_BRACE '$' '%' CLOSE_BRACE                           {
                                                                     INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
@@ -323,7 +334,7 @@ sub_proc:
  * @name array
  */
 array:
-    symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET           {
+    symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET  '$'      {
                                                                     INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
                                                                     string sym_value;
                                                                     get_value($1, sym_value);
@@ -478,25 +489,25 @@ built_in:
                                                                     INFO("built_in: | CONFIG_LOAD attributes");
                                                                     $$ = $2;
                                                                 }
-    | '#' INCLUDE attributes                                    {
+    | INCLUDE attributes                                        {
                                                                     INFO("built_in: | INCLUDE attributes");
                                                                     $$ = $2;
-                                                            }
-    | REQUIRE attributes                                        { /** INFO("built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");*/ }
-    | REQUIRE_ONCE attributes                                   { /** INFO("buitl_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");*/ }
-    | INSERT attributes                                         { /** INFO("built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }      */ }
-    | '#' ASSIGN attributes                                     {
+                                                                }
+    | REQUIRE attributes                                        { INFO("built_in: | REQUIRE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | REQUIRE_ONCE attributes                                   { INFO("buitl_in: | REQUIRE_once FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | INSERT attributes                                         { INFO("built_in: | INSERT FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
+    | ASSIGN attributes                                         {
                                                                     INFO("built_in: | ASSIGN attributes");
                                                                     $$ = $2;
                                                                 }
-    | ISSET attributes                                          { /**  INFO("built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
-    | CAPTURE attributes                                        { /**  INFO("built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
-    | SECTION attributes                                        { /**  INFO("built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
-    | COUNTER attributes                                        { /**  INFO("built_in: | COUNTER FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
-    | CYCLE attributes                                          { /**  INFO("built_in: | CYCLE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
-    | LDELIM attributes                                         { /**  INFO("built_in: | LDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
-    | RDELIM attributes                                         { /**  INFO("built_in: | RDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); */ }
-    | VERSION attributes                                        { /**  INFO("built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }  */ }
+    | ISSET attributes                                          { INFO("built_in: | ISSET FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");  }
+    | CAPTURE attributes                                        { INFO("built_in: | CAPTURE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");  }
+    | SECTION attributes                                        { INFO("built_in: | SECTION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");  }
+    | COUNTER attributes                                        { INFO("built_in: | COUNTER FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");  }
+    | CYCLE attributes                                          { INFO("built_in: | CYCLE FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");  }
+    | LDELIM attributes                                         { INFO("built_in: | LDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");  }
+    | RDELIM attributes                                         { INFO("built_in: | RDELIM FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\"");  }
+    | VERSION attributes                                        { INFO("built_in: | VERSION FILE_ATTRIB=\"%s\" EQUAL STRING_LITERAL=\"\""); }
                                                                 ;
 /**
  * @name attributes
