@@ -153,12 +153,14 @@
  * @name complier
  */
 complier:
-    files  END_OF_FILES                                         {
+	/*empty*/
+	| files  END_OF_FILES                             {
 
                                                                     cout << FMT_FG_DARK_GREY << "PARSER complier: | files" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "************************* Done ************************" << FMT_RESET << endl;
+
                                                                 }
                                                                 ;
 /**

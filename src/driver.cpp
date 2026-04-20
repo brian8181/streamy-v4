@@ -55,7 +55,7 @@ static yy::parser yyparser;
 yy::parser::symbol_type lex()
 {
     TRACE();
-    return lexer::instance().get_token();
+	return lexer::instance().get_token();
 }
 
 /**
@@ -108,44 +108,14 @@ int parse_options(const int argc, char *argv[])
         }
     }
 
-    const int offset = optind + SRC_IDX_OFFSET;
+    const int offset = optind + SRC_IDX_OFFSET-1;
     strm_handle strm;
 	//strm.process_files(argc, argv);
 
-    for (int i = offset; i < argc; ++i)
-    {
-        // TRACE();
+    lexer::instance().init(argc-offset-1, argv+offset);
+    yyparser.parse();
+	//yyparser.make_END_OF_FILE();
 
-        g_input_file = argv[i];
-        cout << "scanning file:\"" << g_input_file << "\"" << endl;
-
-        fs::path p = g_input_file;
-        g_output_file = "build/" + p.filename().string() + ".obj";
-        cout << "in:\"" << g_input_file << "\" - out:\"" << g_output_file << "\" - conf:\"" << g_config_file << "\"" << endl;
-
-		// context ctx("");
-		// string str("test/test5.txt");
-		// bkp::parser np(&ctx, str);
-		//np.parse();
-
-        lexer::instance().init(g_input_file, g_output_file);
-        yyparser.parse();
-		//yyparser.make_END_OF_FILE();
-
-
-        // bkp todo
-        // g_parser.parse();
-
-        cout << "finished file:\"" << g_input_file << "\"" << endl;
-        cout << "write output to file:\"" << g_output_file << "\"" << endl;
-
-		cout << "dump output string ..." << endl;
-		lexer::instance().dump_ostream(g_output_file);
-    }
-	yyparser.make_END_OF_FILES();
-
-    // TRACE();
-    // INFO("EOFS");
     return 0;
 }
 

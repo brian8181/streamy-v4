@@ -69,9 +69,16 @@ public:
 	/**
 	 * @name   init
 	 * @brief  initialize state
+	 * @return void
+	 */
+	void init(const int argc, char* argv[]);
+
+	/**
+	 * @name   init
+	 * @brief  initialize state
 	 * @return bool
 	 */
-	void init(string in, string out);
+	bool next_file();
 
 	/**
 	 * @ set_istream
@@ -201,8 +208,12 @@ private:
 	map<unsigned long, token> m_tok_map;
 	vector<state_t> m_states;
 
+	int m_i = 0;
+	int m_argc;
+	char** m_argv;
+	bool EOFS;
 	string m_ifile;
-	string m_ofile;
+	string m_ofile = "a.out";
 
 	string m_regex_str;
 	string m_buffer;

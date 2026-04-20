@@ -126,20 +126,33 @@ void lexer::load_config(const string &file)
     }
 }
 
+void lexer::init( const int argc, char* argv[] )
+{
+	m_argc = argc;
+	m_argv = argv;
+	m_fstream.open( m_ofile, std::ios_base::out | std::ios::trunc );
+	next_file();
+}
+
 /**
  * @name   init
  * @def    void lexer::init(const string &config_file, const string& input_file, string& output_file)
  * @brief  initialize state
  * @return bool
  */
-void lexer::init(string in, string out)
+bool lexer::next_file()
 {
-    read_str(in, m_buffer, std::ios::in);
+	INFO( " " << m_i << " : " << m_argc );
+	if(++m_i > m_argc)
+		return false;
+	m_ifile = string(m_argv[m_i]);
+	ATTN("parse file: " << m_ifile);
+    read_str(m_ifile, m_buffer, std::ios::in);
     // set state
     set_state_flag(&INITIAL);
-    m_fstream.open(out, std::ios_base::out | std::ios::trunc);
     m_line = 0;
 	cout << FMT_FG_LIGHT_YELLOW << "initialized buffer - [ \"" << esc_nl( m_buffer, "\\n" ).get_val() << "\" ]" << FMT_ITALIC << "line:" << __LINE__ << FMT_RESET << endl;
+	return true;
 }
 
 /**
@@ -215,9 +228,12 @@ void lexer::include_file(const string &input_file)
  */
 parser::symbol_type lexer::get_token()
 {
+	if(EOFS)
+		return parser::make_END_OF_FILES();
+
 	if( m_buffer.empty() )
 	{
-		ATTN("END_OF_FILE");
+		EOFS = !next_file();
 		return parser::make_END_OF_FILE();
 	}
 
