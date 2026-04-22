@@ -155,24 +155,22 @@ bool lexer::next_file()
 		m_fstream.close();
 	}
 
-	INFO( " " << m_i << " : " << m_argc );
-	if( m_i < m_argc )
+	if(static int i = 0; i < m_argc )
 	{
-		m_ifile = string( m_argv[m_i] );
-		ATTN( "parse file: " << m_ifile );
+		m_ifile = string( m_argv[i] );
 		m_buffer.clear();
 		read_istream( m_ifile, m_buffer );
-		TRACE();
+
 		// set state
 		set_state( &INITIAL );
 		m_line = 0;
 		++m_file_count;
+		++i;
 
 		int pos = m_ifile.find_last_of( '.' );
 		string base_name = m_ifile.substr( 0, pos - 1 );
 		m_ofile = base_name + ".out.txt";
 		m_fstream.open( m_ofile, std::ios_base::out | std::ios::trunc );
-		++m_i;
 		INFO( "initialized buffer - [ \"" << esc_nl( m_buffer ).get_val() << "\" ]" );
 		return true;
 	}
@@ -230,15 +228,15 @@ void lexer::push_include( string file )
 	//todo fix this shitty trim job!!
 	char* dest = new char[file.size()+1];
 	strcpy(dest, file.c_str());
-	dest[file.size()-1] = '\0';
-	dest++;
+	dest[file.size()-1] = '\0'; // trim end
+	dest++; // trim beg
 	file = string(dest);
 
-	string inc_buffer;              // new include buffer
+	string inc_buffer;                 // new include buffer
 	read_istream( file, inc_buffer );  // read include
-	inc_buffer.append( m_buffer );  // append current buffer
+	inc_buffer.append( m_buffer );     // append current buffer
 	m_buffer.clear();
-	m_buffer = inc_buffer;          // set buffer
+	m_buffer = inc_buffer;             // set buffer
 }
 
 /**
@@ -320,16 +318,6 @@ parser::symbol_type lexer::get_token()
 		}
 		return parser::make_YYerror(); // no sub match?, should not happen
 	}
-	// else if(!m_buffer.empty())
-	// {
-	// 	// if matching newlines, this will not
-	// 	// happen since a newline @ eof wil always
-	// 	// be the last match
-	// 	ATTN("ITER == end & buffer not empty");
-	//     m_fstream << m_buffer;
-	//     m_fstream.flush();
-	//     m_fstream.close();
-	// }
 	ATTN( "END_OF_FILE" );
 	return parser::make_END_OF_FILE();
 }
@@ -343,177 +331,128 @@ parser::symbol_type lexer::get_token()
  */
 parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 {
-	//yy::parser::token::SYMBOL
 	switch( p_state->id )
 	{
-	case UL_INITIAL:
-	{
-		switch( id )
+		case UL_INITIAL:
 		{
-		case OPEN_BRACE:
-		set_state( &ESCAPED );
-		return parser::make_OPEN_BRACE();
-		case COMMENT:
-		return parser::make_SKIP_TOKEN();
-		case NEWLINE:
-		m_line++;
-		m_fstream << '\n';
-		return get_token();
-		case SKIP_TOK:
-		return get_token();
-		default:;
-		} // END switch
-		break;
-	} // END case UL_INITIAL
-	case UL_ESCAPED:
-	{
-		switch( id )
+			switch( id )
+			{
+				case OPEN_BRACE:
+					set_state( &ESCAPED );
+					return parser::make_OPEN_BRACE();
+				case COMMENT:
+					return parser::make_SKIP_TOKEN();
+				case NEWLINE:
+					m_line++;
+					m_fstream << '\n';
+					return get_token();
+				case SKIP_TOK:
+					return get_token();
+				default:;
+			} // END switch
+			break;
+		} // END case UL_INITIAL
+		case UL_ESCAPED:
 		{
-		case CLOSE_BRACE:
-		set_state( &INITIAL );
-		return parser::make_CLOSE_BRACE();
-		case CLOSE_BRACKET:
-		return parser::make_CLOSE_BRACKET();
-		case OPEN_BRACKET:
-		return parser::make_OPEN_BRACKET();
-		case IF:
-		set_state( &IF_BLOCK );
-		return parser::make_IF();
-		case SYMBOL:
-		return parser::make_SYMBOL( match );
-		case CONST_SYMBOL:
-		return parser::make_CONST_SYMBOL( match );
-		case PERCENT_SIGN:
-		return parser::make_PERCENT_SIGN();
-		case PLUS_SIGN:
-		return parser::make_PLUS_SIGN( '+' );
-		case DOT:
-		return parser::make_DOT();
-		case HASH_MARK:
-		return parser::make_HASH_MARK();
-		case COLON:
-		return parser::make_COLON();
-		case COMMA:
-		return parser::make_COMMA();
-		case VBAR:
-		return parser::make_VBAR();
-		case CAPITALIZE:
-		return parser::make_CAPITALIZE( match );
-		case TRUNCATE:
-		return parser::make_TRUNCATE( match );
-		case STRIP:
-		return parser::make_STRIP( match );
-		case EQUAL_SIGN:
-		return parser::make_EQUAL_SIGN();
-		case NUMERIC_LITERAL:
-		return parser::make_NUMERIC_LITERAL( match );
-		case STRING_LITERAL:
-		return parser::make_STRING_LITERAL( match );
-		case FILE_ATTRIB:
-		return parser::make_FILE_ATTRIB( match );
-		case INCLUDE:
-		return parser::make_INCLUDE( match );
-		case ASSIGN:
-		return parser::make_ASSIGN( match );
-		case DOUBLE_QUOTE:
-		set_state( &DOUBLE_QUOTED );       // fallthrough
-		return get_token();
-		case WHITESPACE:                    // fallthrough
-		case SKIP_TOK:
-		return get_token();
-		default:;
-		} // END switch
-		break;
-	} // CASE UL_ESCAPED
-	case UL_IF_BLOCK:
-	{
-		INFO( "switch case: IF_BLOCK_STATE" );
-		switch( id )
+			switch( id )
+			{
+				case CLOSE_BRACE:
+					set_state( &INITIAL );
+					return parser::make_CLOSE_BRACE();
+				case CLOSE_BRACKET:
+					return parser::make_CLOSE_BRACKET();
+				case OPEN_BRACKET:
+					return parser::make_OPEN_BRACKET();
+				case IF:
+				set_state( &IF_BLOCK );
+					return parser::make_IF();
+				case SYMBOL:
+					return parser::make_SYMBOL( match );
+				case CONST_SYMBOL:
+					return parser::make_CONST_SYMBOL( match );
+				case PERCENT_SIGN:
+					return parser::make_PERCENT_SIGN();
+				case PLUS_SIGN:
+					return parser::make_PLUS_SIGN( '+' );
+				case DOT:
+					return parser::make_DOT();
+				case HASH_MARK:
+					return parser::make_HASH_MARK();
+				case COLON:
+					return parser::make_COLON();
+				case COMMA:
+				return parser::make_COMMA();
+				case VBAR:
+					return parser::make_VBAR();
+				case CAPITALIZE:
+					return parser::make_CAPITALIZE( match );
+				case TRUNCATE:
+					return parser::make_TRUNCATE( match );
+				case STRIP:
+					return parser::make_STRIP( match );
+				case EQUAL_SIGN:
+					return parser::make_EQUAL_SIGN();
+				case NUMERIC_LITERAL:
+					return parser::make_NUMERIC_LITERAL( match );
+				case STRING_LITERAL:
+					return parser::make_STRING_LITERAL( match );
+				case FILE_ATTRIB:
+					return parser::make_FILE_ATTRIB( match );
+				case INCLUDE:
+					return parser::make_INCLUDE( match );
+				case ASSIGN:
+					return parser::make_ASSIGN( match );
+				case DOUBLE_QUOTE:
+					set_state( &DOUBLE_QUOTED );
+					return get_token();
+				case WHITESPACE:
+				case SKIP_TOK:
+					return get_token();
+				default:;
+			} // END switch
+			break;
+		} // CASE UL_ESCAPED
+		case UL_IF_BLOCK:
 		{
-		case SKIP_TOK:
-			//return parser::make_OPEN_BRACE();
-		default:;
-		}
-		break;
-	} // CASE UL_IF_BLOCK_STATE
-	case UL_DOUBLE_QUOTED:
-	{
-		INFO( "switch case: DOUBLE_QUOTED_STATE" );
-		switch( id )
+			switch( id )
+			{
+			case SKIP_TOK:
+			default:;
+			}
+			break;
+		} // CASE UL_IF_BLOCK_STATE
+		case UL_DOUBLE_QUOTED:
 		{
-		case ESC_TAB:
-		g_stringstream << "\t";
-		return get_token();
-		case ESC_BACKSLASH:
-		g_stringstream << "\\";
-		return get_token();
-		case ESC_DOUBLE_QUOTE:
-		g_stringstream << "\"";
-		return get_token();
-		case ESC_SINGLE_QUOTE:
-		g_stringstream << "'";
-		return get_token();
-		case VALID_CHAR:
-		g_stringstream << match;
-		//cout << "char " << g_stringstream.str() << endl;
-		return get_token();
-		case DOUBLE_QUOTE:
-		{
-			set_state( &ESCAPED );
-			string qstr = g_stringstream.str();
-			g_stringstream.str( "" );
-			g_stringstream.clear();
-			//m_fstream << qstr;
-			INFO( "1" << qstr );
-			return parser::make_STRING_LITERAL( qstr );
-		}
-		default:;
-		}
-		break;
-	} // UL_DOUBLE_QUOTED_STATE:
-	case UL_INCLUDING:
-	{
-		INFO( "switch case: INCLUDING_STATE" );
-	//     switch (ptoken->id)
-	//     {
-	//         case UL_FILE_ATTRIB:
-	//         {
-	//             const boost::regex re("file=\"([^\"]*)\"");
-	//             boost::smatch sm;
-	//             boost::regex_search(ptoken->pmatch->str(), sm, re);
-	//             // const int len = m_matches.size();
-	//             g_tokens[ ptoken->id ];
-	//             //m_include_path.clear();
-	//             m_include_path = sm[1].str();
-	//             cout << "file=" << m_include_path << endl;
-	//             string sout;
-	//             read_str(m_include_path, sout);
-	//             // append include file output to buffer
-	//             //m_include_buffer.clear();
-	//             //m_include_buffer << endl << sout << endl;
-	//             return parser::make_SKIP_TOKEN();
-	//         }
-	//         case UL_CLOSE_BRACE:
-	//         {
-	//             // append suffix after include is inserted/streamed
-	//            // m_include_buffer << m_suffix;
-	//             // set the suffix a.k.a "current search buffer"
-	//             m_suffix.clear();
-	//             m_suffix = m_include_buffer.str();
-	//             set_state(&sINITIAL);
-	//             m_fstream << "}";
-	//             return parser::make_SKIP_TOKEN();
-	//         }
-	//         case UL_DOUBLE_QUOTE:
-	//             set_state(&sESCAPED);
-	//             return parser::make_STRING_LITERAL(g_stringstream.str());
-	//         case UL_WHITESPACE:
-	//             cout << "WHITESPACE : SKIP_TOKEN" << endl;
-	//             return parser::make_SKIP_TOKEN();
-	//     }
-	//     break;
-	} // UL_INCLUDING_STATE
-	} // END switch
+			switch( id )
+			{
+				case ESC_TAB:
+					g_stringstream << "\t";
+					return get_token();
+				case ESC_BACKSLASH:
+					g_stringstream << "\\";
+					return get_token();
+				case ESC_DOUBLE_QUOTE:
+					g_stringstream << "\"";
+					return get_token();
+				case ESC_SINGLE_QUOTE:
+					g_stringstream << "'";
+					return get_token();
+				case VALID_CHAR:
+					g_stringstream << match;
+					return get_token();
+				case DOUBLE_QUOTE:
+				{
+					set_state( &ESCAPED );
+					string qstr = g_stringstream.str();
+					g_stringstream.str( "" );
+					g_stringstream.clear();
+					return parser::make_STRING_LITERAL( qstr );
+				}
+				default:;
+			}
+			break;
+		} // UL_DOUBLE_QUOTED_STATE:
+	}
 	cout << "UNDEFINED symbol found... id=" << id << ",  match=" << match << endl;
 	return parser::make_UNDEFINED();
 }
