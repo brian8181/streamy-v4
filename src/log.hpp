@@ -70,6 +70,15 @@ void log(const std::string &msg, int line_number);
 #define ATTN(str) // str
 #endif
 
+// #ifdef PARSER_LOG
+// #undef ATTN
+// #define ATTN(str) LOG("ATTN: ", FMT_FG_MAGENTA, str)
+// #else
+// #undef ATTN
+// #define ATTN(str) // str
+// #endif
+
+
 // debugging
 #ifdef DEBUG
 #define INFO(str) LOG("INFO:  ", INFO_COLOR, str)

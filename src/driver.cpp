@@ -109,8 +109,12 @@ int parse_options(const int argc, char *argv[])
     }
 
     const int offset = optind + SRC_IDX_OFFSET-1;
-     lexer::instance().init(argc-offset-1, argv+offset);
-     yyparser.parse();
+	string inc_buffer;         					// new include buffer
+	lexer::instance().read_istream("test/test6.txt", inc_buffer ); // read include
+	ATTN(inc_buffer);
+	lexer::instance().init(argc-offset-1, argv+offset+1);
+	yyparser.parse();
+
      return 0;
 }
 

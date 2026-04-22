@@ -42,6 +42,7 @@ using std::pair;
 using std::string;
 using std::stringstream;
 using std::vector;
+using std::stack;
 using yy::parser;
 
 /**
@@ -67,52 +68,65 @@ private:
 	// singleton public interface
 public:
 	/**
-	 * @name   init
-	 * @brief  initialize state
+	 * @name   load_config
+	 * @param  const string& file
+	 * @return void
+	 */
+	void load_config( const string& file );
+
+	/**
+	 * @name  init
+	 * @brief initialize input
+	 * @param argc, input file count
+	 * @param argv, onst char* file names
 	 * @return void
 	 */
 	void init(const int argc, char* argv[]);
 
 	/**
-	 * @name   init
-	 * @brief  initialize state
+	 * @name   next_file
+	 * @brief  moves lexer to next file
 	 * @return bool
 	 */
 	bool next_file();
-
-	/**
-	 * @ set_istream
-	 */
-	void set_istream(const string& file);
-
-	/**
-	 * @ set_istream
-	 */
-	void set_ostream( const string& file );
 
 	/**
 	 * @name   set_state
 	 * @brief  void set_state(state_t* pstate)
 	 * @return void
 	 */
-	void set_state_flag(state_t *pstate);
+	void set_state(state_t *pstate);
 
 	/**
-	 * @name include_file
-	 */
-	void include_file(const string &input_file);
-
-	/**
-	 * @name   load_config
-	 * @param  const string& file
+	 * @name get_current_infile
+	 * @param string& in_name
 	 * @return void
 	 */
-	void load_config(const string &file);
+	void get_current_infile( string& in_name )
+	{
+		in_name = m_ifile;
+	}
 
 	/**
-	 * @name set_buffer
+	 * @name get_current_outfile
+	 * @param string& out_name
+	 * @return void
 	 */
-	void set_buffer( const string& buffer );
+	void get_current_outfile( string& out_name )
+	{
+		out_name = m_ofile;
+	}
+
+	/**
+	 * @name get_stack
+	 */
+	stack<string>& get_stack();
+
+	/**
+	 * @name  push_include
+	 * @brief prepends current buffer with include contents
+	 */
+	void push_include(string file);
 
 	/**
 	 * @name   get_token
@@ -124,24 +138,22 @@ public:
 	 * @name  on_token
 	 * @brief override virtual, on_token, for each token ...
 	 * @param unsigned long id
-	 * @return parser::symbol_type
-	 */
-	//inline parser::symbol_type on_token(unsigned long id);
-
-		/**
-	 * @name  on_token
-	 * @brief override virtual, on_token, for each token ...
-	 * @param unsigned long id
 	 * @param string match: current match
 	 * @return parser::symbol_type
 	 */
 	parser::symbol_type on_token( unsigned long id, const string& match = {} );
 
 	/**
+	 * @name read_istream
+	 * @return int
+	 */
+	void read_istream( const string& file, string& s );
+
+	/**
 	 * @name   write_stream
 	 * @return int
 	 */
-	inline void write_ostream(const string &s)
+	inline void write_ostream( const string &s )
 	{
 		m_fstream << s;
 	}
@@ -150,43 +162,20 @@ public:
 	 * @name   dump output stream
 	 * @return int
 	 */
-	inline void dump_ostream(const string& in)
+	inline void dump_ostream( const string& in )
 	{
-		string buffer;
-		read_str( in, buffer, std::ios::in );
-		std::cout << buffer;
+
 	}
 
-	// Declaring friend functions for private member access
-	friend std::ostream &operator<<(std::ostream &os, const string &s);
-	friend std::istream &operator>>(std::istream &is, string &s);
-
-private:
 	/**
-	 * @name   update_state
-	 * @brief  void update_state()
-	 * @return void
+	 * @name  print_token
+	 * @brief print token to stdout
+	 * @param token_match m
 	 */
-	void update_state();
-
-	/**
-	 * @name print_line_count
-	 */
-	void print_line_count(const string &s);
-
-	/**
-	 * @name print_line_number_comment
-	 */
-	void print_line_number_comment();
-
-	// /**
-	//  * @name  print_token
-	//  * @brief print token to stdout
-	//  * @param token_match m
-	//  */
 	void print_token(const token *tval);
 
 private:
+
 	// typedef struct context_t
 	// {
 	// 	string regex_str;
@@ -215,11 +204,14 @@ private:
 	string m_ifile;
 	string m_ofile = "a.out";
 
+	stack<string> include_stack;
+
 	string m_regex_str;
 	string m_buffer;
 	string m_match;
 	fstream m_fstream;
 	int m_line;
+	int m_file_count;
 	state_t *p_state = &INITIAL;
 	stringstream g_stringstream;
 };

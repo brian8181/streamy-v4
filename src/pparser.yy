@@ -31,11 +31,13 @@
     using std::pair;
     using std::map;
 
-    /* #undef INFO_COLOR
-    #define INFO_COLOR FMT_FG_BLUE */
+	#define PARSER_LOG TRUE
 
-    //typedef std::pair< std::string, std::string > > attrib_t;
-    //typedef std::vector< attrib_t > attributes_t;
+    #undef INFO_COLOR
+    #define INFO_COLOR FMT_FG_BLUE
+
+    typedef std::pair< std::string, std::string > attrib_t;
+    typedef std::vector< attrib_t > attributes_t;
 
     std::map<string, string> stab;
 
@@ -55,18 +57,21 @@
 
 %code
 {
-	// print a list of strings
-    auto operator<<(std::ostream& o, const std::vector<std::string>& ss) -> std::ostream&
-    {
-        o << '{';
-        const char *sep = "";
-        for(const auto& s: ss)
-        {
-            o << sep << s;
-            sep = ", ";
-        }
-        return o << '}';
-    }
+	namespace yy
+	{
+		// print a list of strings
+		auto operator<<(std::ostream& o, const std::vector<std::string>& ss) -> std::ostream&
+		{
+			o << '{';
+			const char *sep = "";
+			for(const auto& s: ss)
+			{
+				o << sep << s;
+				sep = ", ";
+			}
+			return o << '}';
+		}
+	}
 }
 
 %define api.token.constructor
@@ -105,6 +110,7 @@
 
 	// declare
 	typedef map<string, string> symbol_table_t;
+	typedef map<string, void*> object_table_t;
 	// test
 	symbol_table_t symbol_table = {     {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"},
 										{"$x", "x"}, {"$y", "y"}, {"$z", "z"},
@@ -117,7 +123,7 @@
 %token<std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
 %token<std::string> INDIRECT_MEMBER ARRAY
 %token<std::string> STRING_LITERAL NUMERIC_LITERAL
-%token<std::string> CONST_SYMBOL SYMBOL
+%token<std::string> CONST_SYMBOL SYMBOL IDENTIFIER
 %token<std::string> VAR_ATTRIB VALUE_ATTRIB FILE_ATTRIB FROM_ATTRIB KEY_ATTRIB NAME_ATTRIB ITEM_ATTRIB
 %token<std::string> CAPITALIZE CAT COUNT_CHARACTERS COUNT_SENTENCES COUNT_PARAGRAPHS COUNT_WORDS DATE_FORMAT DEFAULT ESCAPE
 %token<std::string> INDENT LOWER UPPER STRIP NL2BR REGEX_REPLACE REPLACE SPACIFY STRING_FORMAT STRIP_TAGS TRUNCATE WORDWRAP
@@ -127,6 +133,7 @@
 %token END_OF_FILES
 %token MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
 %token NEWLINE
+%token FILE_PATH
 
 
 %type< std::vector< std::string > > files
@@ -183,6 +190,14 @@
 complier:
 	files  END_OF_FILES                                         {
 																	INFO("complier: files.size=" << $1.size() << " END_OF_FILES");
+
+																	cout << "processed files ..." << endl;
+																	int len = $1.size();
+																	for(int i = 0; i < len; ++i)
+																	{
+																		cout << $1[i] << endl;
+																	}
+
                                                                     cout << FMT_FG_DARK_GREY << "PARSER complier: | files" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
@@ -193,11 +208,14 @@ complier:
  * @name files
  */
 files:
-	%empty                                                      { /* Generates an empty string list */ }
+	file                                                        {
+																	 INFO("files: | file=\"" << $1 << "\"");
+																	 $$.push_back($1);
+																}
     | files file                                                {
 																	INFO("files: | files file=\"" << $2 << "\"");
+																	$1.push_back($2);
 																	$$ = $1;
-																	$$.push_back ($2);
 																}
                                                                 ;
 /**
@@ -206,7 +224,11 @@ files:
 file:
     stmts END_OF_FILE                                           {
                                                                     INFO("file: stmts.size=" << $1.size() << " END_OF_FILE");
-																	$$ = "file_name.cpp";
+
+																	string name;
+																	lexer::instance().get_current_infile(name);
+																	$$ = name;
+
                                                                     cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
@@ -225,24 +247,26 @@ stmts:
  */
 stmt:
     OPEN_BRACE symbol CLOSE_BRACE                               {
-                                                                    INFO("stmt: OPEN_BRACE symbol=\"" << $2 <<  "\" CLOSE_BRACE");
+                                                                    WARN("stmt: OPEN_BRACE symbol=\"" << $2 <<  "\" CLOSE_BRACE");
                                                                     string sym_value; // = "{" + $2 + "=?}";
                                                                     get_value($2, sym_value);
                                                                     lexer::instance().write_ostream(sym_value);
                                                                     $$=sym_value;
                                                                 }
 	| OPEN_BRACE STRING_LITERAL CLOSE_BRACE						{
-																	INFO("stmt: | OPEN_BRACE STRING_LITERAL=\"" << $2 <<  "\" CLOSE_BRACE");
+																	WARN("stmt: | OPEN_BRACE STRING_LITERAL=\"" << $2 <<  "\" CLOSE_BRACE");
                                                                     lexer::instance().write_ostream($2);
                                                                     $$=$2;
 																}
 	| OPEN_BRACE NUMERIC_LITERAL CLOSE_BRACE					{
-																	INFO("stmt: | OPEN_BRACE NUMERIC_LITERAL=" << $2 <<  " CLOSE_BRACE");
+																	WARN("stmt: | OPEN_BRACE NUMERIC_LITERAL=" << $2 <<  " CLOSE_BRACE");
                                                                     lexer::instance().write_ostream($2);
                                                                     $$=$2;
 																}
     | OPEN_BRACE expr CLOSE_BRACE                               {
-                                                                    INFO("block: | OPEN_BRACE expr CLOSE_BRACE");
+                                                                    WARN("block: | OPEN_BRACE expr CLOSE_BRACE");
+																	lexer::instance().write_ostream($2);
+                                                                    $$=$2;
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
                                                                     INFO("block: | OPEN_BRACE sub_porc CLOSE_BRACE");
@@ -272,23 +296,8 @@ stmt:
                                                                              break;
                                                                     }
                                                                     string file = $3[i].second;
-                                                                    INFO("file=\"" << FMT_ITALIC << file << "\"");
-                                                                    //lexer::instance().push(file);
-                                                                    //const state_t s = { INITIAL_STATE, "INITIAL_STATE" };
-                                                                    lexer::instance().set_state_flag(&INITIAL);
-
-                                                                    // read include path
-                                                                    // string sout;
-                                                                    // read_str(path, sout);
-                                                                    // // append include path output to buffer
-                                                                    // string* p_rstr = lexer::instance().get_remaining();
-                                                                    // stringstream* include_buffer = lexer::instance().get_include_buffer();
-                                                                    // *include_buffer << sout << *p_rstr;
-
-                                                                    // set the suffix a.k.a "current search buffer"
-                                                                    // lexer::instance().set_remaining( (*include_buffer).str() );
-                                                                    // lexer::instance().set_state(&sINITIAL);
-
+                                                                    INFO("file=\"" << file << "\"");
+																	lexer::instance().push_include(file);
                                                                 }
 | OPEN_BRACE ASSIGN attributes CLOSE_BRACE                      {
 																	INFO("block: | OPEN_BRACE ASSIGN attibutes CLOSE_BRACE");
@@ -299,12 +308,12 @@ stmt:
  */
 assign_stmt:
     symbol EQUAL_SIGN NUMERIC_LITERAL                           {
-                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL=" << $3);
+                                                                    WARN("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL=" << $3);
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
     | symbol EQUAL_SIGN STRING_LITERAL                          {
-                                                                    INFO("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL\"" << $3 << "\"");
+                                                                    WARN("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL\"" << $3 << "\"");
                                                                     set_value($1, $3);
                                                                     $$ = $3;
                                                                 }
@@ -315,9 +324,11 @@ assign_stmt:
  */
 expr:
     symbol VBAR modifiers                                       {
-                                                                    INFO("expr: | symbol VBAR modifiers ");
+                                                                    WARN("expr: | symbol VBAR modifiers ");
                                                                     std::string s;
                                                                     get_value($1, s);
+																	s = s + "~";       // modifiy value
+																	set_value($1, s);
                                                                     $$ = s;
                                                                 }
     | MINUS expr %prec UMINUS                                   {
@@ -360,15 +371,15 @@ expr:
 sub_proc:
     symbol LPAREN params RPAREN                                 {
                                                                     INFO("sub_proc: | symbol LPAREN params RPAREN" << "");
-                                                                    //$$=$1;
+                                                                    $$=$1;
                                                                 }
                                                                 ;
 /**
  * @name array
  */
 array:
-    symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET  '$'      {
-                                                                    INFO("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
+    symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET          {
+                                                                    WARN("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
                                                                     string sym_value;
                                                                     get_value($1, sym_value);
                                                                     lexer::instance().write_ostream(sym_value);
@@ -404,12 +415,10 @@ param:
 modifiers:
     modifier                                                    {
                                                                     WARN("modifiers: modifier");
-                                                                    //std::swap($$, $1);
 																	$$.push_back($1);
                                                                 }
    | modifiers VBAR modifier                                    {
                                                                     WARN("modifiers: modifier");
-                                                                    // std::swap($$, $1);
                                                                     $$ = $1;
 																	$$.push_back($3);
                                                                 }
@@ -419,15 +428,15 @@ modifiers:
  */
 modifier:
     modifier colon_sep_params                                   {
-                                                                    INFO(" modifier: modifier colon_sep_params");
-                                                                    // $1.params.append("|");
-                                                                    // $1.params.append($2);
+                                                                    WARN(" modifier: modifier colon_sep_params");
+                                                                    //$1.params.append("|");
+                                                                    //$1.params.append($2);
                                                                 }
     | CAPITALIZE                                                {
                                                                     INFO("modifier | CAPITALIZE");
-                                                                    // modifier_t m;
-                                                                    // m.name = "capitalize";
-                                                                    // m.params = "";
+                                                                    modifier_t m;
+                                                                    m.name = "capitalize";
+                                                                    m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "capitalize";
                                                                 }
@@ -449,9 +458,9 @@ modifier:
     | STRIP_TAGS                                                {  INFO("modifier | STIP_TAGS"); $$="strip_tags"; }
     | TRUNCATE                                                  {
                                                                     INFO("modifier | TRUNCATE"); $$="truncate";
-                                                                    // modifier_t m;
-                                                                    // m.name = "truncate";
-                                                                    // m.params = "";
+                                                                    modifier_t m;
+                                                                    m.name = "truncate";
+                                                                    m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "truncate";
                                                                 }
@@ -472,10 +481,8 @@ modifier:
 colon_sep_params:
         colon_sep_params colon_sep_param                        {
                                                                    	INFO("colon_sep_params: | colon_sep_params colon_sep_param");
-                                                                	//std::swap($$, $1);
                                                                     $$ = $1;
 																	$$.push_back($2);
-
                                                                 }
                                                                 ;
 /**
@@ -491,9 +498,9 @@ colon_sep_param:
                                                                     INFO("colon_sep_param: | COLON STRING_LITERAL");
                                                                     $$=$2;
                                                                 }
-        | COLON symbol  '@'                                        {
+        | COLON symbol                                          {
                                                                     INFO("colon_sep_param: | COLON symbol");
-                                                                    get_value($2, $$);
+                                                                    $$=$2;
                                                                 }
                                                                 ;
 
@@ -509,9 +516,9 @@ symbol:
 																	INFO("symbol: | CONST_SYMBOL=" << $1);
 																	$$ = $1;
 																}
-		| symbol DOT SYMBOL		                                {
+		| symbol DOT IDENTIFIER		                            {
 																	string s = $1 + "." + $3;
-																	INFO("symbol: | symbol DOT SYMBOL=" << s);
+																	ATTN("symbol: | symbol DOT SYMBOL=" << s);
 																	$$ = s;
 																}
 																;
@@ -560,7 +567,8 @@ attributes:
     | attributes attrib                                        {
                                                                     INFO("attribute: | attib push --> attributes");
                                                                     //INFO("attribute: | attributes : push-> attrib={name=\"" << $2.first << "\" value=\"" << $2.second << "\"");
-                                                                    $1.push_back( $2 );
+
+																	$1.push_back( $2 );
                                                                     $$ = $1;
                                                                }
                                                                ;
@@ -587,7 +595,7 @@ attrib:
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
-    | FILE_ATTRIB EQUAL_SIGN symbol                    {
+    | FILE_ATTRIB EQUAL_SIGN symbol                            {
                                                                     INFO("name_value: | FILE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\"");
@@ -614,6 +622,8 @@ attrib_name:
     ;
 
 %%
+
+#undef PARSER_LOG
 
 bool get_value(const string& name, /*out*/ string& val)
 {
@@ -692,4 +702,6 @@ namespace yy
     {
         std::cerr << msg << '\n';
     }
+
+
 }

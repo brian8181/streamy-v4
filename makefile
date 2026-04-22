@@ -26,6 +26,7 @@ TST = test
 
 SRC_EXT=cpp
 HDR_EXT=hpp
+OBJ_EXT=obj
 
 FMT_RESET=\e[0m
 FMT_ITALIC=\e[3m
@@ -39,7 +40,7 @@ FMT_WARN=$(FMT_ITALIC)$(FMT_YELLOW)
 
 # lib settings
 LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64
-INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD) -I/. 
+INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD) -I/.
 LDFLAGS=$(LIBS)
 
 CXXFLAGS+=$(INCLUDES)
@@ -73,18 +74,15 @@ $(SRC)/fileio.hpp \
 $(SRC)/auto_ptr.hpp \
 $(SRC)/utility.hpp \
 $(SRC)/ast.hpp \
-$(SRC)/process_strm.hpp \
-$(SRC)/strm_handle.hpp \
 $(BLD)/pparser.tab.hpp \
 $(SRC)/parser.hpp \
 $(SRC)/lexer.hpp \
-$(SRC)/driver.hpp
+$(SRC)/driver.hpp \
+$(SRC)/definitions.hpp
 
 OBJS=$(OBJ)/fileio.o \
 $(OBJ)/auto_ptr.o \
 $(OBJ)/utility.o \
-$(SRC)/strm_handle.o \
-$(OBJ)/process_strm.o \
 $(BLD)/pparser.tab.o \
 $(OBJ)/parser.o \
 $(OBJ)/lexer.o \
@@ -107,7 +105,7 @@ all: $(BLD)/driver
 
 world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so $(BLD)/pparser2.tab.o
 
-$(BLD)/driver: $(SOURCES)
+$(BLD)/driver: $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cpp
@@ -151,7 +149,7 @@ $(BLD)/%.hpp: $(SRC)/%.hpp
 $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CCFLAGS) -c $< -o $@
 
-$(OBJ)/%.o: $(SRC)/%.cpp $(SRC)/%.hpp $(SRC)/log.hpp $(SRC)/bash_color.hpp
+$(OBJ)/%.o: $(SRC)/%.cpp # $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: all rebuild dist install uninstall clean help

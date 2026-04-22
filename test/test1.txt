@@ -1,3 +1,4 @@
 {$xxx=5}
-{$yyy}
-{$zzz}
+{$yyy|capitalize}
+{include file="test/test5.txt"}
+{$array[0]}

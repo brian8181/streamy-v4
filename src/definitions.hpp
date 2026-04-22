@@ -477,14 +477,14 @@ namespace boost
 		{WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
 		{NEWLINE, token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
 		{FILE_ATTRIB, token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
-		{VALID_CHAR, token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_~+-./ ])", __LINE__}},
+		{VALID_CHAR, token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_~+-/ ])", __LINE__}},
 		{NUMERIC_LITERAL, token{"NUMERIC_LITERAL", S_TYPE, R"([0-9]+)", __LINE__}},
 		{CAPITALIZE, token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
 		{STRING_LITERAL, token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
 		{ARRAY, token{"ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", __LINE__}},
-		{SYMBOL, token{"SYMBOL", S_TYPE, R"(\$[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*)", __LINE__}},
-		{CONST_SYMBOL, token{"CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*#)", __LINE__}},
-		{IDENTIFIER, token{"IDENTIFIER", S_TYPE, R"([A-Za-z*@_.~+-][A-Za-z0-9*@_.~+-]*)", __LINE__}},
+		{SYMBOL, token{"SYMBOL", S_TYPE, R"(\$[A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", __LINE__}},
+		{CONST_SYMBOL, token{"CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_~+-]*#)", __LINE__}},
+		{IDENTIFIER, token{"IDENTIFIER", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", __LINE__}},
 		{COMMENT, token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
 		{VAR_ATTRIB, token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
 		{VALUE_ATTRIB, token{"VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", __LINE__}},
@@ -593,8 +593,8 @@ namespace boost
 	 */
 	inline vector<unsigned long> INITIAL_TOKENS = { OPEN_BRACE, NEWLINE, COMMENT };
 
-	inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, DOUBLE_QUOTE, FILE_ATTRIB, INCLUDE, ASSIGN, NUMERIC_LITERAL, EQUAL_SIGN,
-												   CAPITALIZE, TRUNCATE, VBAR, COLON, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE, VALID_CHAR };
+	inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE,  FILE_ATTRIB, INCLUDE, ASSIGN,  STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
+												   CAPITALIZE, TRUNCATE, VBAR, COLON, DOT, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE,  IDENTIFIER, VALID_CHAR };
 
 	inline vector<unsigned long> COMMENTING_TOKENS = { OPEN_BRACE, COMMENT, ANYTHING };
 	inline vector<unsigned long> DOUBLE_QUOTED_TOKENS = { DOUBLE_QUOTE, VALID_CHAR };
