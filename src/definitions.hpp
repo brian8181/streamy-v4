@@ -468,165 +468,166 @@ namespace boost
 #define END_OF_FILES 445ul
 #define S_TYPE "string"
 
-	/**
-	 * @name g_tokens_all
-	 * @brief global token vector - all tokens
-	 */
-	inline map<unsigned long, token> g_tokens = {
-		{UNESCAPED_TEXT, token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
-		{WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
-		{NEWLINE, token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
-		{FILE_ATTRIB, token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
-		{VALID_CHAR, token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_.~+-/ ])", __LINE__}},
-		{NUMERIC_LITERAL, token{"NUMERIC_LITERAL", S_TYPE, R"([0-9]+)", __LINE__}},
-		{CAPITALIZE, token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
-		{STRING_LITERAL, token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
-		{ARRAY, token{"ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", __LINE__}},
-		{SYMBOL, token{"SYMBOL", S_TYPE, R"(\$[A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", __LINE__}},
-		{CONST_SYMBOL, token{"CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_~+-]*#)", __LINE__}},
-		{IDENTIFIER, token{"IDENTIFIER", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", __LINE__}},
-		{COMMENT, token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
-		{VAR_ATTRIB, token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
-		{VALUE_ATTRIB, token{"VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", __LINE__}},
-		{FROM_ATTRIB, token{"FROM_ATTRIB", S_TYPE, R"(from='[^']*')", __LINE__}},
-		{ITEM_ATTRIB, token{"ITEM_ATTRIB", S_TYPE, R"(item='[^']*')", __LINE__}},
-		{KEY_ATTRIB, token{"KEY_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
-		{NAME_ATTRIB, token{"NAME_ATTRIB", S_TYPE, R"(name='[^']*")", __LINE__}},
-		{DOUBLE_QUOTE, token{"DOUBLE_QUOTE", S_TYPE, R"(")", __LINE__}},
-		{TILDE, token{"TILDE", S_TYPE, R"(~)", __LINE__}},
-		{EXCLAMATION, token{"EXCLAMATION", S_TYPE, R"(!)", __LINE__}},
-		{AT_SYMBOL, token{"AT_SYMBOL", S_TYPE, R"(@)", __LINE__}},
-		{TIC_MARK, token{"TIC_MARK", S_TYPE, R"(`)", __LINE__}},
-		{CARROT, token{"CARROT", S_TYPE, R"(\^)", __LINE__}},
-		{AMPERSAND, token{"AMPERSAND", S_TYPE, R"(&)", __LINE__}},
-		{ASTERISK, token{"ASTERISK", S_TYPE, R"(\*)", __LINE__}},
-		{OPEN_PAREN, token{"LPAREN", S_TYPE, R"(\()", __LINE__}},
-		{CLOSE_PAREN, token{"RPAREN", S_TYPE, R"(\))", __LINE__}},
-		{DASH, token{"MINUS", S_TYPE, R"(-)", __LINE__}},
-		{PLUS_SIGN, token{"PLUS", S_TYPE, R"(\+)", __LINE__}},
-		{EQUAL_SIGN, token{"EQUAL_SIGN", S_TYPE, R"(=)", __LINE__}},
-		{CLOSE_BRACKET, token{"RBRACKET", S_TYPE, R"(\])", __LINE__}},
-		{OPEN_BRACE, token{"OPEN_BRACE", S_TYPE, R"(\{)", __LINE__}},
-		{CLOSE_BRACE, token{"CLOSE_BRACE", S_TYPE, R"(\})", __LINE__}},
-		{OPEN_BRACKET, token{"LBRACKET", S_TYPE, R"(\[)", __LINE__}},
-		{VBAR, token{"VBAR", S_TYPE, R"(\|)", __LINE__}},
-		{BACKSLASH, token{"BACKSLASH", S_TYPE, R"(\\)", __LINE__}},
-		{COLON, token{"COLON", S_TYPE, R"(:)", __LINE__}},
-		{SEMI_COLON, token{"SEMI_COLON", S_TYPE, R"(;)", __LINE__}},
-		{SINGLE_QUOTE, token{"SINGLE_QUOTE", S_TYPE, R"(')", __LINE__}},
-		{GREATER_THAN, token{"GREATER_THAN", S_TYPE, R"(>)", __LINE__}},
-		{QUESTION_MARK, token{"QUESTION_MARK", S_TYPE, R"(\?)", __LINE__}},
-		{COMMA, token{"COMMA", S_TYPE, R"(\,)", __LINE__}},
-		{DOT, token{"DOT", S_TYPE, R"(\.)", __LINE__}},
-		{SLASH, token{"SLASH", S_TYPE, R"(/)", __LINE__}},
-		{GREATER_THAN_EQUAL, token{"GREATER_THAN_EQUAL", S_TYPE, R"(>=)", __LINE__}},
-		{LESS_THAN_EQUAL, token{"LESS_THAN_EQUAL", S_TYPE, R"(<=)", __LINE__}},
-		{IF, token{"IF", S_TYPE, R"(if)", __LINE__}},
-		{ELSEIF, token{"ELSEIF", S_TYPE, R"(elseif)", __LINE__}},
-		{WHILE, token{"WHILE", S_TYPE, R"(while)", __LINE__}},
-		{ASSIGN, token{"ASSIGN", S_TYPE, R"(assign)", __LINE__}},
-		{BREAK, token{"BREAK", S_TYPE, R"(break)", __LINE__}},
-		{REQUIRE, token{"REQUIRE", S_TYPE, R"(require)", __LINE__}},
-		{INCLUDE, token{"INCLUDE", S_TYPE, R"(include)", __LINE__}},
-		{CONFIG_LOAD, token{"CONFIG_LOAD", S_TYPE, R"(config_load)", __LINE__}},
-		{INSERT, token{"INSERT", S_TYPE, R"(insert)", __LINE__}},
-		{COUNT_PARAGRAPHS, token{"COUNT_PARAGRAPHS", S_TYPE, R"(count_paragraphs)", __LINE__}},
-		{COUNT_SENTENCES, token{"COUNT_SENTENCES", S_TYPE, R"(count_sentences)", __LINE__}},
-		{COUNT_WORDS, token{"COUNT_WORDS", S_TYPE, R"(count_words)", __LINE__}},
-		{DATE_FORMAT, token{"DATE_FORMAT", S_TYPE, R"(date_format)", __LINE__}},
-		{NULL, token{"DEFAULT", S_TYPE, R"(default)", __LINE__}},
-		{ESCAPE, token{"ESCAPE", S_TYPE, R"(escape)", __LINE__}},
-		{INDENT, token{"INDENT", S_TYPE, R"(indent)", __LINE__}},
-		{LOWER, token{"LOWER", S_TYPE, R"(lower)", __LINE__}},
-		{UPPER, token{"UPPER", S_TYPE, R"(upper)", __LINE__}},
-		{STRIP, token{"STRIP", S_TYPE, R"(strip)", __LINE__}},
-		{NL2BR, token{"NL2BR", S_TYPE, R"(nl2br)", __LINE__}},
-		{REGX_REPLACE, token{"REGX_REPLACE", S_TYPE, R"(regx_replace)", __LINE__}},
-		{REPLACE, token{"REPLACE", S_TYPE, R"(replace)", __LINE__}},
-		{SPACIFY, token{"SPACIFY", S_TYPE, R"(spacify)", __LINE__}},
-		{STRING_FORMAT, token{"STRING_FORMAT", S_TYPE, R"(string_format)", __LINE__}},
-		{STRIP_TAGS, token{"STRIP_TAGS", S_TYPE, R"(strip_tags)", __LINE__}},
-		{WORDWRAP, token{"WORDWRAP", S_TYPE, R"(wordwrap)", __LINE__}},
-		{TRUNCATE, token{"TRUNCATE", S_TYPE, R"(truncate)", __LINE__}},
-		{UNDEFINED, token{"UNDEFINED", S_TYPE, R"(.)", __LINE__}},
-	};
+/**
+ * @name g_tokens_all
+ * @brief global token vector - all tokens
+ */
+inline map<unsigned long, token> g_tokens =
+{
+	{UNESCAPED_TEXT,	token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
+	{WHITESPACE, 		token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
+	{NEWLINE,           token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
+	{FILE_ATTRIB,       token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
+	{VALID_CHAR,        token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_.~+-/ ])", __LINE__}},
+	{NUMERIC_LITERAL,   token{"NUMERIC_LITERAL", S_TYPE, R"([0-9]+)", __LINE__}},
+	{CAPITALIZE,        token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
+	{STRING_LITERAL,    token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
+	{ARRAY,             token{"ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", __LINE__}},
+	{SYMBOL,            token{"SYMBOL", S_TYPE, R"(\$[A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", __LINE__}},
+	{CONST_SYMBOL,      token{"CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_~+-]*#)", __LINE__}},
+	{IDENTIFIER,        token{"IDENTIFIER", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", __LINE__}},
+	{COMMENT,           token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
+	{VAR_ATTRIB,        token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
+	{VALUE_ATTRIB,      token{"VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", __LINE__}},
+	{FROM_ATTRIB,       token{"FROM_ATTRIB", S_TYPE, R"(from='[^']*')", __LINE__}},
+	{ITEM_ATTRIB,       token{"ITEM_ATTRIB", S_TYPE, R"(item='[^']*')", __LINE__}},
+	{KEY_ATTRIB,        token{"KEY_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+	{NAME_ATTRIB,       token{"NAME_ATTRIB", S_TYPE, R"(name='[^']*")", __LINE__}},
+	{DOUBLE_QUOTE,      token{"DOUBLE_QUOTE", S_TYPE, R"(")", __LINE__}},
+	{TILDE,             token{"TILDE", S_TYPE, R"(~)", __LINE__}},
+	{EXCLAMATION,       token{"EXCLAMATION", S_TYPE, R"(!)", __LINE__}},
+	{AT_SYMBOL,         token{"AT_SYMBOL", S_TYPE, R"(@)", __LINE__}},
+	{TIC_MARK,          token{"TIC_MARK", S_TYPE, R"(`)", __LINE__}},
+	{CARROT,            token{"CARROT", S_TYPE, R"(\^)", __LINE__}},
+	{AMPERSAND,         token{"AMPERSAND", S_TYPE, R"(&)", __LINE__}},
+	{ASTERISK,          token{"ASTERISK", S_TYPE, R"(\*)", __LINE__}},
+	{OPEN_PAREN,        token{"LPAREN", S_TYPE, R"(\()", __LINE__}},
+	{CLOSE_PAREN,       token{"RPAREN", S_TYPE, R"(\))", __LINE__}},
+	{DASH,              token{"MINUS", S_TYPE, R"(-)", __LINE__}},
+	{PLUS_SIGN,         token{"PLUS", S_TYPE, R"(\+)", __LINE__}},
+	{EQUAL_SIGN,        token{"EQUAL_SIGN", S_TYPE, R"(=)", __LINE__}},
+	{CLOSE_BRACKET,     token{"RBRACKET", S_TYPE, R"(\])", __LINE__}},
+	{OPEN_BRACE,        token{"OPEN_BRACE", S_TYPE, R"(\{)", __LINE__}},
+	{CLOSE_BRACE,       token{"CLOSE_BRACE", S_TYPE, R"(\})", __LINE__}},
+	{OPEN_BRACKET,      token{"LBRACKET", S_TYPE, R"(\[)", __LINE__}},
+	{VBAR,              token{"VBAR", S_TYPE, R"(\|)", __LINE__}},
+	{BACKSLASH,         token{"BACKSLASH", S_TYPE, R"(\\)", __LINE__}},
+	{COLON,             token{"COLON", S_TYPE, R"(:)", __LINE__}},
+	{SEMI_COLON,        token{"SEMI_COLON", S_TYPE, R"(;)", __LINE__}},
+	{SINGLE_QUOTE,      token{"SINGLE_QUOTE", S_TYPE, R"(')", __LINE__}},
+	{GREATER_THAN,      token{"GREATER_THAN", S_TYPE, R"(>)", __LINE__}},
+	{QUESTION_MARK,     token{"QUESTION_MARK", S_TYPE, R"(\?)", __LINE__}},
+	{COMMA,             token{"COMMA", S_TYPE, R"(\,)", __LINE__}},
+	{DOT,               token{"DOT", S_TYPE, R"(\.)", __LINE__}},
+	{SLASH,             token{"SLASH", S_TYPE, R"(/)", __LINE__}},
+	{GREATER_THAN_EQUAL,token{"GREATER_THAN_EQUAL", S_TYPE, R"(>=)", __LINE__}},
+	{LESS_THAN_EQUAL,   token{"LESS_THAN_EQUAL", S_TYPE, R"(<=)", __LINE__}},
+	{IF,                token{"IF", S_TYPE, R"(if)", __LINE__}},
+	{ELSEIF,            token{"ELSEIF", S_TYPE, R"(elseif)", __LINE__}},
+	{WHILE,             token{"WHILE", S_TYPE, R"(while)", __LINE__}},
+	{ASSIGN,            token{"ASSIGN", S_TYPE, R"(assign)", __LINE__}},
+	{BREAK,             token{"BREAK", S_TYPE, R"(break)", __LINE__}},
+	{REQUIRE,           token{"REQUIRE", S_TYPE, R"(require)", __LINE__}},
+	{INCLUDE,           token{"INCLUDE", S_TYPE, R"(include)", __LINE__}},
+	{CONFIG_LOAD,       token{"CONFIG_LOAD", S_TYPE, R"(config_load)", __LINE__}},
+	{INSERT,            token{"INSERT", S_TYPE, R"(insert)", __LINE__}},
+	{COUNT_PARAGRAPHS,  token{"COUNT_PARAGRAPHS", S_TYPE, R"(count_paragraphs)", __LINE__}},
+	{COUNT_SENTENCES,   token{"COUNT_SENTENCES", S_TYPE, R"(count_sentences)", __LINE__}},
+	{COUNT_WORDS,       token{"COUNT_WORDS", S_TYPE, R"(count_words)", __LINE__}},
+	{DATE_FORMAT,       token{"DATE_FORMAT", S_TYPE, R"(date_format)", __LINE__}},
+	{NULL,              token{"DEFAULT", S_TYPE, R"(default)", __LINE__}},
+	{ESCAPE,            token{"ESCAPE", S_TYPE, R"(escape)", __LINE__}},
+	{INDENT,            token{"INDENT", S_TYPE, R"(indent)", __LINE__}},
+	{LOWER,             token{"LOWER", S_TYPE, R"(lower)", __LINE__}},
+	{UPPER,             token{"UPPER", S_TYPE, R"(upper)", __LINE__}},
+	{STRIP,             token{"STRIP", S_TYPE, R"(strip)", __LINE__}},
+	{NL2BR,             token{"NL2BR", S_TYPE, R"(nl2br)", __LINE__}},
+	{REGX_REPLACE,      token{"REGX_REPLACE", S_TYPE, R"(regx_replace)", __LINE__}},
+	{REPLACE,           token{"REPLACE", S_TYPE, R"(replace)", __LINE__}},
+	{SPACIFY,           token{"SPACIFY", S_TYPE, R"(spacify)", __LINE__}},
+	{STRING_FORMAT,     token{"STRING_FORMAT", S_TYPE, R"(string_format)", __LINE__}},
+	{STRIP_TAGS,        token{"STRIP_TAGS", S_TYPE, R"(strip_tags)", __LINE__}},
+	{WORDWRAP,          token{"WORDWRAP", S_TYPE, R"(wordwrap)", __LINE__}},
+	{TRUNCATE,          token{"TRUNCATE", S_TYPE, R"(truncate)", __LINE__}},
+	{UNDEFINED,         token{"UNDEFINED", S_TYPE, R"(.)", __LINE__}},
+};
 
-	/**
-	 * @brief unsigned long states
-	 */
-	constexpr unsigned long UL_INITIAL = 0x10;
-	constexpr unsigned long UL_UNESCAPE = 0x10;
-	constexpr unsigned long UL_COMMENTING = 0x20;
-	constexpr unsigned long UL_ESCAPED = 0x40;
-	constexpr unsigned long UL_DOUBLE_QUOTED = 0x80;
-	constexpr unsigned long UL_SINGLE_QUOTED = 0x100;
-	constexpr unsigned long UL_INCLUDING = 0x200;
-	constexpr unsigned long UL_IF_BLOCK = 0x400;
-	constexpr unsigned long UL_IF_CONDITION = 0x800;
+/**
+ * @brief unsigned long states
+ */
+constexpr unsigned long UL_INITIAL = 0x10;
+constexpr unsigned long UL_UNESCAPE = 0x10;
+constexpr unsigned long UL_COMMENTING = 0x20;
+constexpr unsigned long UL_ESCAPED = 0x40;
+constexpr unsigned long UL_DOUBLE_QUOTED = 0x80;
+constexpr unsigned long UL_SINGLE_QUOTED = 0x100;
+constexpr unsigned long UL_INCLUDING = 0x200;
+constexpr unsigned long UL_IF_BLOCK = 0x400;
+constexpr unsigned long UL_IF_CONDITION = 0x800;
 
-	/**
-	 * @brief global state IDs
-	 */
-	inline vector<unsigned long> state_ids = { UL_INITIAL, UL_COMMENTING, UL_ESCAPED, UL_DOUBLE_QUOTED, UL_SINGLE_QUOTED, UL_INCLUDING, UL_IF_BLOCK, UL_IF_CONDITION };
+/**
+ * @brief global state IDs
+ */
+inline vector<unsigned long> state_ids = { UL_INITIAL, UL_COMMENTING, UL_ESCAPED, UL_DOUBLE_QUOTED, UL_SINGLE_QUOTED, UL_INCLUDING, UL_IF_BLOCK, UL_IF_CONDITION };
 
-	/**
-	 * @brief state_t states
-	 */
+/**
+ * @brief state_t states
+ */
 
-	inline state_t INITIAL = { UL_INITIAL, "INITIAL" };
-	inline state_t COMMENTING = { UL_COMMENTING, "COMMENT" };
-	inline state_t ESCAPED = { UL_ESCAPED, "ESCAPED" };
-	inline state_t DOUBLE_QUOTED = { UL_DOUBLE_QUOTED, "DOUBLE_QUOTED" };
-	inline state_t SINGLE_QUOTED = { UL_SINGLE_QUOTED, "SINGLE_QUOTED" };
-	inline state_t INCLUDING = { UL_INCLUDING, "INCLUDING" };
-	inline state_t IF_BLOCK = { UL_IF_BLOCK, "IF_BLOCK" };
-	inline state_t IF_CONDITION = { UL_IF_CONDITION, "IF_CONDITION" };
-	inline state_t& UNESCAPED = INITIAL;
+inline state_t INITIAL = { UL_INITIAL, "INITIAL" };
+inline state_t COMMENTING = { UL_COMMENTING, "COMMENT" };
+inline state_t ESCAPED = { UL_ESCAPED, "ESCAPED" };
+inline state_t DOUBLE_QUOTED = { UL_DOUBLE_QUOTED, "DOUBLE_QUOTED" };
+inline state_t SINGLE_QUOTED = { UL_SINGLE_QUOTED, "SINGLE_QUOTED" };
+inline state_t INCLUDING = { UL_INCLUDING, "INCLUDING" };
+inline state_t IF_BLOCK = { UL_IF_BLOCK, "IF_BLOCK" };
+inline state_t IF_CONDITION = { UL_IF_CONDITION, "IF_CONDITION" };
+inline state_t& UNESCAPED = INITIAL;
 
-	/**
-	 * @brief global state vector
-	 */
-	inline vector<state_t> states__ = { INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED, SINGLE_QUOTED, INCLUDING, IF_BLOCK, IF_CONDITION };
+/**
+ * @brief global state vector
+ */
+inline vector<state_t> states__ = { INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED, SINGLE_QUOTED, INCLUDING, IF_BLOCK, IF_CONDITION };
 
-	/**
-	 * @brief token list -> by state
-	 */
-	inline vector<unsigned long> INITIAL_TOKENS = { OPEN_BRACE, NEWLINE, COMMENT };
+/**
+ * @brief token list -> by state
+ */
+inline vector<unsigned long> INITIAL_TOKENS = { OPEN_BRACE, NEWLINE, COMMENT };
 
-	inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE,  FILE_ATTRIB, INCLUDE, ASSIGN,  STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
-												   CAPITALIZE, TRUNCATE, VBAR, COLON, DOT, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE,  IDENTIFIER, VALID_CHAR };
+inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE,  FILE_ATTRIB, INCLUDE, ASSIGN,  STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
+												CAPITALIZE, TRUNCATE, VBAR, COLON, DOT, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE,  IDENTIFIER, VALID_CHAR };
 
-	inline vector<unsigned long> COMMENTING_TOKENS = { OPEN_BRACE, COMMENT, ANYTHING };
-	inline vector<unsigned long> DOUBLE_QUOTED_TOKENS = { DOUBLE_QUOTE, VALID_CHAR };
-	inline vector<unsigned long> SINGLE_QUOTED_TOKENS = { OPEN_BRACE, COMMENT, VALID_CHAR, SINGLE_QUOTE, DOUBLE_QUOTE };
-	inline vector<unsigned long> INCLUDING_TOKENS = { FILE_ATTRIB };
-	inline vector<unsigned long> IF_BLOCK_TOKENS = { CLOSE_BRACE };
-	inline vector<unsigned long> IF_CONDITION_TOKENS = { CLOSE_BRACE };
+inline vector<unsigned long> COMMENTING_TOKENS = { OPEN_BRACE, COMMENT, ANYTHING };
+inline vector<unsigned long> DOUBLE_QUOTED_TOKENS = { DOUBLE_QUOTE, VALID_CHAR };
+inline vector<unsigned long> SINGLE_QUOTED_TOKENS = { OPEN_BRACE, COMMENT, VALID_CHAR, SINGLE_QUOTE, DOUBLE_QUOTE };
+inline vector<unsigned long> INCLUDING_TOKENS = { FILE_ATTRIB };
+inline vector<unsigned long> IF_BLOCK_TOKENS = { CLOSE_BRACE };
+inline vector<unsigned long> IF_CONDITION_TOKENS = { CLOSE_BRACE };
 
-	/**
-	 * @brief global state: state_id -> states
-	 * @name g_tokens_by_state_id
-	 */
-	inline map<unsigned long, vector<unsigned long>*> g_state_tokens { {UL_INITIAL, &INITIAL_TOKENS},
-																	  {UL_ESCAPED, &ESCAPED_TOKENS},
-																	  {UL_COMMENTING, &COMMENTING_TOKENS},
-																	  {UL_SINGLE_QUOTED, &SINGLE_QUOTED_TOKENS},
-																	  {UL_DOUBLE_QUOTED, &DOUBLE_QUOTED_TOKENS},
-																	  {UL_INCLUDING, &INCLUDING_TOKENS},
-																	  {UL_IF_BLOCK, &IF_BLOCK_TOKENS},
-																	  {UL_IF_CONDITION, &IF_CONDITION_TOKENS} };
-	/**
-	 *
-	 */
-	typedef unsigned long type_t;
-	typedef unsigned long terminal_t;
-	typedef vector<terminal_t> terminals_t;
-	typedef vector<type_t> types_t;
-	typedef vector<unsigned long> rules_t;
-	typedef vector<type_t> rules_t;
-	typedef vector<type_t> squence_t;
-	typedef vector<squence_t> squences_t;
-	typedef map < type_t, squences_t > maps;
+/**
+ * @brief global state: state_id -> states
+ * @name g_tokens_by_state_id
+ */
+inline map<unsigned long, vector<unsigned long>*> g_state_tokens { {UL_INITIAL, &INITIAL_TOKENS},
+																	{UL_ESCAPED, &ESCAPED_TOKENS},
+																	{UL_COMMENTING, &COMMENTING_TOKENS},
+																	{UL_SINGLE_QUOTED, &SINGLE_QUOTED_TOKENS},
+																	{UL_DOUBLE_QUOTED, &DOUBLE_QUOTED_TOKENS},
+																	{UL_INCLUDING, &INCLUDING_TOKENS},
+																	{UL_IF_BLOCK, &IF_BLOCK_TOKENS},
+																	{UL_IF_CONDITION, &IF_CONDITION_TOKENS} };
+/**
+ *
+ */
+typedef unsigned long type_t;
+typedef unsigned long terminal_t;
+typedef vector<terminal_t> terminals_t;
+typedef vector<type_t> types_t;
+typedef vector<unsigned long> rules_t;
+typedef vector<type_t> rules_t;
+typedef vector<type_t> squence_t;
+typedef vector<squence_t> squences_t;
+typedef map < type_t, squences_t > maps;
 
 #define PROGRAM 1ul
 // #define FILES 2ul
