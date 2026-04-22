@@ -226,23 +226,19 @@ void lexer::set_state( state_t* pstate )
  */
 void lexer::push_include( string file )
 {
-	string inc_buffer;
+	// trimming quotes ...
+	//todo fix this shitty trim job!!
 	char* dest = new char[file.size()+1];
 	strcpy(dest, file.c_str());
 	dest[file.size()-1] = '\0';
 	dest++;
-	string f(dest);
-	INFO("f=====" << f);
-	//trim( file, '\"' );
-	INFO("@@@@@" << dest);
-	//file = string("test/test6.txt");					// new include buffer
-	read_istream( f, inc_buffer );                   // read include
-	ATTN( "file=" << file << ", content=" << inc_buffer );
-	inc_buffer.append( m_buffer );
-	INFO( inc_buffer );
+	file = string(dest);
+
+	string inc_buffer;              // new include buffer
+	read_istream( file, inc_buffer );  // read include
+	inc_buffer.append( m_buffer );  // append current buffer
 	m_buffer.clear();
-	m_buffer = inc_buffer;
-	INFO( m_buffer );
+	m_buffer = inc_buffer;          // set buffer
 }
 
 /**
