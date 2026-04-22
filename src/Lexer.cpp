@@ -168,9 +168,10 @@ bool lexer::next_file()
 		++i;
 
 		int pos = m_ifile.find_last_of( '.' );
-		string base_name = m_ifile.substr( 0, pos - 1 );
-		m_ofile = base_name + ".out.txt";
-		m_fstream.open( m_ofile, std::ios_base::out | std::ios::trunc );
+		string path = m_ifile.substr( 0, pos - 1 );
+		m_ofile = path + ".out.txt";
+		m_fstream.open( "a.out", std::ios_base::out | std::ios::trunc );
+		INFO("m_ofile=" << m_ofile);
 		INFO( "initialized buffer - [ \"" << esc_nl( m_buffer ).get_val() << "\" ]" );
 		return true;
 	}
@@ -212,9 +213,11 @@ void lexer::set_state( state_t* pstate )
 	//  ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
 		ss << "(" << ptoken->rexp << ")|";
 	}
+
 	// save expression string ...
 	m_regex_str = ss.str();
 	m_regex_str.pop_back(); // remove extra '|' i.e. "V-BAR"
+	ATTN("EXPR:=" <<  m_regex_str);
 	ATTN( "Exit set_state ~ " << p_state->id << ":" << p_state->name );
 }
 
@@ -222,18 +225,21 @@ void lexer::set_state( state_t* pstate )
  * @name push_include
  * @brief prepend include file contents to beginning of buffer
  */
-void lexer::push_include( string file )
+void lexer::push_include(const string& file)
 {
 	// trimming quotes ...
-	//todo fix this shitty trim job!!
+	// todo fix this shitty trim job!!
 	char* dest = new char[file.size()+1];
 	strcpy(dest, file.c_str());
 	dest[file.size()-1] = '\0'; // trim end
 	dest++; // trim beg
-	file = string(dest);
+
+	// string tmp = file;
+	// tmp.erase(0,1);
+	// tmp.erase(file.size()-1,1);
 
 	string inc_buffer;                 // new include buffer
-	read_istream( file, inc_buffer );  // read include
+	read_istream( string(dest), inc_buffer );  // read include
 	inc_buffer.append( m_buffer );     // append current buffer
 	m_buffer.clear();
 	m_buffer = inc_buffer;             // set buffer
@@ -263,6 +269,26 @@ void lexer::read_istream( const string& file, string& s )
 			ss << c;
 		}
 		s = ss.str();
+		stream.close();
+	}
+}
+
+
+/**
+ * @name read_istream
+ * @brief read input file into string object
+ */
+void lexer::read_istream(const string& file, char* cstr)
+{
+	ifstream stream( file, std::ios::in );
+	if( stream.is_open() )
+	{
+		char c;
+		int i = 0;
+		while( stream.get( c ) )
+		{
+			cstr[i++] = c;
+		}
 		stream.close();
 	}
 }

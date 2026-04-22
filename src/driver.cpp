@@ -115,6 +115,10 @@ int parse_options(const int argc, char *argv[])
 	lexer::instance().init(argc-offset-1, argv+offset+1);
 	yyparser.parse();
 
+	string s ="12345";
+	s.erase(s.size()-1,1); // erase last char
+	cout << "erase-> " << s << endl;
+
      return 0;
 }
 

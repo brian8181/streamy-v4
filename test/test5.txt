@@ -1,4 +1,4 @@
 $a={$a}
-{include file="test/test6.txt"}
+
 $b={$b}
 $c={$c}

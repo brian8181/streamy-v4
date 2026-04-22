@@ -349,6 +349,42 @@ string &to_upper(string &s) // in place
     return s;
 }
 
+
+/**
+ * @brief  left trim
+ * @param  s : input string
+ * @return string&
+ */
+string &ltrim(std::string &s, const string& seq)
+{
+	return s;
+}
+
+/**
+ * @brief  right trim
+ * @param  s : input string
+ * @return string&
+ */
+string &rtrim(std::string &s, const string& seq)
+{
+	return s;
+}
+
+/**
+ * @brief  trim left & right
+ * @param  s : input string
+ * @param  c : char to trim
+ * @return string&
+ */
+string &trim(std::string &s, const string& seq)
+{
+	int len = s.size();
+	if(s[len-2] == '\n' && s[len-1] == '\n')
+		s.erase(len-1, 1);
+	return s;
+}
+
+
 /**
  * @brief  left trim
  * @param  s : input string

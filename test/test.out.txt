@@ -1,9 +1,2 @@
 
-YYY_VAL~
-$a=a_val
-$e=
-$f=
-
-$b=b_val
-$c=c_val
 

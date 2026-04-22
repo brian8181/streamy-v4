@@ -102,7 +102,7 @@ public:
 	 * @param string& in_name
 	 * @return void
 	 */
-	void get_current_infile( string& in_name )
+	inline void get_current_infile( string& in_name )
 	{
 		in_name = m_ifile;
 	}
@@ -112,7 +112,7 @@ public:
 	 * @param string& out_name
 	 * @return void
 	 */
-	void get_current_outfile( string& out_name )
+	inline void get_current_outfile( string& out_name )
 	{
 		out_name = m_ofile;
 	}
@@ -126,7 +126,7 @@ public:
 	 * @name  push_include
 	 * @brief prepends current buffer with include contents
 	 */
-	void push_include(string file);
+	void push_include(const string& file);
 
 	/**
 	 * @name   get_token
@@ -150,6 +150,12 @@ public:
 	void read_istream( const string& file, string& s );
 
 	/**
+	 * @name read_istream
+	 * @brief read input file into string object
+	 */
+	void read_istream(const string& file, char* cstr);
+
+	/**
 	 * @name   write_stream
 	 * @return int
 	 */
@@ -158,7 +164,7 @@ public:
 		m_fstream << s;
 	}
 
-		/**
+	/**
 	 * @name   dump output stream
 	 * @return int
 	 */

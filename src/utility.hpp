@@ -103,6 +103,28 @@ string &to_upper(string &s);
  * @param  s : input string
  * @return string&
  */
+string &ltrim(std::string &s, const string& seq);
+
+/**
+ * @brief  right trim
+ * @param  s : input string
+ * @return string&
+ */
+string &rtrim(std::string &s, const string& seq);
+
+/**
+ * @brief  trim left & right
+ * @param  s : input string
+ * @param  c : char to trim
+ * @return string&
+ */
+string &trim(std::string &s, const string& seq);
+
+/**
+ * @brief  left trim
+ * @param  s : input string
+ * @return string&
+ */
 string &ltrim(std::string &s);
 
 /**
