@@ -1,0 +1,3 @@
+{include file="test1.txt"}
+{include file="test2.txt"}
+{include file="test3.txt"}

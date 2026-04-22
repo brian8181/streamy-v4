@@ -477,7 +477,7 @@ namespace boost
 		{WHITESPACE, token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
 		{NEWLINE, token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
 		{FILE_ATTRIB, token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
-		{VALID_CHAR, token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_~+-/ ])", __LINE__}},
+		{VALID_CHAR, token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_.~+-/ ])", __LINE__}},
 		{NUMERIC_LITERAL, token{"NUMERIC_LITERAL", S_TYPE, R"([0-9]+)", __LINE__}},
 		{CAPITALIZE, token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
 		{STRING_LITERAL, token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},

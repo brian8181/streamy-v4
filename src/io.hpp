@@ -1,0 +1,49 @@
+/**
+ * @file    io.hpp
+ * @version 0.0.1
+ * @date    Tue, 21 Apr 2026 07:39:25 +0000
+ * @info    ...
+ */
+#ifndef _io_HPP_
+#define _io_HPP_
+#include <iostream>
+
+/**
+  * @brief class io
+  */
+class io
+{
+public:
+	/**
+	* @brief : default ctor
+	*/
+	io(const string& infile);
+
+	/**
+	* @brief : copy ctor
+	*/
+	io( const io& src ) = default;
+
+	/**
+	* @brief : destructor
+	*/
+	~io() = default;
+
+	void read();
+
+	/**
+	 * @brief str
+	 */
+	const string& str();
+
+
+private:
+	ifstream stream;
+	string& file;
+	std::ios::openmode mode = std::ios_base::in;
+
+	string& content;
+
+};
+
+#endif
