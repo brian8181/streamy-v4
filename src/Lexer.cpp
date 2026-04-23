@@ -148,8 +148,8 @@ bool lexer::init( const int argc, char* argv[] )
 			return false;
 		}
 		m_input_paths.push_back(p);
-
 	}
+	m_fstream.open( "a.out", std::ios_base::out | std::ios::trunc );
 	return next_file();
 }
 
@@ -161,11 +161,11 @@ bool lexer::init( const int argc, char* argv[] )
 bool lexer::next_file()
 {
 	// flush close current
-	if( m_fstream.is_open() )
-	{
-		m_fstream.flush();
-		m_fstream.close();
-	}
+	// if( m_fstream.is_open() )
+	// {
+	// 	m_fstream.flush();
+	// 	m_fstream.close();
+	// }
 
 	if(static int i = 0; i < m_input_paths.size() )
 	{
@@ -179,10 +179,13 @@ bool lexer::next_file()
 		++m_file_count;
 		++i;
 
+		fs::path p = m_ifile;
+		ATTN( "stem=" << p.stem());
+
 		int pos = m_ifile.find_last_of( '.' );
 		string path = m_ifile.substr( 0, pos - 1 );
 		m_ofile = path + ".out.txt";
-		m_fstream.open( "a.out", std::ios_base::out | std::ios::trunc );
+		//m_fstream.open( "a.out", std::ios_base::out | std::ios::trunc );
 		INFO("m_ofile=" << m_ofile);
 		INFO( "initialized buffer - [ \"" << esc_nl( m_buffer ).get_val() << "\" ]" );
 		return true;
@@ -240,21 +243,16 @@ void lexer::set_state( state_t* pstate )
 void lexer::push_include(const string& file)
 {
 	// trimming quotes ...
-	// todo fix this shitty trim job!!
-	char* dest = new char[file.size()+1];
-	strcpy(dest, file.c_str());
-	dest[file.size()-1] = '\0'; // trim end
-	dest++; // trim beg
+	string file_tmp = file;
+	file_tmp.erase(file.size()-1,1);
+	file_tmp.erase(0,1);
 
-	// string tmp = file;
-	// tmp.erase(0,1);
-	// tmp.erase(file.size()-1,1);
-
-	string inc_buffer;                 // new include buffer
-	read_istream( string(dest), inc_buffer );  // read include
-	inc_buffer.append( m_buffer );     // append current buffer
+	string inc_buffer;                             // new include buffer
+	read_istream( string(file_tmp), inc_buffer );  // read include file
+	trim(inc_buffer, '\n'); 	                   // trim any trialing newline
+	inc_buffer.append( m_buffer );                 // append current buffer
 	m_buffer.clear();
-	m_buffer = inc_buffer;             // set buffer
+	m_buffer = inc_buffer;                         // set current buffer
 }
 
 /**

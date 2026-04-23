@@ -40,7 +40,7 @@ long file_size(const string &path)
 bool file_exist(const string &path)
 {
     std::fstream strm(path);
-    strm.open(path, std::ios::in);
+    strm.open(path.c_str(), std::ios::in);
     bool ret = strm.is_open();
     strm.close();
     return ret;
