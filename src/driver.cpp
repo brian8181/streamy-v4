@@ -109,15 +109,14 @@ int parse_options(const int argc, char *argv[])
     }
 
     const int offset = optind + SRC_IDX_OFFSET-1;
-	string inc_buffer;         					// new include buffer
-	lexer::instance().read_istream("test/test6.txt", inc_buffer ); // read include
-	ATTN(inc_buffer);
 	lexer::instance().init(argc-offset-1, argv+offset+1);
 	yyparser.parse();
 
 	string s ="12345";
 	s.erase(s.size()-1,1); // erase last char
 	cout << "erase-> " << s << endl;
+
+
 
      return 0;
 }

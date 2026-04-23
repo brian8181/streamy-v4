@@ -149,7 +149,7 @@ bool lexer::init( const int argc, char* argv[] )
 		}
 		m_input_paths.push_back(p);
 	}
-	m_fstream.open( "a.out", std::ios_base::out | std::ios::trunc );
+	m_fstream.open( "build/a.out", std::ios_base::out | std::ios::trunc );
 	return next_file();
 }
 
@@ -160,13 +160,6 @@ bool lexer::init( const int argc, char* argv[] )
  */
 bool lexer::next_file()
 {
-	// flush close current
-	// if( m_fstream.is_open() )
-	// {
-	// 	m_fstream.flush();
-	// 	m_fstream.close();
-	// }
-
 	if(static int i = 0; i < m_input_paths.size() )
 	{
 		m_ifile = string( m_input_paths[i] );
@@ -179,16 +172,20 @@ bool lexer::next_file()
 		++m_file_count;
 		++i;
 
-		fs::path p = m_ifile;
-		ATTN( "stem=" << p.stem());
+		// fs::path p = m_ifile;
+		// int pos = m_ifile.find_last_of( '.' );
+		// string path = m_ifile.substr( 0, pos - 1 );
+		// m_ofile = path + ".out.txt";
 
-		int pos = m_ifile.find_last_of( '.' );
-		string path = m_ifile.substr( 0, pos - 1 );
-		m_ofile = path + ".out.txt";
-		//m_fstream.open( "a.out", std::ios_base::out | std::ios::trunc );
-		INFO("m_ofile=" << m_ofile);
 		INFO( "initialized buffer - [ \"" << esc_nl( m_buffer ).get_val() << "\" ]" );
 		return true;
+	}
+
+	// flush close current
+	if( m_fstream.is_open() )
+	{
+		m_fstream.flush();
+		m_fstream.close();
 	}
 	return false;
 }
@@ -376,13 +373,11 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 				case OPEN_BRACE:
 					set_state( &ESCAPED );
 					return parser::make_OPEN_BRACE();
-				case COMMENT:
-					return parser::make_SKIP_TOKEN();
 				case NEWLINE:
 					m_line++;
 					m_fstream << '\n';
 					return get_token();
-				case SKIP_TOK:
+				case COMMENT:
 					return get_token();
 				default:;
 			} // END switch
@@ -409,7 +404,7 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 				case PERCENT_SIGN:
 					return parser::make_PERCENT_SIGN();
 				case PLUS_SIGN:
-					return parser::make_PLUS_SIGN( '+' );
+					return parser::make_PLUS_SIGN();
 				case DOT:
 					return parser::make_DOT();
 				case HASH_MARK:

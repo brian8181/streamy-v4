@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "ast.hpp"
 
 using std::cout;
@@ -28,6 +29,9 @@ int main(int argc, char** argv)
     ast::modlus_expr<int> e5(10,3);
     int* v5 = e5.eval();
     cout << "e5=" << *v5 << endl;
+
+
+	std::vector<ast::expr> vec = { e1, e2, e3, e4, e5 };
 
     return 0;
 }
