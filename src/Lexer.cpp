@@ -16,6 +16,7 @@
 #include <vector>
 #include <stdio.h>
 #include <string.h>
+#include <filesystem>
 #include <boost/regex.hpp>
 #include <fmt/core.h>
 #include <fmt/format.h>
@@ -25,6 +26,7 @@
 #include "utility.hpp"
 #include "bash_color.hpp"
 #include "log.hpp"
+namespace fs = std::filesystem;
 
 using std::cerr;
 using std::cout;
@@ -126,7 +128,6 @@ void lexer::load_config( const string& file )
 	}
 }
 
-
 /**
  * @name  init
  * @brief initialize input
@@ -134,11 +135,22 @@ void lexer::load_config( const string& file )
  * @param argv, onst char* file names
  * @return void
  */
-void lexer::init( const int argc, char* argv[] )
+bool lexer::init( const int argc, char* argv[] )
 {
 	m_argc = argc;
 	m_argv = argv;
-	next_file();
+	for(int i = 0; i < argc; ++i)
+	{
+		 fs::path p = argv[i];
+		if(!fs::exists(p))
+		{
+			ERROR("file error: \"" << p << "\" does not exist. ");
+			return false;
+		}
+		m_input_paths.push_back(p);
+
+	}
+	return next_file();
 }
 
 /**
@@ -155,9 +167,9 @@ bool lexer::next_file()
 		m_fstream.close();
 	}
 
-	if(static int i = 0; i < m_argc )
+	if(static int i = 0; i < m_input_paths.size() )
 	{
-		m_ifile = string( m_argv[i] );
+		m_ifile = string( m_input_paths[i] );
 		m_buffer.clear();
 		read_istream( m_ifile, m_buffer );
 

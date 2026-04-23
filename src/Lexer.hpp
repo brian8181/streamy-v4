@@ -81,7 +81,7 @@ public:
 	 * @param argv, onst char* file names
 	 * @return void
 	 */
-	void init(const int argc, char* argv[]);
+	bool init(const int argc, char* argv[]);
 
 	/**
 	 * @name   next_file
@@ -206,6 +206,8 @@ private:
 	int m_i = 0;
 	int m_argc;
 	char** m_argv;
+
+	vector<string> m_input_paths;
 	bool EOFS;
 	string m_ifile;
 	string m_ofile = "a.out";
