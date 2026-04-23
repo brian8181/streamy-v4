@@ -210,7 +210,7 @@ private:
 	vector<string> m_input_paths;
 	bool EOFS;
 	string m_ifile;
-	string m_ofile = "a.out";
+	string m_ofile = "build/a.out";
 
 	stack<string> include_stack;
 

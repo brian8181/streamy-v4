@@ -18,6 +18,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include "fileio.hpp"
+	#include "utility.hpp"
     #include "log.hpp"
     #include "symtab.h"
     #include "driver.hpp"
@@ -107,15 +108,8 @@
 
     //%type<std::vector< modifier_t > > modifiers
     //%type<modifier_t> modifier
+	#include "table.hpp"
 
-	// declare
-	typedef map<string, string> symbol_table_t;
-	typedef map<string, void*> object_table_t;
-	// test
-	symbol_table_t symbol_table = {     {"$a", "a_val"}, {"$b", "b_val"}, {"$c", "c_val"},
-										{"$x", "x"}, {"$y", "y"}, {"$z", "z"},
-										{"$xxx", "XXX_VAL"}, {"$yyy", "YYY_VAL"}, {"$zzz", "ZZZ_VAL"},
-										{"$headers", "the headers"}, {"$page_title", "Brian's Home2 Page"}, {"#test#", "config_const"}, {"$e", "51"}, {"$f", "52"}, {"$h", "53"}, {"$i", "54"}	};
 	static int m_file_count = 0;
 
 }
@@ -155,7 +149,7 @@
 %nonassoc IFX
 %nonassoc ELSE ELSEIF IF WHILE BREAK
 %left GREATER_THAN_EQUAL LESS_THAN_EQUAL EQUAL_SIGN NOT_EQUAL LESS_THAN GREATER_THAN COMMA
-%left<char> PLUS_SIGN MINUS
+%left PLUS_SIGN MINUS
 %left ASTERISK SLASH PERCENT_SIGN
 %nonassoc UMINUS
 %type<std::string> symbol
@@ -263,6 +257,15 @@ stmt:
                                                                     lexer::instance().write_ostream($2);
                                                                     $$=$2;
 																}
+	| OPEN_BRACE symbol VBAR modifiers CLOSE_BRACE              {
+                                                                    WARN("expr: | symbol VBAR modifiers ");
+                                                                    std::string s;
+                                                                    get_value($2, s);
+																	s = s + "~";       // modifiy value
+																	set_value($2, s);
+                                                                    $$=$2;
+																	// todo modifiers
+                                                                }
     | OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     WARN("block: | OPEN_BRACE expr CLOSE_BRACE");
 																	lexer::instance().write_ostream($2);
@@ -323,15 +326,7 @@ assign_stmt:
  * @brief Numerical / logical exprssions
  */
 expr:
-    symbol VBAR modifiers                                       {
-                                                                    WARN("expr: | symbol VBAR modifiers ");
-                                                                    std::string s;
-                                                                    get_value($1, s);
-																	s = s + "~";       // modifiy value
-																	set_value($1, s);
-                                                                    $$ = s;
-                                                                }
-    | MINUS expr %prec UMINUS                                   {
+    MINUS expr %prec UMINUS                                   {
 																	INFO("PARSER expr: | expr <<");
 																}
     | expr PLUS_SIGN expr                                       {

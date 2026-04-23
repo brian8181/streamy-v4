@@ -22,7 +22,7 @@ BLD = build
 OBJ = build
 SRC = src
 AST = ast
-TST = test
+TST = tests
 
 SRC_EXT=cpp
 HDR_EXT=hpp
@@ -103,10 +103,19 @@ SOURCES=$(HEADERS) $(OBJS)
 
 all: $(BLD)/driver
 
-world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so $(BLD)/pparser2.tab.o
+world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
 
 $(BLD)/driver: $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
+
+# $(TST)/%: $(OBJ)/%.o
+# 	$(CXX) $(CXXFLAGS) $< -o $@
+
+$(BLD)/path_append: $(OBJ)/path_append.o
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+# $(BLD)/p2: $(OBJS)
+# 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cpp
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp
@@ -114,11 +123,11 @@ $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cp
 $(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(BLD)/bash_color.hpp $(SRC)/log.hpp $(SRC)/config.hpp
 	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
 
-$(BLD)/pparser2.tab.cpp $(BLD)/pparser2.tab.hh: $(SRC)/pparser2.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
-	$(YACC) --debug -Wcounterexamples $(SRC)/pparser2.yy --header=$(BLD)/pparser2.tab.hpp -o $(BLD)/pparser2.tab.cpp
+# $(BLD)/pparser2.tab.cpp $(BLD)/pparser2.tab.hh: $(SRC)/pparser2.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
+# 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser2.yy --header=$(BLD)/pparser2.tab.hpp -o $(BLD)/pparser2.tab.cpp
 
-$(OBJ)/pparser2.tab.o: $(OBJ)/pparser2.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.hpp
-	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
+# $(OBJ)/pparser2.tab.o: $(OBJ)/pparser2.tab.cpp $(SRC)/bash_color.hpp $(SRC)/log.hpp
+# 	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
 
 $(BLD)/ast: $(OBJ)/ast.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
@@ -135,8 +144,8 @@ $(BLD)/lib$(APP).a: $(BLD)/$(APP).o
 	ar rvs $(BLD)/lib$(APP).a $(OBJ)/$(APP).o
 	chmod 755 $(BLD)/lib$(APP).a
 
-$(BLD)/TEST_lex:  $(SOURCES) $(OBJ)/TEST_lex.o
-	$(CXX) $(CXXFLAGS) $(OBJ) -I/usr/local/include/cppunit -L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt -lcppunit -o $@
+$(BLD)/TEST_lex: $(OBJ)/TEST_lex.o $(SOURCES)
+	$(CXX) $(CXXFLAGS) $^ -I/usr/local/include/cppunit -L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt -lcppunit $(LDFLAGS) -o $@
 
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h
@@ -150,6 +159,9 @@ $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: $(SRC)/%.cpp # $(HEADERS)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ)/%.o: $(TST)/%.cpp # $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: all rebuild dist install uninstall clean help
