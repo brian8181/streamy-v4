@@ -1,0 +1,9 @@
+%
+/* comments */
+"/*" { BEGIN(COMMENT); }
+<COMMENT>"*/" { BEGIN(INITIAL); }
+<COMMENT>([^*]|\n)+|.
+<COMMENT><<EOF>> { printf("%s:%d: Unterminated comment\n",
+curfilename, yylineno); return 0; }
+/* C++ comment, a common extension */
+"//".*\n

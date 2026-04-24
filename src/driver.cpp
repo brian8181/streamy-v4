@@ -26,7 +26,6 @@
 #include "lexer.hpp"
 #include "pparser.tab.hpp"
 #include "parser.hpp"
-#include "strm_handle.hpp"
 #include "bash_color.hpp"
 
 using std::cerr;

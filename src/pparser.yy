@@ -128,6 +128,9 @@
 %token MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
 %token NEWLINE
 %token FILE_PATH
+%token PLUS '+'
+%token MINUS '-'
+%token MULT '*'
 
 
 %type< std::vector< std::string > > files
@@ -146,10 +149,11 @@
 %type<std::string> attrib_name
 %type<std::string> sub_proc array
 
+
 %nonassoc IFX
 %nonassoc ELSE ELSEIF IF WHILE BREAK
 %left GREATER_THAN_EQUAL LESS_THAN_EQUAL EQUAL_SIGN NOT_EQUAL LESS_THAN GREATER_THAN COMMA
-%left PLUS_SIGN MINUS
+%left PLUS_SIGN MINUS_SIGN
 %left ASTERISK SLASH PERCENT_SIGN
 %nonassoc UMINUS
 %type<std::string> symbol
@@ -236,40 +240,47 @@ stmts:
     stmt                                                        { INFO("stmts: stmt=\"" << $1 << "\""); $$.push_back($1);  }
     | stmts stmt                                                { INFO("stmts: | stmts stmt"); $$=$1; $$.push_back($2); }
                                                                 ;
+
 /**
- * @name block
+ * @name stmt
  */
 stmt:
-    OPEN_BRACE symbol CLOSE_BRACE                               {
-                                                                    WARN("stmt: OPEN_BRACE symbol=\"" << $2 <<  "\" CLOSE_BRACE");
-                                                                    string sym_value; // = "{" + $2 + "=?}";
-                                                                    get_value($2, sym_value);
+	'{' IF '(' expr ')' '}' stmts  '{' '/' IF '}'                              {
+																					/* if-then (no else) */
+																			   }
+	| '{' IF '(' expr ')' '}' '{' stmt '}' '{' ELSE '}'  stmt  '{' '/' IF '}'  {
+		                                                                            /* if-then-else */
+																			   }
+    | OPEN_BRACE symbol CLOSE_BRACE                               {
+                                                                    WARN("stmt: OPEN_BRACE symbol=\"" << $symbol <<  "\" CLOSE_BRACE");
+                                                                    string sym_value; // = "{" + $symbol + "=?}";
+                                                                    get_value($symbol, sym_value);
                                                                     lexer::instance().write_ostream(sym_value);
-                                                                    $$=sym_value;
+                                                                    $stmt=sym_value;
                                                                 }
 	| OPEN_BRACE STRING_LITERAL CLOSE_BRACE						{
 																	WARN("stmt: | OPEN_BRACE STRING_LITERAL=\"" << $2 <<  "\" CLOSE_BRACE");
                                                                     lexer::instance().write_ostream($2);
-                                                                    $$=$2;
+                                                                    $stmt=$2;
 																}
 	| OPEN_BRACE NUMERIC_LITERAL CLOSE_BRACE					{
 																	WARN("stmt: | OPEN_BRACE NUMERIC_LITERAL=" << $2 <<  " CLOSE_BRACE");
                                                                     lexer::instance().write_ostream($2);
-                                                                    $$=$2;
+                                                                    $stmt=$2;
 																}
-	| OPEN_BRACE symbol VBAR modifiers CLOSE_BRACE              {
+	| OPEN_BRACE symbol[sym] VBAR modifiers[mod] CLOSE_BRACE    {
                                                                     WARN("expr: | symbol VBAR modifiers ");
                                                                     std::string s;
-                                                                    get_value($2, s);
+                                                                    get_value($sym, s);
 																	s = s + "~";       // modifiy value
-																	set_value($2, s);
-                                                                    $$=$2;
+																	set_value($sym, s);
+                                                                    $stmt=$sym;
 																	// todo modifiers
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
                                                                     WARN("block: | OPEN_BRACE expr CLOSE_BRACE");
 																	lexer::instance().write_ostream($2);
-                                                                    $$=$2;
+                                                                    $stmt=$2;
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
                                                                     INFO("block: | OPEN_BRACE sub_porc CLOSE_BRACE");
@@ -325,9 +336,11 @@ assign_stmt:
  * @name expr
  * @brief Numerical / logical exprssions
  */
-expr:
-    MINUS expr %prec UMINUS                                   {
+expr[result]:
+    MINUS expr[lhs] %prec UMINUS                                {
 																	INFO("PARSER expr: | expr <<");
+																	$result=$lhs
+
 																}
     | expr PLUS_SIGN expr                                       {
 																	INFO("PARSER expr: | expr PLUS_SIGN expr <<");
@@ -374,12 +387,12 @@ sub_proc:
  */
 array:
     symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET          {
-                                                                    WARN("PARSER array: | symbol=\"" << $1 << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $3 << "\" CLOSE_BRACKET");
+                                                                    WARN("PARSER array: | symbol=\"" << $symbol << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $NUMERIC_LITERAL << "\" CLOSE_BRACKET");
                                                                     string sym_value;
                                                                     get_value($1, sym_value);
                                                                     lexer::instance().write_ostream(sym_value);
                                                                     $$=sym_value;
-                                                                    $$=$1;
+                                                                    $array=$symbol;
                                                                 }
                                                                 ;
 /**
@@ -605,6 +618,13 @@ attrib:
                                                                     $$ = pair;
                                                                }
                                                                ;
+tokens:
+	'+'
+	| '-'
+	| '*'
+	| '/'
+	| '='
+	;
 /**
  * @name attrib_name
  * @brief attribute name

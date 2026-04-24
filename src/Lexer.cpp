@@ -405,6 +405,8 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 					return parser::make_PERCENT_SIGN();
 				case PLUS_SIGN:
 					return parser::make_PLUS_SIGN();
+				case DASH:
+					return parser::make_MINUS();
 				case DOT:
 					return parser::make_DOT();
 				case HASH_MARK:
@@ -412,7 +414,7 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 				case COLON:
 					return parser::make_COLON();
 				case COMMA:
-				return parser::make_COMMA();
+					return parser::make_COMMA();
 				case VBAR:
 					return parser::make_VBAR();
 				case CAPITALIZE:
@@ -452,37 +454,37 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 			}
 			break;
 		} // CASE UL_IF_BLOCK_STATE
-		// case UL_DOUBLE_QUOTED:
-		// {
-		// 	switch( id )
-		// 	{
-		// 		case ESC_TAB:
-		// 			g_stringstream << "\t";
-		// 			return get_token();
-		// 		case ESC_BACKSLASH:
-		// 			g_stringstream << "\\";
-		// 			return get_token();
-		// 		case ESC_DOUBLE_QUOTE:
-		// 			g_stringstream << "\"";
-		// 			return get_token();
-		// 		case ESC_SINGLE_QUOTE:
-		// 			g_stringstream << "'";
-		// 			return get_token();
-		// 		case VALID_CHAR:
-		// 			g_stringstream << match;
-		// 			return get_token();
-		// 		case DOUBLE_QUOTE:
-		// 		{
-		// 			set_state( &ESCAPED );
-		// 			string qstr = g_stringstream.str();
-		// 			g_stringstream.str( "" );
-		// 			g_stringstream.clear();
-		// 			return parser::make_STRING_LITERAL( qstr );
-		// 		}
-		// 		default:;
-		// 	}
-			//break;
-		//} // UL_DOUBLE_QUOTED_STATE:
+		case UL_DOUBLE_QUOTED:
+		{
+			switch( id )
+			{
+				case ESC_TAB:
+					g_stringstream << "\t";
+					return get_token();
+				case ESC_BACKSLASH:
+					g_stringstream << "\\";
+					return get_token();
+				case ESC_DOUBLE_QUOTE:
+					g_stringstream << "\"";
+					return get_token();
+				case ESC_SINGLE_QUOTE:
+					g_stringstream << "'";
+					return get_token();
+				case VALID_CHAR:
+					g_stringstream << match;
+					return get_token();
+				case DOUBLE_QUOTE:
+				{
+					set_state( &ESCAPED );
+					string qstr = g_stringstream.str();
+					g_stringstream.str( "" );
+					g_stringstream.clear();
+					return parser::make_STRING_LITERAL( qstr );
+				}
+				default:;
+			}
+			break;
+		} // UL_DOUBLE_QUOTED_STATE:
 	}
 	cout << "UNDEFINED symbol found... id=" << id << ",  match=" << match << endl;
 	return parser::make_UNDEFINED();

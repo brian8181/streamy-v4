@@ -37,14 +37,14 @@ long file_size(const string &path)
  * @param  const string& : path to file
  * @return bool: ture file exsit otherwise false
  */
-bool file_exist(const string &path)
-{
-    std::fstream strm(path);
-    strm.open(path.c_str(), std::ios::in);
-    bool ret = strm.is_open();
-    strm.close();
-    return ret;
-}
+// bool file_exist(const string &path)
+// {
+//     std::fstream strm(path);
+//     strm.open(path.c_str(), std::ios::in);
+//     bool ret = strm.is_open();
+//     strm.close();
+//     return ret;
+// }
 
 /**
  * @brief get an ofstream by path
