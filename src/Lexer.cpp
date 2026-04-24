@@ -370,6 +370,7 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 		{
 			switch( id )
 			{
+
 				case OPEN_BRACE:
 					set_state( &ESCAPED );
 					return parser::make_OPEN_BRACE();
@@ -406,7 +407,8 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 				case PLUS_SIGN:
 					return parser::make_PLUS_SIGN();
 				case DASH:
-					return parser::make_MINUS();
+					return parser::make_DASH();
+					parser::make_DASH();
 				case DOT:
 					return parser::make_DOT();
 				case HASH_MARK:

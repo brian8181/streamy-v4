@@ -115,6 +115,11 @@ int parse_options(const int argc, char *argv[])
 	s.erase(s.size()-1,1); // erase last char
 	cout << "erase-> " << s << endl;
 
+	char* pc = "113";
+	int n = atoi(pc);
+	cout << "n=" << n << endl;
+
+
 
 
      return 0;

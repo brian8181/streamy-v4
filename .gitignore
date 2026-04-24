@@ -3,4 +3,5 @@ build2/**
 cbuild/**
 debug*.txt
 out.txt
+settings.json
 

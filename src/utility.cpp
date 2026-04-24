@@ -273,10 +273,11 @@ int atoi(const char *ptr)
     const int len = strlen(ptr);
     for (int i = 0; i < len; ++i)
     {
-        const int digit = ASCII_OFFSET - i;
-        if (digit < 0 || digit > 10)
-            return -1;
-        num += digit * pow(10, i);
+		const int c = (int)ptr[i];
+        const int digit = (c - ASCII_OFFSET);
+        if (digit < 0 || digit > 9)
+            return -1; // not an ascii 0-9
+        num += digit * pow(10, len-(i+1));
     }
     return num;
 }
@@ -327,7 +328,7 @@ string &to_upper(const string &s, /* out */ string &r)
     r.clear();
     for (int i = 0; i < len; ++i)
     {
-        int c = std::toupper(s[i]);
+        const int c = std::toupper(s[i]);
         r.push_back(c);
     }
     return r;

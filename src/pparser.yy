@@ -186,7 +186,8 @@
  * @name complier
  */
 complier:
-	files  END_OF_FILES                                         {
+	%empty
+	| files  END_OF_FILES                                         {
 																	INFO("complier: files.size=" << $1.size() << " END_OF_FILES");
 
 																	cout << "processed files ..." << endl;
@@ -619,7 +620,9 @@ attrib:
                                                                }
                                                                ;
 tokens:
-	'+'
+	PLUS                                                        {
+																	INFO("PLUS TOKEN!!!!");
+	}
 	| '-'
 	| '*'
 	| '/'
