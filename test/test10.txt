@@ -1,3 +1,9 @@
 {$a="test1234567890"}
 {"test"}
 {42}
+{$x=42}
+{if $foo}
+<body>
+	move your body ...
+</body>
+{/if}

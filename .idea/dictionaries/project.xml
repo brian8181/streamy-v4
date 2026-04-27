@@ -1,14 +1,24 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>abcdefghijklmnopqrstuvwxy</w>
+      <w>alnum</w>
       <w>attibutes</w>
       <w>cout</w>
       <w>endl</w>
       <w>filestack</w>
+      <w>foreachelse</w>
       <w>nvalue</w>
       <w>pstate</w>
+      <w>punct</w>
       <w>qualafied</w>
+      <w>spacify</w>
+      <w>srans</w>
       <w>stringstream</w>
+      <w>yyparser</w>
+      <w>yysymbol</w>
+      <w>yytoken</w>
+      <w>zabcefghijklmnopqrstuvwxyz</w>
     </words>
   </dictionary>
 </component>

@@ -49,56 +49,35 @@ const string CONFIG_SECTIONS = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>groups)|(
 const string CONFIG_PAIR = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
 const string CONFIG_COMMENT = R"(^\s*#.*$)";
 const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
-const string qwerty = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./'";
+const string qwerty = R"(ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:"<>?`-=[]\;',./')";
 
 // groups
 const string BUILTIN_FUNCTION = "(insert)|(include)|(config_load)|(assign)|(fetch)|(capture)";
 const string MATH = "(abs)|(ceil)|(cos)|(exp)|(floor)|(log)|(log10)|(max)|(min)|(pi)|(pow)|(rand)|(round)|(sin)|(sqrt)|(srans)|(tan)";
 const string KEY_WORDS = "(if)|(else)|(elseif)|(foreach)|(foreachelse)|(literal)|(section)|(strip)|(assign)|(counter)|(cycle)|(debug)|(eval)|(fetch)|(html_checkboxes)";
 const string VAR_MODIFIER = "(capitalize)|(indent)|(lower)|(upper)|(spacify)|(string_format)|(truncate)|(date_format)|(escape)";
+typedef struct token_t
+{
+	string name;
+	string stype;
+	string rexp;
+	unsigned long index;
+} token_t;
+typedef struct state_t
+{
+	unsigned long id;
+	string name;
+} state_t;
 
-	typedef struct token_t
-	{
-		string name;
-		string stype;
-		string rexp;
-		unsigned long index;
-	} token_t;
-
-	// typedef struct token_value_t
-	// {
-	//     unsigned long id;
-	//     string match;
-	//     string prefix;
-	//     string suffix;
-	//     string file;
-	//     int line;
-	//     long pos;
-	//     token_t *def;
-	// } token_value_t;
-
-	typedef struct state_t
-	{
-		unsigned long id;
-		string name;
-	} state_t;
-
-	// class file_context
-	// {
-	//     string name;
-	//     string *parent;
-	//     char *text;
-	// };
-
-	typedef token_t token;
-	typedef parser::token_type yytoken;
-	typedef parser::symbol_type yysymbol;
-	inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
+typedef token_t token;
+typedef parser::token_type yytoken;
+typedef parser::symbol_type yysymbol;
+inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 
 #define R_TILDE R"(~)"
 #define R_EXCLAMATION R"(!)"
+#define R_REAL_LITERAL R"(([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)"
 
-// static context *g_context;
 /**
  * @brief token definitions : unsigned long integers
  */
@@ -153,6 +132,7 @@ const string VAR_MODIFIER = "(capitalize)|(indent)|(lower)|(upper)|(spacify)|(st
 #define GREATER_THAN_EQUAL 49ul
 #define LESS_THAN_EQUAL 50ul
 #define NUMERIC_LITERAL 51ul
+#define REAL_LITERAL   0x0FFFFFFFFFFF0001ul
 #define STRING_LITERAL 52ul
 #define DECIMAL_LITERAL 53ul
 #define HEXADECIMAL_LITERAL 54ul
@@ -244,7 +224,7 @@ const string VAR_MODIFIER = "(capitalize)|(indent)|(lower)|(upper)|(spacify)|(st
 #define S_TYPE "string"
 
 /**
- * @name g_tokens_all
+ * @name g_tokens
  * @brief global token vector - all tokens
  */
 inline map<unsigned long, token> g_tokens =
@@ -254,7 +234,8 @@ inline map<unsigned long, token> g_tokens =
 	{NEWLINE,           token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
 	{FILE_ATTRIB,       token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
 	{VALID_CHAR,        token{"VALID_CHAR", S_TYPE, R"([A-Za-z0-9*@_.~+-/ ])", __LINE__}},
-	{NUMERIC_LITERAL,   token{"NUMERIC_LITERAL", S_TYPE, R"([0-9]+)", __LINE__}},
+	{NUMERIC_LITERAL,   token{"NUMERIC_LITERAL", S_TYPE, R"([1-9]+[0-9]*|0)", __LINE__}},
+	{REAL_LITERAL,      token{"REAL_LITERAL", S_TYPE, R"(([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)", __LINE__}},
 	{CAPITALIZE,        token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
 	{STRING_LITERAL,    token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
 	{ARRAY,             token{"ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", __LINE__}},
@@ -268,6 +249,31 @@ inline map<unsigned long, token> g_tokens =
 	{ITEM_ATTRIB,       token{"ITEM_ATTRIB", S_TYPE, R"(item='[^']*')", __LINE__}},
 	{KEY_ATTRIB,        token{"KEY_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
 	{NAME_ATTRIB,       token{"NAME_ATTRIB", S_TYPE, R"(name='[^']*")", __LINE__}},
+ // {START_ATTRIB,      token{"START_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {MAX_ATTRIB,        token{"MAX_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {ONCE_ATTRIB,       token{"ONCE_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {SCRIPT_ATTRIB,     token{"SCRIPT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {LOOP_ATTRIB,       token{"LOOP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {STEP_ATTRIB,       token{"STEP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {SHOW_ATTRIB,       token{"SHOW_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {SKIP_ATTRIB,       token{"SKIP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {PRINT_ATTRIB,      token{"PRINT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {DIRECTION_ATTRIB,  token{"DIRECTION_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {ADVANCE_ATTRIB,    token{"ADVANCE_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {RESET_ATTRIB,      token{"RESET_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {DELIMITER_ATTRIB,  token{"DELIMITER_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {OUTPUT_ATTRIB,     token{"OUTPUT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {HEIGHT_ATTRIB,     token{"HEIGHT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {WIDTH_ATTRIB,      token{"WIDTH_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {ALT_ATTRIB,        token{"ALT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {HREF_ATTRIB,       token{"HREF_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {BASEDIR_ATTRIB,    token{"BASEDIR_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {PATH_PREFIX_ATTRIB,token{"PATH_PREFIX_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {SELECTED_ATTRIB,   token{"SELECTED_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {OPTIONS_ATTRIB,    token{"OPTIONS_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {VALUES_ATTRIB,     token{"VALUES_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {SEPERATOR_ATTRIB,  token{"SEPERATOR_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+ // {FORMAT_ATTRIB,     token{"FORMAT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
 	{DOUBLE_QUOTE,      token{"DOUBLE_QUOTE", S_TYPE, R"(")", __LINE__}},
 	{TILDE,             token{"TILDE", S_TYPE, R"(~)", __LINE__}},
 	{EXCLAMATION,       token{"EXCLAMATION", S_TYPE, R"(!)", __LINE__}},
@@ -298,6 +304,7 @@ inline map<unsigned long, token> g_tokens =
 	{GREATER_THAN_EQUAL,token{"GREATER_THAN_EQUAL", S_TYPE, R"(>=)", __LINE__}},
 	{LESS_THAN_EQUAL,   token{"LESS_THAN_EQUAL", S_TYPE, R"(<=)", __LINE__}},
 	{IF,                token{"IF", S_TYPE, R"(if)", __LINE__}},
+	{ELSE,              token{"ELSE", S_TYPE, R"(else)", __LINE__}},
 	{ELSEIF,            token{"ELSEIF", S_TYPE, R"(elseif)", __LINE__}},
 	{WHILE,             token{"WHILE", S_TYPE, R"(while)", __LINE__}},
 	{ASSIGN,            token{"ASSIGN", S_TYPE, R"(assign)", __LINE__}},
@@ -369,14 +376,16 @@ inline vector<state_t> states__ = { INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED,
  */
 inline vector<unsigned long> INITIAL_TOKENS = { OPEN_BRACE, NEWLINE, COMMENT };
 
-inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE,  FILE_ATTRIB, INCLUDE, ASSIGN,  STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
-												CAPITALIZE, TRUNCATE, VBAR, COLON, DOT, STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE,  IDENTIFIER, VALID_CHAR };
+inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE, IF, ELSE, FILE_ATTRIB, INCLUDE, ASSIGN, STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
+												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH,  STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE };
 
 inline vector<unsigned long> COMMENTING_TOKENS = { OPEN_BRACE, COMMENT, ANYTHING };
 inline vector<unsigned long> DOUBLE_QUOTED_TOKENS = { DOUBLE_QUOTE, VALID_CHAR };
 inline vector<unsigned long> SINGLE_QUOTED_TOKENS = { OPEN_BRACE, COMMENT, VALID_CHAR, SINGLE_QUOTE, DOUBLE_QUOTE };
 inline vector<unsigned long> INCLUDING_TOKENS = { FILE_ATTRIB };
-inline vector<unsigned long> IF_BLOCK_TOKENS = { CLOSE_BRACE };
+inline vector<unsigned long> IF_BLOCK_TOKENS = { CLOSE_BRACE, CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE, IF, ELSE, FILE_ATTRIB, INCLUDE, ASSIGN, STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
+												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH, STRIP, SYMBOL, CONST_SYMBOL };
+
 inline vector<unsigned long> IF_CONDITION_TOKENS = { CLOSE_BRACE };
 
 /**
@@ -400,9 +409,9 @@ typedef vector<terminal_t> terminals_t;
 typedef vector<type_t> types_t;
 typedef vector<unsigned long> rules_t;
 typedef vector<type_t> rules_t;
-typedef vector<type_t> squence_t;
-typedef vector<squence_t> squences_t;
-typedef map < type_t, squences_t > maps;
+typedef vector<type_t> sequence_t;
+typedef vector<sequence_t> sequences_t;
+typedef map < type_t, sequences_t > maps;
 
 #define PROGRAM 1ul
 // #define FILES 2ul
@@ -411,7 +420,7 @@ typedef map < type_t, squences_t > maps;
 // #define BLOCK 5ul
 
 //type_t type { PROGRAM, FILES, FILE, BLOCKS, BLOCK }
-//maps g_map { type_t{PROGRAM}, squences_t{ squence_t{ PROGRAM, FILES } } }
+//maps g_map { type_t{PROGRAM}, sequences_t{ sequence_t{ PROGRAM, FILES } } }
 
 //inline constexpr unsigned long ADD_TYPE, MUL_TYPE, NUM;
 // TYPES types{ADD_TYPE, MUL_TYPE, NUM, EXPR};

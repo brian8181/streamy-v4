@@ -4,7 +4,11 @@
  * @date    Tue, 21 Apr 2026 07:39:25 +0000
  * @info    ...
  */
+#include <sstream>
 #include "io.hpp"
+
+using std::stringstream;
+stringstream ss;
 
 /**
  * @name ctor

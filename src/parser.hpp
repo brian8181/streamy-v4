@@ -45,9 +45,7 @@ namespace bkp
 		string m_input;
 		context *m_context;
 		//std::list<std::string_view> rules;
-
 		std::deque<unsigned long> rules;
-
 	};
 }
 #endif

@@ -1,4 +1,2 @@
 
-{include fi{$xxx=5}
-{$yyy|capitalize}le="test/test5.txt"}
-{$array[0]}
+{}

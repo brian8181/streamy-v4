@@ -5,3 +5,4 @@ $c={$c}
 {$a|capitalize}
 ${$b|capitalize}
 my pussy is {$pussy}.
+{}

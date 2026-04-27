@@ -16,33 +16,33 @@ typedef struct node
     struct node *prev;
 } node;
 
-typedef struct binary_node
-{
-    void *data;
-    struct node *left;
-    struct node *right;
-} binary_node;
+// typedef struct binary_node
+// {
+//     void *data;
+//     struct node *left;
+//     struct node *right;
+// } binary_node;
 
-typedef struct tree_node
-{
-    void *data;
-    int count;
-    struct tree_node *nodes;
-} tree_node;
+// typedef struct tree_node
+// {
+//     void *data;
+//     int count;
+//     struct tree_node *nodes;
+// } tree_node;
 
-typedef struct map_node
-{
-    int key;
-    char *name;
-    symbol *sym;
-} map_node;
+// typedef struct map_node
+// {
+//     int key;
+//     char *name;
+//     symbol *sym;
+// } map_node;
 
-typedef struct object
-{
-    char *fields[255];
-    symbol symbols[255];
-    node *next;
-} object;
+// typedef struct object
+// {
+//     char *fields[255];
+//     symbol symbols[255];
+//     node *next;
+// } object;
 
 typedef struct symbol_tab
 {
@@ -52,7 +52,6 @@ typedef struct symbol_tab
 
 // get root symbol table
 symbol_tab *get_stable();
-symbol* new_symbol();
 symbol* new_symbol(const char* id, const char* type_modifiers, const char* type, const char* val);
 void free_node(symbol_tab *stab, node *n);
 void add_symbol(symbol_tab *stab, const char *id, const char *val);

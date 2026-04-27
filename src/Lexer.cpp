@@ -44,6 +44,7 @@ using yy::parser;
  * @name   load_config
  * @def    void lexer::load_config( const string &file )
  * @brief  load_config: load configuration from file
+ * @param  file
  * @param  const string& file
  * @return void
  */
@@ -109,14 +110,14 @@ void lexer::load_config( const string& file )
 			string str_state = states_match["state"].str();   // new state to create
 			string str_tokens = states_match["tokens"].str(); // csv tokens for that state
 			unsigned long i = 0ul;
-			unsigned long state_id = 0xFFul | ( ++i * 6ul ); // generate id for new state
-			state_t stat { state_id, str_state };             // create new state
+			unsigned long state_id = 0xFFul | ( ++i * 6ul );  // generate id for new state
+			state_t stat { state_id, str_state };    // create new state
 			m_states.push_back( stat );
 
 			// copy to term to vector
-			vector<token_t> tokens;           // token vector for this state
-			std::stringstream ss( str_tokens ); // csv of states
-			std::string str_token;            // item in csv states
+			vector<token_t> tokens;                           // token vector for this state
+			std::stringstream ss( str_tokens );               // csv of states
+			std::string str_token;                            // item in csv states
 
 			// use get line to split on commas
 			while( std::getline( ss, str_token, ',' ) )
@@ -132,7 +133,7 @@ void lexer::load_config( const string& file )
  * @name  init
  * @brief initialize input
  * @param argc, input file count
- * @param argv, onst char* file names
+ * @param argv, const char* file names
  * @return void
  */
 bool lexer::init( const int argc, char* argv[] )
@@ -253,8 +254,8 @@ void lexer::push_include(const string& file)
 }
 
 /**
-	 * @name get_stack
-	 */
+ * @name get_stack
+ */
 stack<string>& lexer::get_stack()
 {
 	return include_stack;
@@ -279,7 +280,6 @@ void lexer::read_istream( const string& file, string& s )
 		stream.close();
 	}
 }
-
 
 /**
  * @name read_istream
@@ -356,6 +356,20 @@ parser::symbol_type lexer::get_token()
 }
 
 /**
+ * @name   dump output stream
+ * @return int
+ */
+void lexer::dump_ostream( const string& in )
+{
+
+}
+
+void lexer::print_token(const token *tval)
+{
+	cout << tval->name << "{\n" << tval->index << "\n" << tval->rexp << "\n" << tval->stype << endl;
+}
+
+/**
  * @name  on_token
  * @brief override virtual, on_token, for each token ...
  * @param unsigned long id
@@ -384,6 +398,7 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 			} // END switch
 			break;
 		} // END case UL_INITIAL
+		//case UL_IF_BLOCK: // fallthrough
 		case UL_ESCAPED:
 		{
 			switch( id )
@@ -396,8 +411,11 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 				case OPEN_BRACKET:
 					return parser::make_OPEN_BRACKET();
 				case IF:
-				set_state( &IF_BLOCK );
+					//set_state( &IF_BLOCK );
 					return parser::make_IF();
+				case ELSE:
+					//set_state( &IF_BLOCK );
+					return parser::make_ELSE();
 				case SYMBOL:
 					return parser::make_SYMBOL( match );
 				case CONST_SYMBOL:
@@ -419,6 +437,8 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 					return parser::make_COMMA();
 				case VBAR:
 					return parser::make_VBAR();
+				case SLASH:
+					return parser::make_SLASH();
 				case CAPITALIZE:
 					return parser::make_CAPITALIZE( match );
 				case TRUNCATE:
@@ -441,21 +461,14 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 				// 	set_state( &DOUBLE_QUOTED );
 				// 	return get_token();
 				case WHITESPACE:
+					TRACE();
 				case SKIP_TOK:
+					TRACE();
 					return get_token();
 				default:;
 			} // END switch
 			break;
 		} // CASE UL_ESCAPED
-		case UL_IF_BLOCK:
-		{
-			switch( id )
-			{
-			case SKIP_TOK:
-			default:;
-			}
-			break;
-		} // CASE UL_IF_BLOCK_STATE
 		case UL_DOUBLE_QUOTED:
 		{
 			switch( id )
@@ -487,6 +500,7 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 			}
 			break;
 		} // UL_DOUBLE_QUOTED_STATE:
+		default: ;
 	}
 	cout << "UNDEFINED symbol found... id=" << id << ",  match=" << match << endl;
 	return parser::make_UNDEFINED();

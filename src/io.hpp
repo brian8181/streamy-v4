@@ -6,7 +6,12 @@
  */
 #ifndef _io_HPP_
 #define _io_HPP_
-#include <iostream>
+#include <string>
+#include <fstream>
+
+using std::string;
+using std::ofstream;
+using std::ifstream;
 
 /**
   * @brief class io

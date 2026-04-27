@@ -22,7 +22,7 @@ BLD = build
 OBJ = build
 SRC = src
 AST = ast
-TST = tests
+TST = unit_test
 
 SRC_EXT=cpp
 HDR_EXT=hpp
@@ -78,7 +78,8 @@ $(BLD)/pparser.tab.hpp \
 $(SRC)/parser.hpp \
 $(SRC)/lexer.hpp \
 $(SRC)/driver.hpp \
-$(SRC)/definitions.hpp
+$(SRC)/definitions.hpp \
+$(SRC)/table.hpp
 
 OBJS=$(OBJ)/fileio.o \
 $(OBJ)/auto_ptr.o \
@@ -86,7 +87,8 @@ $(OBJ)/utility.o \
 $(BLD)/pparser.tab.o \
 $(OBJ)/parser.o \
 $(OBJ)/lexer.o \
-$(OBJ)/driver.o
+$(OBJ)/driver.o \
+$(OBJ)/symtab.o
 
 # SOURCES=$(SRC)/bash_color.hpp \
 # $(SRC)/log.hpp \
@@ -144,7 +146,7 @@ $(BLD)/lib$(APP).a: $(BLD)/$(APP).o
 	ar rvs $(BLD)/lib$(APP).a $(OBJ)/$(APP).o
 	chmod 755 $(BLD)/lib$(APP).a
 
-$(BLD)/TEST_lex: $(OBJ)/TEST_lex.o $(SOURCES)
+$(BLD)/TEST_lex: $(OBJ)/TEST_lex.o $(SOURCES) $(BLD)/main.o
 	$(CXX) $(CXXFLAGS) $^ -I/usr/local/include/cppunit -L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt -lcppunit $(LDFLAGS) -o $@
 
 # copy header files

@@ -27,6 +27,7 @@
 #include "pparser.tab.hpp"
 #include "parser.hpp"
 #include "bash_color.hpp"
+#include "utility.hpp"
 
 using std::cerr;
 using std::cout;
@@ -118,14 +119,49 @@ int parse_options(const int argc, char *argv[])
 	char* pc = "113";
 	int n = atoi(pc);
 	cout << "n=" << n << endl;
+	int num = 12345;
+	char* buffer = new char[6];
+	int v = 99;
+	bool b = (num != 0);
+	v = (num != 0);
+	cout << b << " : " << v << endl;
+	b = (num == 12345);
+	v = (num == 12345);
+	cout << b << " : " << v << endl;
+	b = (num == 1);
+	v = (num == 1);
+	cout << b << " : " << v << endl;
+	b = (num == 55);
+	v = (num == 55);
+	cout << b << " : " << v << endl;
+	b = (num != 12345);
+	v = (num != 12345);
+	cout << b << " : " << v << endl;
+	b = true;
+	v = true;
+	cout << b << " : " << v << endl;
+	b = false;
+	v = false;
+	cout << b << " : " << v << endl;
+	b = num;
+	cout << b << endl;
+	v = num;
+	cout << v << endl;
+	b = (b == v);
+	cout << b << endl;
+	// itoa(num, buffer, 10);
+
+	//char c = '"\R"(n)""';
+
+	string s1 = "\n";
+	string s2 = R"(n)";
+	itoa(num, buffer);
+	cout << "std::itoa: " << num << " --> \"" << buffer << "\"" << endl;
 
 
-
-
-     return 0;
+    return 0;
 }
 
-#ifndef _TEST123_
 #ifndef _WIN32
 /**
  * @brief  stdin_ready function
@@ -190,4 +226,3 @@ int main(int argc, char *argv[])
         std::exit(-1);
     }
 }
-#endif

@@ -14,17 +14,7 @@ symbol_tab *get_stable()
     if (tab != 0)
         return tab;
 
-    // symbol* streamy_init_object = (symbol*)malloc(sizeof(symbol));
-    //// bkp todo! allocate strings ...
-    // streamy_init_object->id = "$streamy";
-    // streamy_init_object->type = "object";
-    // streamy_init_object->type_modifiers = "static";
-    // streamy_init_object->pval = 0;
-
-    // symbol* streamy_init_object;
-    // init_symbol(streamy_init_object, "$streamy", "static", "object" );
-
-    symbol *streamy_init_object =
+   symbol *streamy_init_object =
         new_symbol("$streamy", "static", "object", 0);
 
     tab = (symbol_tab *)malloc(sizeof(symbol_tab));
@@ -43,22 +33,16 @@ void free_node(symbol_tab *stab, node *n)
     n = 0;
 }
 
-symbol *new_symbol()
-{
-    symbol *s = (symbol *)malloc(sizeof(symbol));
-    return s;
-}
-
 symbol *new_symbol(const char *id, const char *type_modifiers, const char *type, const char *val)
 {
-    symbol *s = new_symbol();
+    symbol *s;
     init_symbol(&s, id, type_modifiers, type, val);
     return s;
 }
 
 void init_symbol(symbol **s, const char *id, const char *type_modifiers, const char *type, const char *val)
 {
-    *s = (symbol *)malloc(sizeof(symbol));
+    *s = (symbol*)malloc(sizeof(symbol));
     (*s)->id = (char *)malloc(strlen(id) + 1);
     strcpy((*s)->id, id);
     (*s)->type = (char *)malloc(strlen(type) + 1);

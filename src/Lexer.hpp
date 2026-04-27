@@ -21,6 +21,7 @@
 #endif
 
 #include <iostream>
+#include <memory>
 #include <iterator>
 #include <map>
 #include <stack>
@@ -46,24 +47,71 @@ using std::stack;
 using yy::parser;
 
 /**
+ * ============================================================================
+ * File: <singleton>.cpp
+ *
+ * --- EDUCATIONAL NOTE:
+ * "We use the Heap (via unique_ptr) when the Singleton is very large, when we
+ * want to use polymorphism (deciding the implementation at runtime) or when we
+ * need total control over dynamic memory. We use Meyers' Singleton for
+ * lightweight and simple Singletons due to its elegance and native thread
+ * safety."
+ *
+ * --- CONFIGURATION:
+ * Toggle the definition below to switch between implementations.
+ * Only ONE implementation of getInstance() will be compiled at a time,
+ * preserving the "Single Instance" rule of the pattern.
+ * ============================================================================
+ */
+
+// Comment or uncomment this line to switch between Meyers' and Heap version
+//#define USE_HEAP_SINGLETON
+
+/**
  * @brief class lexer (singleton)
  */
 class lexer final
 {
 public:
-	// singleton implementation
-	static lexer &instance()
+	/**
+     *  singleton Access Point
+     *  logic changes based on the #define at the top of the file.
+     */
+	static lexer& instance()
 	{
-		static lexer s;
-		return s;
+#ifdef USE_HEAP_SINGLETON
+		// APPROACH: Heap-based singleton (Dynamic Memory)
+		// Managed by std::unique_ptr for automatic cleanup.
+		// We use 'new' because make_unique cannot access a private constructor.
+		static std::unique_ptr<lexer> instance(new lexer());
+		std::cout << " [Info] Using Heap-based implementation (unique_ptr).\n";
+		return *instance;
+#else
+		// APPROACH: Meyers' singleton (Static/Data Segment)
+		// Simplest, thread-safe (C++11+), and stack-efficient.
+		static lexer instance;
+		std::cout << " [Info] Using Meyers' implementation (Static Segment).\n";
+		return instance;
+#endif
 	}
 
-	lexer(const lexer &) = delete;
-	lexer &operator=(const lexer &) = delete;
 
 private:
-	lexer() {}
-	~lexer() {}
+	// Private constructor prevents direct instantiation.
+	lexer()
+	{
+		std::cout << " [System] lexer instance created at address: " << this << "\n";
+	}
+
+public:
+	// rule of three/five: delete copy constructor and assignment operator.
+	lexer(const lexer&) = delete;
+	lexer& operator=(const lexer&) = delete;
+
+	virtual ~lexer()
+	{
+		std::cout << " [System] lexer instance destroyed.\n";
+	}
 
 	// singleton public interface
 public:
@@ -99,22 +147,24 @@ public:
 
 	/**
 	 * @name get_current_infile
+	 * @param in_name
 	 * @param string& in_name
 	 * @return void
 	 */
-	inline void get_current_infile( string& in_name )
+	inline void get_current_infile( string& in_name ) const
 	{
 		in_name = m_ifile;
 	}
 
 	/**
 	 * @name get_current_outfile
+	 * @param name
 	 * @param string& out_name
 	 * @return void
 	 */
-	inline void get_current_outfile( string& out_name )
+	inline void get_current_outfile( /*out*/ string& name ) const
 	{
-		out_name = m_ofile;
+		name = m_ofile;
 	}
 
 	/**
@@ -135,25 +185,16 @@ public:
 	parser::symbol_type get_token();
 
 	/**
-	 * @name  on_token
-	 * @brief override virtual, on_token, for each token ...
-	 * @param unsigned long id
-	 * @param string match: current match
-	 * @return parser::symbol_type
-	 */
-	parser::symbol_type on_token( unsigned long id, const string& match = {} );
-
-	/**
 	 * @name read_istream
 	 * @return int
 	 */
-	void read_istream( const string& file, string& s );
+	static void read_istream( const string& file, string& s );
 
 	/**
 	 * @name read_istream
 	 * @brief read input file into string object
 	 */
-	void read_istream(const string& file, char* cstr);
+	static void read_istream(const string& file, char* pc);
 
 	/**
 	 * @name   write_stream
@@ -168,10 +209,7 @@ public:
 	 * @name   dump output stream
 	 * @return int
 	 */
-	inline void dump_ostream( const string& in )
-	{
-
-	}
+	void dump_ostream( const string& in );
 
 	/**
 	 * @name  print_token
@@ -179,6 +217,17 @@ public:
 	 * @param token_match m
 	 */
 	void print_token(const token *tval);
+
+	/**
+	 * @name  on_token
+	 * @brief override virtual, on_token, for each token ...
+	 * @param id
+	 * @param match
+	 * @param unsigned long id
+	 * @param string match: current match
+	 * @return parser::symbol_type
+	 */
+	parser::symbol_type on_token( unsigned long id, const string& match = {} );
 
 private:
 
@@ -207,6 +256,7 @@ private:
 	int m_argc;
 	char** m_argv;
 
+	bool initalized = false;
 	vector<string> m_input_paths;
 	bool EOFS;
 	string m_ifile;
