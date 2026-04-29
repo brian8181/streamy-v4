@@ -53,14 +53,16 @@ typedef struct symbol_tab
 // get root symbol table
 symbol_tab *get_stable();
 symbol* new_symbol(const char* id, const char* type_modifiers, const char* type, const char* val);
+node* new_node();
 void free_node(symbol_tab *stab, node *n);
-void add_symbol(symbol_tab *stab, const char *id, const char *val);
-void insert_symbol(symbol_tab *stab, const char *dst_id, const char *src_id, const char *src_val);
+void add_symbol(symbol_tab *stab, symbol* s);
+void insert_symbol(symbol_tab *stab, symbol* s);
 void remove_symbol(symbol_tab *stab, const char *id);
 void dump_symbols(symbol_tab *stab);
 void clear_symbols(symbol_tab *stab);
+symbol *find_symbol(symbol_tab *stab, symbol* s);
+symbol *find_symbol_by_id(symbol_tab *stab, const char *id);
 symbol *find_symbol_by_addr(symbol_tab *stab, symbol *sym);
-symbol *find_symbol(symbol_tab *stab, const char *id);
 node *find_node(symbol_tab *stab, const char *id);
 node *find_tail(symbol_tab *stab);
 int size(symbol_tab *stab);

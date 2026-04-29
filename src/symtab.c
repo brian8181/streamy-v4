@@ -14,13 +14,13 @@ symbol_tab *get_stable()
     if (tab != 0)
         return tab;
 
-   symbol *streamy_init_object =
-        new_symbol("$streamy", "static", "object", 0);
+//    symbol *streamy_init_object =
+//         new_symbol("$streamy", "static", "object", 0);
 
-    tab = (symbol_tab *)malloc(sizeof(symbol_tab));
-    tab->head = (node *)malloc(sizeof(node));
-    tab->head->sym = streamy_init_object;
-    tab->head->next = 0;
+//     tab = (symbol_tab *)malloc(sizeof(symbol_tab));
+//     tab->head = (node *)malloc(sizeof(node));
+//     tab->head->sym = streamy_init_object;
+//     tab->head->next = 0;
 
     return tab;
 }
@@ -33,11 +33,10 @@ void free_node(symbol_tab *stab, node *n)
     n = 0;
 }
 
-symbol *new_symbol(const char *id, const char *type_modifiers, const char *type, const char *val)
+node* new_node()
 {
-    symbol *s;
-    init_symbol(&s, id, type_modifiers, type, val);
-    return s;
+	node* n = (node*)malloc(sizeof(node));
+	return n;
 }
 
 void init_symbol(symbol **s, const char *id, const char *type_modifiers, const char *type, const char *val)
@@ -61,39 +60,29 @@ void init_sub_table(symbol_tab *parent)
     // symtab->parent = parent->head;
 }
 
-void add_symbol(symbol_tab *stab, const char *id, const char *val)
+void add_symbol(symbol_tab* stab, symbol* s)
 {
-    // create symbol
-    symbol *sym = (symbol *)malloc(sizeof(symbol));
-    sym->id = (char *)malloc(strlen(id) + 1);
-    sym->pval = (char *)malloc(strlen(val) + 1);
-    node *new_node = (node *)malloc(sizeof(node));
-    new_node->sym = sym;
-    // add node / symbol to tail
+	node* n = new_node();
+	n->sym = s;
+	 // add node / symbol to tail
     node *tail = find_tail(stab);
-    new_node->next = 0;
-    tail->next = new_node;
+	tail->next = n;
+	n->prev = n;
+
 }
 
-// void add_symbol(symbol_tab* stab, const char* id, const char* type_modifiers, const char* type, const char* val)
-
-void insert_symbol(symbol_tab *stab, const char *dst_id, const char *src_id, const char *src_val)
+void insert_symbol(symbol_tab *stab, symbol* s)
 {
-    // create symbol
-    symbol *src_sym = (symbol *)malloc(sizeof(symbol));
-    src_sym->id = (char *)malloc(strlen(src_id) + 1);
-    src_sym->pval = (char *)malloc(strlen(src_val) + 1);
-    node *src_node = (node *)malloc(sizeof(node));
-    src_node->sym = src_sym;
     // add node
-    node *dst_node = find_node(stab, dst_id);
-    src_node->next = dst_node->next;
-    dst_node->next = src_node;
+    // node *dst_node = find_node(stab, s->id);
+    // dst_node->prev->next = dst_node;
+    // dst_node->next = src_node;
 }
 
 void remove_symbol(symbol_tab *stab, const char *id)
 {
     node *cur = get_stable()->head;
+
     if (stab != 0)
         cur = stab->head;
     while (cur->next != 0)
@@ -164,19 +153,9 @@ symbol *find_symbol_by_id(symbol_tab *stab, const char *id)
     return 0;
 }
 
-symbol *find_symbol(symbol_tab *stab, const char *id)
+symbol *find_symbol(symbol_tab *stab, symbol* s)
 {
-    node *cur = get_stable()->head;
-    if (stab != 0)
-        cur = stab->head;
-    while (cur->next != 0)
-    {
-        symbol *s = cur->sym;
-        if (strcmp((char *)s->pval, id))
-            return s;
-        cur = cur->next;
-    }
-    return 0;
+    find_symbol_by_id(stab, s->id);
 }
 
 node *find_node(symbol_tab *stab, const char *id)

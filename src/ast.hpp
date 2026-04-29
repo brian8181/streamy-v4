@@ -19,10 +19,15 @@ namespace ast
 	// template <typename T>
 	// class expr_base {};
 
+	class expr_base
+	{
+
+	}
+
 	/**
 	 * @class expr
 	 */
-	class expr //: public expr_base<expr>
+	class expr : public expr_base
 	{
 	public:
 		struct expr_node
