@@ -10,7 +10,15 @@ using std::endl;
 #ifdef AST_MAIN
 int main(int argc, char** argv)
 {
-    ast::add_expr<int> e1(2,3);
+    ast::add_expr<int> e11(2,3);
+    int* v11 = e11.eval();
+    cout << "e12=" << *v11 << endl;
+
+	ast::add_expr<int> e12(5,7);
+    int* v12 = e12.eval();
+    cout << "e12=" << *v12 << endl;
+
+	ast::add_expr<int> e1(e11,  e12);
     int* v = e1.eval();
     cout << "e1=" << *v << endl;
 

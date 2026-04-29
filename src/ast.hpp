@@ -22,7 +22,7 @@ namespace ast
 	class expr_base
 	{
 
-	}
+	};
 
 	/**
 	 * @class expr
@@ -179,6 +179,7 @@ namespace ast
 	public:
 		add_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
 		add_expr(const expr& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
+		add_expr(const expr& lhs, const expr& rhs) : binary_expr<T>(lhs, rhs) { }
 
 		T* eval()
 		{
