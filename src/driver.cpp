@@ -157,6 +157,16 @@ int parse_options(const int argc, char *argv[])
 	string s2 = R"(n)";
 	itoa(num, buffer);
 	cout << "std::itoa: " << num << " --> \"" << buffer << "\"" << endl;
+	string s3 = "my string....";
+	cout << s3 << " | ";
+	trim(s3, '.');
+	cout << s3 << endl;
+
+	string s4 = "my string....          ";
+	cout << s4 << " | ";
+	trim(s4, ' ');
+	cout << s4 << endl;
+
 
 
     return 0;

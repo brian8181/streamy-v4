@@ -84,13 +84,13 @@ public:
 		// Managed by std::unique_ptr for automatic cleanup.
 		// We use 'new' because make_unique cannot access a private constructor.
 		static std::unique_ptr<lexer> instance(new lexer());
-		std::cout << " [Info] Using Heap-based implementation (unique_ptr).\n";
+		std::cout << "[Info] Using Heap-based implementation (unique_ptr).\n";
 		return *instance;
 #else
 		// APPROACH: Meyers' singleton (Static/Data Segment)
 		// Simplest, thread-safe (C++11+), and stack-efficient.
 		static lexer instance;
-		std::cout << " [Info] Using Meyers' implementation (Static Segment).\n";
+		std::cout << "[Info] Using Meyers' implementation (Static Segment).\n";
 		return instance;
 #endif
 	}
@@ -100,7 +100,7 @@ private:
 	// Private constructor prevents direct instantiation.
 	lexer()
 	{
-		std::cout << " [System] lexer instance created at address: " << this << "\n";
+		std::cout << "[System] lexer instance created at address: " << this << "\n";
 	}
 
 public:
@@ -110,7 +110,7 @@ public:
 
 	virtual ~lexer()
 	{
-		std::cout << " [System] lexer instance destroyed.\n";
+		std::cout << "[System] lexer instance destroyed.\n";
 	}
 
 	// singleton public interface

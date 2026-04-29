@@ -7,3 +7,13 @@
 	move your body ...
 </body>
 {/if}
+
+{if $foo}
+	<body>
+		// if stuff ..
+	</body>
+{else}
+	<body>
+		// else stuff ..
+	</body>
+{/if}

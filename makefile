@@ -41,9 +41,7 @@ FMT_WARN=$(FMT_ITALIC)$(FMT_YELLOW)
 # lib settings
 LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64
 INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD) -I/.
-LDFLAGS=$(LIBS)
 
-CXXFLAGS+=$(INCLUDES)
 
 ifdef CLANG
 	CXX=clang++
@@ -54,13 +52,16 @@ ifndef RELEASE
 endif
 
 ifdef CYGWIN
-	CXXFLAGS += -DCYGWIN -I"/home/brian/src/boost_1_89_0"
-	LDFLAGS += /usr/local/lib/libfmt.a -lcppunit.dll
+	CXXFLAGS += -DCYGWIN
+	INCLUDES += -I"/home/brian/src/boost_1_89_0"
+	LIBS += /usr/local/lib/libfmt.a -lcppunit.dll
 endif
 ifdef MSYS_UCRT
-	CXXFLAGS += -I/ucrt64/include/boost
-	LDFLAGS += /usr/lib/libfmt.dll.a
+	INCLUDES += -I/ucrt64/include/boost
+	LIBS += /usr/lib/libfmt.dll.a
 endif
+
+LDFLAGS=$(INCLUDES) $(LIBS)
 
 # ifdef TRACEING
 # CXXFLAGS += -DTRACING
@@ -123,7 +124,7 @@ $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cp
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp
 
 $(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(BLD)/bash_color.hpp $(SRC)/log.hpp $(SRC)/config.hpp
-	$(CXX) $(CXXFLAGS) -DYYDEBUG -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -DYYDEBUG -c $< -o $@
 
 # $(BLD)/pparser2.tab.cpp $(BLD)/pparser2.tab.hh: $(SRC)/pparser2.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
 # 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser2.yy --header=$(BLD)/pparser2.tab.hpp -o $(BLD)/pparser2.tab.cpp
@@ -147,7 +148,7 @@ $(BLD)/lib$(APP).a: $(BLD)/$(APP).o
 	chmod 755 $(BLD)/lib$(APP).a
 
 $(BLD)/TEST_lex: $(OBJ)/TEST_lex.o $(SOURCES) $(BLD)/main.o
-	$(CXX) $(CXXFLAGS) $^ -I/usr/local/include/cppunit -L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt -lcppunit $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $^ -L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt -I/usr/local/include/cppunit -lcppunit $(LDFLAGS) -o $@
 
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h
@@ -161,7 +162,7 @@ $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: $(SRC)/%.cpp # $(HEADERS)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ)/%.o: $(TST)/%.cpp # $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@

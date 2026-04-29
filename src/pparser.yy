@@ -239,6 +239,18 @@ file:
                                                                 }
                                                                 ;
 /**
+ * @name stmt
+ */
+if_stmt:
+	OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmt                                                     {
+																										/* if-then (no else) */
+																										INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE stmt");
+																									}
+	OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE stmts SLASH IF CLOSE_BRACE                     {
+																										/* if-then (no else) */
+																										INFO("stmt: OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE stmts SLASH IF CLOSE_BRACE");
+																									}
+/**
  * @name stmts
  */
 stmts:
@@ -250,13 +262,15 @@ stmts:
  * @name stmt
  */
 stmt:
-	OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE {
+	OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE                           {
 																										/* if-then (no else) */
-																			   }
-	| '{' IF '(' expr ')' '}' '{' stmt '}' '{' ELSE '}'  stmt  '{' '/' IF '}'  					 {
+																										INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
+																									}
+	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE  {
 		                                                                            					/* if-then-else */
-																			   }
-    | OPEN_BRACE symbol CLOSE_BRACE                               {
+																										INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
+																			   						}
+    | OPEN_BRACE symbol CLOSE_BRACE                              {
                                                                     WARN("stmt: OPEN_BRACE symbol=\"" << $symbol <<  "\" CLOSE_BRACE");
                                                                     string sym_value; // = "{" + $symbol + "=?}";
                                                                     get_value($symbol, sym_value);

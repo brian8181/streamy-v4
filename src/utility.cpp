@@ -50,8 +50,7 @@ string_ptr esc_nl(const string &s, const string &r)
         ret.append(r);                                 // replace '\n' with r
 
         // move suffix
-        suffix = suffix.substr(index+1);   // get suffix
-		//std::cout << "~ " << prefix  << std::endl;
+        suffix = suffix.substr(index+1);              // get suffix
     }
     ret.append(suffix);
 	return auto_ptr<string>(ret);
@@ -356,20 +355,20 @@ string &to_upper(string &s) // in place
  * @param  s : input string
  * @return string&
  */
-string &ltrim(std::string &s, const string& seq)
-{
-	return s;
-}
+// string &ltrim(std::string &s, const string& seq)
+// {
+// 	return s;
+// }
 
 /**
  * @brief  right trim
  * @param  s : input string
  * @return string&
  */
-string &rtrim(std::string &s, const string& seq)
-{
-	return s;
-}
+// string &rtrim(std::string &s, const string& seq)
+// {
+// 	return s;
+// }
 
 /**
  * @brief  trim left & right
@@ -377,13 +376,13 @@ string &rtrim(std::string &s, const string& seq)
  * @param  c : char to trim
  * @return string&
  */
-string &trim(std::string &s, const string& seq)
-{
-	int len = s.size();
-	if(s[len-2] == '\n' && s[len-1] == '\n')
-		s.erase(len-1, 1);
-	return s;
-}
+// string &trim(std::string &s, const string& seq)
+// {
+// 	int len = s.size();
+// 	if(s[len-2] == '\n' && s[len-1] == '\n')
+// 		s.erase(len-1, 1);
+// 	return s;
+// }
 
 
 /**
@@ -444,7 +443,7 @@ string &trim(std::string &s)
  */
 string &trim(string &s, char c)
 {
-    if (s.at(s.length() - 1) == c)
+	while (s[s.size()-1] == c)
         s.pop_back();
     return s;
 }
