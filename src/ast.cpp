@@ -10,17 +10,17 @@ using std::endl;
 #ifdef AST_MAIN
 int main(int argc, char** argv)
 {
-    ast::add_expr<int> e11(2,3);
+    ast::add_expr<int,int> e11(2,3);
     int* v11 = e11.eval();
     cout << "e12=" << *v11 << endl;
 
-	ast::add_expr<int> e12(5,7);
+	ast::add_expr2<int> e12(10,7);
     int* v12 = e12.eval();
     cout << "e12=" << *v12 << endl;
 
-	ast::add_expr<int> e1(e11,  e12);
-    int* v = e1.eval();
-    cout << "e1=" << *v << endl;
+	// ast::add_expr<int> e1(e11,  e12);
+    // int* v = e1.eval();
+    // cout << "e1=" << *v << endl;
 
     ast::subtract_expr<int> e2(5,3);
     int* v2 = e2.eval();
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     cout << "e5=" << *v5 << endl;
 
 
-	std::vector<ast::expr> vec = { e1, e2, e3, e4, e5 };
+	//std::vector<ast::expr> vec = { e1, e2, e3, e4, e5 };
 
     return 0;
 }

@@ -173,20 +173,44 @@ namespace ast
 		 T* _rhs;
 	};
 
-	template< class T >
-	class add_expr final : binary_expr<T>
+	template< class LHS, class RHS >
+	class add_expr
 	{
 	public:
-		add_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		add_expr(const expr& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		add_expr(const expr& lhs, const expr& rhs) : binary_expr<T>(lhs, rhs) { }
+		add_expr(const LHS& lhs, const RHS& rhs) : _lhs(lhs), _rhs(rhs)
+		{
+		}
+
+		LHS* eval()
+		{
+			LHS* p = new LHS;
+			*p = _lhs + _rhs;
+			return p;
+		}
+	private:
+		LHS _lhs;
+		RHS _rhs;
+
+	};
+
+	template< class T >
+	class add_expr2
+	{
+	public:
+		add_expr2(const T& lhs, const T& rhs) : _lhs(lhs), _rhs(rhs)
+		{
+		}
 
 		T* eval()
 		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs + *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
+			T* p = new T;
+			*p = _lhs + _rhs;
+			return p;
 		}
+	private:
+		T _lhs;
+		T _rhs;
+
 	};
 
 	template< class T >
