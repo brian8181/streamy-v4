@@ -68,6 +68,34 @@ namespace ast
 		 void* _val;
 	};
 
+
+	// template< class T >
+	// class literal_expr : expr
+	// {
+	// public:
+	// 	/**
+	// 	 * @brief : default ctor
+	// 	 */
+	// 	literal_expr(const T& val) : _val_t(0)
+	// 	{
+	// 			expr::_val = new T(val);
+	// 		_val_t = (T*)expr::_val;
+	// 	}
+
+	// 	~literal_expr() override
+	// 	{
+	// 		delete _val_t;
+	// 	}
+
+	// 	T* eval()
+	// 	{
+	// 		return _val_t;
+	// 	}
+
+	// protected:
+	// 	T* _val_t;
+	// };
+
 	/**
 	 * @class urnary_expr
 	 */
@@ -117,6 +145,13 @@ namespace ast
 		 */
 		~literal_expr() override {
 			delete urnary_expr<T>::_val_t;
+		}
+
+		T* eval()
+		{
+			T* p = new T;
+			*p = _val_t;
+			return p;
 		}
 	};
 
@@ -177,15 +212,20 @@ namespace ast
 	class add_expr
 	{
 	public:
+		add_expr(const int& lhs, const int& rhs) : _lhs(literal_expr<int>(lhs)), _rhs(literal_expr<int>(rhs))
+		{
+
+		}
+
 		add_expr(const LHS& lhs, const RHS& rhs) : _lhs(lhs), _rhs(rhs)
 		{
 		}
 
-		LHS* eval()
+		literal_expr<int>* eval()
 		{
-			LHS* p = new LHS;
-			*p = _lhs + _rhs;
-			return p;
+			// RHS* p = new RHS;
+			// *p = _lhs + _rhs;
+			// return p;
 		}
 	private:
 		LHS _lhs;

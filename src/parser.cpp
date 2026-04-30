@@ -10,6 +10,18 @@ using std::string;
 using std::cout;
 using std::endl;
 
+namespace ast
+{
+	struct node
+	{
+		string stype;
+		node* parent;
+		node* left;
+		node* right;
+		void* val;
+	};
+}
+
 
 typedef vector<string> rule;
 vector<rule> rules {

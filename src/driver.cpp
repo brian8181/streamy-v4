@@ -168,7 +168,6 @@ int parse_options(const int argc, char *argv[])
 	cout << s4 << endl;
 
 
-
     return 0;
 }
 

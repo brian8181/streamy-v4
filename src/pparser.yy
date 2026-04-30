@@ -361,34 +361,34 @@ expr[result]:
 																	$result=$lhs
 
 																}
-    | expr PLUS_SIGN expr                                       {
+    | expr[lhs] PLUS_SIGN[op] expr[rhs]                         {
 																	INFO("PARSER expr: | expr PLUS_SIGN expr <<");
 																}
-    | expr MINUS expr                                           {
+    | expr[lhs] MINUS[op] expr[rhs]                                           {
 																	INFO("PARSER expr: | expr MINUS expr <<");
 																}
-    | expr ASTERISK expr                                        {
+    | expr[lhs] ASTERISK[op] expr[rhs]                                        {
 																	INFO("PARSER expr: | expr ASTERISK expr <<");
 																}
-    | expr SLASH expr                                           {
+    | expr[lhs] SLASH[op] expr[rhs]                                           {
 																	INFO("PARSER expr: | expr SLASH expr <<");
 																}
-    | expr LESS_THAN expr                                       {
+    | expr[lhs] LESS_THAN[op] expr[rhs]                                       {
 																	INFO("PARSER expr: | expr LESS_THAN expr <<");
 																}
-    | expr GREATER_THAN expr                                    {
+    | expr[lhs] GREATER_THAN[op] expr[rhs]                                    {
 																	INFO("PARSER expr: | expr GREATER_THAN expr <<");
 																}
-    | expr GREATER_THAN_EQUAL expr                              {
+    | expr[lhs] GREATER_THAN_EQUAL[op] expr[rhs]                              {
 																	INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << ");
 																}
-    | expr LESS_THAN_EQUAL expr                                 {
+    | expr[lhs] LESS_THAN_EQUAL[op] expr[rhs]                                 {
 																	INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<");
 																}
-    | expr NOT_EQUAL expr                                       {
+    | expr[lhs] NOT_EQUAL[op] expr[rhs]                                       {
 																	INFO("PARSER expr: | expr NOT_EQUAL expr <<");
 																}
-    | LPAREN expr RPAREN                                        {
+    | LPAREN expr[exp] RPAREN                                   {
 																	INFO("PARSER expr: | LPAREN expr RPAREN <<");
 																}
                                                                 ;
@@ -530,7 +530,6 @@ colon_sep_param:
                                                                     $$=$2;
                                                                 }
                                                                 ;
-
 /**
  * @name symbol
  */
@@ -549,8 +548,6 @@ symbol:
 																	$$ = s;
 																}
 																;
-
-
 /**
  * @name built-in
  */
@@ -594,7 +591,6 @@ attributes:
     | attributes COMMA attrib                                        {
                                                                     INFO("attribute: | attib push --> attributes");
                                                                     //INFO("attribute: | attributes : push-> attrib={name=\"" << $2.first << "\" value=\"" << $2.second << "\"");
-
 																	$1.push_back( $3 );
                                                                     $$ = $1;
                                                                }
@@ -603,40 +599,40 @@ attributes:
  * @name attrib
  */
 attrib:
-    VALUE_ATTRIB EQUAL_SIGN STRING_LITERAL                     {
+    VALUE_ATTRIB[name] EQUAL_SIGN STRING_LITERAL[value]        {
                                                                     INFO("name_value: | VALUE_ATTRIB=\"" \
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\"" \
                                                                         << buf << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
-    | VAR_ATTRIB EQUAL_SIGN NUMERIC_LITERAL                     {
+    | VAR_ATTRIB[name] EQUAL_SIGN NUMERIC_LITERAL[value]       {
                                                                     INFO("name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
-    | FILE_ATTRIB EQUAL_SIGN STRING_LITERAL                    {
+    | FILE_ATTRIB[name] EQUAL_SIGN STRING_LITERAL[value]       {
                                                                     INFO("name_value: | FILE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
-    | FILE_ATTRIB EQUAL_SIGN symbol                            {
+    | FILE_ATTRIB[name] EQUAL_SIGN symbol[value]               {
                                                                     INFO("name_value: | FILE_ATTRIB=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
-    | attrib_name EQUAL_SIGN STRING_LITERAL                    {
+    | attrib_name[name] EQUAL_SIGN STRING_LITERAL[value]       {
                                                                     INFO("name_value: | " << $1 << "=\""
                                                                         << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                         << $3 << "\"");
                                                                     std::pair<std::string, std::string>  pair($1, $3);
                                                                     $$ = pair;
                                                                }
-    | attrib_name EQUAL_SIGN NUMERIC_LITERAL                    {
+    | attrib_name[name] EQUAL_SIGN NUMERIC_LITERAL[value]      {
                                                                         INFO("name_value: | " << $1 << "=\""
                                                                             << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
                                                                             << $3 << "\"");
@@ -654,12 +650,8 @@ attrib:
 tokens:
 	PLUS                                                        {
 																	INFO("PLUS TOKEN!!!!");
-	}
-	| '-'
-	| '*'
-	| '/'
-	| '='
-	;
+																}
+																;
 /**
  * @name attrib_name
  * @brief attribute name
@@ -697,7 +689,6 @@ attrib_name:
     | VALUES_ATTRIB
     | SEPERATOR_ATTRIB
     | FORMAT_ATTRIB
-
     ;
 
 %%
