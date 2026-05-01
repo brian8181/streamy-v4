@@ -34,7 +34,6 @@ long file_size(const string& path);
  */
 bool file_exist(const string& path);
 
-
 /**
  * @brief get an ofstream by path
  * @param path

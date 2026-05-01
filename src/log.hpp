@@ -50,7 +50,7 @@ void log(const std::string &msg, int line_number);
 // tracing
 #ifdef TRACING
 #define TRACE(str) *DEFAULT_OUT_STREAM << FMT_FG_WHITE << std::left << std::setw(6) \
-									   << "TRCE: "     << FMT_FG_LIGHT_GREY << FMT_ITALIC \
+									   << "[TRCE] "     << FMT_FG_LIGHT_GREY << FMT_ITALIC \
 						     		   << "func:\""    << __func__ << "\" ~ file:\"" << __FILE__ << "\" ~ "\
 						               << "line:"      << __LINE__ << " ~ " << __DATE__ << ", " << __TIME__ << FMT_RESET << endl
 #else
@@ -65,7 +65,7 @@ void log(const std::string &msg, int line_number);
 // #endif
 
 #ifdef TEST_ONLY
-#define ATTN(str) LOG("ATTN: ", FMT_FG_RED, str)
+#define ATTN(str) LOG("[ATTN] ", FMT_FG_RED, str)
 #else
 #define ATTN(str) // str
 #endif
@@ -81,17 +81,17 @@ void log(const std::string &msg, int line_number);
 
 // debugging
 #ifdef DEBUG
-#define INFO(str) LOG("INFO:  ", INFO_COLOR, str)
-#define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
-#define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
+#define INFO(str) LOG("[INFO]  ", INFO_COLOR, str)
+#define WARN(str) LOG("[WARN]  ", FMT_FG_YELLOW, str)
+#define ERROR(str) LOG("[ERROR] ", FMT_FG_RED, str)
 #elif WARNINGS
 #define INFO(str) // str
-#define WARN(str) LOG("WARN:  ", FMT_FG_YELLOW, str)
-#define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
+#define WARN(str) LOG("[WARN]  ", FMT_FG_YELLOW, str)
+#define ERROR(str) LOG("[ERROR] ", FMT_FG_RED, str)
 #else
 #define INFO(str) // str
 #define WARN(str) // str
-#define ERROR(str) LOG("ERROR: ", FMT_FG_RED, str)
+#define ERROR(str) LOG("[ERROR] ", FMT_FG_RED, str)
 #endif
 
 namespace bkp

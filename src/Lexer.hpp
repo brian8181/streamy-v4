@@ -1,4 +1,4 @@
-/**
+    /**
  * @file    lexer.hpp
  * @version 0.0.1
  * @date    Fri, 26 Sep 2025 17:05:10
@@ -206,12 +206,6 @@ public:
 	}
 
 	/**
-	 * @name   dump output stream
-	 * @return int
-	 */
-	void dump_ostream( const string& in );
-
-	/**
 	 * @name  print_token
 	 * @brief print token to stdout
 	 * @param token_match m
@@ -252,17 +246,11 @@ private:
 	map<unsigned long, token> m_tok_map;
 	vector<state_t> m_states;
 
-	int m_i = 0;
-	int m_argc;
-	char** m_argv;
-
 	bool initalized = false;
+	bool EOFS = false;
 	vector<string> m_input_paths;
-	bool EOFS;
 	string m_ifile;
 	string m_ofile = "build/a.out";
-
-	stack<string> include_stack;
 
 	string m_regex_str;
 	string m_buffer;

@@ -138,11 +138,9 @@ void lexer::load_config( const string& file )
  */
 bool lexer::init( const int argc, char* argv[] )
 {
-	m_argc = argc;
-	m_argv = argv;
 	for(int i = 0; i < argc; ++i)
 	{
-		 fs::path p = argv[i];
+		fs::path p = argv[i];
 		if(!fs::exists(p))
 		{
 			ERROR("file error: \"" << p << "\" does not exist. ");
@@ -151,6 +149,7 @@ bool lexer::init( const int argc, char* argv[] )
 		m_input_paths.push_back(p);
 	}
 	m_fstream.open( "build/a.out", std::ios_base::out | std::ios::trunc );
+	initalized = true;
 	return next_file();
 }
 
@@ -230,7 +229,6 @@ void lexer::set_state( state_t* pstate )
 	// save expression string ...
 	m_regex_str = ss.str();
 	m_regex_str.pop_back(); // remove extra '|' i.e. "V-BAR"
-	ATTN("EXPR:=" <<  m_regex_str);
 	ATTN( "Exit set_state ~ " << p_state->id << ":" << p_state->name );
 }
 
@@ -251,14 +249,6 @@ void lexer::push_include(const string& file)
 	inc_buffer.append( m_buffer );                 // append current buffer
 	m_buffer.clear();
 	m_buffer = inc_buffer;                         // set current buffer
-}
-
-/**
- * @name get_stack
- */
-stack<string>& lexer::get_stack()
-{
-	return include_stack;
 }
 
 /**
@@ -327,7 +317,7 @@ parser::symbol_type lexer::get_token()
 	{
 		for( int i = 1; i < len; ++i )
 		{
-			if( m.operator[]( i ).matched )
+			if( m[i].matched )
 			{
 				if( m.prefix().matched )
 				{
@@ -356,13 +346,10 @@ parser::symbol_type lexer::get_token()
 }
 
 /**
- * @name   dump output stream
- * @return int
- */
-void lexer::dump_ostream( const string& in )
-{
-
-}
+	 * @name  print_token
+	 * @brief print token to stdout
+	 * @param token_match m
+	 */
 
 void lexer::print_token(const token *tval)
 {
@@ -391,6 +378,7 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 				case NEWLINE:
 					m_line++;
 					m_fstream << '\n';
+					m_fstream << "// line:" << m_line << endl;
 					return get_token();
 				case COMMENT:
 					return get_token();
@@ -398,7 +386,6 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 			} // END switch
 			break;
 		} // END case UL_INITIAL
-		//case UL_IF_BLOCK: // fallthrough
 		case UL_ESCAPED:
 		{
 			switch( id )

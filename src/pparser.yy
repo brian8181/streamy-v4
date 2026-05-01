@@ -242,14 +242,9 @@ file:
  * @name stmt
  */
 if_stmt:
-	OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmt                                                     {
-																										/* if-then (no else) */
-																										INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE stmt");
-																									}
-	OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE stmts SLASH IF CLOSE_BRACE                     {
-																										/* if-then (no else) */
-																										INFO("stmt: OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE stmts SLASH IF CLOSE_BRACE");
-																									}
+	 OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts  OPEN_BRACE SLASH IF CLOSE_BRACE                       {
+																											INFO("stmt: OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE stmts SLASH IF CLOSE_BRACE");
+																										}
 /**
  * @name stmts
  */
@@ -262,14 +257,12 @@ stmts:
  * @name stmt
  */
 stmt:
-	OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE                           {
-																										/* if-then (no else) */
-																										INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
-																									}
-	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE  {
-		                                                                            					/* if-then-else */
-																										INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
-																			   						}
+	OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE                               {
+																											INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
+																										}
+	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE {
+																											INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
+																			   						    }
     | OPEN_BRACE symbol CLOSE_BRACE                              {
                                                                     WARN("stmt: OPEN_BRACE symbol=\"" << $symbol <<  "\" CLOSE_BRACE");
                                                                     string sym_value; // = "{" + $symbol + "=?}";
@@ -358,35 +351,43 @@ assign_stmt:
 expr[result]:
     MINUS expr[lhs] %prec UMINUS                                {
 																	INFO("PARSER expr: | expr <<");
-																	$result=$lhs
-
+																	$result=-$lhs
 																}
     | expr[lhs] PLUS_SIGN[op] expr[rhs]                         {
 																	INFO("PARSER expr: | expr PLUS_SIGN expr <<");
+																	$result = $lhs + $rhs;
 																}
-    | expr[lhs] MINUS[op] expr[rhs]                                           {
+    | expr[lhs] MINUS[op] expr[rhs]                             {
 																	INFO("PARSER expr: | expr MINUS expr <<");
+																	$result = $lhs - $rhs;
 																}
-    | expr[lhs] ASTERISK[op] expr[rhs]                                        {
+    | expr[lhs] ASTERISK[op] expr[rhs]                          {
 																	INFO("PARSER expr: | expr ASTERISK expr <<");
+																	$result = $lhs * $rhs;
 																}
-    | expr[lhs] SLASH[op] expr[rhs]                                           {
+    | expr[lhs] SLASH[op] expr[rhs]                             {
 																	INFO("PARSER expr: | expr SLASH expr <<");
+																	$result = $lhs / $rhs;
 																}
-    | expr[lhs] LESS_THAN[op] expr[rhs]                                       {
+    | expr[lhs] LESS_THAN[op] expr[rhs]                         {
 																	INFO("PARSER expr: | expr LESS_THAN expr <<");
+																	$result = lhs < rhs;
 																}
-    | expr[lhs] GREATER_THAN[op] expr[rhs]                                    {
+    | expr[lhs] GREATER_THAN[op] expr[rhs]                      {
 																	INFO("PARSER expr: | expr GREATER_THAN expr <<");
+																	$result = lhs > rhs;
 																}
-    | expr[lhs] GREATER_THAN_EQUAL[op] expr[rhs]                              {
+    | expr[lhs] GREATER_THAN_EQUAL[op] expr[rhs]                {
 																	INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << ");
+																	$result = lhs >= rhs;
 																}
-    | expr[lhs] LESS_THAN_EQUAL[op] expr[rhs]                                 {
+    | expr[lhs] LESS_THAN_EQUAL[op] expr[rhs]                   {
 																	INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<");
+																	$result = lhs <= rhs;
 																}
-    | expr[lhs] NOT_EQUAL[op] expr[rhs]                                       {
+    | expr[lhs] NOT_EQUAL[op] expr[rhs]                         {
 																	INFO("PARSER expr: | expr NOT_EQUAL expr <<");
+																	$result = lhs != rhs;
 																}
     | LPAREN expr[exp] RPAREN                                   {
 																	INFO("PARSER expr: | LPAREN expr RPAREN <<");
@@ -581,16 +582,15 @@ built_in:
  */
 attributes:
     attrib                                                     {
-                                                                    INFO("attribute: | attib push --> attributes");
-                                                                    //INFO("attribute: | push -> attrib={name=\"" << $1.first << "\" value=\"" << $1.second << "\"");
-                                                                    std::pair<std::string, std::string>  p($1);
-                                                                    std::vector< std::pair<std::string, std::string> > v;
-                                                                    v.push_back( p );
-                                                                    $$ = v;
+                             										stringstream ss;
+																	ss << "attribute: | push -> attrib={name=\"" << $1.first << "\" value=\"" << $1.second << "\"";
+                                                                    INFO(ss.str());
+                                                                    $$.push_back($1);
                                                                }
-    | attributes COMMA attrib                                        {
-                                                                    INFO("attribute: | attib push --> attributes");
-                                                                    //INFO("attribute: | attributes : push-> attrib={name=\"" << $2.first << "\" value=\"" << $2.second << "\"");
+    | attributes COMMA attrib                                  {
+                                                                    stringstream ss;
+																	ss << "attribute: | push -> attrib={name=\"" << $3.first << "\" value=\"" << $3.second << "\"";
+                                                                    INFO(ss.str());
 																	$1.push_back( $3 );
                                                                     $$ = $1;
                                                                }

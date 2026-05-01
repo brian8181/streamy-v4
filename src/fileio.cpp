@@ -18,6 +18,9 @@ using std::ofstream;
 using std::pair;
 using std::stringstream;
 
+/**
+ *
+ */
 long file_size(const string &path)
 {
     try
@@ -32,6 +35,7 @@ long file_size(const string &path)
     }
     return -1;
 }
+
 /**
  * @brief  check if file exist
  * @param  const string& : path to file

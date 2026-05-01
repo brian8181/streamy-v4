@@ -44,8 +44,6 @@ vector<rule> rules {
 		{ "ASSIGN_ATTRIB", "EQUAL_SIGN", "STRING_LITERAL" },
 		{ "ASSIGN_ATTRIB", "EQUAL_SIGN", "NUMERIC_LITERAL" },
 		{ "ASSIGN_ATTRIB", "EQUAL_SIGN", "SYMBOL" }
-
-
 	};
 
 /**
