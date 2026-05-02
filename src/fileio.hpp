@@ -146,7 +146,7 @@ int write_line(const string& file, /* in */ const string& line);
  * @param  lines : vector to store the lines
  * @return number of lines written, or -1 on errors
  */
-int read_lines(const string& file, /* out */ vector<string>& lines);
+int read_lines(const string &file, /* out */ vector<string>& lines);
 
 /**
  * @brief  write lines to a file

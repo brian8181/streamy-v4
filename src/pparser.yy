@@ -114,6 +114,7 @@
 
 }
 
+
 %token<std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
 %token<std::string> INDIRECT_MEMBER ARRAY
 %token<std::string> STRING_LITERAL NUMERIC_LITERAL
@@ -129,6 +130,7 @@
 %token DOLLAR_SIGN COMMA COLON VBAR HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
 %token END_OF_FILE 0
 %token END_OF_FILES
+%token<std::string> UNESCAPED_TEXT
 %token MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
 %token NEWLINE
 %token FILE_PATH
@@ -136,7 +138,7 @@
 %token MINUS '-'
 %token MULT '*'
 
-
+%type<std::string> block
 %type< std::vector< std::string > > files
 %type<std::string> file
 %type< std::vector< std::string > > stmts
@@ -211,7 +213,8 @@ complier:
  * @name files
  */
 files:
-	file                                                        {
+	block                                                      { INFO("block"); }
+	| file                                                        {
 																	 INFO("files: | file=\"" << $1 << "\"");
 																	 $$.push_back($1);
 																}
@@ -225,7 +228,7 @@ files:
  * @name file
  */
 file:
-    stmts END_OF_FILE                                           {
+	 stmts END_OF_FILE                                           {
                                                                     INFO("file: stmts.size=" << $1.size() << " END_OF_FILE");
 
 																	string name;
@@ -238,6 +241,12 @@ file:
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                 }
                                                                 ;
+block:
+	UNESCAPED_TEXT                     {
+											INFO("block: | UNESACAPED_TEXT");
+										    $$=$1;
+										}
+										;
 /**
  * @name stmt
  */
@@ -245,6 +254,7 @@ if_stmt:
 	 OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts  OPEN_BRACE SLASH IF CLOSE_BRACE                       {
 																											INFO("stmt: OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE stmts SLASH IF CLOSE_BRACE");
 																										}
+																										;
 /**
  * @name stmts
  */
@@ -259,6 +269,7 @@ stmts:
 stmt:
 	OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE                               {
 																											INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
+
 																										}
 	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE {
 																											INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");

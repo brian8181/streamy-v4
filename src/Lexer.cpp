@@ -236,7 +236,7 @@ void lexer::set_state( state_t* pstate )
  * @name push_include
  * @brief prepend include file contents to beginning of buffer
  */
-void lexer::push_include(const string& file)
+void lexer::push_include( const string& file )
 {
 	// trimming quotes ...
 	string file_tmp = file;
@@ -275,7 +275,7 @@ void lexer::read_istream( const string& file, string& s )
  * @name read_istream
  * @brief read input file into string object
  */
-void lexer::read_istream(const string& file, char* cstr)
+void lexer::read_istream( const string& file, char* cstr )
 {
 	ifstream stream( file, std::ios::in );
 	if( stream.is_open() )
@@ -321,19 +321,16 @@ parser::symbol_type lexer::get_token()
 			{
 				if( m.prefix().matched )
 				{
+					ATTN("PREFIX_ERROR");
 					if( p_state->id != UL_INITIAL )
-						return parser::make_YYerror();
-					m_fstream << m.prefix(); // stream prefix (unescaped text)
+					 	return parser::make_YYerror();
+					//m_fstream << m.prefix(); // stream prefix (unescaped text)
 				}
 				// get match : by sub_match index (i)
 				unsigned long id = ( *g_state_tokens[p_state->id] )[i - 1];
 				token_t token = g_tokens[id];
+				print_smatch(token,  m );
 
-				INFO( "match.pos:" << m.position() << " - match.sz:" << m.str().size() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size() );
-				INFO( "match[" << "i=" << i << "] = " << token.name \
-					<< "[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.str() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]" \
-					<< " - prefix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.prefix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]" \
-					<< " - suffix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.suffix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]" );
 				// set buffer to suffix
 				m_buffer = m.suffix();
 				return on_token( id, match );
@@ -351,9 +348,13 @@ parser::symbol_type lexer::get_token()
 	 * @param token_match m
 	 */
 
-void lexer::print_token(const token *tval)
+void lexer::print_smatch(token_t t, boost::smatch m)
 {
-	cout << tval->name << "{\n" << tval->index << "\n" << tval->rexp << "\n" << tval->stype << endl;
+	INFO( "match.pos:" << m.position() << " - match.sz:" << m.str().size() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size() );
+	INFO( "match[ " << t.index << " : " << t.name  << "] "\
+		<< "[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.str() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"\
+		<< " - prefix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.prefix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"\
+		<< " - suffix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.suffix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]");
 }
 
 /**
@@ -371,7 +372,11 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 		{
 			switch( id )
 			{
-
+				case UNESCAPED_TEXT:
+					ATTN("UNESCAPED_TEXT");
+					write_ostream(match);
+					return get_token();
+					//return parser::make_UNESCAPED_TEXT( match );
 				case OPEN_BRACE:
 					set_state( &ESCAPED );
 					return parser::make_OPEN_BRACE();

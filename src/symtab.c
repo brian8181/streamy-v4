@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "symtab.h"
 
 // root sym_table
@@ -24,12 +23,6 @@ symbol_tab *get_stable()
 
     return tab;
 }
-
-
-// free_symbol(symbol_tab stab, symbol s)
-// {
-// 	free(s);
-// }
 
 void init_symbol(symbol **s, const char *id, const char *type_modifiers, const char *type, const char *val)
 {
@@ -82,7 +75,6 @@ void remove_symbol(symbol_tab *stab, const char *id)
         {
             symbol *next_next = cur->next->next;
 			free(s);
-            //free_symbol(stab, cur->next);
             cur->next = next_next;
         }
     }
@@ -110,7 +102,6 @@ void clear_symbols(symbol_tab *stab)
     {
         symbol *next = cur->next;
 		free(cur);
-        //free_symbol(stab, cur);
         cur = next;
     }
 }
@@ -144,8 +135,6 @@ symbol *find_symbol_by_id(symbol_tab *stab, const char *id)
     }
     return 0;
 }
-
-
 
 symbol *find_tail(symbol_tab *stab)
 {

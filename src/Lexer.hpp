@@ -206,11 +206,11 @@ public:
 	}
 
 	/**
-	 * @name  print_token
+	 * @name  print_smatch
 	 * @brief print token to stdout
 	 * @param token_match m
 	 */
-	void print_token(const token *tval);
+	void print_smatch(token_t t, boost::smatch m);
 
 	/**
 	 * @name  on_token
@@ -258,7 +258,7 @@ private:
 	fstream m_fstream;
 	int m_line;
 	int m_file_count;
-	state_t *p_state = &INITIAL;
+	state_t* p_state = &INITIAL;
 	stringstream g_stringstream;
 };
 
