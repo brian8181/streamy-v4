@@ -64,6 +64,7 @@ namespace ast
 	class binary_expr : public expr
 	{
 	public:
+
 		binary_expr(expr* lhs, expr* rhs) : _lhs(lhs), _rhs(rhs)
 		{
 		}
@@ -88,9 +89,13 @@ namespace ast
 	class add_operation : public binary_expr
 	{
 	public:
-		add_operation(T* lhs, T* rhs) : binary_expr( literal<T>(lhs) ,  literal<T>(rhs))
+		add_operation(T* lhs, T* rhs) : binary_expr(literal<T>(lhs), literal<T>(rhs))
 		{
 		}
+
+		// add_operation(literal<T> lhs,  literal<T> rhs) : binary_expr( lhs, rhs )
+		// {
+		// }
 
 		add_operation(expr* lhs, expr* rhs) : binary_expr(lhs, rhs)
 		{
@@ -105,5 +110,84 @@ namespace ast
 		}
 
 	};
+
+	template< class T >
+	class subtract_operation : public binary_expr
+	{
+	public:
+		subtract_operation(T* lhs, T* rhs) : binary_expr(literal<T>(lhs), literal<T>(rhs))
+		{
+		}
+
+		// add_operation(literal<T> lhs,  literal<T> rhs) : binary_expr( lhs, rhs )
+		// {
+		// }
+
+		subtract_operation(expr* lhs, expr* rhs) : binary_expr(lhs, rhs)
+		{
+		}
+
+		T* eval()
+		{
+			_val = new T;
+			T* pval = (T*)_val;
+			*pval = *(_lhs->eval<T>()) - *(_rhs->eval<T>());
+			return pval;
+		}
+
+	};
+
+
+	template< class T >
+	class multiply_operation : public binary_expr
+	{
+	public:
+		multiply_operation(T* lhs, T* rhs) : binary_expr(literal<T>(lhs), literal<T>(rhs))
+		{
+		}
+
+		// add_operation(literal<T> lhs,  literal<T> rhs) : binary_expr( lhs, rhs )
+		// {
+		// }
+
+		multiply_operation(expr* lhs, expr* rhs) : binary_expr(lhs, rhs)
+		{
+		}
+
+		T* eval()
+		{
+			_val = new T;
+			T* pval = (T*)_val;
+			*pval = *(_lhs->eval<T>()) * *(_rhs->eval<T>());
+			return pval;
+		}
+	};
+
+
+	template< class T >
+	class divide_operation : public binary_expr
+	{
+	public:
+		divide_operation(T* lhs, T* rhs) : binary_expr(literal<T>(lhs), literal<T>(rhs))
+		{
+		}
+
+		// add_operation(literal<T> lhs,  literal<T> rhs) : binary_expr( lhs, rhs )
+		// {
+		// }
+
+		divide_operation(expr* lhs, expr* rhs) : binary_expr(lhs, rhs)
+		{
+		}
+
+		T* eval()
+		{
+			_val = new T;
+			T* pval = (T*)_val;
+			*pval = *(_lhs->eval<T>()) / *(_rhs->eval<T>());
+			return pval;
+		}
+	};
+
 }
 #endif

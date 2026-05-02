@@ -30,6 +30,10 @@ int main(int argc, char** argv)
 	long* pv = ex.eval();
 	cout << "*pv=" << *pv << endl;
 
+	// ast::add_operation<long> ex2(&n2, &n);
+	// long* p2 = ex2.eval();
+	// cout << "*p2=" << *p2 << endl;
+
 
 
 	//std::vector<ast::expr> vec = { e1, e2, e3, e4, e5 };
