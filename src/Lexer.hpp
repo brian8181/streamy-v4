@@ -50,7 +50,7 @@ using yy::parser;
  * ============================================================================
  * File: <singleton>.cpp
  *
- * --- EDUCATIONAL NOTE:
+ * --- NOTE:
  * "We use the Heap (via unique_ptr) when the Singleton is very large, when we
  * want to use polymorphism (deciding the implementation at runtime) or when we
  * need total control over dynamic memory. We use Meyers' Singleton for
@@ -224,22 +224,6 @@ public:
 	parser::symbol_type on_token( unsigned long id, const string& match = {} );
 
 private:
-
-	// typedef struct context_t
-	// {
-	// 	string regex_str;
-	// 	string search;
-	// 	string match;
-	// 	string prefix;
-	// 	string suffix;
-	// 	long pos;
-	// 	string buffer;
-	// 	boost::regex rexp;
-	// 	boost::sregex_iterator iter;
-	// 	boost::sregex_iterator end;
-	// 	boost::smatch* p_smatch;
-	// } context_t;
-	// context_t* p_context;
 
 	//configuration types
 	vector<token_t> m_tokens;

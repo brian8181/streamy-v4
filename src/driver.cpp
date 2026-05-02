@@ -21,7 +21,7 @@
 #include <getopt.h>
 #include <set>
 #include <filesystem>
-#include "config.hpp"
+#include "config.h"
 #include "driver.hpp"
 #include "lexer.hpp"
 #include "pparser.tab.hpp"

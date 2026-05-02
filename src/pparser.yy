@@ -138,10 +138,11 @@
 %token MINUS '-'
 %token MULT '*'
 
-%type<std::string> block
 %type< std::vector< std::string > > files
 %type<std::string> file
 %type< std::vector< std::string > > stmts
+%type< std::vector< std::string > > blocks
+%type<std::string> block
 %type< std::pair<std::string, std::string> > attrib
 %type<std::vector< std::pair<std::string, std::string> > > attributes
 %type<std::vector< std::pair<std::string, std::string> > > built_in
@@ -192,8 +193,7 @@
  * @name complier
  */
 complier:
-	%empty
-	| files  END_OF_FILES                                         {
+	files  END_OF_FILES                                         {
 																	INFO("complier: files.size=" << $1.size() << " END_OF_FILES");
 
 																	cout << "processed files ..." << endl;
@@ -207,14 +207,14 @@ complier:
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "************************* Done ************************" << FMT_RESET << endl;
+																	std::exit(0);
                                                                 }
                                                                 ;
 /**
  * @name files
  */
 files:
-	block                                                      { INFO("block"); }
-	| file                                                        {
+	file                                                        {
 																	 INFO("files: | file=\"" << $1 << "\"");
 																	 $$.push_back($1);
 																}
@@ -228,8 +228,9 @@ files:
  * @name file
  */
 file:
-	 stmts END_OF_FILE                                           {
-                                                                    INFO("file: stmts.size=" << $1.size() << " END_OF_FILE");
+	blocks END_OF_FILE
+						                                        {
+                                                                    INFO("file: blocks.size=" << $1.size() << " END_OF_FILE");
 
 																	string name;
 																	lexer::instance().get_current_infile(name);
@@ -241,12 +242,19 @@ file:
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                 }
                                                                 ;
+blocks:
+	block														{ INFO("blocks: | block"); }
+	| blocks block												{ INFO("blocks: | blocks block"); }
+	;
+
 block:
-	UNESCAPED_TEXT                     {
-											INFO("block: | UNESACAPED_TEXT");
-										    $$=$1;
-										}
-										;
+	stmts														{ INFO("block: | stmts"); }
+	| UNESCAPED_TEXT						                    {
+																	INFO("block: | UNESACAPED_TEXT");
+																	lexer::instance().write_ostream($1);
+																	$$=$1;
+																}
+																;
 /**
  * @name stmt
  */
@@ -292,7 +300,7 @@ stmt:
                                                                     $stmt=$2;
 																}
 	| OPEN_BRACE symbol[sym] VBAR modifiers[mod] CLOSE_BRACE    {
-                                                                    WARN("expr: | symbol VBAR modifiers ");
+                                                                    WARN("stmt: | symbol VBAR modifiers ");
                                                                     std::string s;
                                                                     get_value($sym, s);
 																	s = s + "~";       // modifiy value
@@ -301,22 +309,22 @@ stmt:
 																	// todo modifiers
                                                                 }
     | OPEN_BRACE expr CLOSE_BRACE                               {
-                                                                    WARN("block: | OPEN_BRACE expr CLOSE_BRACE");
+                                                                    WARN("stmt: | OPEN_BRACE expr CLOSE_BRACE");
 																	lexer::instance().write_ostream($2);
                                                                     $stmt=$2;
                                                                 }
     | OPEN_BRACE sub_proc CLOSE_BRACE                           {
-                                                                    INFO("block: | OPEN_BRACE sub_porc CLOSE_BRACE");
+                                                                    INFO("stmt: | OPEN_BRACE sub_porc CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE array CLOSE_BRACE                              {
-                                                                    INFO("block: | OPEN_BRACE array CLOSE_BRACE");
+                                                                    INFO("stmt: | OPEN_BRACE array CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE assign_stmt CLOSE_BRACE                        {
-                                                                    INFO("block: | OPEN_BRACE assign_stmt CLOSE_BRACE");
+                                                                    INFO("stmt: | OPEN_BRACE assign_stmt CLOSE_BRACE");
                                                                     //lexer::instance().write_ostream($2);
                                                                 }
 	| OPEN_BRACE '$' '%' CLOSE_BRACE                           {
-                                                                    INFO("block: | OPEN_BRACE qualafied_id CLOSE_BRACE");
+                                                                    INFO("stmt: | OPEN_BRACE qualafied_id CLOSE_BRACE");
                                                                     // bkp todo, look up in symbol table & do replace
                                                                     // bkp todo qualified lookup
                                                                     std::string s;
@@ -324,7 +332,7 @@ stmt:
                                                                     $$ = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
-                                                                    INFO("block: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
+                                                                    INFO("stmt: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
                                                                     size_t len = $3.size();
                                                                     int i = 0;
                                                                     for(; i < len; ++i)
@@ -417,13 +425,21 @@ sub_proc:
  * @name array
  */
 array:
-    symbol OPEN_BRACKET NUMERIC_LITERAL CLOSE_BRACKET          {
-                                                                    WARN("PARSER array: | symbol=\"" << $symbol << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $NUMERIC_LITERAL << "\" CLOSE_BRACKET");
+    symbol[id] OPEN_BRACKET NUMERIC_LITERAL[index] CLOSE_BRACKET	{
+																		WARN("PARSER array: | symbol=\"" << $id << "\" OPEN_BRACKET NUMERIC_LITERAL=\"" << $index << "\" CLOSE_BRACKET");
+																		string sym_value;
+																		get_value($id, sym_value);
+																		lexer::instance().write_ostream(sym_value);
+																		$$=sym_value;
+																		$array=$id;
+                                                                }
+	|  symbol[id] OPEN_BRACKET symbol[index] CLOSE_BRACKET					{
+                                                                    WARN("PARSER array: | symbol=\"" << $id << "\" OPEN_BRACKET symbol=\"" << $index << "\" CLOSE_BRACKET");
                                                                     string sym_value;
-                                                                    get_value($1, sym_value);
+                                                                    get_value($id, sym_value);
                                                                     lexer::instance().write_ostream(sym_value);
                                                                     $$=sym_value;
-                                                                    $array=$symbol;
+                                                                    $array=$id;
                                                                 }
                                                                 ;
 /**
@@ -662,14 +678,6 @@ attrib:
 																	$$ = pair;
                                                                 }
                                                                 ;
-tokens:
-	PLUS                                                        {
-																	INFO("PLUS TOKEN!!!!");
-																}
-	| UNESCAPED_TEXT						                    {
-																	INFO("block: | UNESACAPED_TEXT");
-																}
-																;
 /**
  * @name attrib_name
  * @brief attribute name

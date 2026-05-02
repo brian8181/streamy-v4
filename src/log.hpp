@@ -94,36 +94,6 @@ void log(const std::string &msg, int line_number);
 #define ERROR(str) LOG("[ERROR] ", FMT_FG_RED, str)
 #endif
 
-namespace bkp
-{
-    template <typename T, typename... Args>
-    string &print(string &fmt, Args... args)
-    {
-        vector<T> v;
-        (v.push_back(args), ...);
-
-        int len = v.size();
-        const auto rexp = boost::regex(R"({.*})", boost::regex::extended);
-        const auto beg = boost::sregex_iterator(fmt.begin(), fmt.end(), rexp);
-        const auto end = boost::sregex_iterator();
-        auto iter = beg;
-
-        stringstream ss;
-        for (int i = 0; iter != end; ++iter, ++i)
-            ss << iter->prefix() << v[i];
-
-        ss << iter->suffix();
-        fmt = ss.str();
-        return fmt;
-    }
-
-    template <typename... Ts>
-    void myFunction(Ts const &...xs) // Ts can be of any number of any type
-    {
-        // ...
-    }
-}
-
 //}
 
 #endif

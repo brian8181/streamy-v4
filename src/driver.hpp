@@ -9,7 +9,6 @@
 #define SCANNER_HPP_
 #define YYDEBUG 1
 
-#include "config.h"
 #include "fileio.hpp"
 #include "pparser.tab.hpp"
 

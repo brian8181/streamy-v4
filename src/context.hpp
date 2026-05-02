@@ -17,6 +17,22 @@
 using std::cout;
 using std::endl;
 
+// typedef struct context_t
+// {
+// 	string regex_str;
+// 	string search;
+// 	string match;
+// 	string prefix;
+// 	string suffix;
+// 	long pos;
+// 	string buffer;
+// 	boost::regex rexp;
+// 	boost::sregex_iterator iter;
+// 	boost::sregex_iterator end;
+// 	boost::smatch* p_smatch;
+// } context_t;
+// context_t* p_context;
+
 class context
 {
 public:

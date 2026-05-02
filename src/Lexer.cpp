@@ -64,7 +64,6 @@ void lexer::load_config( const string& file )
 	boost::regex_search( terminal_suffix, groups_match, rgx, boost::match_not_bol | boost::match_not_eol );
 	// now get section
 	string token_section = groups_match.prefix();
-
 	// stream & parse tokens section
 	std::istringstream input1;
 	input1.str( token_section );
@@ -80,7 +79,6 @@ void lexer::load_config( const string& file )
 			string expr = token_match["rexp"].str();
 			string stype = token_match["type"].str();
 			string test_val = token_match["test"].str();
-
 			auto* ptoken = new token_t {
 				string( name ),
 				stype,
@@ -97,7 +95,6 @@ void lexer::load_config( const string& file )
 	boost::regex_search( groups_suffix, states_match, rgx, boost::match_not_bol | boost::match_not_eol );
 	string groups_section = states_match.prefix();
 	string states_section = states_match.suffix();
-
 	// stream & parse tokens section
 	std::istringstream input2;
 	input2.str( states_section );
@@ -113,12 +110,10 @@ void lexer::load_config( const string& file )
 			unsigned long state_id = 0xFFul | ( ++i * 6ul );  // generate id for new state
 			state_t stat { state_id, str_state };    // create new state
 			m_states.push_back( stat );
-
 			// copy to term to vector
 			vector<token_t> tokens;                           // token vector for this state
 			std::stringstream ss( str_tokens );               // csv of states
 			std::string str_token;                            // item in csv states
-
 			// use get line to split on commas
 			while( std::getline( ss, str_token, ',' ) )
 			{
@@ -172,8 +167,8 @@ bool lexer::next_file()
 		++m_file_count;
 		++i;
 
-		// fs::path p = m_ifile;
-		// int pos = m_ifile.find_last_of( '.' );
+		fs::path p = m_ifile;
+		int pos = m_ifile.find_last_of( '.' );
 		// string path = m_ifile.substr( 0, pos - 1 );
 		// m_ofile = path + ".out.txt";
 
@@ -340,11 +335,10 @@ parser::symbol_type lexer::get_token()
 }
 
 /**
-	 * @name  print_token
-	 * @brief print token to stdout
-	 * @param token_match m
-	 */
-
+ * @name  print_token
+ * @brief print token to stdout
+ * @param token_match m
+ */
 void lexer::print_smatch(token_t t, boost::smatch m)
 {
 	INFO( "match.pos:" << m.position() << " - match.sz:" << m.str().size() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size() );
@@ -371,9 +365,9 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 			{
 				case UNESCAPED_TEXT:
 					ATTN("UNESCAPED_TEXT");
-					write_ostream(match);
-					return get_token();
-					//return parser::make_UNESCAPED_TEXT( match );
+					//write_ostream(match);
+					//return get_token();
+					return parser::make_UNESCAPED_TEXT( match );
 				case OPEN_BRACE:
 					set_state( &ESCAPED );
 					return parser::make_OPEN_BRACE();
