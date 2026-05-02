@@ -133,24 +133,24 @@ namespace ast
 		}
 	};
 
-	// template< class T >
-	// class divide_operation : public binary_expr
-	// {
-	// public:
-	// 	divide_operation(T* lhs, T* rhs) : binary_expr(literal<T>(lhs), literal<T>(rhs))
-	// 	{
-	// 	}
-	// 	divide_operation(expr* lhs, expr* rhs) : binary_expr(lhs, rhs)
-	// 	{
-	// 	}
-	// 	T* eval()
-	// 	{
-	// 		_val = new T;
-	// 		T* pval = (T*)_val;
-	// 		*pval = *(_lhs->eval<T>()) / *(_rhs->eval<T>());
-	// 		return pval;
-	// 	}
-	// };
+	template< class T >
+	class divide_operation : public binary_expr
+	{
+	public:
+		divide_operation(T* lhs, T* rhs) : binary_expr(literal<T>(lhs), literal<T>(rhs))
+		{
+		}
+		divide_operation(expr* lhs, expr* rhs) : binary_expr(lhs, rhs)
+		{
+		}
+		T* eval()
+		{
+			_val = new T;
+			T* pval = (T*)_val;
+			*pval = *(_lhs->eval<T>()) / *(_rhs->eval<T>());
+			return pval;
+		}
+	};
 
 }
 #endif

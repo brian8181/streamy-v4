@@ -518,10 +518,14 @@ modifier:
  * @brief ( $x:$y:$x ) | 1:2:"three"
  */
 colon_sep_params:
-        colon_sep_params colon_sep_param                        {
+		colon_sep_param											{
+                                                                   	INFO("colon_sep_params: | colon_sep_param");
+																	$$.push_back($1);
+                                                                }
+		|  colon_sep_params colon_sep_param                     {
                                                                    	INFO("colon_sep_params: | colon_sep_params colon_sep_param");
-                                                                    $$ = $1;
-																	$$.push_back($2);
+                                                                    $1.push_back($2);
+																	$$ = $1;
                                                                 }
                                                                 ;
 /**
@@ -661,6 +665,9 @@ attrib:
 tokens:
 	PLUS                                                        {
 																	INFO("PLUS TOKEN!!!!");
+																}
+	| UNESCAPED_TEXT						                    {
+																	INFO("block: | UNESACAPED_TEXT");
 																}
 																;
 /**

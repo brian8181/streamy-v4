@@ -2,7 +2,7 @@
 $a={$a}
 $b={$b}
 $c={$c}
-{$a|capitalize}
+{$a|capitalize:3:2:1}
 ${$b|capitalize}
 my pussy is {$pussy}.
 {}
