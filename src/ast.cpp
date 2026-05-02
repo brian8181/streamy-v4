@@ -1,45 +1,35 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include "ast.hpp"
 
 using std::cout;
 using std::endl;
+using std::string;
 
 #define AST_MAIN
 #define AST_MAIN
 #ifdef AST_MAIN
 int main(int argc, char** argv)
 {
-	ast::literal_expr le(5);
-	cout << *le.eval() << endl;
+	// string s = "test";
+	// ast::string_literal e1(&s);
+	// e1.eval<string>();
 
-    // ast::add_expr<int,int> e11(2,3);
-    // int* v11 = e11.eval();
-    // cout << "e12=" << *v11 << endl;
+	long n = 42;
+	ast::literal<long> e2(&n);
+	e2.eval<long>();
 
-	// // ast::add_expr< ast::literal_expr<int>, ast::literal_expr<int> > e12(ast::literal_expr(10),ast::literal_expr(3));
-    // int* v12 = e12.eval();
-    // cout << "e12=" << *v12 << endl;
+	long n2 = 55;
+	ast::literal<long> e3(&n2);
+	e3.eval<long>();
 
-	// ast::add_expr<ast::add_expr<int,int>, int> e1(e11, 3);
-    // //int* v = e1.eval();
-    // //cout << "e1=" << *v << endl;
+	//ast::binary_expr be(&e2, &e3);
 
-    ast::subtract_expr<int> e2(5,3);
-    int* v2 = e2.eval();
-    cout << "e2=" << *v2 << endl;
+	ast::add_operation<long> ex(&e2, &e3);
+	long* pv = ex.eval();
+	cout << "*pv=" << *pv << endl;
 
-    ast::multiply_expr<int> e3(2,3);
-    int* v3 = e3.eval();
-    cout << "e3=" << *v3 << endl;
-
-    ast::divide_expr<int> e4(10,2);
-    int* v4 = e4.eval();
-    cout << "e4=" << *v4 << endl;
-
-    ast::modlus_expr<int> e5(10,3);
-    int* v5 = e5.eval();
-    cout << "e5=" << *v5 << endl;
 
 
 	//std::vector<ast::expr> vec = { e1, e2, e3, e4, e5 };

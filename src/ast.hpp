@@ -7,19 +7,20 @@
 #define _expr_HPP_
 
 #include <iostream>
+#include <string>
 
 using std::cout;
 using std::endl;
-
+using std::string;
 namespace ast
 {
-	/**
-	 * @name expr_base
-	 */
-	// template <typename T>
-	// class expr_base {};
+	struct expr_node
+	{
+		void* pval;
+		expr_node* next;
+	};
 
-	class expr_base
+	class expr_t
 	{
 
 	};
@@ -27,16 +28,8 @@ namespace ast
 	/**
 	 * @class expr
 	 */
-	class expr : public expr_base
+	class expr : expr_t
 	{
-	public:
-		struct expr_node
-		{
-			void* pval;
-			expr_node* next;
-			expr_node* nodes;
-		};
-
 	public:
 		/**
 		 * @brief : default ctor
@@ -61,366 +54,56 @@ namespace ast
 		template< typename T >
 		T* eval()
 		{
-			return T::eval();
+			return (T*)_val;
 		}
-
-	protected:
+	public:
 		 void* _val;
 	};
 
-
-	// template< class T >
-	// class literal_expr : expr
-	// {
-	// public:
-	// 	/**
-	// 	 * @brief : default ctor
-	// 	 */
-	// 	literal_expr(const T& val) : _val_t(0)
-	// 	{
-	// 			expr::_val = new T(val);
-	// 		_val_t = (T*)expr::_val;
-	// 	}
-
-	// 	~literal_expr() override
-	// 	{
-	// 		delete _val_t;
-	// 	}
-
-	// 	T* eval()
-	// 	{
-	// 		return _val_t;
-	// 	}
-
-	// protected:
-	// 	T* _val_t;
-	// };
-
-	/**
-	 * @class urnary_expr
-	 */
-	template< class T >
-	class urnary_expr : expr
+	//template< class T >
+	class binary_expr : public expr
 	{
 	public:
-		/**
-		 * @brief : default ctor
-		 */
-		explicit urnary_expr(const T& val) : _val_t(0)
-		{
-			expr::_val = new T(val);
-			_val_t = (T*)expr::_val;
-		}
-
-		~urnary_expr() override
-		{
-			delete _val_t;
-		}
-
-		T* eval()
-		{
-			return _val_t;
-		}
-
-	protected:
-		T* _val_t;
-	};
-
-	/**
-	 * @class expr
-	 */
-	template< class T >
-	class literal_expr final : urnary_expr<T>
-	{
-	public:
-		/**
-		 * @brief : default ctor
-		 */
-		explicit literal_expr(T val) : urnary_expr<T>(val)
+		binary_expr(expr* lhs, expr* rhs) : _lhs(lhs), _rhs(rhs)
 		{
 		}
 
-		/**
-		 * @brief : dtor
-		 */
-		~literal_expr() override {
-			delete urnary_expr<T>::_val_t;
-		}
-
-		T* eval()
-		{
-			T* p = new T;
-			*p = _val_t;
-			return p;
-		}
-	};
-
-
-	 /**
-	 * @class expr
-	 */
-	template< class T >
-	class binary_expr : expr
-	{
-	public:
-		/**
-		 * @brief : default ctor
-		 */
-		binary_expr(const T& lhs, const T& rhs) //: _lhs(&lhs), _rhs(&rhs)
-			: _val(nullptr)
-		{
-			_lhs = new T(lhs);
-			_rhs = new T(rhs);
-		}
-
-		/**
-		 * @brief : ctor
-		 * @param lhs : const expr& lhs
-		 * @param rhs : const T& rhs
-		 */
-		binary_expr(const expr& lhs, const T& rhs) //: _lhs(&lhs), _rhs(&rhs)
-			: _val(nullptr)
-		{
-			_lhs = new T(lhs);
-			_rhs = new T(rhs);
-		}
-
-		/**
-		 * @brief : ctor
-		 * @param lhs : const expr& lhs
-		 * @param rhs : const expr& rhs
-		 */
-		binary_expr(const expr& lhs, const expr& rhs) //: _lhs(&lhs), _rhs(&rhs)
-			: _val(nullptr)
-		{
-			_lhs = new T(lhs);
-			_rhs = new T(rhs);
-		}
-
-		/**
-		 * @brief dtor
-		 */
-		~binary_expr() override { /* let consumer free/release/delete */ }
-
-	public:
-		 T* _val;
-		 T* _lhs;
-		 T* _rhs;
-	};
-
-	template< class LHS, class RHS >
-	class add_expr
-	{
-	public:
-		add_expr(const int& lhs, const int& rhs) : _lhs(literal_expr<int>(lhs)), _rhs(literal_expr<int>(rhs))
-		{
-
-		}
-
-		add_expr(const LHS& lhs, const RHS& rhs) : _lhs(lhs), _rhs(rhs)
-		{
-		}
-
-		literal_expr<int>* eval()
-		{
-			// RHS* p = new RHS;
-			// *p = _lhs + _rhs;
-			// return p;
-		}
-	private:
-		LHS _lhs;
-		RHS _rhs;
-
+		expr* _lhs;
+		expr* _rhs;
 	};
 
 	template< class T >
-	class add_expr2
+	class literal : public expr
 	{
 	public:
-		add_expr2(const T& lhs, const T& rhs) : _lhs(lhs), _rhs(rhs)
+		literal(T* n)
 		{
-		}
-
-		T* eval()
-		{
-			T* p = new T;
-			*p = _lhs + _rhs;
-			return p;
-		}
-	private:
-		T _lhs;
-		T _rhs;
-
-	};
-
-	template< class T >
-	class subtract_expr final : binary_expr<T>
-	{
-	public:
-		subtract_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		subtract_expr(const subtract_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs - *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
+			_val = new T;
+			T* pn = (T*)_val;
+			*pn = *n;
 		}
 	};
 
 	template< class T >
-	class multiply_expr final : binary_expr<T>
+	class add_operation : public binary_expr
 	{
 	public:
-		multiply_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		multiply_expr(const multiply_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
+		add_operation(T* lhs, T* rhs) : binary_expr( literal<T>(lhs) ,  literal<T>(rhs))
+		{
+		}
+
+		add_operation(expr* lhs, expr* rhs) : binary_expr(lhs, rhs)
+		{
+		}
 
 		T* eval()
 		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs * *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
+			_val = new T;
+			T* pval = (T*)_val;
+			*pval = *(_lhs->eval<T>()) + *(_rhs->eval<T>());
+			return pval;
 		}
+
 	};
-
-	template< class T >
-	class divide_expr final : binary_expr<T>
-	{
-	public:
-		divide_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		divide_expr(const divide_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs / *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
-		}
-    };
-
-	template< class T >
-    class modlus_expr : binary_expr<T>
-	{
-	public:
-		modlus_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		modlus_expr(const modlus_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs % *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
-		}
-	};
-
-	template< class T >
-	class assign_expr final : binary_expr<T>
-	{
-	public:
-		assign_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		assign_expr(const assign_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs = *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
-		}
-	};
-
-    template< class T >
-    class equal_expr final : binary_expr<T>
-    {
-    public:
-        equal_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-        equal_expr(const equal_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs == *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
-		}
-    };
-
-	template< class T >
-	class less_than_expr final : binary_expr<T>
-	{
-	public:
-		less_than_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		less_than_expr(const less_than_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs < *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
-		}
-	};
-
-	template< class T >
-	class less_than_equal_expr final : binary_expr<T>
-	{
-	public:
-		less_than_equal_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-		less_than_equal_expr(const less_than_equal_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs <= *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
-		}
-	};
-
-    template< class T >
-    class greater_than_expr final : binary_expr<T>
-    {
-	public:
-        greater_than_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-        greater_than_expr(const greater_than_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs > *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
-		}
-	};
-
-	template< class T >
-	class greater_than_equal_expr final : binary_expr<T>
-	{
-	public:
-        greater_than_equal_expr(const T& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-        greater_than_equal_expr(const greater_than_equal_expr<T>& lhs, const T& rhs) : binary_expr<T>(lhs, rhs) { }
-
-		T* eval()
-		{
-			binary_expr<T>::_val = new int;
-			*binary_expr<T>::_val =  *binary_expr<T>::_lhs >= *binary_expr<T>::_rhs;
-			return binary_expr<T>::_val;
-		}
-	};
-
-    template <typename T>
-    class LList
-    {
-    public:
-        struct Node
-        {
-            T data;
-            Node *next;
-        };
-
-    public:
-        LList() = default;
-    	explicit LList(const Node* _head): mHead(nullptr) {
-        } ;
-        ~LList() = default;
-
-    private:
-        Node* mHead;
-    };
 }
 #endif
