@@ -80,7 +80,8 @@ $(SRC)/parser.hpp \
 $(SRC)/lexer.hpp \
 $(SRC)/driver.hpp \
 $(SRC)/definitions.hpp \
-$(SRC)/table.hpp
+$(SRC)/table.hpp \
+$(SRC)/def.h
 
 OBJS=$(OBJ)/fileio.o \
 $(OBJ)/auto_ptr.o \
@@ -90,6 +91,7 @@ $(OBJ)/parser.o \
 $(OBJ)/lexer.o \
 $(OBJ)/driver.o \
 $(OBJ)/symtab.o
+#$(OBJ)/def.o
 
 # SOURCES=$(SRC)/bash_color.hpp \
 # $(SRC)/log.hpp \
@@ -100,7 +102,8 @@ $(OBJ)/symtab.o
 # $(BLD)/pparser.tab.hpp $(BLD)/pparser.tab.o \
 # $(SRC)/parser.hpp $(OBJ)/parser.o \
 # $(SRC)/lexer.hpp $(OBJ)/lexer.o \
-# $(SRC)/driver.hpp $(OBJ)/driver.o
+# $(SRC)/driver.hpp $(OBJ)/driver.o \
+
 
 SOURCES=$(HEADERS) $(OBJS)
 

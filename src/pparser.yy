@@ -120,7 +120,7 @@
 %token<std::string> STRING_LITERAL NUMERIC_LITERAL
 %token<std::string> CONST_SYMBOL SYMBOL IDENTIFIER
 %token<std::string> VAR_ATTRIB VALUE_ATTRIB FILE_ATTRIB FROM_ATTRIB KEY_ATTRIB NAME_ATTRIB ITEM_ATTRIB
-%token<std::string>  ASSIGN_ATTRIB START_ATTRIB MAX_ATTRIB
+%token<std::string> ASSIGN_ATTRIB START_ATTRIB MAX_ATTRIB
 %token<std::string> ONCE_ATTRIB SCRIPT_ATTRIB LOOP_ATTRIB STEP_ATTRIB SHOW_ATTRIB SKIP_ATTRIB PRINT_ATTRIB DIRECTION_ATTRIB
 %token<std::string> ADVANCE_ATTRIB RESET_ATTRIB DELIMITER_ATTRIB OUTPUT_ATTRIB HEIGHT_ATTRIB WIDTH_ATTRIB ALT_ATTRIB HREF_ATTRIB
 %token<std::string> BASEDIR_ATTRIB PATH_PREFIX_ATTRIB SELECTED_ATTRIB OPTIONS_ATTRIB VALUES_ATTRIB SEPERATOR_ATTRIB FORMAT_ATTRIB
@@ -648,18 +648,18 @@ attrib:
                                                                     $$ = pair;
                                                                }
     | attrib_name[name] EQUAL_SIGN NUMERIC_LITERAL[value]      {
-                                                                        INFO("name_value: | " << $1 << "=\""
-                                                                            << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                            << $3 << "\"");
-                                                                        std::pair<std::string, std::string>  pair($1, $3);
-                                                                        $$ = pair;
+																	INFO("name_value: | " << $1 << "=\""
+																		<< $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
+																		<< $3 << "\"");
+																	std::pair<std::string, std::string>  pair($1, $3);
+																	$$ = pair;
                                                                 }
     | attrib_name EQUAL_SIGN symbol                             {
-                                                                        INFO("name_value: | " << $1 << "=\""
-                                                                            << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                            << $3 << "\"");
-                                                                        std::pair<std::string, std::string>  pair($1, $3);
-                                                                        $$ = pair;
+																	INFO("name_value: | " << $1 << "=\""
+																		<< $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
+																		<< $3 << "\"");
+																	std::pair<std::string, std::string>  pair($1, $3);
+																	$$ = pair;
                                                                 }
                                                                 ;
 tokens:

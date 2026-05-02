@@ -107,6 +107,8 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define SEMI_COLON 27ul
 #define DOUBLE_QUOTE 28ul
 #define SINGLE_QUOTE 29ul
+#define ESC_SEQ      307ul
+#define ESC_NLINE      308ul
 #define ESC_BACKSLASH 301ul
 #define ESC_NEWLINE 302ul
 #define ESC_DOUBLE_QUOTE 303ul
@@ -223,6 +225,13 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define END_OF_FILES 445ul
 #define S_TYPE "string"
 
+
+#define isodigit(x) ((x) >= '0' && (x) <= '7')
+#define hextoint(x) (isdigit((x)) ? (x) - '0' : ((x) - 'A') + 10)
+
+// hex (x|X)[0-9a-fA-F]{1,2}
+// oct [0-7]{1,3}
+
 /**
  * @name g_tokens
  * @brief global token vector - all tokens
@@ -230,6 +239,8 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 inline map<unsigned long, token> g_tokens =
 {
 	{UNESCAPED_TEXT,	token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
+	{ESC_SEQ,	        token{"ESC_SEQ", S_TYPE, R"(\\[^\n])", __LINE__}},
+	{ESC_NLINE,	        token{"ESC_NINE", S_TYPE, R"([^\\\n])", __LINE__}},
 	{WHITESPACE, 		token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
 	{NEWLINE,           token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
 	{FILE_ATTRIB,       token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},

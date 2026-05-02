@@ -48,9 +48,8 @@ string_ptr esc_nl(const string &s, const string &r)
 		string prefix = suffix.substr( 0, index);      // get prefix
 		ret.append(prefix);                            // append prefix
         ret.append(r);                                 // replace '\n' with r
-
         // move suffix
-        suffix = suffix.substr(index+1);              // get suffix
+        suffix = suffix.substr(index+1);               // get suffix
     }
     ret.append(suffix);
 	return auto_ptr<string>(ret);

@@ -6,6 +6,10 @@
 
 // root sym_table
 
+/**
+ * @brief get symbol table
+ * @return symbol_tab*
+ */
 symbol_tab *get_stable()
 {
     static symbol_tab *tab = 0;
@@ -24,6 +28,14 @@ symbol_tab *get_stable()
     return tab;
 }
 
+/**
+ * @brief initialize table
+ * @param s
+ * @param id
+ * @param type_modifiers
+ * @param type
+ * @param val
+ */
 void init_symbol(symbol **s, const char *id, const char *type_modifiers, const char *type, const char *val)
 {
     *s = (symbol*)malloc(sizeof(symbol));
@@ -37,6 +49,10 @@ void init_symbol(symbol **s, const char *id, const char *type_modifiers, const c
     strcpy((*s)->type, type);
 }
 
+/**
+ * @brief
+ * @param parent
+ */
 void init_sub_table(symbol_tab *parent)
 {
     symbol_tab *symtab = (symbol_tab *)malloc(sizeof(symbol_tab));
@@ -45,9 +61,15 @@ void init_sub_table(symbol_tab *parent)
     // symtab->parent = parent->head;
 }
 
+/**
+ * @brief add symbol to tail
+ * @param stab
+ * @param s
+ */
 void add_symbol(symbol_tab* stab, symbol* s)
 {
-	//symbol* n = new symbol(s);
+	symbol* ns = (symbol*)malloc(sizeof(symbol));
+	*ns = *s;
 	// add node / symbol to tail
     symbol *tail = find_tail(stab);
 	tail->next = s;
@@ -55,14 +77,27 @@ void add_symbol(symbol_tab* stab, symbol* s)
 
 }
 
+/**
+ * @brief insert_symbol @ id
+ * @param stab
+ * @param id
+ * @param s
+ */
 void insert_symbol(symbol_tab *stab, const int id, symbol* s)
 {
-    // add node
-    // node *dst_node = find_node(stab, s->id);
-    // dst_node->prev->next = dst_node;
-    // dst_node->next = src_node;
+    // insert
+    symbol* dst = find_symbol_by_id(stab, s->id);
+	s->prev = dst;
+	s->next = dst->next;
+	s->next->prev = s;
+    dst->next = s;
 }
 
+/**
+ * @brief remove @ id
+ * @param stab
+ * @param id
+ */
 void remove_symbol(symbol_tab *stab, const char *id)
 {
     symbol *cur = get_stable()->head;
@@ -80,6 +115,10 @@ void remove_symbol(symbol_tab *stab, const char *id)
     }
 }
 
+/**
+ * @brief dump symbols
+ * @param stab
+ */
 void dump_symbols(symbol_tab *stab)
 {
     symbol *cur = get_stable()->head;
@@ -93,6 +132,10 @@ void dump_symbols(symbol_tab *stab)
     }
 }
 
+/**
+ * @brief delete all
+ * @param stab
+ */
 void clear_symbols(symbol_tab *stab)
 {
     symbol *cur = get_stable()->head;
@@ -106,6 +149,12 @@ void clear_symbols(symbol_tab *stab)
     }
 }
 
+/**
+ * @brief find by address
+ * @param stab
+ * @param sym
+ * @return
+ */
 symbol *find_symbol_by_addr(symbol_tab *stab, symbol *sym)
 {
     symbol *cur = get_stable()->head;
@@ -121,6 +170,12 @@ symbol *find_symbol_by_addr(symbol_tab *stab, symbol *sym)
     return 0;
 }
 
+/**
+ * @brief find by id
+ * @param stab
+ * @param id
+ * @return
+ */
 symbol *find_symbol_by_id(symbol_tab *stab, const char *id)
 {
     symbol *cur = get_stable()->head;
@@ -136,6 +191,11 @@ symbol *find_symbol_by_id(symbol_tab *stab, const char *id)
     return 0;
 }
 
+/**
+ * @brief get/find tail
+ * @param stab
+ * @return
+ */
 symbol *find_tail(symbol_tab *stab)
 {
     symbol *cur = get_stable()->head;
@@ -148,6 +208,11 @@ symbol *find_tail(symbol_tab *stab)
     return cur;
 }
 
+/**
+ * @brief get size
+ * @param stab
+ * @return
+ */
 int size(symbol_tab *stab)
 {
     int k = 0;

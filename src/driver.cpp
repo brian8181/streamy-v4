@@ -28,6 +28,7 @@
 #include "parser.hpp"
 #include "bash_color.hpp"
 #include "utility.hpp"
+#include "def.h"
 
 using std::cerr;
 using std::cout;
@@ -164,6 +165,9 @@ int parse_options(const int argc, char *argv[])
 	// trim(s4, ' ');
 	// cout << s4 << endl;
 
+	// char* s = "TESTING";
+	// if(all_upper(s))
+	// 	cout << s << " is UPPER" << endl;
 
     return 0;
 }

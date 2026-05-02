@@ -180,7 +180,6 @@ bool lexer::next_file()
 		INFO( "initialized buffer - [ \"" << esc_nl( m_buffer ).get_val() << "\" ]" );
 		return true;
 	}
-
 	// flush close current
 	if( m_fstream.is_open() )
 	{
@@ -324,13 +323,11 @@ parser::symbol_type lexer::get_token()
 					ATTN("PREFIX_ERROR");
 					if( p_state->id != UL_INITIAL )
 					 	return parser::make_YYerror();
-					//m_fstream << m.prefix(); // stream prefix (unescaped text)
 				}
 				// get match : by sub_match index (i)
 				unsigned long id = ( *g_state_tokens[p_state->id] )[i - 1];
 				token_t token = g_tokens[id];
 				print_smatch(token,  m );
-
 				// set buffer to suffix
 				m_buffer = m.suffix();
 				return on_token( id, match );
@@ -465,6 +462,22 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 		{
 			switch( id )
 			{
+			case ESC_NLINE:
+			    {
+                    //  buffer = realloc(buffer,buffer_size+1);
+                    //  switch(yytext[yyleng-1])
+					//  {
+					// 	case 'b' : buffer[buffer_size-1] = '\b';  break;
+					// 	case 't' : buffer[buffer_size-1] = '\t';  break;
+					// 	case 'n' : buffer[buffer_size-1] = '\n';  break;
+					// 	case 'v' : buffer[buffer_size-1] = '\v';  break;
+					// 	case 'f' : buffer[buffer_size-1] = '\f';  break;
+					// 	case 'r' : buffer[buffer_size-1] = '\r';  break;
+					// 	default  : buffer[buffer_size-1] = yytext[yyleng-1];
+                    //  }
+                    //  buffer[buffer_size] = '\0';
+                    //  buffer_size += 1;
+                }
 				case ESC_TAB:
 					g_stringstream << "\t";
 					return get_token();
