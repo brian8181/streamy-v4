@@ -30,9 +30,15 @@ int main(int argc, char** argv)
 	long* pv = ex.eval();
 	cout << "*pv=" << *pv << endl;
 
-	// ast::add_operation<long> ex2(&n2, &n);
-	// long* p2 = ex2.eval();
-	// cout << "*p2=" << *p2 << endl;
+	ast::literal e5(&n2);
+	ast::literal e6(&n);
+	ast::subtract_operation<long> ex2(&e5,&e6);
+	long* p2 = ex2.eval();
+	cout << "*p2=" << *p2 << endl;
+
+	ast::multiply_operation<long> ex3(&e5, &e6);
+	long* p3 = ex3.eval();
+	cout << "*p3=" << *p3 << endl;
 
 
 
