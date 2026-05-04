@@ -56,6 +56,140 @@ const string BUILTIN_FUNCTION = "(insert)|(include)|(config_load)|(assign)|(fetc
 const string MATH = "(abs)|(ceil)|(cos)|(exp)|(floor)|(log)|(log10)|(max)|(min)|(pi)|(pow)|(rand)|(round)|(sin)|(sqrt)|(srans)|(tan)";
 const string KEY_WORDS = "(if)|(else)|(elseif)|(foreach)|(foreachelse)|(literal)|(section)|(strip)|(assign)|(counter)|(cycle)|(debug)|(eval)|(fetch)|(html_checkboxes)";
 const string VAR_MODIFIER = "(capitalize)|(indent)|(lower)|(upper)|(spacify)|(string_format)|(truncate)|(date_format)|(escape)";
+
+// smarty
+// commentstart = /#|;/
+// openB = /\[/
+// closeB = /\]/
+// section = /.*?(?=[\.=\[\]\r\n])/
+// equal = /=/
+// whitespace = /[ \t\r]+/
+// dot = /\./
+// id = /[0-9]*[a-zA-Z_]\w*/
+// newline = /\n/
+// single_quoted_string = /'[^'\\]*(?:\\.[^'\\]*)*'(?=[ \t\r]*[\n#;])/
+// double_quoted_string = /"[^"\\]*(?:\\.[^"\\]*)*"(?=[ \t\r]*[\n#;])/
+// tripple_quotes = /"""/
+// tripple_quotes_end = /"""(?=[ \t\r]*[\n#;])/
+// text = /[\S\s]/
+// float = /\d+\.\d+(?=[ \t\r]*[\n#;])/
+// int = /\d+(?=[ \t\r]*[\n#;])/
+// maybe_bool = /[a-zA-Z]+(?=[ \t\r]*[\n#;])/
+// naked_string = /[^\n]+?(?=[ \t\r]*\n)/
+
+// 'NOT'         => '(!,not)',
+// 'OPENP'       => '(',
+// 'CLOSEP'      => ')',
+// 'OPENB'       => '[',
+// 'CLOSEB'      => ']',
+// 'PTR'         => '->',
+// 'APTR'        => '=>',
+// 'EQUAL'       => '=',
+// 'NUMBER'      => 'number',
+// 'UNIMATH'     => '+" , "-',
+// 'MATH'        => '*" , "/" , "%',
+// 'INCDEC'      => '++" , "--',
+// 'SPACE'       => ' ',
+// 'DOLLAR'      => '$',
+// 'SEMICOLON'   => ';',
+// 'COLON'       => ':',
+// 'DOUBLECOLON' => '::',
+// 'AT'          => '@',
+// 'HATCH'       => '#',
+// 'QUOTE'       => '"',
+// 'BACKTICK'    => '`',
+// 'VERT'        => '"|" modifier',
+// 'DOT'         => '.',
+// 'COMMA'       => '","',
+// 'QMARK'       => '"?"',
+// 'ID'          => 'id, name',
+// 'TEXT'        => 'text',
+// 'LDELSLASH'   => '{/..} closing tag',
+// 'LDEL'        => '{...} Smarty tag',
+// 'COMMENT'     => 'comment',
+// 'AS'          => 'as',
+// 'TO'          => 'to',
+// 'LOGOP'       => '"<", "==" ... logical operator',
+// 'TLOGOP'      => '"lt", "eq" ... logical operator; "is div by" ... if condition',
+// 'SCOND'       => '"is even" ... if condition',
+
+/*!lex2php
+%input $this->data
+%counter $this->counter
+%token $this->token
+%value $this->value
+%line $this->line
+userliteral = ~(SMARTYldel)SMARTYautoliteral\s+SMARTYliteral~
+char = ~[\S\s]~
+textdoublequoted = ~([^"\\]*?)((?:\\.[^"\\]*?)*?)(?=((SMARTYldel)SMARTYal|\$|`\$|"SMARTYliteral))~
+namespace = ~([0-9]*[a-zA-Z_]\w*)?(\\[0-9]*[a-zA-Z_]\w*)+~
+emptyjava = ~[{][}]~
+slash = ~[/]~
+ldel = ~(SMARTYldel)SMARTYal~
+rdel = ~\s*SMARTYrdel~
+nocacherdel = ~(\s+nocache)?\s*SMARTYrdel~
+smartyblockchildparent = ~[\$]smarty\.block\.(child|parent)~
+integer = ~\d+~
+hex =  ~0[xX][0-9a-fA-F]+~
+math = ~\s*([*]{1,2}|[%/^&]|[<>]{2})\s*~
+comment = ~(SMARTYldel)SMARTYal[*]~
+incdec = ~([+]|[-]){2}~
+unimath = ~\s*([+]|[-])\s*~
+openP = ~\s*[(]\s*~
+closeP = ~\s*[)]~
+openB = ~\[\s*~
+closeB = ~\s*\]~
+dollar = ~[$]~
+dot = ~[.]~
+comma = ~\s*[,]\s*~
+doublecolon = ~[:]{2}~
+colon = ~\s*[:]\s*~
+at = ~[@]~
+hatch = ~[#]~
+semicolon = ~\s*[;]\s*~
+equal = ~\s*[=]\s*~
+space = ~\s+~
+ptr = ~\s*[-][>]\s*~
+aptr = ~\s*[=][>]\s*~
+singlequotestring = ~'[^'\\]*(?:\\.[^'\\]*)*'~
+backtick = ~[`]~
+vert = ~[|][@]?~
+qmark = ~\s*[?]\s*~
+constant = ~[_]+[A-Z0-9][0-9A-Z_]*|[A-Z][0-9A-Z_]*(?![0-9A-Z_]*[a-z])~
+attr = ~\s+[0-9]*[a-zA-Z_][a-zA-Z0-9_\-:]*\s*[=]\s*~
+id = ~[0-9]*[a-zA-Z_]\w*~
+literal = ~literal~
+strip = ~strip~
+lop = ~\s*([!=][=]{1,2}|[<][=>]?|[>][=]?|[&|]{2})\s*~
+slop = ~\s+(eq|ne|neq|gt|ge|gte|lt|le|lte|mod|and|or|xor)\s+~
+tlop = ~\s+is\s+(not\s+)?(odd|even|div)\s+by\s+~
+scond = ~\s+is\s+(not\s+)?(odd|even)~
+isin = ~\s+is\s+(not\s+)?in\s+~
+as = ~\s+as\s+~
+to = ~\s+to\s+~
+step = ~\s+step\s+~
+if = ~(if|elseif|else if|while)\s+~
+for = ~for\s+~
+array = ~array~
+foreach = ~foreach(?![^\s])~
+setfilter = ~setfilter\s+~
+instanceof = ~\s+instanceof\s+~
+not = ~[!]\s*|not\s+~
+typecast = ~[(](int(eger)?|bool(ean)?|float|double|real|string|binary|array|object)[)]\s*~
+double_quote = ~["]~
+*/
+
+struct if_stmt
+{
+	bool _if;
+	char* _then;
+	char* _else;
+};
+
+struct block
+{
+	vector<string> src;
+};
 typedef struct token_t
 {
 	string name;
@@ -77,6 +211,10 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define R_TILDE R"(~)"
 #define R_EXCLAMATION R"(!)"
 #define R_REAL_LITERAL R"(([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)"
+#define R_VALID_ID     R"([A-Za-z_][A-Za-z0-9_]*)"
+#define R_ARRAY        R"(\$[A-Za-z_][A-Za-z0-9_]*\[[^\]]\])"
+#define R_SYMBOL       R"(\$[A-Za-z_][A-Za-z0-9_]*)"
+#define R_CONST_SYMBOL R"(#[A-Za-z_][A-Za-z0-9_]*#)"
 
 /**
  * @brief token definitions : unsigned long integers
@@ -196,9 +334,10 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define FILE_NAME 122ul
 #define HAS_SIGN 123ul
 #define NEWLINE 124ul
-#define SKIP_TOK 125
-#define UNESCAPED_TEXT 126
-#define SCAN_EOF 128
+#define SKIP_TOK 125ul
+#define UNESCAPED_TEXT 126ul
+#define RAW_STREAM 127ul
+#define SCAN_EOF 128ul
 #define ANYTHING 130
 #define MATCH 140
 #define UNDEFINED 150
@@ -223,7 +362,35 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define COMPILER 440ul
 #define END_OF_FILE 442ul
 #define END_OF_FILES 445ul
+#define IDENTIFIER_CHARS 500ul
+#define OFFSET 1000ul
+#define START_ATTRIB       (OFFSET + __LINE__)
+#define MAX_ATTRIB         (OFFSET + __LINE__)
+#define ONCE_ATTRIB        (OFFSET + __LINE__)
+#define SCRIPT_ATTRIB      (OFFSET + __LINE__)
+#define LOOP_ATTRIB        (OFFSET + __LINE__)
+#define STEP_ATTRIB        (OFFSET + __LINE__)
+#define SHOW_ATTRIB        (OFFSET + __LINE__)
+#define SKIP_ATTRIB        (OFFSET + __LINE__)
+#define PRINT_ATTRIB       (OFFSET + __LINE__)
+#define DIRECTION_ATTRIB   (OFFSET + __LINE__)
+#define ADVANCE_ATTRIB     (OFFSET + __LINE__)
+#define RESET_ATTRIB       (OFFSET + __LINE__)
+#define DELIMITER_ATTRIB   (OFFSET + __LINE__)
+#define OUTPUT_ATTRIB      (OFFSET + __LINE__)
+#define HEIGHT_ATTRIB      (OFFSET + __LINE__)
+#define WIDTH_ATTRIB       (OFFSET + __LINE__)
+#define ALT_ATTRIB         (OFFSET + __LINE__)
+#define HREF_ATTRIB        (OFFSET + __LINE__)
+#define BASEDIR_ATTRIB     (OFFSET + __LINE__)
+#define PATH_PREFIX_ATTRIB (OFFSET + __LINE__)
+#define SELECTED_ATTRIB    (OFFSET + __LINE__)
+#define OPTIONS_ATTRIB     (OFFSET + __LINE__)
+#define VALUES_ATTRIB      (OFFSET + __LINE__)
+#define SEPERATOR_ATTRIB   (OFFSET + __LINE__)
+#define FORMAT_ATTRIB      (OFFSET + __LINE__)
 #define S_TYPE "string"
+
 
 
 #define isodigit(x) ((x) >= '0' && (x) <= '7')
@@ -239,6 +406,7 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 inline map<unsigned long, token> g_tokens =
 {
 	{UNESCAPED_TEXT,	token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
+	{RAW_STREAM,	    token{"RAW_STREAM", S_TYPE, R"(.*)", __LINE__}},
 	{ESC_SEQ,	        token{"ESC_SEQ", S_TYPE, R"(\\[^\n])", __LINE__}},
 	{ESC_NLINE,	        token{"ESC_NINE", S_TYPE, R"([^\\\n])", __LINE__}},
 	{WHITESPACE, 		token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
@@ -249,10 +417,10 @@ inline map<unsigned long, token> g_tokens =
 	{REAL_LITERAL,      token{"REAL_LITERAL", S_TYPE, R"(([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?)", __LINE__}},
 	{CAPITALIZE,        token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
 	{STRING_LITERAL,    token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
-	{ARRAY,             token{"ARRAY", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*\[[^\]]\])", __LINE__}},
-	{SYMBOL,            token{"SYMBOL", S_TYPE, R"(\$[A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", __LINE__}},
-	{CONST_SYMBOL,      token{"CONST_SYMBOL", S_TYPE, R"(#[A-Za-z*@_.~+-][A-Za-z0-9*@_~+-]*#)", __LINE__}},
-	{IDENTIFIER,        token{"IDENTIFIER", S_TYPE, R"([A-Za-z*@_~+-][A-Za-z0-9*@_~+-]*)", __LINE__}},
+	{ARRAY,             token{"ARRAY", S_TYPE, R_ARRAY, __LINE__}},
+	{SYMBOL,            token{"SYMBOL", S_TYPE, R_SYMBOL, __LINE__}},
+	{CONST_SYMBOL,      token{"CONST_SYMBOL", S_TYPE, R_CONST_SYMBOL, __LINE__}},
+	{IDENTIFIER,        token{"IDENTIFIER", S_TYPE, R"([A-Za-z_][A-Za-z0-9_]*)", __LINE__}},
 	{COMMENT,           token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
 	{VAR_ATTRIB,        token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
 	{VALUE_ATTRIB,      token{"VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", __LINE__}},
@@ -260,44 +428,45 @@ inline map<unsigned long, token> g_tokens =
 	{ITEM_ATTRIB,       token{"ITEM_ATTRIB", S_TYPE, R"(item='[^']*')", __LINE__}},
 	{KEY_ATTRIB,        token{"KEY_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
 	{NAME_ATTRIB,       token{"NAME_ATTRIB", S_TYPE, R"(name='[^']*")", __LINE__}},
- // {START_ATTRIB,      token{"START_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {MAX_ATTRIB,        token{"MAX_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {ONCE_ATTRIB,       token{"ONCE_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {SCRIPT_ATTRIB,     token{"SCRIPT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {LOOP_ATTRIB,       token{"LOOP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {STEP_ATTRIB,       token{"STEP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {SHOW_ATTRIB,       token{"SHOW_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {SKIP_ATTRIB,       token{"SKIP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {PRINT_ATTRIB,      token{"PRINT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {DIRECTION_ATTRIB,  token{"DIRECTION_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {ADVANCE_ATTRIB,    token{"ADVANCE_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {RESET_ATTRIB,      token{"RESET_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {DELIMITER_ATTRIB,  token{"DELIMITER_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {OUTPUT_ATTRIB,     token{"OUTPUT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {HEIGHT_ATTRIB,     token{"HEIGHT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {WIDTH_ATTRIB,      token{"WIDTH_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {ALT_ATTRIB,        token{"ALT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {HREF_ATTRIB,       token{"HREF_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {BASEDIR_ATTRIB,    token{"BASEDIR_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {PATH_PREFIX_ATTRIB,token{"PATH_PREFIX_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {SELECTED_ATTRIB,   token{"SELECTED_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {OPTIONS_ATTRIB,    token{"OPTIONS_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {VALUES_ATTRIB,     token{"VALUES_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {SEPERATOR_ATTRIB,  token{"SEPERATOR_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
- // {FORMAT_ATTRIB,     token{"FORMAT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {START_ATTRIB,      token{"START_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {MAX_ATTRIB,        token{"MAX_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {ONCE_ATTRIB,       token{"ONCE_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {SCRIPT_ATTRIB,     token{"SCRIPT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {LOOP_ATTRIB,       token{"LOOP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {STEP_ATTRIB,       token{"STEP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {SHOW_ATTRIB,       token{"SHOW_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {SKIP_ATTRIB,       token{"SKIP_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {PRINT_ATTRIB,      token{"PRINT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {DIRECTION_ATTRIB,  token{"DIRECTION_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {ADVANCE_ATTRIB,    token{"ADVANCE_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {RESET_ATTRIB,      token{"RESET_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {DELIMITER_ATTRIB,  token{"DELIMITER_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {OUTPUT_ATTRIB,     token{"OUTPUT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {HEIGHT_ATTRIB,     token{"HEIGHT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {WIDTH_ATTRIB,      token{"WIDTH_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {ALT_ATTRIB,        token{"ALT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {HREF_ATTRIB,       token{"HREF_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {BASEDIR_ATTRIB,    token{"BASEDIR_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {PATH_PREFIX_ATTRIB,token{"PATH_PREFIX_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {SELECTED_ATTRIB,   token{"SELECTED_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {OPTIONS_ATTRIB,    token{"OPTIONS_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {VALUES_ATTRIB,     token{"VALUES_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {SEPERATOR_ATTRIB,  token{"SEPERATOR_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
+    {FORMAT_ATTRIB,     token{"FORMAT_ATTRIB", S_TYPE, R"(key='[^']*')", __LINE__}},
 	{DOUBLE_QUOTE,      token{"DOUBLE_QUOTE", S_TYPE, R"(")", __LINE__}},
 	{TILDE,             token{"TILDE", S_TYPE, R"(~)", __LINE__}},
-	{EXCLAMATION,       token{"EXCLAMATION", S_TYPE, R"(!)", __LINE__}},
-	{AT_SYMBOL,         token{"AT_SYMBOL", S_TYPE, R"(@)", __LINE__}},
-	{TIC_MARK,          token{"TIC_MARK", S_TYPE, R"(`)", __LINE__}},
+	{EXCLAMATION,       token{"EXCLAMATION", S_TYPE, R"([!])", __LINE__}},
+	{AT_SYMBOL,         token{"AT_SYMBOL", S_TYPE, R"([@])", __LINE__}},
+	{DOLLAR_SIGN,         token{"DOLLAR_SIGN", S_TYPE, R"([$])", __LINE__}},
+	{TIC_MARK,          token{"TIC_MARK", S_TYPE, R"([`])", __LINE__}},
 	{CARROT,            token{"CARROT", S_TYPE, R"(\^)", __LINE__}},
 	{AMPERSAND,         token{"AMPERSAND", S_TYPE, R"(&)", __LINE__}},
 	{ASTERISK,          token{"ASTERISK", S_TYPE, R"(\*)", __LINE__}},
 	{OPEN_PAREN,        token{"LPAREN", S_TYPE, R"(\()", __LINE__}},
 	{CLOSE_PAREN,       token{"RPAREN", S_TYPE, R"(\))", __LINE__}},
-	{DASH,              token{"MINUS", S_TYPE, R"(-)", __LINE__}},
-	{PLUS_SIGN,         token{"PLUS", S_TYPE, R"(\+)", __LINE__}},
-	{EQUAL_SIGN,        token{"EQUAL_SIGN", S_TYPE, R"(=)", __LINE__}},
+	{DASH,              token{"MINUS", S_TYPE, R"([-])", __LINE__}},
+	{PLUS_SIGN,         token{"PLUS_SIGN", S_TYPE, R"([+])", __LINE__}},
+	{EQUAL_SIGN,        token{"EQUAL_SIGN", S_TYPE, R"([=])", __LINE__}},
 	{CLOSE_BRACKET,     token{"RBRACKET", S_TYPE, R"(\])", __LINE__}},
 	{OPEN_BRACE,        token{"OPEN_BRACE", S_TYPE, R"(\{)", __LINE__}},
 	{CLOSE_BRACE,       token{"CLOSE_BRACE", S_TYPE, R"(\})", __LINE__}},
@@ -388,7 +557,7 @@ inline vector<state_t> states__ = { INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED,
 inline vector<unsigned long> INITIAL_TOKENS = { UNESCAPED_TEXT, OPEN_BRACE, NEWLINE, COMMENT };
 
 inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE, IF, ELSE, FILE_ATTRIB, INCLUDE, ASSIGN, STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
-												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH,  STRIP, SYMBOL, CONST_SYMBOL, WHITESPACE };
+												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH,  STRIP, SYMBOL, CONST_SYMBOL, PLUS_SIGN, IDENTIFIER,  WHITESPACE };
 
 inline vector<unsigned long> COMMENTING_TOKENS = { OPEN_BRACE, COMMENT, ANYTHING };
 inline vector<unsigned long> DOUBLE_QUOTED_TOKENS = { DOUBLE_QUOTE, VALID_CHAR };

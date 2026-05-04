@@ -114,7 +114,7 @@
 
 }
 
-
+%token IF ELSE ELSEIF DO WHILE FOREACH BREAK CONTINUE
 %token<std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
 %token<std::string> INDIRECT_MEMBER ARRAY
 %token<std::string> STRING_LITERAL NUMERIC_LITERAL
@@ -207,6 +207,7 @@ complier:
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "************************* Done ************************" << FMT_RESET << endl;
+																	SYST("system halting ...");
 																	std::exit(0);
                                                                 }
                                                                 ;
@@ -256,14 +257,6 @@ block:
 																}
 																;
 /**
- * @name stmt
- */
-if_stmt:
-	 OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts  OPEN_BRACE SLASH IF CLOSE_BRACE                       {
-																											INFO("stmt: OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE stmts SLASH IF CLOSE_BRACE");
-																										}
-																										;
-/**
  * @name stmts
  */
 stmts:
@@ -275,13 +268,12 @@ stmts:
  * @name stmt
  */
 stmt:
-	OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE                               {
-																											INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
-
-																										}
-	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE {
-																											INFO("stmt: OPEN_BRACE IF symbol CLOSE_BRACE OPEN_BRACE ELSE CLOSE_BRACE OPEN_BRACE SLASH IF CLOSE_BRACE");
-																			   						    }
+	OPEN_BRACE conditionial_expr CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE                         			{
+																														INFO("stmt: | OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
+																													}
+	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE {
+																														INFO("stmt: | OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
+																			   						   				}
     | OPEN_BRACE symbol CLOSE_BRACE                              {
                                                                     WARN("stmt: OPEN_BRACE symbol=\"" << $symbol <<  "\" CLOSE_BRACE");
                                                                     string sym_value; // = "{" + $symbol + "=?}";
@@ -363,53 +355,63 @@ assign_stmt:
                                                                     $$ = $3;
                                                                 }
                                                                 ;
+
+conditionial_expr:
+	IF expr														{
+																	INFO("conditional_expr: | if expr");
+																	lexer::instance().set_state(&IF_BLOCK);
+																}
+																;
  /**
  * @name expr
  * @brief Numerical / logical exprssions
  */
 expr[result]:
-    MINUS expr[lhs] %prec UMINUS                                {
-																	INFO("PARSER expr: | expr <<");
-																	$result=-$lhs
+	symbol[lhs] PLUS_SIGN[op] NUMERIC_LITERAL[rhs]              {
+																	INFO("expr: |symbol PLUS_SIGN NUMERIC_LITERAL");
+																}
+    | MINUS expr[lhs] %prec UMINUS                              {
+																	INFO("PARSER expr: | expr");
+																	//$result=-$lhs
 																}
     | expr[lhs] PLUS_SIGN[op] expr[rhs]                         {
-																	INFO("PARSER expr: | expr PLUS_SIGN expr <<");
-																	$result = $lhs + $rhs;
+																	INFO("PARSER expr: | expr PLUS_SIGN expr");
+																	//$result = $lhs + $rhs;
 																}
     | expr[lhs] MINUS[op] expr[rhs]                             {
-																	INFO("PARSER expr: | expr MINUS expr <<");
-																	$result = $lhs - $rhs;
+																	INFO("PARSER expr: | expr MINUS expr");
+																	//$result = $lhs - $rhs;
 																}
     | expr[lhs] ASTERISK[op] expr[rhs]                          {
-																	INFO("PARSER expr: | expr ASTERISK expr <<");
-																	$result = $lhs * $rhs;
+																	INFO("PARSER expr: | expr ASTERISK expr");
+																	//$result = $lhs * $rhs;
 																}
     | expr[lhs] SLASH[op] expr[rhs]                             {
-																	INFO("PARSER expr: | expr SLASH expr <<");
-																	$result = $lhs / $rhs;
+																	INFO("PARSER expr: | expr SLASH expr");
+																	//$result = $lhs / $rhs;
 																}
     | expr[lhs] LESS_THAN[op] expr[rhs]                         {
-																	INFO("PARSER expr: | expr LESS_THAN expr <<");
-																	$result = lhs < rhs;
+																	INFO("PARSER expr: | expr LESS_THAN expr");
+																	//$result = $lhs < $rhs;
 																}
     | expr[lhs] GREATER_THAN[op] expr[rhs]                      {
-																	INFO("PARSER expr: | expr GREATER_THAN expr <<");
-																	$result = lhs > rhs;
+																	INFO("PARSER expr: | expr GREATER_THAN expr");
+																	//$result = $lhs > $rhs;
 																}
     | expr[lhs] GREATER_THAN_EQUAL[op] expr[rhs]                {
-																	INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr << ");
-																	$result = lhs >= rhs;
+																	INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr ");
+																	//$result = $lhs >= $rhs;
 																}
     | expr[lhs] LESS_THAN_EQUAL[op] expr[rhs]                   {
-																	INFO("PARSER expr: | expr LESS_THAN_EQUAL expr <<");
-																	$result = lhs <= rhs;
+																	INFO("PARSER expr: | expr LESS_THAN_EQUAL expr");
+																	//$result = $lhs <= $rhs;
 																}
     | expr[lhs] NOT_EQUAL[op] expr[rhs]                         {
-																	INFO("PARSER expr: | expr NOT_EQUAL expr <<");
-																	$result = lhs != rhs;
+																	INFO("PARSER expr: | expr NOT_EQUAL expr");
+																	//$result = $lhs != $rhs;
 																}
     | LPAREN expr[exp] RPAREN                                   {
-																	INFO("PARSER expr: | LPAREN expr RPAREN <<");
+																	INFO("PARSER expr: | LPAREN expr RPAREN");
 																}
                                                                 ;
 /**

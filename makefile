@@ -69,7 +69,8 @@ LDFLAGS=$(INCLUDES) $(LIBS)
 
 CXXFLAGS+=-DTEST_ONLY
 
-HEADERS=$(SRC)/bash_color.hpp \
+HEADERS= \
+$(SRC)/bash_color.hpp \
 $(SRC)/log.hpp \
 $(SRC)/fileio.hpp \
 $(SRC)/auto_ptr.hpp \
@@ -82,6 +83,12 @@ $(SRC)/driver.hpp \
 $(SRC)/definitions.hpp \
 $(SRC)/table.hpp \
 $(SRC)/def.h
+
+HEADER_ONLY= \
+$(BLD)/pparser.tab.hpp \
+$(SRC)/definitions.hpp \
+$(SRC)/log.hpp \
+$(SRC)/table.hpp \
 
 OBJS=$(OBJ)/fileio.o \
 $(OBJ)/auto_ptr.o \
@@ -111,7 +118,7 @@ all: $(BLD)/driver
 
 world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
 
-$(BLD)/driver: $(OBJS)
+$(BLD)/driver: $(OBJS) $(SRC)/definitions.hpp
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 # $(TST)/%: $(OBJ)/%.o
@@ -126,7 +133,7 @@ $(BLD)/path_append: $(OBJ)/path_append.o
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cpp
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp
 
-$(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(BLD)/bash_color.hpp $(SRC)/log.hpp $(SRC)/config.h
+$(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(BLD)/pparser.tab.hpp $(BLD)/bash_color.hpp $(SRC)/log.hpp $(SRC)/config.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -DYYDEBUG -c $< -o $@
 
 # $(BLD)/pparser2.tab.cpp $(BLD)/pparser2.tab.hh: $(SRC)/pparser2.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp
@@ -164,7 +171,7 @@ $(BLD)/%.hpp: $(SRC)/%.hpp
 $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(CCFLAGS) -c $< -o $@
 
-$(OBJ)/%.o: $(SRC)/%.cpp # $(HEADERS)
+$(OBJ)/%.o: $(SRC)/%.cpp $(SRC)/%.hpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ)/%.o: $(TST)/%.cpp # $(HEADERS)

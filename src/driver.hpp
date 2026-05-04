@@ -1,7 +1,6 @@
 /**
  * @file driver.hpp
  * @brief Header file for driver.cpp
- * @author Your Name
  * @version 1.0
  * @date 2024-06-01
  */

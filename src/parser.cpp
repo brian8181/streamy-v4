@@ -4,11 +4,14 @@
  * @date    Sat, 04 Apr 2026 12:59:28 +0000
  */
 #include <iostream>
+#include <set>
+#include <map>
 #include "parser.hpp"
 
 using std::string;
 using std::cout;
 using std::endl;
+using std::map;
 
 namespace ast
 {
@@ -20,6 +23,43 @@ namespace ast
 		node* right;
 		void* val;
 	};
+
+
+		// struct seq
+		// {
+		// 	seq* next[];
+		// 	seq* parent;
+		// };
+
+
+	struct seq
+	{
+		int id;
+		string name;
+		std::map< int, seq > next;
+		seq& operator[] (int id)
+		{
+			return next[id];
+		}
+	};
+
+	void init()
+	{
+		seq s;
+		s.id;
+		s[OPEN_BRACE][SYMBOL][EQUALS][NUMERIC_LITERAL][CLOSE_BRACE];
+		s[OPEN_BRACE][SYMBOL][EQUALS][STRING_LITERAL][CLOSE_BRACE];
+		s[OPEN_BRACE][SYMBOL][EQUALS][SYMBOL][CLOSE_BRACE];
+		// branch* b1 = b->next[OPEN_BRACE]->next[SYMBOL]->next[EQUALS];
+		// b->next[VALUE_ATTRIB]->next[SYMBOL];
+		// 																b1->next[NUMERIC_LITERAL]->next[CLOSE_BRACE];
+		// 																b1->next[STRING_LITERAL]->next[CLOSE_BRACE;]
+		// 																b1->next[SYMBOL]->next[CLOSE_BRACE];
+
+		//n->next[EQUALS] = new branch;
+
+	}
+
 }
 
 

@@ -403,13 +403,14 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 					return parser::make_SYMBOL( match );
 				case CONST_SYMBOL:
 					return parser::make_CONST_SYMBOL( match );
+				case IDENTIFIER:
+					INFO("IDENTIFIER!!");
 				case PERCENT_SIGN:
 					return parser::make_PERCENT_SIGN();
 				case PLUS_SIGN:
 					return parser::make_PLUS_SIGN();
 				case DASH:
 					return parser::make_DASH();
-					parser::make_DASH();
 				case DOT:
 					return parser::make_DOT();
 				case HASH_MARK:
