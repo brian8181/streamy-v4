@@ -39,6 +39,47 @@ void io::read()
 	return -1;
 }
 
+
+/**
+ * @name read_istream
+ * @brief read input file into string object
+ */
+void io::read_istream( const string& file, string& s )
+{
+	ifstream stream( file, std::ios::in );
+	if( stream.is_open() )
+	{
+		stringstream ss;
+		char c;
+		while( stream.get( c ) )
+		{
+			ss << c;
+		}
+		s = ss.str();
+		stream.close();
+	}
+}
+
+/**
+ * @name read_istream
+ * @brief read input file into string object
+ */
+void io::read_istream( const string& file, char* cstr )
+{
+	ifstream stream( file, std::ios::in );
+	if( stream.is_open() )
+	{
+		char c;
+		int i = 0;
+		while( stream.get( c ) )
+		{
+			cstr[i++] = c;
+		}
+		stream.close();
+	}
+}
+
+
 /**
  * @brief str
  */

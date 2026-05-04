@@ -9,9 +9,11 @@
 
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <fstream>
 #include <vector>
 #include <filesystem>
+
 
 namespace fs = std::filesystem;
 
@@ -20,7 +22,7 @@ using std::vector;
 using std::ifstream;
 using std::ofstream;
 using std::stringstream;
-//test
+using std::ios;
 
 /**
  *
@@ -106,7 +108,7 @@ int read_str(const string& file, /* out */ string& out, std::ios::openmode mode 
  * @param  in : string to write
  * @return number of characters written, or -1 on error
  */
-int write_str(const string& file, /* in */ const string& out);
+int write_str(const string& file, /* in */ const string& out, std::ios_base::openmode mode = ios::out);
 
 /**
  * @brief  read a file into a stringstream
@@ -114,7 +116,7 @@ int write_str(const string& file, /* in */ const string& out);
  * @param  sstrm : stringstream to store the file contents
  * @return number of characters read, or -1 on error
  */
-int read_sstream(const string& file, /* out */ stringstream& sstrm);
+int read_sstream(const string& file, /* out */ stringstream& sstrm, std::ios_base::openmode mode = ios::in);
 
 /**
  * @brief  write a stringstream to a file
@@ -122,7 +124,7 @@ int read_sstream(const string& file, /* out */ stringstream& sstrm);
  * @param  sstrm : stringstream to write
  * @return number of characters written, or -1 on error
  */
-int write_sstream(const string& file, /* in */ const stringstream& sstrm);
+int write_sstream(const string& file, /* in */ const stringstream& sstrm, std::ios_base::openmode mode = ios::out | std::ofstream::trunc);
 
 /**
  * @brief  read lines from a file into a vector of strings

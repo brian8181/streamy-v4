@@ -167,11 +167,15 @@ bool lexer::next_file()
 		++m_file_count;
 		++i;
 
+		// todo close open stream & open one for next file
 		fs::path p = m_ifile;
 		int pos = m_ifile.find_last_of( '.' );
+		p.replace_extension(".html");
 		// string path = m_ifile.substr( 0, pos - 1 );
 		// m_ofile = path + ".out.txt";
+		m_ofile = (string)p;
 
+		INFO("output file=\"" << m_ofile << "\"");
 		INFO( "initialized buffer - [ \"" << esc_nl( m_buffer ).get_val() << "\" ]" );
 		return true;
 	}

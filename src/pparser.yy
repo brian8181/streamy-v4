@@ -37,6 +37,9 @@
     #undef INFO_COLOR
     #define INFO_COLOR FMT_FG_BLUE
 
+	typedef std::pair< std::string, std::string > attribute;
+	//typedef std::string stmt_t;
+	//typedef std::vector< std::string > stmts_t;
     typedef std::pair< std::string, std::string > attrib_t;
     typedef std::vector< attrib_t > attributes_t;
 
@@ -100,7 +103,6 @@
     nvalue* alloc_nvalue(char* name, char* value);
     void free_nvalue(nvalue* nv);
     void free_all_nvalues();
-    typedef std::pair< std::string, std::string > attribute;
 
     bool get_value(const string& name, /*out*/ string& val);
     bool set_value(const string& name, const string& val);
@@ -140,13 +142,13 @@
 
 %type< std::vector< std::string > > files
 %type<std::string> file
+%type<std::string> stmt
 %type< std::vector< std::string > > stmts
-%type< std::vector< std::string > > blocks
 %type<std::string> block
+%type< std::vector< std::string > > blocks
 %type< std::pair<std::string, std::string> > attrib
 %type<std::vector< std::pair<std::string, std::string> > > attributes
 %type<std::vector< std::pair<std::string, std::string> > > built_in
-%type<std::string> stmt
 %type<std::string> expr
 %type<std::string> assign_stmt
 %type< std::vector< std::string > > colon_sep_params
@@ -259,18 +261,32 @@ block:
 /**
  * @name stmts
  */
-stmts:
-    stmt                                                        { INFO("stmts: stmt=\"" << $1 << "\""); $$.push_back($1);  }
-    | stmts stmt                                                { INFO("stmts: | stmts stmt"); $$=$1; $$.push_back($2); }
+stmts[result]:
+    stmt        		                                       {
+																	INFO("stmts: stmt=\"" << $1 << "\"");
+																	//$$.push_back($1);
+																	$result.push_back($stmt);
+																}
+	| stmts stmt			                                    {
+																	INFO("stmts: | stmts stmt");
+																	$stmts.push_back($stmt);
+																	$result = $stmts;
+																}
                                                                 ;
 
 /**
  * @name stmt
  */
 stmt:
-	OPEN_BRACE conditionial_expr CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE                         			{
-																														INFO("stmt: | OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
+	OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE                         			   		{
+																														INFO("stmt: | OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
 																													}
+	| OPEN_BRACE WHILE expr CLOSE_BRACE stmts OPEN_BRACE SLASH WHILE CLOSE_BRACE                         			{
+																														INFO("stmt: | OPEN_BRACE WHILE expr CLOSE_BRACE stmts OPEN_BRACE SLASH WHILE CLOSE_BRACE ");
+																													}
+	| OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE        {
+																														INFO("stmt: | OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
+																			   						   				}
 	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE {
 																														INFO("stmt: | OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
 																			   						   				}
@@ -357,7 +373,11 @@ assign_stmt:
                                                                 ;
 
 conditionial_expr:
-	IF expr														{
+	IF expr '%'														{
+																	INFO("conditional_expr: | if expr");
+																	lexer::instance().set_state(&IF_BLOCK);
+																}
+	| WHILE expr '%'									{
 																	INFO("conditional_expr: | if expr");
 																	lexer::instance().set_state(&IF_BLOCK);
 																}

@@ -184,7 +184,7 @@ int read_str(const string &file, /* out */ string &out, std::ios_base::openmode 
  * @param  const string& in : string to write
  * @return int : number of characters written, or -1 on error
  */
-int write_str(const string &file, /* in */ const string &in)
+int write_str(const string &file, /* in */ const string &in, std::ios_base::openmode mode)
 {
     ofstream stream;
     stream.open(file, std::ios_base::out | std::ios::out);
@@ -205,9 +205,9 @@ int write_str(const string &file, /* in */ const string &in)
  * @param  stringstream& ostrm : stringstream to store the file contents
  * @return int : number of characters read, or -1 on error
  */
-int read_sstream(const string &file, /* out */ stringstream &ostrm)
+int read_sstream(const string &file, /* out */ stringstream &ostrm, std::ios_base::openmode mode)
 {
-    ifstream stream(file, ios::in);
+    ifstream stream(file, mode);
     if (stream.is_open())
     {
         char c;
@@ -227,9 +227,9 @@ int read_sstream(const string &file, /* out */ stringstream &ostrm)
  * @param  const stringstream& istrm : stringstream to write
  * @return int : number of characters written, or -1 on error
  */
-int write_sstream(const string &file, /* in */ const stringstream &istrm)
+int write_sstream(const string &file, /* in */ const stringstream &istrm, std::ios_base::openmode mode)
 {
-    ofstream stream(file, ios::out | std::ofstream::trunc);
+    ofstream stream(file, mode);
     if (stream.is_open())
     {
         stream << istrm.str();

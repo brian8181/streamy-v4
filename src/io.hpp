@@ -37,6 +37,18 @@ public:
 	void read();
 
 	/**
+	 * @name read_istream
+	 * @brief read input file into string object
+	 */
+	static void read_istream( const string& file, string& s );
+
+	/**
+	 * @name read_istream
+	 * @brief read input file into string object
+	 */
+	static void read_istream( const string& file, char* cstr );
+
+	/**
 	 * @brief str
 	 */
 	const string& str();
