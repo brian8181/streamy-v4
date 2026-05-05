@@ -232,18 +232,18 @@ private:
 
 	bool initalized = false;
 	bool EOFS = false;
-	vector<string> m_input_paths;
-	string m_ifile;
+	vector<string> m_input_paths{};
+	string m_ifile{};
 	string m_ofile = "build/a.out";
 
-	string m_regex_str;
-	string m_buffer;
-	string m_match;
-	fstream m_fstream;
-	int m_line;
-	int m_file_count;
+	string m_regex_str{};
+	string m_buffer{};
+	string m_match{};
+	fstream m_fstream{};
+	int m_line = 0;
+	int m_file_count = 0;
 	state_t* p_state = &INITIAL;
-	stringstream g_stringstream;
+	stringstream g_stringstream{};
 };
 
 #endif

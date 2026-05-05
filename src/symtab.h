@@ -3,7 +3,7 @@
 
 typedef struct symbol
 {
-    char *id;
+    char* id;
     char *type_modifiers;
     char *type;
     void *pval;
@@ -47,8 +47,24 @@ typedef struct symbol_tab
 } symbol_tab;
 
 // get root symbol table
-symbol_tab *get_stable();
-symbol* new_symbol(const char* id, const char* type_modifiers, const char* type, const char* val);
+symbol_tab* get_root_stable();
+
+/**
+ * @brief
+ * @param parent
+ */
+symbol_tab* new_table(symbol_tab *parent);
+
+/**
+ * @brief initialize table
+ * @param s
+ * @param id
+ * @param type_modifiers
+ * @param type
+ * @param val
+ */
+symbol* new_symbol(const char *id, const char *type_modifiers, const char *type, const char *val);
+
 void free_symbol(symbol_tab *stab, symbol* s);
 void add_symbol(symbol_tab *stab, symbol* s);
 void insert_symbol(symbol_tab *stab, const int id, symbol* s);

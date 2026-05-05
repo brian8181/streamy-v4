@@ -5,27 +5,32 @@
 #include "symtab.h"
 
 // root sym_table
+static symbol_tab* tab = 0;
 
 /**
  * @brief get symbol table
  * @return symbol_tab*
  */
-symbol_tab *get_stable()
+symbol_tab* get_root_stable()
 {
-    static symbol_tab *tab = 0;
-
-    if (tab != 0)
+	if (tab != 0)
         return tab;
-
-//    symbol *streamy_init_object =
-//         new_symbol("$streamy", "static", "object", 0);
-
-//     tab = (symbol_tab *)malloc(sizeof(symbol_tab));
-//     tab->head = (node *)malloc(sizeof(node));
-//     tab->head->sym = streamy_init_object;
-//     tab->head->next = 0;
-
+    symbol_tab* tab = new_table(0);
+    symbol* streamy_init_object = new_symbol("$streamy", "static", "object", 0);
+	tab->head = streamy_init_object;
     return tab;
+}
+
+/**
+ * @brief new symbol table
+ * @param parent
+ */
+symbol_tab* new_table(symbol_tab *parent)
+{
+    symbol_tab* tab = (symbol_tab *)malloc(sizeof(symbol_tab));
+	tab->parent = parent;
+	tab->head = 0;
+	return tab;
 }
 
 /**
@@ -36,29 +41,19 @@ symbol_tab *get_stable()
  * @param type
  * @param val
  */
-void init_symbol(symbol **s, const char *id, const char *type_modifiers, const char *type, const char *val)
+symbol* new_symbol(const char *id, const char *type_modifiers, const char *type, const char *val)
 {
-    *s = (symbol*)malloc(sizeof(symbol));
-    (*s)->id = (char *)malloc(strlen(id) + 1);
-    strcpy((*s)->id, id);
-    (*s)->type = (char *)malloc(strlen(type) + 1);
-    strcpy((*s)->type_modifiers, type_modifiers);
-    (*s)->type_modifiers = (char *)malloc(strlen(type_modifiers) + 1);
-    strcpy((*s)->type, type);
-    (*s)->pval = (char *)malloc(strlen(val) + 1);
-    strcpy((*s)->type, type);
-}
-
-/**
- * @brief
- * @param parent
- */
-void init_sub_table(symbol_tab *parent)
-{
-    symbol_tab *symtab = (symbol_tab *)malloc(sizeof(symbol_tab));
-    symtab->head = 0;
-    // bkp todo!
-    // symtab->parent = parent->head;
+    symbol* s = (symbol*)malloc(sizeof(symbol));
+    s->id = (char *)malloc(strlen(id) + 1);
+    strcpy(s->id, id);
+    s->type = (char *)malloc(strlen(type) + 1);
+    strcpy(s->type_modifiers, type_modifiers);
+    s->type_modifiers = (char *)malloc(strlen(type_modifiers) + 1);
+    strcpy(s->type, type);
+    s->pval = (char *)malloc(strlen(val) + 1);
+    strcpy(s->type, type);
+	s->next = 0;
+	return s;
 }
 
 /**
@@ -74,7 +69,6 @@ void add_symbol(symbol_tab* stab, symbol* s)
     symbol *tail = find_tail(stab);
 	tail->next = s;
 	s->prev = tail;
-
 }
 
 /**
@@ -100,7 +94,7 @@ void insert_symbol(symbol_tab *stab, const int id, symbol* s)
  */
 void remove_symbol(symbol_tab *stab, const char *id)
 {
-    symbol *cur = get_stable()->head;
+    symbol *cur = get_root_stable()->head;
     if (stab != 0)
         cur = stab->head;
     while (cur->next != 0)
@@ -121,7 +115,7 @@ void remove_symbol(symbol_tab *stab, const char *id)
  */
 void dump_symbols(symbol_tab *stab)
 {
-    symbol *cur = get_stable()->head;
+    symbol *cur = get_root_stable()->head;
     if (stab != 0)
         cur = stab->head;
     while (cur != 0)
@@ -138,7 +132,7 @@ void dump_symbols(symbol_tab *stab)
  */
 void clear_symbols(symbol_tab *stab)
 {
-    symbol *cur = get_stable()->head;
+    symbol *cur = get_root_stable()->head;
     if (stab != 0)
         cur = stab->head;
     while (cur != 0)
@@ -157,7 +151,7 @@ void clear_symbols(symbol_tab *stab)
  */
 symbol *find_symbol_by_addr(symbol_tab *stab, symbol *sym)
 {
-    symbol *cur = get_stable()->head;
+    symbol *cur = get_root_stable()->head;
     if (stab != 0)
         cur = stab->head;
     while (cur->next != 0)
@@ -178,7 +172,7 @@ symbol *find_symbol_by_addr(symbol_tab *stab, symbol *sym)
  */
 symbol *find_symbol_by_id(symbol_tab *stab, const char *id)
 {
-    symbol *cur = get_stable()->head;
+    symbol *cur = get_root_stable()->head;
     if (stab != 0)
         cur = stab->head;
     while (cur->next != 0)
@@ -198,7 +192,7 @@ symbol *find_symbol_by_id(symbol_tab *stab, const char *id)
  */
 symbol *find_tail(symbol_tab *stab)
 {
-    symbol *cur = get_stable()->head;
+    symbol *cur = get_root_stable()->head;
     if (stab != 0)
         cur = stab->head;
     while (cur->next != 0)
