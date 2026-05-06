@@ -28,6 +28,7 @@
 #include "bash_color.hpp"
 #include "utility.hpp"
 #include "log.hpp"
+#include "streamy.hpp"
 
 using std::cerr;
 using std::cout;

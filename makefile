@@ -89,6 +89,7 @@ $(BLD)/pparser.tab.hpp \
 $(SRC)/definitions.hpp \
 $(SRC)/log.hpp \
 $(SRC)/table.hpp \
+$(SRC)/streamy.hpp
 
 OBJS=$(OBJ)/fileio.o \
 $(OBJ)/auto_ptr.o \
@@ -97,7 +98,8 @@ $(BLD)/pparser.tab.o \
 $(OBJ)/parser.o \
 $(OBJ)/lexer.o \
 $(OBJ)/driver.o \
-$(OBJ)/symtab.o
+$(OBJ)/symtab.o \
+$(OBJ)/streamy.o
 #$(OBJ)/def.o
 
 TST_OBJS=$(OBJ)/fileio.o \
