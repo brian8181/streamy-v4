@@ -405,8 +405,8 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 					return parser::make_ELSE();
 				case VAR_OPER:
 					return parser::make_DOLLAR_SIGN();
-				case CONST_SYMBOL:
-					return parser::make_CONST_SYMBOL( match );
+				case CONST_VAR_OPER:
+					return parser::make_HASH_MARK();
 				case IDENTIFIER:
 					return parser::make_IDENTIFIER( match );
 				case PERCENT_SIGN:

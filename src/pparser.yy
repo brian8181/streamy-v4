@@ -164,7 +164,6 @@
 %left GREATER_THAN_EQUAL LESS_THAN_EQUAL EQUAL_SIGN NOT_EQUAL LESS_THAN GREATER_THAN COMMA
 %left PLUS_SIGN MINUS_SIGN
 %left ASTERISK SLASH PERCENT_SIGN
-%nonassoc UMINUS
 %type<std::string> symbol
 %start complier
 
@@ -247,7 +246,7 @@ file:
                                                                 ;
 blocks:
 	block														{ INFO("blocks: | block"); }
-	| blocks block												{ INFO("blocks: | blocks block"); }
+	| blocks block
 	;
 
 block:
@@ -389,10 +388,6 @@ conditionial_expr:
 expr[result]:
 	symbol[lhs] PLUS_SIGN[op] NUMERIC_LITERAL[rhs]              {
 																	INFO("expr: |symbol PLUS_SIGN NUMERIC_LITERAL");
-																}
-    | MINUS expr[lhs] %prec UMINUS                              {
-																	INFO("PARSER expr: | expr");
-																	//$result=-$lhs
 																}
     | expr[lhs] PLUS_SIGN[op] expr[rhs]                         {
 																	INFO("PARSER expr: | expr PLUS_SIGN expr");
@@ -592,9 +587,9 @@ symbol:
 																	INFO("symbol: | DOLLAR_SIGN IDENTIFIER=");
 																	$$ = $2;
 																}
-		| CONST_SYMBOL											{
-																	INFO("symbol: | CONST_SYMBOL=" << $1);
-																	$$ = $1;
+		| HASH_MARK IDENTIFIER  								{
+																	INFO("symbol: | HASH_MARK IDENTIFIER" << $2);
+																	$$ = $2;
 																}
 		| symbol DOT IDENTIFIER		                            {
 																	string s = $1 + "." + $3;

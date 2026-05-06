@@ -364,6 +364,7 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define END_OF_FILES 445ul
 #define IDENTIFIER_CHARS 500ul
 #define VAR_OPER 503ul
+#define CONST_VAR_OPER 505ul
 #define OFFSET 1000ul
 #define START_ATTRIB       (OFFSET + __LINE__)
 #define MAX_ATTRIB         (OFFSET + __LINE__)
@@ -419,8 +420,8 @@ inline map<unsigned long, token> g_tokens =
 	{CAPITALIZE,        token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
 	{STRING_LITERAL,    token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
 	{ARRAY,             token{"ARRAY", S_TYPE, R_ARRAY, __LINE__}},
-	{CONST_SYMBOL,      token{"CONST_SYMBOL", S_TYPE, R_CONST_SYMBOL, __LINE__}},
 	{VAR_OPER,         	token{"VAR_OPER", S_TYPE, R"(\B[$]\<)", __LINE__}},
+	{CONST_VAR_OPER,    token{"VAR_OPER", S_TYPE, R"(\B[#]\b)", __LINE__}},
 	{IDENTIFIER,        token{"IDENTIFIER", S_TYPE, R"(\<[A-Za-z_][A-Za-z0-9_]*\>)", __LINE__}},
 	{COMMENT,           token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
 	{VAR_ATTRIB,        token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
@@ -557,14 +558,14 @@ inline vector<state_t> states__ = { INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED,
 inline vector<unsigned long> INITIAL_TOKENS = { UNESCAPED_TEXT, OPEN_BRACE, NEWLINE, COMMENT };
 
 inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE, IF, ELSE, FILE_ATTRIB, INCLUDE, ASSIGN, STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
-												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH,  STRIP, IDENTIFIER, VAR_OPER, CONST_SYMBOL, PLUS_SIGN, IDENTIFIER,  WHITESPACE };
+												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH,  STRIP, IDENTIFIER, VAR_OPER, CONST_VAR_OPER, PLUS_SIGN, WHITESPACE };
 
 inline vector<unsigned long> COMMENTING_TOKENS = { OPEN_BRACE, COMMENT, ANYTHING };
 inline vector<unsigned long> DOUBLE_QUOTED_TOKENS = { DOUBLE_QUOTE, VALID_CHAR };
 inline vector<unsigned long> SINGLE_QUOTED_TOKENS = { OPEN_BRACE, COMMENT, VALID_CHAR, SINGLE_QUOTE, DOUBLE_QUOTE };
 inline vector<unsigned long> INCLUDING_TOKENS = { FILE_ATTRIB };
 inline vector<unsigned long> IF_BLOCK_TOKENS = { CLOSE_BRACE, CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE, IF, ELSE, FILE_ATTRIB, INCLUDE, ASSIGN, STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
-												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH, STRIP, SYMBOL, CONST_SYMBOL };
+												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH, STRIP, SYMBOL, CONST_VAR_OPER };
 
 inline vector<unsigned long> IF_CONDITION_TOKENS = { CLOSE_BRACE };
 
