@@ -106,7 +106,8 @@ $(OBJ)/utility.o \
 $(OBJ)/symtab.o \
 $(OBJ)/TEST_lex.o \
 $(OBJ)/TEST_general.o \
-$(OBJ)/TEST_symbol_table.o
+$(OBJ)/TEST_symbol_table.o \
+$(OBJ)/TEST_ast.o
 
 # SOURCES=$(SRC)/bash_color.hpp \
 # $(SRC)/log.hpp \
@@ -141,7 +142,7 @@ $(BLD)/path_append: $(OBJ)/path_append.o
 $(BLD)/pparser.tab.cpp $(BLD)/pparser.tab.hpp: $(SRC)/pparser.yy $(SRC)/lexer.cpp
 	$(YACC) --debug -Wcounterexamples $(SRC)/pparser.yy --header=$(BLD)/pparser.tab.hpp -o $(BLD)/pparser.tab.cpp
 
-$(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(BLD)/pparser.tab.hpp $(BLD)/bash_color.hpp $(SRC)/log.hpp $(SRC)/config.h
+$(OBJ)/pparser.tab.o: $(OBJ)/pparser.tab.cpp $(BLD)/pparser.tab.hpp $(BLD)/bash_color.hpp $(SRC)/log.hpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -DYYDEBUG -c $< -o $@
 
 # $(BLD)/pparser2.tab.cpp $(BLD)/pparser2.tab.hh: $(SRC)/pparser2.yy $(SRC)/lexer.hpp $(SRC)/lexer.cpp

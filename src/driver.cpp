@@ -21,14 +21,13 @@
 #include <getopt.h>
 #include <set>
 #include <filesystem>
-#include "config.h"
 #include "driver.hpp"
 #include "lexer.hpp"
 #include "pparser.tab.hpp"
 #include "parser.hpp"
 #include "bash_color.hpp"
 #include "utility.hpp"
-#include "def.h"
+#include "log.hpp"
 
 using std::cerr;
 using std::cout;

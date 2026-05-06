@@ -42,21 +42,6 @@ using std::stringstream;
 using std::vector;
 using yy::parser;
 
-const string VALID_SYMBOL_CHARS = R"([A-Za-z0-9_])";  /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
-const string VALID_CHARS = R"([[:punct:][:alnum:]])"; // [:punct:] = !"#$%&'()*+,-./:;<=>?@[\]^_{|}~`);
-const string CONFIG_STATES = R"((?<states>^\s*(?<state>[A-Za-z][A-Za-z0-9_]*)\s*=\s*\s*\{(?<tokens>[A-Za-z][A-Za-z0-9_]*(, [A-Za-z][A-Za-z0-9_]*)*)\}\s*\s*$))";
-const string CONFIG_SECTIONS = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>groups)|(?<states>states)\s*\]\s*$)";
-const string CONFIG_PAIR = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
-const string CONFIG_COMMENT = R"(^\s*#.*$)";
-const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
-const string qwerty = R"(ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:"<>?`-=[]\;',./')";
-
-// groups
-const string BUILTIN_FUNCTION = "(insert)|(include)|(config_load)|(assign)|(fetch)|(capture)";
-const string MATH = "(abs)|(ceil)|(cos)|(exp)|(floor)|(log)|(log10)|(max)|(min)|(pi)|(pow)|(rand)|(round)|(sin)|(sqrt)|(srans)|(tan)";
-const string KEY_WORDS = "(if)|(else)|(elseif)|(foreach)|(foreachelse)|(literal)|(section)|(strip)|(assign)|(counter)|(cycle)|(debug)|(eval)|(fetch)|(html_checkboxes)";
-const string VAR_MODIFIER = "(capitalize)|(indent)|(lower)|(upper)|(spacify)|(string_format)|(truncate)|(date_format)|(escape)";
-
 // smarty
 // commentstart = /#|;/
 // openB = /\[/
@@ -77,107 +62,21 @@ const string VAR_MODIFIER = "(capitalize)|(indent)|(lower)|(upper)|(spacify)|(st
 // maybe_bool = /[a-zA-Z]+(?=[ \t\r]*[\n#;])/
 // naked_string = /[^\n]+?(?=[ \t\r]*\n)/
 
-// 'NOT'         => '(!,not)',
-// 'OPENP'       => '(',
-// 'CLOSEP'      => ')',
-// 'OPENB'       => '[',
-// 'CLOSEB'      => ']',
-// 'PTR'         => '->',
-// 'APTR'        => '=>',
-// 'EQUAL'       => '=',
-// 'NUMBER'      => 'number',
-// 'UNIMATH'     => '+" , "-',
-// 'MATH'        => '*" , "/" , "%',
-// 'INCDEC'      => '++" , "--',
-// 'SPACE'       => ' ',
-// 'DOLLAR'      => '$',
-// 'SEMICOLON'   => ';',
-// 'COLON'       => ':',
-// 'DOUBLECOLON' => '::',
-// 'AT'          => '@',
-// 'HATCH'       => '#',
-// 'QUOTE'       => '"',
-// 'BACKTICK'    => '`',
-// 'VERT'        => '"|" modifier',
-// 'DOT'         => '.',
-// 'COMMA'       => '","',
-// 'QMARK'       => '"?"',
-// 'ID'          => 'id, name',
-// 'TEXT'        => 'text',
-// 'LDELSLASH'   => '{/..} closing tag',
-// 'LDEL'        => '{...} Smarty tag',
-// 'COMMENT'     => 'comment',
-// 'AS'          => 'as',
-// 'TO'          => 'to',
-// 'LOGOP'       => '"<", "==" ... logical operator',
-// 'TLOGOP'      => '"lt", "eq" ... logical operator; "is div by" ... if condition',
-// 'SCOND'       => '"is even" ... if condition',
 
-/*!lex2php
-%input $this->data
-%counter $this->counter
-%token $this->token
-%value $this->value
-%line $this->line
-userliteral = ~(SMARTYldel)SMARTYautoliteral\s+SMARTYliteral~
-char = ~[\S\s]~
-textdoublequoted = ~([^"\\]*?)((?:\\.[^"\\]*?)*?)(?=((SMARTYldel)SMARTYal|\$|`\$|"SMARTYliteral))~
-namespace = ~([0-9]*[a-zA-Z_]\w*)?(\\[0-9]*[a-zA-Z_]\w*)+~
-emptyjava = ~[{][}]~
-slash = ~[/]~
-ldel = ~(SMARTYldel)SMARTYal~
-rdel = ~\s*SMARTYrdel~
-nocacherdel = ~(\s+nocache)?\s*SMARTYrdel~
-smartyblockchildparent = ~[\$]smarty\.block\.(child|parent)~
-integer = ~\d+~
-hex =  ~0[xX][0-9a-fA-F]+~
-math = ~\s*([*]{1,2}|[%/^&]|[<>]{2})\s*~
-comment = ~(SMARTYldel)SMARTYal[*]~
-incdec = ~([+]|[-]){2}~
-unimath = ~\s*([+]|[-])\s*~
-openP = ~\s*[(]\s*~
-closeP = ~\s*[)]~
-openB = ~\[\s*~
-closeB = ~\s*\]~
-dollar = ~[$]~
-dot = ~[.]~
-comma = ~\s*[,]\s*~
-doublecolon = ~[:]{2}~
-colon = ~\s*[:]\s*~
-at = ~[@]~
-hatch = ~[#]~
-semicolon = ~\s*[;]\s*~
-equal = ~\s*[=]\s*~
-space = ~\s+~
-ptr = ~\s*[-][>]\s*~
-aptr = ~\s*[=][>]\s*~
-singlequotestring = ~'[^'\\]*(?:\\.[^'\\]*)*'~
-backtick = ~[`]~
-vert = ~[|][@]?~
-qmark = ~\s*[?]\s*~
-constant = ~[_]+[A-Z0-9][0-9A-Z_]*|[A-Z][0-9A-Z_]*(?![0-9A-Z_]*[a-z])~
-attr = ~\s+[0-9]*[a-zA-Z_][a-zA-Z0-9_\-:]*\s*[=]\s*~
-id = ~[0-9]*[a-zA-Z_]\w*~
-literal = ~literal~
-strip = ~strip~
-lop = ~\s*([!=][=]{1,2}|[<][=>]?|[>][=]?|[&|]{2})\s*~
-slop = ~\s+(eq|ne|neq|gt|ge|gte|lt|le|lte|mod|and|or|xor)\s+~
-tlop = ~\s+is\s+(not\s+)?(odd|even|div)\s+by\s+~
-scond = ~\s+is\s+(not\s+)?(odd|even)~
-isin = ~\s+is\s+(not\s+)?in\s+~
-as = ~\s+as\s+~
-to = ~\s+to\s+~
-step = ~\s+step\s+~
-if = ~(if|elseif|else if|while)\s+~
-for = ~for\s+~
-array = ~array~
-foreach = ~foreach(?![^\s])~
-setfilter = ~setfilter\s+~
-instanceof = ~\s+instanceof\s+~
-not = ~[!]\s*|not\s+~
-typecast = ~[(](int(eger)?|bool(ean)?|float|double|real|string|binary|array|object)[)]\s*~
-double_quote = ~["]~
-*/
+const string VALID_SYMBOL_CHARS = R"([A-Za-z0-9_])";  /** @note_to_self: ~~> \w == [A-Za-z0-9_] **/
+const string VALID_CHARS = R"([[:punct:][:alnum:]])"; // [:punct:] = !"#$%&'()*+,-./:;<=>?@[\]^_{|}~`);
+const string CONFIG_STATES = R"((?<states>^\s*(?<state>[A-Za-z][A-Za-z0-9_]*)\s*=\s*\s*\{(?<tokens>[A-Za-z][A-Za-z0-9_]*(, [A-Za-z][A-Za-z0-9_]*)*)\}\s*\s*$))";
+const string CONFIG_SECTIONS = R"(^\s*\[\s*(?<tokens>tokens)|(?<groups>groups)|(?<states>states)\s*\]\s*$)";
+const string CONFIG_PAIR = R"(\s*(?<type>" + TOKEN_TYPE_ + ")\\s+(?<name>[A-Za-z])" + VALID_SYMBOL_CHARS + R"("*)\\s*=\\s*(?<rexp>)" + VALID_CHARS + R"(*)\s*\"(?<test>.*)\"\s*)";
+const string CONFIG_COMMENT = R"(^\s*#.*$)";
+const string CONFIG = R"((?<pairs>)" + CONFIG_PAIR + R"()|(?<comments>)" + CONFIG_COMMENT + R"())";
+const string qwerty = R"(ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+{}|:"<>?`-=[]\;',./')";
+
+// groups
+const string BUILTIN_FUNCTION = "(insert)|(include)|(config_load)|(assign)|(fetch)|(capture)";
+const string MATH = "(abs)|(ceil)|(cos)|(exp)|(floor)|(log)|(log10)|(max)|(min)|(pi)|(pow)|(rand)|(round)|(sin)|(sqrt)|(srans)|(tan)";
+const string KEY_WORDS = "(if)|(else)|(elseif)|(foreach)|(foreachelse)|(literal)|(section)|(strip)|(assign)|(counter)|(cycle)|(debug)|(eval)|(fetch)|(html_checkboxes)";
+const string VAR_MODIFIER = "(capitalize)|(indent)|(lower)|(upper)|(spacify)|(string_format)|(truncate)|(date_format)|(escape)";
 
 struct if_stmt
 {
