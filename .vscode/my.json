@@ -1,0 +1,7 @@
+"terminal.integrated.defaultProfile.windows": "Cygwin",
+	"terminal.integrated.copyOnSelection": true,
+	"terminal.integrated.cwd": "${workspaceFolder}",
+	"terminal.explorerKind": "external",
+	"terminal.external.windowsExec": "C:\\cygwin64\\bin\\mintty.exe -i /Cygwin-Terminal.ico -",
+	"terminal.integrated.tabs.enableAnimation": false,
+	"terminal.integrated.suggest.windowsExecutableExtensions": {},

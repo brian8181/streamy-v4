@@ -144,8 +144,6 @@
 %type<std::string> file
 %type<std::string> stmt
 %type< std::vector< std::string > > stmts
-%type<std::string> block
-%type< std::vector< std::string > > blocks
 %type< std::pair<std::string, std::string> > attrib
 %type<std::vector< std::pair<std::string, std::string> > > attributes
 %type<std::vector< std::pair<std::string, std::string> > > built_in
@@ -156,7 +154,8 @@
 %type< std::vector< std::string > > modifiers
 %type<std::string> modifier
 %type<std::string> attrib_name
-%type<std::string> sub_proc array
+%type<std::string> array
+%type<std::string> block
 
 
 %nonassoc IFX
@@ -216,11 +215,11 @@ complier:
  * @name files
  */
 files:
-	file                                                        {
+	file                                              {
 																	 INFO("files: | file=\"" << $1 << "\"");
 																	 $$.push_back($1);
 																}
-    | files file                                                {
+    | files file                                               {
 																	INFO("files: | files file=\"" << $2 << "\"");
 																	$1.push_back($2);
 																	$$ = $1;
@@ -230,66 +229,54 @@ files:
  * @name file
  */
 file:
-	blocks END_OF_FILE
-						                                        {
+	block END_OF_FILE										{
                                                                     INFO("file: blocks.size=" << $1.size() << " END_OF_FILE");
 
-																	string name;
-																	lexer::instance().get_current_infile(name);
-																	$$ = name;
+																	// string name;
+																	// lexer::instance().get_current_infile(name);
+																	// $$ = name;
 
-                                                                    cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
-                                                                    cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
-                                                                    cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
-                                                                    cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
+                                                                    // cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
+                                                                    // cout << FMT_FG_DARK_GREY << "*                      End Of File                    *" << FMT_RESET << endl;
+                                                                    // cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
                                                                 }
                                                                 ;
-blocks:
-	block														{ INFO("blocks: | block"); }
-	| blocks block
-	;
 
 block:
-	stmts														{ INFO("block: | stmts"); }
-	| UNESCAPED_TEXT						                    {
-																	INFO("block: | UNESACAPED_TEXT");
-																	lexer::instance().write_ostream($1);
-																	$$=$1;
-																}
-																;
-/**
- * @name stmts
- */
-stmts[result]:
-    stmt        		                                       {
-																	INFO("stmts: stmt=\"" << $1 << "\"");
-																	//$$.push_back($1);
-																	$result.push_back($stmt);
-																}
-	| stmts stmt			                                    {
-																	INFO("stmts: | stmts stmt");
-																	$stmts.push_back($stmt);
-																	$result = $stmts;
-																}
-                                                                ;
+	stmt
+	| UNESCAPED_TEXT
+	| block stmt
+	| block UNESCAPED_TEXT
+	;
 
+compound_stmt:
+	OPEN_BRACE IF expr CLOSE_BRACE block OPEN_BRACE SLASH IF CLOSE_BRACE                         			   		{
+																														INFO("stmt: | OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
+																													}
+	| OPEN_BRACE WHILE expr CLOSE_BRACE block OPEN_BRACE SLASH WHILE CLOSE_BRACE                         			{
+																														INFO("stmt: | OPEN_BRACE WHILE expr CLOSE_BRACE stmts OPEN_BRACE SLASH WHILE CLOSE_BRACE ");
+																													}
+	| OPEN_BRACE IF expr CLOSE_BRACE block OPEN_BRACE ELSE CLOSE_BRACE block OPEN_BRACE SLASH IF CLOSE_BRACE        {
+																														INFO("stmt: | OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
+																			   						   				}
+	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE block OPEN_BRACE ELSE CLOSE_BRACE block OPEN_BRACE SLASH IF CLOSE_BRACE {
+																														INFO("stmt: | OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
+																			   						   				}
+																													;
+END_IF_BLOCK:
+	 SLASH IF																					{
+
+																								}
+																								;
+BEGIN_IF_BLOCK:
+	 IF expr																					{
+																								}
+																								;
 /**
  * @name stmt
  */
 stmt:
-	OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE                         			   		{
-																														INFO("stmt: | OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
-																													}
-	| OPEN_BRACE WHILE expr CLOSE_BRACE stmts OPEN_BRACE SLASH WHILE CLOSE_BRACE                         			{
-																														INFO("stmt: | OPEN_BRACE WHILE expr CLOSE_BRACE stmts OPEN_BRACE SLASH WHILE CLOSE_BRACE ");
-																													}
-	| OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE        {
-																														INFO("stmt: | OPEN_BRACE IF expr CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
-																			   						   				}
-	| OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE {
-																														INFO("stmt: | OPEN_BRACE IF symbol[sym] CLOSE_BRACE stmts OPEN_BRACE ELSE CLOSE_BRACE stmts OPEN_BRACE SLASH IF CLOSE_BRACE");
-																			   						   				}
-    | OPEN_BRACE symbol CLOSE_BRACE                              {
+	OPEN_BRACE symbol CLOSE_BRACE                              {
                                                                     WARN("stmt: OPEN_BRACE symbol=\"" << $symbol <<  "\" CLOSE_BRACE");
                                                                     string sym_value; // = "{" + $symbol + "=?}";
                                                                     get_value($symbol, sym_value);
@@ -319,9 +306,6 @@ stmt:
                                                                     WARN("stmt: | OPEN_BRACE expr CLOSE_BRACE");
 																	lexer::instance().write_ostream($2);
                                                                     $stmt=$2;
-                                                                }
-    | OPEN_BRACE sub_proc CLOSE_BRACE                           {
-                                                                    INFO("stmt: | OPEN_BRACE sub_porc CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE array CLOSE_BRACE                              {
                                                                     INFO("stmt: | OPEN_BRACE array CLOSE_BRACE");
@@ -430,15 +414,6 @@ expr[result]:
 																}
                                                                 ;
 /**
- * @name sub_proc
- */
-sub_proc:
-    symbol LPAREN params RPAREN                                 {
-                                                                    INFO("sub_proc: | symbol LPAREN params RPAREN" << "");
-                                                                    $$=$1;
-                                                                }
-                                                                ;
-/**
  * @name array
  */
 array:
@@ -460,35 +435,13 @@ array:
                                                                 }
                                                                 ;
 /**
- * @name params
- * @brief params (i.e. $x, $y, $x)
- */
-params:
-    param                                                       {
-																	INFO("PARSER params: | param");
-																}
-    | params symbol  '@'                                        {
-																	INFO("qualafied_id: | params COMMA symbol");
-																}
-                                                                ;
-/**
- * @name param
- * @brief param (i.e. $x, )
- */
-param:
-        symbol COMMA                                            {
-																	INFO("param: | symbol");
-																}
-                                                                ;
-/**
  * @name modifiers
  * @brief create vector of modifiers
  */
 modifiers:
     modifier                                                    {
                                                                     WARN("modifiers: modifier");
-																	$$.push_back($1);
-                                                                }
+																 }
    | modifiers VBAR modifier                                    {
                                                                     WARN("modifiers: modifier");
                                                                     $$ = $1;
@@ -508,7 +461,7 @@ modifier:
                                                                     INFO("modifier | CAPITALIZE");
                                                                     modifier_t m;
                                                                     m.name = "capitalize";
-                                                                    m.params = "";
+                                                                    //m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "capitalize";
                                                                 }
@@ -532,7 +485,7 @@ modifier:
                                                                     INFO("modifier | TRUNCATE"); $$="truncate";
                                                                     modifier_t m;
                                                                     m.name = "truncate";
-                                                                    m.params = "";
+                                                                    //m.params = "";
                                                                     // $$ = m;
                                                                     $$ = "truncate";
                                                                 }
@@ -551,10 +504,9 @@ modifier:
  * @brief ( $x:$y:$x ) | 1:2:"three"
  */
 colon_sep_params:
-		colon_sep_param											{
+		colon_sep_param									{
                                                                    	INFO("colon_sep_params: | colon_sep_param");
-																	$$.push_back($1);
-                                                                }
+																}
 		|  colon_sep_params colon_sep_param                     {
                                                                    	INFO("colon_sep_params: | colon_sep_params colon_sep_param");
                                                                     $1.push_back($2);
