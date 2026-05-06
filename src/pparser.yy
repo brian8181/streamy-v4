@@ -120,7 +120,7 @@
 %token<std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
 %token<std::string> INDIRECT_MEMBER ARRAY
 %token<std::string> STRING_LITERAL NUMERIC_LITERAL
-%token<std::string> CONST_SYMBOL SYMBOL IDENTIFIER
+%token<std::string> CONST_SYMBOL IDENTIFIER
 %token<std::string> VAR_ATTRIB VALUE_ATTRIB FILE_ATTRIB FROM_ATTRIB KEY_ATTRIB NAME_ATTRIB ITEM_ATTRIB
 %token<std::string> ASSIGN_ATTRIB START_ATTRIB MAX_ATTRIB
 %token<std::string> ONCE_ATTRIB SCRIPT_ATTRIB LOOP_ATTRIB STEP_ATTRIB SHOW_ATTRIB SKIP_ATTRIB PRINT_ATTRIB DIRECTION_ATTRIB
@@ -588,9 +588,9 @@ colon_sep_param:
  * @name symbol
  */
 symbol:
-		SYMBOL													{
-																	INFO("symbol: | SYMBOL=" << $1);
-																	$$ = $1;
+		DOLLAR_SIGN IDENTIFIER								{
+																	INFO("symbol: | DOLLAR_SIGN IDENTIFIER=");
+																	$$ = $2;
 																}
 		| CONST_SYMBOL											{
 																	INFO("symbol: | CONST_SYMBOL=" << $1);

@@ -20,11 +20,6 @@
 #include <netinet/in.h>
 #include <string.h>
 #include "TEST_lex.hpp"
-#include "lexer.hpp"
-#include "driver.hpp"
-#include "pparser.tab.hpp"
-#include "parser.hpp"
-#include "strm_handle.hpp"
 #include "bash_color.hpp"
 
 
@@ -33,17 +28,17 @@ using namespace std;
 
 
 // create parser
-static yy::parser yyparser;
+//static yy::parser yyparser;
 
 /**
  * @name lex
  * @return yy::parser::symbol_type
  */
-yy::parser::symbol_type lex()
-{
-	// TRACE();
-	return lexer::instance().get_token();
-}
+// yy::parser::symbol_type lex()
+// {
+// 	// TRACE();
+// 	//return lexer::instance().get_token();
+// }
 
 
 void TEST_lex::setUp()
@@ -101,4 +96,3 @@ void TEST_lex::execute(int argc, char* argv[])
 {
 
 }
-

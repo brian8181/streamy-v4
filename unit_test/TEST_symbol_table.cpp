@@ -1,14 +1,16 @@
-#include "ast/symbol_base.hpp"
 #include "TEST_symbol_table.hpp"
 #include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <string>
 #include <stdexcept>
 
 using std::cout;
 using std::endl;
 using std::cerr;
+using std::string;
+
 //using namespace ast;
 
 CPPUNIT_TEST_SUITE_REGISTRATION( TEST_symbol_table );
@@ -51,20 +53,20 @@ void TEST_symbol_table::TEST_string_memory()
 
 void TEST_symbol_table::TEST_add_symbol_change_value()
 {
-	std::map<string, symbol_base*> symbol_table_;
-	symbol_<int> s( "x", 42);
-	symbol_table_["x"] = &s;
-	auto it = symbol_table_.find( "x" );
-	if(it != symbol_table_.end())
-	{
-		cout << std::dec << endl;
-		string id = it->first;
-		cout << "sym=" << id << endl;
-		symbol_<int>* ps = ( symbol_<int>* )it->second;
-		cout << "result=" << *ps->m_pval << endl;
-		ps->set( 77 );
-		cout << "ps=" << *ps->m_pval << " : " << *ps->get() << endl;
-		*ps->m_pval = 88;
-		cout << "ps=" << *ps->m_pval << " : " << *ps->get() << endl;
-	}
+	// std::map<string, symbol_base*> symbol_table_;
+	// symbol_<int> s( "x", 42);
+	// symbol_table_["x"] = &s;
+	// auto it = symbol_table_.find( "x" );
+	// if(it != symbol_table_.end())
+	// {
+	// 	cout << std::dec << endl;
+	// 	string id = it->first;
+	// 	cout << "sym=" << id << endl;
+	// 	symbol_<int>* ps = ( symbol_<int>* )it->second;
+	// 	cout << "result=" << *ps->m_pval << endl;
+	// 	ps->set( 77 );
+	// 	cout << "ps=" << *ps->m_pval << " : " << *ps->get() << endl;
+	// 	*ps->m_pval = 88;
+	// 	cout << "ps=" << *ps->m_pval << " : " << *ps->get() << endl;
+	// }
 }

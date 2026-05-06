@@ -403,12 +403,12 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 				case ELSE:
 					//set_state( &IF_BLOCK );
 					return parser::make_ELSE();
-				case SYMBOL:
-					return parser::make_SYMBOL( match );
+				case VAR_OPER:
+					return parser::make_DOLLAR_SIGN();
 				case CONST_SYMBOL:
 					return parser::make_CONST_SYMBOL( match );
 				case IDENTIFIER:
-					INFO("IDENTIFIER!!");
+					return parser::make_IDENTIFIER( match );
 				case PERCENT_SIGN:
 					return parser::make_PERCENT_SIGN();
 				case PLUS_SIGN:

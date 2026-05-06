@@ -40,7 +40,7 @@ FMT_WARN=$(FMT_ITALIC)$(FMT_YELLOW)
 
 # lib settings
 LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64
-INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD) -I/.
+INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD) -I./$(TST)
 
 
 ifdef CLANG
@@ -100,6 +100,14 @@ $(OBJ)/driver.o \
 $(OBJ)/symtab.o
 #$(OBJ)/def.o
 
+TST_OBJS=$(OBJ)/fileio.o \
+$(OBJ)/auto_ptr.o \
+$(OBJ)/utility.o \
+$(OBJ)/symtab.o \
+$(OBJ)/TEST_lex.o \
+$(OBJ)/TEST_general.o \
+$(OBJ)/TEST_symbol_table.o
+
 # SOURCES=$(SRC)/bash_color.hpp \
 # $(SRC)/log.hpp \
 # $(SRC)/fileio.hpp $(OBJ)/fileio.o \
@@ -114,9 +122,9 @@ $(OBJ)/symtab.o
 
 SOURCES=$(HEADERS) $(OBJS)
 
-all: $(BLD)/driver
+all: $(BLD)/driver $(BLD)/TEST_lex
 
-world: $(BLD)/driver $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
+world: $(BLD)/driver $(BLD)/TEST_lex $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
 
 $(BLD)/driver: $(OBJS) $(SRC)/definitions.hpp
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
@@ -157,8 +165,8 @@ $(BLD)/lib$(APP).a: $(BLD)/$(APP).o
 	ar rvs $(BLD)/lib$(APP).a $(OBJ)/$(APP).o
 	chmod 755 $(BLD)/lib$(APP).a
 
-$(BLD)/TEST_lex: $(OBJ)/TEST_lex.o $(SOURCES) $(BLD)/main.o
-	$(CXX) $(CXXFLAGS) $^ -L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt -I/usr/local/include/cppunit -lcppunit $(LDFLAGS) -o $@
+$(BLD)/TEST_lex: $(TST_OBJS) $(OBJ)/main.o
+	$(CXX) $(CXXFLAGS) -I/src -I/build  $^ -L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt -I/usr/local/include/cppunit -lcppunit $(LDFLAGS) -o $@
 
 # copy header files
 $(BLD)/%.h : $(SRC)/%.h
@@ -174,8 +182,8 @@ $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
 $(OBJ)/%.o: $(SRC)/%.cpp $(SRC)/%.hpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-$(OBJ)/%.o: $(TST)/%.cpp # $(HEADERS)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(OBJ)/%.o: $(TST)/%.cpp $(TST)/%.hpp # $(HEADERS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 .PHONY: all rebuild dist install uninstall clean help
 rebuild: clean all
