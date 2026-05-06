@@ -6,17 +6,15 @@
  */
 #include "TEST_assign.hpp"
 
-/**
- * @brief : default ctor
- */
-TEST_assign::TEST_assign() = default;
+CPPUNIT_TEST_SUITE_REGISTRATION( TEST_assign );
 
-/**
-  * @brief : copy ctor
-  */
-TEST_assign::TEST_assign( const TEST_assign& src ) = default;
 
-/**
-  * @brief : destructor
-  */
-TEST_assign::~TEST_assign() = default;
+void TEST_assign::setUp()
+{
+
+}
+
+void TEST_assign::tearDown()
+{
+
+}

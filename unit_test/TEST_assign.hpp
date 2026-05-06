@@ -6,33 +6,44 @@
  */
 #ifndef _TEST_assign_HPP_
 #define _TEST_assign_HPP_
+
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/TestFixture.h>
 #include <iostream>
 
 /**
   * @brief class TEST_assign
   */
-class TEST_assign
+class TEST_assign : public CppUnit::TestFixture
 {
+	CPPUNIT_TEST_SUITE( TEST_assign );
+	CPPUNIT_TEST_SUITE_END();
+
+public:
+	void setUp();
+	void tearDown();
+
 public:
 	/**
 	* @brief : default ctor
 	*/
-	TEST_assign();
+	TEST_assign() {};
 
 		/**
 	* @brief : copy ctor
 	*/
-	TEST_assign( const TEST_assign& src );
-	
+	TEST_assign( const TEST_assign& src )
+
 		/**
 	* @brief : destructor
 	*/
-	virtual ~TEST_assign();
+	virtual ~TEST_assign() {}
 
 
-	TEST_assign
+
 	/**
-	  * @brief 
+	  * @brief
 	  * @brief c++ comment ...
 	  * @brief place future additions here ...
 	  *

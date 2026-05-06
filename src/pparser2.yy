@@ -141,8 +141,8 @@ program:
  * @name files
  */
 files:
-    file                                                        {                                                                                    }
-    | files file                                                {  				                                                                      }
+    file                                                        {}
+    | files file                                                {}
                                                                 ;
 /**
  * @name file

@@ -1,7 +1,6 @@
 #ifndef _TESTEXPR_HPP_
 #define _TESTEXPR_HPP_
 
-#include "ast/variant.hpp"
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestFixture.h>
 

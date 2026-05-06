@@ -109,7 +109,9 @@ $(OBJ)/symtab.o \
 $(OBJ)/TEST_lex.o \
 $(OBJ)/TEST_general.o \
 $(OBJ)/TEST_symbol_table.o \
-$(OBJ)/TEST_ast.o
+$(OBJ)/TEST_ast.o \
+$(OBJ)/TEST_assign_expr.o \
+$(OBJ)/TEST_expr.o
 
 # SOURCES=$(SRC)/bash_color.hpp \
 # $(SRC)/log.hpp \
