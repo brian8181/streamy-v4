@@ -108,7 +108,12 @@ int parse_options(const int argc, char *argv[])
             return 1;
         }
     }
-
+    
+    streamy strmy;
+    strmy.assign("x", "this is x");
+    strmy.assign("y", "this is y");
+    
+    
     const int offset = optind + SRC_IDX_OFFSET-1;
 	lexer::instance().init(argc-offset-1, argv+offset+1);
 	yyparser.parse();

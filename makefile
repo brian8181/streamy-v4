@@ -99,7 +99,8 @@ $(OBJ)/parser.o \
 $(OBJ)/lexer.o \
 $(OBJ)/driver.o \
 $(OBJ)/symtab.o \
-$(OBJ)/streamy.o
+$(OBJ)/streamy.o \
+#$(OBJ)/index.o
 #$(OBJ)/def.o
 
 TST_OBJS=$(OBJ)/fileio.o \
@@ -127,11 +128,20 @@ $(OBJ)/TEST_expr.o
 
 SOURCES=$(HEADERS) $(OBJS)
 
-all: $(BLD)/driver $(BLD)/TEST_lex
+all: $(BLD)/driver $(BLD)/TEST_lex $(BLD)/index $(BLD)/index2 $(BLD)/index3
 
 world: $(BLD)/driver $(BLD)/TEST_lex $(BLD)/lib$(APP).a $(BLD)/libauto_ptr.a $(BLD)/libauto_ptr.so
 
 $(BLD)/driver: $(OBJS) $(SRC)/definitions.hpp
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
+
+$(OBJ)/index: $(OBJ)/index.o $(OBJ)/index.hpp $(OBJ)/fileio.o $(OBJ)/streamy.o $(SRC)/streamy.hpp $(SRC)/constants.hpp
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
+
+$(BLD)/index2:  $(OBJ)/index2.o $(OBJ)/index2.hpp $(OBJ)/fileio.o $(OBJ)/streamy.o $(SRC)/streamy.hpp $(SRC)/constants.hpp
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
+
+$(BLD)/index3:  $(OBJ)/index3.o $(OBJ)/index3.hpp $(OBJ)/fileio.o $(OBJ)/streamy.o $(SRC)/streamy.hpp $(SRC)/constants.hpp
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 # $(TST)/%: $(OBJ)/%.o

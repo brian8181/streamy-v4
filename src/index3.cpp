@@ -10,7 +10,7 @@
 #include <string>
 #include <getopt.h>
 #include <filesystem>
-#include "bash_color.h"
+#include "bash_color.hpp"
 #include "utility.hpp"
 #include "streamy.hpp"
 

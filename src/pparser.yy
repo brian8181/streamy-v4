@@ -250,26 +250,25 @@ blocks:
 	;
 
 block:
-	stmts														{ INFO("block: | stmts"); }
-	| UNESCAPED_TEXT						                    {
+	stmts													    { INFO("block: | stmts"); }
+	| UNESCAPED_TEXT[raw]						                {
 																	INFO("block: | UNESACAPED_TEXT");
-																	lexer::instance().write_ostream($1);
-																	$$=$1;
+																	lexer::instance().write_ostream($raw);
+																	$block = $raw;
 																}
 																;
 /**
  * @name stmts
  */
 stmts[result]:
-    stmt        		                                       {
-																	INFO("stmts: stmt=\"" << $1 << "\"");
-																	//$$.push_back($1);
-																	$result.push_back($stmt);
+    stmt[lhs]        		                                    {
+																	INFO("stmts: stmt=\"" << $lhs << "\"");
+																	$result.push_back($lhs);
 																}
-	| stmts stmt			                                    {
+	| stmts[lhs] stmt[rhs]			                            {
 																	INFO("stmts: | stmts stmt");
-																	$stmts.push_back($stmt);
-																	$result = $stmts;
+																	$lhs.push_back($rhs);
+																	$result = $lhs;
 																}
                                                                 ;
 
