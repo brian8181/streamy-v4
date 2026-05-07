@@ -50,8 +50,6 @@ set(SOURCES
 		src/lexer.cpp
 		build/pparser.tab.cpp
 		src/log.cpp
-		src/strm_handle.cpp
-		src/process_strm.cpp
 		src/parser.cpp
 )
 

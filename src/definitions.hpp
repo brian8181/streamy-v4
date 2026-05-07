@@ -246,25 +246,25 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define BLOCK 190ul
 #define BLOCKS 200ul
 #define BUILT_IN 210ul
-#define FILES 220ul
-#define FILE 230ul
-#define ASSIGN_STMT 240ul
-#define EXPR 250ul
-#define SUB_PROC 260ul
-#define PARAM 270ul
-#define PARAMS 280ul
-#define COLON_SEP_PARAMS 290ul
-#define COLON_SEP_PARAM 300ul
-#define ATTRIB 310ul
-#define ATTRIBUTES 320ul
-#define ATTRIB_NAME 330ul
-#define COMPILER 440ul
-#define END_OF_FILE 442ul
-#define END_OF_FILES 445ul
-#define IDENTIFIER_CHARS 500ul
-#define VAR_OPER 503ul
-#define CONST_VAR_OPER 505ul
 #define OFFSET 1000ul
+#define FILES   			(OFFSET+ __LINE__)
+#define FILE   				(OFFSET+ __LINE__)
+#define ASSIGN_STMT   		(OFFSET+ __LINE__)
+#define EXPR   				(OFFSET+ __LINE__)
+#define SUB_PROC   			(OFFSET+ __LINE__)
+#define PARAM   			(OFFSET+ __LINE__)
+#define PARAMS   			(OFFSET+ __LINE__)
+#define COLON_SEP_PARAMS   	(OFFSET+ __LINE__)
+#define COLON_SEP_PARAM     (OFFSET+ __LINE__)
+#define ATTRIB   			(OFFSET+ __LINE__)
+#define ATTRIBUTES   		(OFFSET+ __LINE__)
+#define ATTRIB_NAME   		(OFFSET+ __LINE__)
+#define COMPILER   			(OFFSET+ __LINE__)
+#define END_OF_FILE   		(OFFSET+ __LINE__)
+#define END_OF_FILES   		(OFFSET+ __LINE__)
+#define IDENTIFIER_CHARS    (OFFSET+ __LINE__)
+#define VAR_OPER   			(OFFSET+__LINE__)
+#define CONST_VAR_OPER 		(OFFSET+ __LINE__)
 #define START_ATTRIB       (OFFSET + __LINE__)
 #define MAX_ATTRIB         (OFFSET + __LINE__)
 #define ONCE_ATTRIB        (OFFSET + __LINE__)
@@ -289,7 +289,7 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define OPTIONS_ATTRIB     (OFFSET + __LINE__)
 #define VALUES_ATTRIB      (OFFSET + __LINE__)
 #define SEPERATOR_ATTRIB   (OFFSET + __LINE__)
-#define FORMAT_ATTRIB      (OFFSET + __LINE__)
+#define FORMAT_ATTRIB       (OFFSET + __LINE__)
 #define S_TYPE "string"
 
 
