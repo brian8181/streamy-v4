@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.28.3)
 # We don't use the C++ compiler, so don't let project()
 # test for it in case the platform doesn't have one
-project(inflex VERSION 0.1.0
+project(streamy VERSION 0.1.0
                 DESCRIPTION "Very nice project"
                 LANGUAGES CXX)
 
@@ -21,7 +21,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "CYGWIN")
     add_definitions(-DCYGWIN)
 endif()
 
-set(Boost_DIR  "/home/brian/src/boost_1_89_0/tools/cmake/config/")  # only find static libs
+set(Boost_DIR  "/home/brian/src/boost_1_91_0/tools/cmake/config/")  # only find static libs
 include_directories(${Boost_INCLUDE_DIRS})
 # Find the Boost package, requiring the 'regex' component
 # 'CONFIG' mode is generally preferred with modern Boost versions (1.70+)
@@ -30,7 +30,7 @@ find_package(Boost 1.66.0 CONFIG REQUIRED COMPONENTS regex)
 # Find required packages
 find_package(fmt REQUIRED)
 if(NOT fmt_FOUND)
-    message(FATAL_ERROR "fmt not found")
+   message(FATAL_ERROR "fmt not found")
 endif()
 
 find_package(PkgConfig REQUIRED)
@@ -54,11 +54,20 @@ set(SOURCES
 )
 
 # Create test executable
-add_executable(driver ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
+
+# include(FetchContent)
+# FetchContent_Declare(
+#   fmt
+#   GIT_REPOSITORY https://github.com/fmtlib/fmt
+#   GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281) # 10.2.1
+# FetchContent_MakeAvailable(fmt)
+# target_link_libraries(${PROJECT_NAME} fmt::fmt)
+
 
 # Link the executable against the Boost::regex imported target
 # CMake handles linking to the correct library file and adding the include directories
-target_link_libraries(driver PRIVATE Boost::regex)
+target_link_libraries(${PROJECT_NAME} PRIVATE Boost::regex)
 
 # Create library from sources
 #add_library(${PROJECT_NAME}_lib ${SOURCES})

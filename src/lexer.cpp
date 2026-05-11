@@ -169,10 +169,7 @@ bool lexer::next_file()
 
 		// todo close open stream & open one for next file
 		fs::path p = m_ifile;
-		int pos = m_ifile.find_last_of( '.' );
 		p.replace_extension(".html");
-		// string path = m_ifile.substr( 0, pos - 1 );
-		// m_ofile = path + ".out.txt";
 		m_ofile = (string)p;
 
 		INFO("output file=\"" << m_ofile << "\"");
@@ -220,7 +217,7 @@ void lexer::set_state( state_t* pstate )
 		cout << ( ( i % 2 ) ? FMT_BG_BLACK : FMT_BG_DARK_GREY ) << FMT_FG_LIGHT_YELLOW
 			<< info.str() << FMT_ITALIC << FMT_RESET << endl;
 
-	//  ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
+//   	ss << "(?<" << ptoken->name << ">)" << ptoken->rexp << ")|";
 		ss << "(" << ptoken->rexp << ")|";
 	}
 
@@ -345,11 +342,14 @@ parser::symbol_type lexer::get_token()
  */
 void lexer::print_smatch(token_t t, boost::smatch m)
 {
-	INFO( "match.pos:" << m.position() << " - match.sz:" << m.str().size() << " - prefix.sz:" << m.prefix().str().size() << " - suffix.sz:" << m.suffix().str().size() );
-	INFO( "match[ " << t.index << " : " << t.name  << "] "\
-		<< "[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.str() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"\
-		<< " - prefix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.prefix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"\
-		<< " - suffix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.suffix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]");
+	INFO(	"match.pos:" << m.position() << " - match.sz:" << m.str().size() 
+										 << " - prefix.sz:" << m.prefix().str().size() 
+										 << " - suffix.sz:" << m.suffix().str().size()	 );
+
+	INFO( 	"match[ " << t.index << " : " << t.name << "] "\
+			<< "[ " 		 << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.str()    ).get_val() << "\""    << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"\
+			<< " - prefix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.prefix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"\
+			<< " - suffix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.suffix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"	);
 }
 
 /**

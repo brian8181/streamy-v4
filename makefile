@@ -1,10 +1,7 @@
 # @file: makefile
 # @date: Mon Sep  8 00:03:12 CDT 2025
 # @version: 0.0.2
-
-CYGWIN=0
-
-APP = driver
+APP = streamy
 CXX = g++
 #CXX = x86_64-pc-cygwin-g++
 CC = gcc
@@ -14,7 +11,7 @@ LEX = flex
 YACC = bison
 YFLAGS = -YYDEBUG
 CXXFLAGS = -std=gnu++17 -fPIC
-CCFLAGS = -g -DLEX_TEST -DCYGWIN -DDEBUG
+CCFLAGS = -g -DLEX_TEST -DDEBUG
 LDFLAGS =
 FLEXFLAGS = --flex
 BISONFLAGS = -y -d --html --graph
@@ -39,9 +36,8 @@ FMT_INFO=$(FMT_ITALIC)$(FMT_GREEN)
 FMT_WARN=$(FMT_ITALIC)$(FMT_YELLOW)
 
 # lib settings
-LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64
-INCLUDES=-I/usr/local/include/cppunit/ -I./$(SRC) -I./$(BLD) -I./$(TST)
-
+INCLUDES=-I/usr/local/include/cppunit/ -I"/home/brian/src/boost_1_91_0" -I./$(SRC) -I./$(BLD) -I./$(TST)
+LIBS=-L/usr/lib -L/usr/lib64 -L/usr/local/lib -L/usr/local/lib64 -lfmt
 
 ifdef CLANG
 	CXX=clang++
@@ -53,7 +49,7 @@ endif
 
 ifdef CYGWIN
 	CXXFLAGS += -DCYGWIN
-	INCLUDES += -I"/home/brian/src/boost_1_89_0"
+	INCLUDES += -I"/home/brian/src/boost_1_91_0"
 	LIBS += /usr/local/lib/libfmt.a -lcppunit.dll
 endif
 ifdef MSYS_UCRT
@@ -98,7 +94,7 @@ $(BLD)/pparser.tab.o \
 $(OBJ)/parser.o \
 $(OBJ)/lexer.o \
 $(OBJ)/driver.o \
-git $(OBJ)/symtab.o \
+$(OBJ)/symtab.o \
 $(OBJ)/streamy.o \
 #$(OBJ)/index.o
 #$(OBJ)/def.o
@@ -107,6 +103,7 @@ TST_OBJS=$(OBJ)/fileio.o \
 $(OBJ)/auto_ptr.o \
 $(OBJ)/utility.o \
 $(OBJ)/symtab.o \
+$(OBJ)/lexer.o \
 $(OBJ)/TEST_lex.o \
 $(OBJ)/TEST_general.o \
 $(OBJ)/TEST_symbol_table.o \

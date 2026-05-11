@@ -1,4 +1,4 @@
-#ifndef _TEST_MULTIPLY_EXPR_HPP_
+md #ifndef _TEST_MULTIPLY_EXPR_HPP_
 #define _TEST_MULTIPLY_EXPR_HPP_
 
 #include <cppunit/extensions/HelperMacros.h>

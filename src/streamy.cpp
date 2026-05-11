@@ -86,6 +86,7 @@ void streamy::load_config(const string& path)
 void streamy::display(const string& tmpl)
 {
     string html;
+    cout << "x=" << map_vars["x"] << ". y=" << map_vars["y"] << endl; 
 }
 
 string& streamy::fetch(const string& tmpl, const string& cache_id, const string& compile_id, /*out*/ string& html)

@@ -224,7 +224,7 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define VALID_CHAR 113ul
 #define FIRST_CHAR 114ul
 #define ID 115ul
-#define IDENTIFIER 116ul
+#define IDENTIFIER 1009ul
 #define SYMBOL 117ul
 #define CONST_SYMBOL 118ul
 #define ARRAY 119ul
@@ -260,11 +260,11 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define ATTRIBUTES   		(OFFSET+ __LINE__)
 #define ATTRIB_NAME   		(OFFSET+ __LINE__)
 #define COMPILER   			(OFFSET+ __LINE__)
-#define END_OF_FILE   		(OFFSET+ __LINE__)
-#define END_OF_FILES   		(OFFSET+ __LINE__)
+#define END_OF_FILE   		2003ul
+#define END_OF_FILES   		2006ul
 #define IDENTIFIER_CHARS    (OFFSET+ __LINE__)
-#define VAR_OPER   			(OFFSET+__LINE__)
-#define CONST_VAR_OPER 		(OFFSET+ __LINE__)
+#define VAR_OPER   			1003ul
+#define CONST_VAR_OPER 		1006ul
 #define START_ATTRIB       (OFFSET + __LINE__)
 #define MAX_ATTRIB         (OFFSET + __LINE__)
 #define ONCE_ATTRIB        (OFFSET + __LINE__)
@@ -319,9 +319,9 @@ inline map<unsigned long, token> g_tokens =
 	{CAPITALIZE,        token{"CAPITALIZE", S_TYPE, R"(capitalize)", __LINE__}},
 	{STRING_LITERAL,    token{"STRING_LITERAL", S_TYPE, R"("[A-Za-z0-9*@_.~+-/ ]+")", __LINE__}},
 	{ARRAY,             token{"ARRAY", S_TYPE, R_ARRAY, __LINE__}},
-	{VAR_OPER,         	token{"VAR_OPER", S_TYPE, R"(\B[$]\<)", __LINE__}},
-	{CONST_VAR_OPER,    token{"VAR_OPER", S_TYPE, R"(\B[#]\b)", __LINE__}},
-	{IDENTIFIER,        token{"IDENTIFIER", S_TYPE, R"(\<[A-Za-z_][A-Za-z0-9_]*\>)", __LINE__}},
+	{VAR_OPER,         	token{"VAR_OPER", S_TYPE, R"([$])", __LINE__}},
+	{CONST_VAR_OPER,    token{"VAR_OPER", S_TYPE, R"([#])", __LINE__}},
+	{IDENTIFIER,        token{"IDENTIFIER", S_TYPE, R"(\<[A-Za-z_][A-Za-z0-9_]*)", __LINE__}},
 	{COMMENT,           token{"COMMENT", S_TYPE, R"(\{[ ]*\*[^*}]*\*[ ]*\})", __LINE__}},
 	{VAR_ATTRIB,        token{"VAR_ATTRIB", S_TYPE, R"(var='[^']*')", __LINE__}},
 	{VALUE_ATTRIB,      token{"VALUE_ATTRIB", S_TYPE, R"(value='[^']*')", __LINE__}},
@@ -397,7 +397,7 @@ inline map<unsigned long, token> g_tokens =
 	{COUNT_SENTENCES,   token{"COUNT_SENTENCES", S_TYPE, R"(count_sentences)", __LINE__}},
 	{COUNT_WORDS,       token{"COUNT_WORDS", S_TYPE, R"(count_words)", __LINE__}},
 	{DATE_FORMAT,       token{"DATE_FORMAT", S_TYPE, R"(date_format)", __LINE__}},
-	{NULL,              token{"DEFAULT", S_TYPE, R"(default)", __LINE__}},
+	{DEFAULT,           token{"DEFAULT", S_TYPE, R"(default)", __LINE__}},
 	{ESCAPE,            token{"ESCAPE", S_TYPE, R"(escape)", __LINE__}},
 	{INDENT,            token{"INDENT", S_TYPE, R"(indent)", __LINE__}},
 	{LOWER,             token{"LOWER", S_TYPE, R"(lower)", __LINE__}},

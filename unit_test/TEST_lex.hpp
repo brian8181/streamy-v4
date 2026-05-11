@@ -12,11 +12,8 @@ class TEST_lex : public CppUnit::TestFixture
 {
 private:
     CPPUNIT_TEST_SUITE(TEST_lex);
-    CPPUNIT_TEST(testNoOptions);
-    CPPUNIT_TEST(testOptionHelp);
-    CPPUNIT_TEST(testOptionHelpLong);
-    CPPUNIT_TEST(testOptionVerbose);
-    CPPUNIT_TEST(testOptionVerboseLong);
+    CPPUNIT_TEST(test_initialize);
+    CPPUNIT_TEST(test_get_token);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -28,12 +25,9 @@ public:
     void execute(int argc, char* argv[]);
 
 protected:
-    void testNoOptions();
-    void testOptionHelp();
-    void testOptionHelpLong();
-    void testOptionVerbose();
-    void testOptionVerboseLong();
-
+    void test_initialize();
+    void test_get_token();
+  
 private:
     int m_argc;
     char* m_argv[10];

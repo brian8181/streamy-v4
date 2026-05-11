@@ -116,57 +116,6 @@
 
 }
 
-%token IF ELSE ELSEIF DO WHILE FOREACH BREAK CONTINUE
-%token<std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
-%token<std::string> INDIRECT_MEMBER ARRAY
-%token<std::string> STRING_LITERAL NUMERIC_LITERAL
-%token<std::string> CONST_SYMBOL IDENTIFIER
-%token<std::string> VAR_ATTRIB VALUE_ATTRIB FILE_ATTRIB FROM_ATTRIB KEY_ATTRIB NAME_ATTRIB ITEM_ATTRIB
-%token<std::string> ASSIGN_ATTRIB START_ATTRIB MAX_ATTRIB
-%token<std::string> ONCE_ATTRIB SCRIPT_ATTRIB LOOP_ATTRIB STEP_ATTRIB SHOW_ATTRIB SKIP_ATTRIB PRINT_ATTRIB DIRECTION_ATTRIB
-%token<std::string> ADVANCE_ATTRIB RESET_ATTRIB DELIMITER_ATTRIB OUTPUT_ATTRIB HEIGHT_ATTRIB WIDTH_ATTRIB ALT_ATTRIB HREF_ATTRIB
-%token<std::string> BASEDIR_ATTRIB PATH_PREFIX_ATTRIB SELECTED_ATTRIB OPTIONS_ATTRIB VALUES_ATTRIB SEPERATOR_ATTRIB FORMAT_ATTRIB
-%token<std::string> CAPITALIZE CAT COUNT_CHARACTERS COUNT_SENTENCES COUNT_PARAGRAPHS COUNT_WORDS DATE_FORMAT DEFAULT ESCAPE
-%token<std::string> INDENT LOWER UPPER STRIP NL2BR REGEX_REPLACE REPLACE SPACIFY STRING_FORMAT STRIP_TAGS TRUNCATE WORDWRAP
-%token CARROT OPEN_PAREN CLOSE_PAREN DASH BACKSLASH QUESTION_MARK SEMI_COLON DOUBLE_QUOTE SINGLE_QUOTE BACK_SLASH AT AMPERSAND AND OR NOT
-%token DOLLAR_SIGN COMMA COLON VBAR HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
-%token END_OF_FILE 0
-%token END_OF_FILES
-%token<std::string> UNESCAPED_TEXT
-%token MATCH UNDEFINED WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN
-%token NEWLINE
-%token FILE_PATH
-%token PLUS '+'
-%token MINUS '-'
-%token MULT '*'
-
-%type< std::vector< std::string > > files
-%type<std::string> file
-%type<std::string> stmt
-%type< std::vector< std::string > > stmts
-%type<std::string> block
-%type< std::vector< std::string > > blocks
-%type< std::pair<std::string, std::string> > attrib
-%type<std::vector< std::pair<std::string, std::string> > > attributes
-%type<std::vector< std::pair<std::string, std::string> > > built_in
-%type<std::string> expr
-%type<std::string> assign_stmt
-%type< std::vector< std::string > > colon_sep_params
-%type<std::string> colon_sep_param
-%type< std::vector< std::string > > modifiers
-%type<std::string> modifier
-%type<std::string> attrib_name
-%type<std::string> sub_proc array
-
-
-%nonassoc IFX
-%nonassoc ELSE ELSEIF IF WHILE BREAK
-%left GREATER_THAN_EQUAL LESS_THAN_EQUAL EQUAL_SIGN NOT_EQUAL LESS_THAN GREATER_THAN COMMA
-%left PLUS_SIGN MINUS_SIGN
-%left ASTERISK SLASH PERCENT_SIGN
-%type<std::string> symbol
-%start complier
-
 %code
 {
 	/* namespace yy
@@ -188,14 +137,61 @@
 	} */
 }
 
-%%
 
+%token <std::string> UNESCAPED_TEXT
+%token MATCH UNDEFINED NEWLINE WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN FILE_PATH
+%token PLUS MINUS MULT DIV
+%token END_OF_FILE 0
+%token END_OF_FILES
+%token IF ELSE ELSEIF DO WHILE FOREACH BREAK CONTINUE
+%token <std::string> CAPTURE CONFIG_LOAD INCLUDE REQUIRE REQUIRE_ONCE INSERT ASSIGN ISSET SECTION LDELIM RDELIM VERSION CYCLE COUNTER
+%token <std::string> INDIRECT_MEMBER ARRAY
+%token <std::string> IDENTIFIER 
+%token <std::string> STRING_LITERAL NUMERIC_LITERAL
+%token <std::string> VAR_ATTRIB VALUE_ATTRIB FILE_ATTRIB FROM_ATTRIB KEY_ATTRIB NAME_ATTRIB ITEM_ATTRIB
+%token <std::string> ASSIGN_ATTRIB START_ATTRIB MAX_ATTRIB
+%token <std::string> ONCE_ATTRIB SCRIPT_ATTRIB LOOP_ATTRIB STEP_ATTRIB SHOW_ATTRIB SKIP_ATTRIB PRINT_ATTRIB DIRECTION_ATTRIB
+%token <std::string> ADVANCE_ATTRIB RESET_ATTRIB DELIMITER_ATTRIB OUTPUT_ATTRIB HEIGHT_ATTRIB WIDTH_ATTRIB ALT_ATTRIB HREF_ATTRIB
+%token <std::string> BASEDIR_ATTRIB PATH_PREFIX_ATTRIB SELECTED_ATTRIB OPTIONS_ATTRIB VALUES_ATTRIB SEPERATOR_ATTRIB FORMAT_ATTRIB
+%token <std::string> CAPITALIZE CAT COUNT_CHARACTERS COUNT_SENTENCES COUNT_PARAGRAPHS COUNT_WORDS DATE_FORMAT DEFAULT ESCAPE
+%token <std::string> INDENT LOWER UPPER STRIP NL2BR REGEX_REPLACE REPLACE SPACIFY STRING_FORMAT STRIP_TAGS TRUNCATE WORDWRAP
+%token CARROT OPEN_PAREN CLOSE_PAREN DASH BACKSLASH QUESTION_MARK SEMI_COLON DOUBLE_QUOTE SINGLE_QUOTE BACK_SLASH AT AMPERSAND AND OR NOT
+%token DOLLAR_SIGN COMMA COLON VBAR HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
+
+%type < std::vector< std::string > > files
+%type <std::string> file
+%type <std::string> stmt
+%type < std::vector< std::string > > stmts
+%type <std::string> block
+%type < std::vector< std::string > > blocks
+%type <std::string> attrib_name
+%type < std::pair<std::string, std::string> > attrib
+%type <std::vector< std::pair<std::string, std::string> > > attributes
+%type <std::vector< std::pair<std::string, std::string> > > built_in
+%type <std::string> expr
+%type <std::string> assign_stmt
+%type < std::vector< std::string > > colon_sep_params
+%type <std::string> colon_sep_param
+%type < std::vector< std::string > > modifiers
+%type <std::string> modifier
+%type <std::string> sub_proc array
+
+%nonassoc IFX
+%nonassoc ELSE ELSEIF IF WHILE BREAK
+%left GREATER_THAN_EQUAL LESS_THAN_EQUAL EQUAL_SIGN NOT_EQUAL LESS_THAN GREATER_THAN COMMA
+%left PLUS_SIGN MINUS_SIGN
+%left ASTERISK SLASH PERCENT_SIGN
+%type <std::string> symbol
+%type <std::string> compiler
+%start compiler
+
+%%
 /**
  * @name complier
  */
-complier:
+compiler:
 	files  END_OF_FILES                                         {
-																	INFO("complier: files.size=" << $1.size() << " END_OF_FILES");
+																	INFO("compiler: files.size=" << $1.size() << " END_OF_FILES");
 
 																	cout << "processed files ..." << endl;
 																	int len = $1.size();
@@ -204,7 +200,7 @@ complier:
 																		cout << $1[i] << endl;
 																	}
 
-                                                                    cout << FMT_FG_DARK_GREY << "PARSER complier: | files" << endl;
+                                                                    cout << FMT_FG_DARK_GREY << "PARSER compiler: | files" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*********************** STOPPING **********************" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*                     Terminating.                    *" << FMT_RESET << endl;
                                                                     cout << FMT_FG_DARK_GREY << "************************* Done ************************" << FMT_RESET << endl;
@@ -215,15 +211,15 @@ complier:
 /**
  * @name files
  */
-files:
+files[result]:
 	file                                                        {
-																	 INFO("files: | file=\"" << $1 << "\"");
-																	 $$.push_back($1);
+																	 INFO("files: | file=\"" << $file << "\"");
+																	 $result.push_back($file);
 																}
-    | files file                                                {
-																	INFO("files: | files file=\"" << $2 << "\"");
-																	$1.push_back($2);
-																	$$ = $1;
+    | files[file_list] file                                                {
+																	INFO("files: | files file=\"" << $file << "\"");
+																	$file_list.push_back($file);
+																	$result = $file_list;
 																}
                                                                 ;
 /**
@@ -236,7 +232,7 @@ file:
 
 																	string name;
 																	lexer::instance().get_current_infile(name);
-																	$$ = name;
+																	$file = name;
 
                                                                     cout << FMT_FG_DARK_GREY << "file: | blocks END_OF_FILE" << endl;
                                                                     cout << FMT_FG_DARK_GREY << "*******************************************************" << FMT_RESET << endl;
@@ -260,15 +256,15 @@ block:
 /**
  * @name stmts
  */
-stmts[result]:
+stmts:
     stmt[lhs]        		                                    {
 																	INFO("stmts: stmt=\"" << $lhs << "\"");
-																	$result.push_back($lhs);
+																	$stmts.push_back($lhs);
 																}
 	| stmts[lhs] stmt[rhs]			                            {
 																	INFO("stmts: | stmts stmt");
 																	$lhs.push_back($rhs);
-																	$result = $lhs;
+																	$stmts = $lhs;
 																}
                                                                 ;
 
@@ -335,7 +331,7 @@ stmt:
                                                                     // bkp todo qualified lookup
                                                                     std::string s;
                                                                     //get_value($2, s);
-                                                                    $$ = s;
+                                                                    $stmt = s;
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
                                                                     INFO("stmt: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
@@ -361,12 +357,12 @@ assign_stmt:
     symbol EQUAL_SIGN NUMERIC_LITERAL                           {
                                                                     WARN("assign_stmt: | symbol EQUAL_SIGN NUMERIC_LITERAL=" << $3);
                                                                     set_value($1, $3);
-                                                                    $$ = $3;
+                                                                    $assign_stmt = $3;
                                                                 }
     | symbol EQUAL_SIGN STRING_LITERAL                          {
                                                                     WARN("assign_stmt: | symbol EQUAL_SIGN STRING_LITERAL\"" << $3 << "\"");
                                                                     set_value($1, $3);
-                                                                    $$ = $3;
+                                                                    $assign_stmt = $3;
                                                                 }
                                                                 ;
 
@@ -385,44 +381,45 @@ conditionial_expr:
  * @brief Numerical / logical exprssions
  */
 expr[result]:
-	symbol[lhs] PLUS_SIGN[op] NUMERIC_LITERAL[rhs]              {
+	symbol[lhs] PLUS[op] NUMERIC_LITERAL[rhs]                   {
 																	INFO("expr: |symbol PLUS_SIGN NUMERIC_LITERAL");
+                                                                    //$result = (std::atoi($lhs) + std::atoi($rhs));
 																}
-    | expr[lhs] PLUS_SIGN[op] expr[rhs]                         {
+    | expr[lhs] PLUS[op] expr[rhs]                              {
 																	INFO("PARSER expr: | expr PLUS_SIGN expr");
-																	//$result = $lhs + $rhs;
+																	//$result = (std::atoi($lhs) + std::atoi($rhs));
 																}
     | expr[lhs] MINUS[op] expr[rhs]                             {
 																	INFO("PARSER expr: | expr MINUS expr");
-																	//$result = $lhs - $rhs;
+																	//$result = ($lhs - $rhs);
 																}
-    | expr[lhs] ASTERISK[op] expr[rhs]                          {
+    | expr[lhs] MULT[op] expr[rhs]                              {
 																	INFO("PARSER expr: | expr ASTERISK expr");
-																	//$result = $lhs * $rhs;
+																	//$result = (std::atoi($lhs) * std::atoi($rhs));
 																}
-    | expr[lhs] SLASH[op] expr[rhs]                             {
+    | expr[lhs] DIV[op] expr[rhs]                               {
 																	INFO("PARSER expr: | expr SLASH expr");
-																	//$result = $lhs / $rhs;
+																	//$result = ($lhs / $rhs);
 																}
     | expr[lhs] LESS_THAN[op] expr[rhs]                         {
 																	INFO("PARSER expr: | expr LESS_THAN expr");
-																	//$result = $lhs < $rhs;
+																	//$result = ($lhs < $rhs);
 																}
     | expr[lhs] GREATER_THAN[op] expr[rhs]                      {
 																	INFO("PARSER expr: | expr GREATER_THAN expr");
-																	//$result = $lhs > $rhs;
+																	//$result = ($lhs > $rhs);
 																}
     | expr[lhs] GREATER_THAN_EQUAL[op] expr[rhs]                {
 																	INFO("PARSER expr: | expr GREATER_THAN_EQUAL expr ");
-																	//$result = $lhs >= $rhs;
+																	//$result = ($lhs >= $rhs);
 																}
     | expr[lhs] LESS_THAN_EQUAL[op] expr[rhs]                   {
 																	INFO("PARSER expr: | expr LESS_THAN_EQUAL expr");
-																	//$result = $lhs <= $rhs;
+																	//$result = ($lhs <= $rhs);
 																}
     | expr[lhs] NOT_EQUAL[op] expr[rhs]                         {
 																	INFO("PARSER expr: | expr NOT_EQUAL expr");
-																	//$result = $lhs != $rhs;
+																	//$result = ($lhs != $rhs);
 																}
     | LPAREN expr[exp] RPAREN                                   {
 																	INFO("PARSER expr: | LPAREN expr RPAREN");
@@ -648,50 +645,50 @@ attributes:
 attrib:
     VALUE_ATTRIB[name] EQUAL_SIGN STRING_LITERAL[value]        {
                                                                     INFO("name_value: | VALUE_ATTRIB=\"" \
-                                                                        << $1 << "\" EQUAL_SIGN STRING_LITERAL=\"" \
+                                                                        << $name << "\" EQUAL_SIGN STRING_LITERAL=\"" \
                                                                         << buf << "\"");
-                                                                    std::pair<std::string, std::string>  pair($1, $3);
-                                                                    $$ = pair;
+                                                                    std::pair<std::string, std::string>  pair($name, $value);
+                                                                    $attrib = pair;
                                                                }
     | VAR_ATTRIB[name] EQUAL_SIGN NUMERIC_LITERAL[value]       {
                                                                     INFO("name_value: | VAR_ATTRIB=\"\" EQUAL_SIGN STRING_LITERAL=\"\"");
-                                                                    std::pair<std::string, std::string>  pair($1, $3);
-                                                                    $$ = pair;
+                                                                    std::pair<std::string, std::string>  pair($name, $value);
+                                                                    $attrib = pair;
                                                                }
     | FILE_ATTRIB[name] EQUAL_SIGN STRING_LITERAL[value]       {
                                                                     INFO("name_value: | FILE_ATTRIB=\""
-                                                                        << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\"");
-                                                                    std::pair<std::string, std::string>  pair($1, $3);
-                                                                    $$ = pair;
+                                                                        << $name << "\" EQUAL_SIGN STRING_LITERAL=\""
+                                                                        << $value << "\"");
+                                                                    std::pair<std::string, std::string>  pair($name, $value);
+                                                                    $attrib = pair;
                                                                }
     | FILE_ATTRIB[name] EQUAL_SIGN symbol[value]               {
                                                                     INFO("name_value: | FILE_ATTRIB=\""
-                                                                        << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\"");
-                                                                    std::pair<std::string, std::string>  pair($1, $3);
-                                                                    $$ = pair;
+                                                                        << $name << "\" EQUAL_SIGN STRING_LITERAL=\""
+                                                                        << $value << "\"");
+                                                                    std::pair<std::string, std::string>  pair($name, $value);
+                                                                    $attrib = pair;
                                                                }
     | attrib_name[name] EQUAL_SIGN STRING_LITERAL[value]       {
-                                                                    INFO("name_value: | " << $1 << "=\""
-                                                                        << $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-                                                                        << $3 << "\"");
-                                                                    std::pair<std::string, std::string>  pair($1, $3);
-                                                                    $$ = pair;
+                                                                    INFO("name_value: | " << $name << "=\""
+                                                                        << $name << "\" EQUAL_SIGN STRING_LITERAL=\""
+                                                                        << $value << "\"");
+                                                                    std::pair<std::string, std::string>  pair($name, $value);
+                                                                    $attrib = pair;
                                                                }
     | attrib_name[name] EQUAL_SIGN NUMERIC_LITERAL[value]      {
-																	INFO("name_value: | " << $1 << "=\""
-																		<< $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-																		<< $3 << "\"");
-																	std::pair<std::string, std::string>  pair($1, $3);
-																	$$ = pair;
+																	INFO("name_value: | " << $name << "=\""
+																		<< $name << "\" EQUAL_SIGN STRING_LITERAL=\""
+																		<< $value << "\"");
+																	std::pair<std::string, std::string>  pair($name, $value);
+																	$attrib = pair;
                                                                 }
-    | attrib_name EQUAL_SIGN symbol                             {
-																	INFO("name_value: | " << $1 << "=\""
-																		<< $1 << "\" EQUAL_SIGN STRING_LITERAL=\""
-																		<< $3 << "\"");
-																	std::pair<std::string, std::string>  pair($1, $3);
-																	$$ = pair;
+    | attrib_name[name] EQUAL_SIGN symbol[value]                             {
+																	INFO("name_value: | " << $name << "=\""
+																		<< $name << "\" EQUAL_SIGN STRING_LITERAL=\""
+																		<< $value << "\"");
+																	std::pair<std::string, std::string>  pair($name, $value);
+																	$attrib = pair;
                                                                 }
                                                                 ;
 /**

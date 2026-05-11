@@ -110,9 +110,13 @@ int parse_options(const int argc, char *argv[])
     }
     
     streamy strmy;
+    strmy.load_config("test/config/test.conf");
     strmy.assign("x", "this is x");
     strmy.assign("y", "this is y");
-    
+    string x = strmy.get_map_vars()["x"];
+    string y = strmy.get_map_vars()["y"];
+    strmy.display("test/templates/test_vars.tpl"); 
+       
     
     const int offset = optind + SRC_IDX_OFFSET-1;
 	lexer::instance().init(argc-offset-1, argv+offset+1);

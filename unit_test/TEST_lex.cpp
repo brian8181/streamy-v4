@@ -20,7 +20,8 @@
 #include <netinet/in.h>
 #include <string.h>
 #include "TEST_lex.hpp"
-#include "bash_color.hpp"
+#include "lexer.hpp"
+#include "../src/bash_color.hpp"
 
 
 using namespace CppUnit;
@@ -40,6 +41,7 @@ using namespace std;
 // 	//return lexer::instance().get_token();
 // }
 
+CPPUNIT_TEST_SUITE_REGISTRATION( TEST_lex );
 
 void TEST_lex::setUp()
 {
@@ -49,29 +51,22 @@ void TEST_lex::tearDown()
 {
 }
 
-void TEST_lex::testNoOptions()
+void TEST_lex::test_initialize()
 {
-    CPPUNIT_ASSERT(1 == 1);
+    // on head
+    char** ppath = new char*;
+    *ppath = (char*)"<path exe>";
+    char** pstr = new char*;
+    *pstr = (char*)"test/test5.txt";    // on the heap
+    char** argv = new char*[2] { *pstr,*pstr};
+    int argc = 2;
+    bool ret = lexer::instance().init(argc, argv);
+    CPPUNIT_ASSERT(ret);
 }
 
-void TEST_lex::testOptionHelp()
+void TEST_lex::test_get_token()
 {
     CPPUNIT_ASSERT(1 == 1);
-}
-
-void TEST_lex::testOptionHelpLong()
-{
-    CPPUNIT_ASSERT(1 == 1);
-}
-
-void TEST_lex::testOptionVerbose()
-{
-    CPPUNIT_ASSERT(1 == 1);
-}
-
-void TEST_lex::testOptionVerboseLong()
-{
-   CPPUNIT_ASSERT(1 == 1);
 }
 
 void TEST_lex::execute()
