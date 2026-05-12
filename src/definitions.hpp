@@ -290,6 +290,7 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
 #define VALUES_ATTRIB      (OFFSET + __LINE__)
 #define SEPERATOR_ATTRIB   (OFFSET + __LINE__)
 #define FORMAT_ATTRIB       (OFFSET + __LINE__)
+#define TEST_TOKEN          777ul
 #define S_TYPE "string"
 
 
@@ -306,10 +307,11 @@ inline auto SKIP_TOKEN = yysymbol( yytoken::SKIP_TOKEN ).kind();
  */
 inline map<unsigned long, token> g_tokens =
 {
-	{UNESCAPED_TEXT,	token{"UNESCAPED_TEXT", S_TYPE, R"([^{]+)", __LINE__}},
+	{TEST_TOKEN,	    token{"TEST_TOKEN", S_TYPE, R"(@@@)", __LINE__}},
+	{UNESCAPED_TEXT,	token{"UNESCAPED_TEXT", S_TYPE, R"([^{@]+)", __LINE__}},
 	{RAW_STREAM,	    token{"RAW_STREAM", S_TYPE, R"(.*)", __LINE__}},
 	{ESC_SEQ,	        token{"ESC_SEQ", S_TYPE, R"(\\[^\n])", __LINE__}},
-	{ESC_NLINE,	        token{"ESC_NINE", S_TYPE, R"([^\\\n])", __LINE__}},
+	{ESC_NLINE,	        token{"ESC_NLINE", S_TYPE, R"([^\\\n])", __LINE__}},
 	{WHITESPACE, 		token{"WHITESPACE", S_TYPE, R"([ \t])", __LINE__}},
 	{NEWLINE,           token{"NEWLINE", S_TYPE, R"(\n)", __LINE__}},
 	{FILE_ATTRIB,       token{"FILE_ATTRIB", S_TYPE, R"(file)", __LINE__}},
@@ -454,9 +456,9 @@ inline vector<state_t> states__ = { INITIAL, COMMENTING, ESCAPED, DOUBLE_QUOTED,
 /**
  * @brief token list -> by state
  */
-inline vector<unsigned long> INITIAL_TOKENS = { UNESCAPED_TEXT, OPEN_BRACE, NEWLINE, COMMENT };
+inline vector<unsigned long> INITIAL_TOKENS = { TEST_TOKEN, UNESCAPED_TEXT, OPEN_BRACE, NEWLINE, COMMENT };
 
-inline vector<unsigned long> ESCAPED_TOKENS = { CLOSE_BRACE, OPEN_BRACKET, DOUBLE_QUOTE, IF, ELSE, FILE_ATTRIB, INCLUDE, ASSIGN, STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
+inline vector<unsigned long> ESCAPED_TOKENS = {  TEST_TOKEN, CLOSE_BRACE, OPEN_BRACKET, IF, ELSE, FILE_ATTRIB, INCLUDE, ASSIGN, STRING_LITERAL, NUMERIC_LITERAL, EQUAL_SIGN,
 												CAPITALIZE, TRUNCATE, VBAR, COMMA, COLON, DOT, SLASH,  STRIP, IDENTIFIER, VAR_OPER, CONST_VAR_OPER, PLUS_SIGN, WHITESPACE };
 
 inline vector<unsigned long> COMMENTING_TOKENS = { OPEN_BRACE, COMMENT, ANYTHING };

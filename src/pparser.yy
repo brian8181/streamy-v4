@@ -137,7 +137,7 @@
 	} */
 }
 
-
+%token <std::string> TEST_TOKEN
 %token <std::string> UNESCAPED_TEXT
 %token MATCH UNDEFINED NEWLINE WHITESPACE ANYTHING VALID_CHAR SKIP_TOKEN FILE_PATH
 %token PLUS MINUS MULT DIV
@@ -158,22 +158,32 @@
 %token CARROT OPEN_PAREN CLOSE_PAREN DASH BACKSLASH QUESTION_MARK SEMI_COLON DOUBLE_QUOTE SINGLE_QUOTE BACK_SLASH AT AMPERSAND AND OR NOT
 %token DOLLAR_SIGN COMMA COLON VBAR HASH_MARK OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE LPAREN RPAREN DOT
 
-%type < std::vector< std::string > > files
+/**/
+%type< std::string > testing
+/**/
 %type <std::string> file
+%type < std::vector< std::string > > files
+/**/
 %type <std::string> stmt
 %type < std::vector< std::string > > stmts
+/**/
 %type <std::string> block
 %type < std::vector< std::string > > blocks
+/**/
 %type <std::string> attrib_name
 %type < std::pair<std::string, std::string> > attrib
 %type <std::vector< std::pair<std::string, std::string> > > attributes
+/**/
 %type <std::vector< std::pair<std::string, std::string> > > built_in
 %type <std::string> expr
 %type <std::string> assign_stmt
-%type < std::vector< std::string > > colon_sep_params
+/**/
 %type <std::string> colon_sep_param
-%type < std::vector< std::string > > modifiers
+%type < std::vector< std::string > > colon_sep_params
+/**/
 %type <std::string> modifier
+%type < std::vector< std::string > > modifiers
+/**/
 %type <std::string> sub_proc array
 
 %nonassoc IFX
@@ -190,7 +200,10 @@
  * @name complier
  */
 compiler:
-	files  END_OF_FILES                                         {
+    TEST_TOKEN                                                  {
+                                                                            INFO("complier: | TEST_TOKEN=" << $1);
+                                                                }  
+    | files  END_OF_FILES                                       {
 																	INFO("compiler: files.size=" << $1.size() << " END_OF_FILES");
 
 																	cout << "processed files ..." << endl;
@@ -322,13 +335,8 @@ stmt:
                                                                     INFO("stmt: | OPEN_BRACE assign_stmt CLOSE_BRACE");
                                                                     //lexer::instance().write_ostream($2);
                                                                 }
-	| OPEN_BRACE '$' '%' CLOSE_BRACE                           {
-                                                                    INFO("stmt: | OPEN_BRACE qualafied_id CLOSE_BRACE");
-                                                                    // bkp todo, look up in symbol table & do replace
-                                                                    // bkp todo qualified lookup
-                                                                    std::string s;
-                                                                    //get_value($2, s);
-                                                                    $stmt = s;
+	| OPEN_BRACE built_in CLOSE_BRACE                           {
+                                                                    INFO("stmt: | OPEN_BRACE built_id CLOSE_BRACE");
                                                                 }
     | OPEN_BRACE INCLUDE attributes CLOSE_BRACE                 {
                                                                     INFO("stmt: | OPEN_BRACE INCLUDE attributes CLOSE_BRACE");
@@ -576,11 +584,11 @@ colon_sep_param:
  * @name symbol
  */
 symbol:
-		DOLLAR_SIGN IDENTIFIER								{
+		DOLLAR_SIGN IDENTIFIER								    {
 																	INFO("symbol: | DOLLAR_SIGN IDENTIFIER=");
 																	$$ = $2;
 																}
-		HASH_MARK IDENTIFIER HASH_MARK 								    {
+		| HASH_MARK IDENTIFIER HASH_MARK					    {
 																	INFO("symbol: | HASH_MARK IDENTIFIER" << $2);
 																	$$ = $2;
 																}
@@ -622,14 +630,19 @@ built_in:
  * @name attributes
  */
 attributes[top]:
-     %empty
+     attrib                                                     {
+                                                                    stringstream ss;
+																	ss << "attribute: | push -> attrib={name=\"" << $attrib.first << "\" value=\"" << $attrib.second << "\"";
+                                                                    INFO(ss.str());
+																	$top.push_back($attrib);
+                                                                }
     | attributes[list] COMMA attrib                             {
                                                                     stringstream ss;
 																	ss << "attribute: | push -> attrib={name=\"" << $attrib.first << "\" value=\"" << $attrib.second << "\"";
                                                                     INFO(ss.str());
-																	$list.push_back( $attrib);
-                                                                    $top = $list;
-                                                               }
+                                                                    // $list.push_back($attrib);
+																	// $top = $list;
+                                                                }
                                                                ;
 /**
  * @name attrib

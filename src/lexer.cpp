@@ -270,17 +270,18 @@ void lexer::read_istream( const string& file, /*out*/ string& s )
  * @name read_istream
  * @brief read input file into string object
  */
-void lexer::read_istream( const string& file, /*out*/ char* buff, int& len)
+bool lexer::read_istream( const string& file, /*out*/ char* buff, int& len)
 {
 	ifstream stream( file, std::ios::in );
 	if( stream.is_open() )
 	{
 		bool ret = false;
-		if(stream.read(buf, len)}
+		if(stream.read(buff, len))
 			ret = true;
 		stream.close();
 		return ret;
 	}
+	return false;
 }
 
 /**
@@ -366,6 +367,8 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 		{
 			switch( id )
 			{
+				case TEST_TOKEN:
+					return parser::make_TEST_TOKEN( match );
 				case UNESCAPED_TEXT:
 					ATTN("UNESCAPED_TEXT");
 					//write_ostream(match);
@@ -389,6 +392,8 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 		{
 			switch( id )
 			{
+				case TEST_TOKEN:
+					return parser::make_TEST_TOKEN( match );
 				case CLOSE_BRACE:
 					set_state( &INITIAL );
 					return parser::make_CLOSE_BRACE();

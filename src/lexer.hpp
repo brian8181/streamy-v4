@@ -194,7 +194,7 @@ public:
 	 * @name read_istream
 	 * @brief read input file into string object
 	 */
-	static void read_istream(const string& file, char* pc);
+	static bool read_istream( const string& file, /*out*/ char* buff, int& len);
 
 	/**
 	 * @name   write_stream
