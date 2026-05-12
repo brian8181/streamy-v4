@@ -241,7 +241,7 @@ file:
                                                                 }
                                                                 ;
 blocks:
-	block														{ INFO("blocks: | block"); }
+	%empty														{ INFO("blocks: | block"); }
 	| blocks block
 	;
 
@@ -256,15 +256,12 @@ block:
 /**
  * @name stmts
  */
-stmts:
-    stmt[lhs]        		                                    {
-																	INFO("stmts: stmt=\"" << $lhs << "\"");
-																	$stmts.push_back($lhs);
-																}
+stmts[result]:
+    %empty
 	| stmts[lhs] stmt[rhs]			                            {
 																	INFO("stmts: | stmts stmt");
 																	$lhs.push_back($rhs);
-																	$stmts = $lhs;
+																	$result = $lhs;
 																}
                                                                 ;
 
@@ -583,7 +580,7 @@ symbol:
 																	INFO("symbol: | DOLLAR_SIGN IDENTIFIER=");
 																	$$ = $2;
 																}
-		| HASH_MARK IDENTIFIER  								{
+		HASH_MARK IDENTIFIER HASH_MARK 								    {
 																	INFO("symbol: | HASH_MARK IDENTIFIER" << $2);
 																	$$ = $2;
 																}
@@ -624,19 +621,14 @@ built_in:
 /**
  * @name attributes
  */
-attributes:
-    attrib                                                     {
-                             										stringstream ss;
-																	ss << "attribute: | push -> attrib={name=\"" << $1.first << "\" value=\"" << $1.second << "\"";
-                                                                    INFO(ss.str());
-                                                                    $$.push_back($1);
-                                                               }
-    | attributes COMMA attrib                                  {
+attributes[top]:
+     %empty
+    | attributes[list] COMMA attrib                             {
                                                                     stringstream ss;
-																	ss << "attribute: | push -> attrib={name=\"" << $3.first << "\" value=\"" << $3.second << "\"";
+																	ss << "attribute: | push -> attrib={name=\"" << $attrib.first << "\" value=\"" << $attrib.second << "\"";
                                                                     INFO(ss.str());
-																	$1.push_back( $3 );
-                                                                    $$ = $1;
+																	$list.push_back( $attrib);
+                                                                    $top = $list;
                                                                }
                                                                ;
 /**

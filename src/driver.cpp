@@ -116,8 +116,7 @@ int parse_options(const int argc, char *argv[])
     string x = strmy.get_map_vars()["x"];
     string y = strmy.get_map_vars()["y"];
     strmy.display("test/templates/test_vars.tpl"); 
-       
-    
+           
     const int offset = optind + SRC_IDX_OFFSET-1;
 	lexer::instance().init(argc-offset-1, argv+offset+1);
 	yyparser.parse();
@@ -164,7 +163,6 @@ int main(int argc, char *argv[])
     try
     {
 #ifndef _WIN32
-        // TRACE();
         char *argv_cpy[sizeof(char *) * argc + 1];
         if (stdin_ready(STDIN_FILENO))
         {

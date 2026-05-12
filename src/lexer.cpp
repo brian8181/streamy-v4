@@ -250,7 +250,7 @@ void lexer::push_include( const string& file )
  * @name read_istream
  * @brief read input file into string object
  */
-void lexer::read_istream( const string& file, string& s )
+void lexer::read_istream( const string& file, /*out*/ string& s )
 {
 	ifstream stream( file, std::ios::in );
 	if( stream.is_open() )
@@ -270,18 +270,16 @@ void lexer::read_istream( const string& file, string& s )
  * @name read_istream
  * @brief read input file into string object
  */
-void lexer::read_istream( const string& file, char* cstr )
+void lexer::read_istream( const string& file, /*out*/ char* buff, int& len)
 {
 	ifstream stream( file, std::ios::in );
 	if( stream.is_open() )
 	{
-		char c;
-		int i = 0;
-		while( stream.get( c ) )
-		{
-			cstr[i++] = c;
-		}
+		bool ret = false;
+		if(stream.read(buf, len)}
+			ret = true;
 		stream.close();
+		return ret;
 	}
 }
 
@@ -342,11 +340,11 @@ parser::symbol_type lexer::get_token()
  */
 void lexer::print_smatch(token_t t, boost::smatch m)
 {
-	INFO(	"match.pos:" << m.position() << " - match.sz:" << m.str().size() 
+	INFO("match.pos:" << m.position() << " - match.sz:" << m.str().size() 
 										 << " - prefix.sz:" << m.prefix().str().size() 
 										 << " - suffix.sz:" << m.suffix().str().size()	 );
 
-	INFO( 	"match[ " << t.index << " : " << t.name << "] "\
+	INFO("match[ " << t.index << " : " << t.name << "] "\
 			<< "[ " 		 << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.str()    ).get_val() << "\""    << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"\
 			<< " - prefix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.prefix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"\
 			<< " - suffix[ " << FMT_RESET << FMT_FG_WHITE << "\"" << esc_nl( m.suffix() ).get_val() << "\"" << FMT_RESET << FMT_ITALIC << FMT_FG_GREEN << "]"	);
@@ -361,6 +359,7 @@ void lexer::print_smatch(token_t t, boost::smatch m)
  */
 parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 {
+	TRACE();
 	switch( p_state->id )
 	{
 		case UL_INITIAL:
@@ -461,46 +460,46 @@ parser::symbol_type lexer::on_token( unsigned long id, const string& match )
 		{
 			switch( id )
 			{
-			case ESC_NLINE:
-			    {
-                    //  buffer = realloc(buffer,buffer_size+1);
-                    //  switch(yytext[yyleng-1])
-					//  {
-					// 	case 'b' : buffer[buffer_size-1] = '\b';  break;
-					// 	case 't' : buffer[buffer_size-1] = '\t';  break;
-					// 	case 'n' : buffer[buffer_size-1] = '\n';  break;
-					// 	case 'v' : buffer[buffer_size-1] = '\v';  break;
-					// 	case 'f' : buffer[buffer_size-1] = '\f';  break;
-					// 	case 'r' : buffer[buffer_size-1] = '\r';  break;
-					// 	default  : buffer[buffer_size-1] = yytext[yyleng-1];
-                    //  }
-                    //  buffer[buffer_size] = '\0';
-                    //  buffer_size += 1;
-                }
-				case ESC_TAB:
-					g_stringstream << "\t";
-					return get_token();
-				case ESC_BACKSLASH:
-					g_stringstream << "\\";
-					return get_token();
-				case ESC_DOUBLE_QUOTE:
-					g_stringstream << "\"";
-					return get_token();
-				case ESC_SINGLE_QUOTE:
-					g_stringstream << "'";
-					return get_token();
-				case VALID_CHAR:
-					g_stringstream << match;
-					return get_token();
-				case DOUBLE_QUOTE:
-				{
-					set_state( &ESCAPED );
-					string qstr = g_stringstream.str();
-					g_stringstream.str( "" );
-					g_stringstream.clear();
-					return parser::make_STRING_LITERAL( qstr );
-				}
-				default:;
+			// case ESC_NLINE:
+			//     {
+            //         //  buffer = realloc(buffer,buffer_size+1);
+            //         //  switch(yytext[yyleng-1])
+			// 		//  {
+			// 		// 	case 'b' : buffer[buffer_size-1] = '\b';  break;
+			// 		// 	case 't' : buffer[buffer_size-1] = '\t';  break;
+			// 		// 	case 'n' : buffer[buffer_size-1] = '\n';  break;
+			// 		// 	case 'v' : buffer[buffer_size-1] = '\v';  break;
+			// 		// 	case 'f' : buffer[buffer_size-1] = '\f';  break;
+			// 		// 	case 'r' : buffer[buffer_size-1] = '\r';  break;
+			// 		// 	default  : buffer[buffer_size-1] = yytext[yyleng-1];
+            //         //  }
+            //         //  buffer[buffer_size] = '\0';
+            //         //  buffer_size += 1;
+            //     }
+			case ESC_TAB:
+				g_stringstream << "\t";
+				return get_token();
+			case ESC_BACKSLASH:
+				g_stringstream << "\\";
+				return get_token();
+			case ESC_DOUBLE_QUOTE:
+				g_stringstream << "\"";
+				return get_token();
+			case ESC_SINGLE_QUOTE:
+				g_stringstream << "'";
+				return get_token();
+			case VALID_CHAR:
+				g_stringstream << match;
+				return get_token();
+			case DOUBLE_QUOTE:
+			{
+				set_state( &ESCAPED );
+				string qstr = g_stringstream.str();
+				g_stringstream.str( "" );
+				g_stringstream.clear();
+				return parser::make_STRING_LITERAL( qstr );
+			}
+			default:;
 			}
 			break;
 		} // UL_DOUBLE_QUOTED_STATE:
